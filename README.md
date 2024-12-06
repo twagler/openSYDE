@@ -1,5 +1,8 @@
 # openSYDE
 
+This fork is intended to be the development branch for updating openSYDE to Qt 6.
+--------------------------------------------------------------------------------------
+
 openSYDE by STW (https://www.stw-mobile-machines.com/) is a software toolchain that supports implementation, commissioning, analysis and maintenance of control systems for mobile machines.
 
 openSYDE stands out with its openness: freely useable interfaces to other applications like requirement engineering tools or the integration of 3rd party devices. Based on the open architecture openSYDE can be flexibly integrated into an existing tool- and process-environment.
