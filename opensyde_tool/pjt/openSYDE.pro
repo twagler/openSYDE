@@ -2114,15 +2114,15 @@ INCLUDEPATH += ../src \
 RESOURCES += \
     ../src/application.qrc
 
-LIBS += -L../libs/gettext -lintl \
-        -L../libs/qcustomplot -lqcustomplot \
+LIBS += -L$$PWD/../libs/gettext -lintl \
+        -L$$PWD/../libs/qcustomplot -lqcustomplot \
         -lz
 
 LIBS += -lws2_32   #WinSock
 LIBS += -lIphlpapi #IP helper API
 
 #openssl
-LIBS += -L../libs/openssl -lcrypto
+LIBS += -L$$PWD/../libs/openssl -lcrypto
 
 #add windows API libraries
 LIBS += -lversion
