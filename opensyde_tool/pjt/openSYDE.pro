@@ -2114,8 +2114,9 @@ INCLUDEPATH += ../src \
 RESOURCES += \
     ../src/application.qrc
 
+LIBS +=-L$$PWD/../libs/qcustomplot -lqcustomplot2_1_1_i386
+
 LIBS += -L$$PWD/../libs/gettext -lintl \
-        -L$$PWD/../libs/qcustomplot -lqcustomplot \
         -lz
 
 LIBS += -lws2_32   #WinSock
