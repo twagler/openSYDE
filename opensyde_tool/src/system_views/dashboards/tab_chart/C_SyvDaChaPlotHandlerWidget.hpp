@@ -17,7 +17,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <algorithm>
-#include <qcustomplot2_1_1.h>
+#include <qcustomplot.h>
 #include "stwtypes.hpp"
 #include "C_PuiSvDbNodeDataPoolListElementId.hpp"
 #include "C_PuiSvDbDataElementScaling.hpp"

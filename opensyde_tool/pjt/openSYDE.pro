@@ -30,6 +30,7 @@ SOURCES += ../src/main.cpp \
     ../libs/opensyde_core/aes/AES.cpp \
     ../libs/opensyde_core/C_OscZipData.cpp \
     ../libs/opensyde_core/C_OscZipFile.cpp \
+    ../libs/qcustomplot/qcustomplot.cpp \
     ../src/com_import_export/C_CieConverter.cpp \
     ../src/com_import_export/C_CieImportDataAssignment.cpp \
     ../src/com_import_export/C_CieImportedMessageVectorData.cpp \
@@ -953,6 +954,7 @@ HEADERS  += \
     ../libs/opensyde_core/C_OscZipData.hpp \
     ../libs/opensyde_core/C_OscZipFile.hpp \
     ../libs/opensyde_core/miniz/miniz.h \
+    ../libs/qcustomplot/qcustomplot.h \
     ../src/com_import_export/C_CieImportDataAssignment.hpp \
     ../src/com_import_export/C_CieImportedMessageVectorData.hpp \
     ../src/graphic_items/C_GiProgressBarUtil.hpp \
@@ -2113,8 +2115,6 @@ INCLUDEPATH += ../src \
 
 RESOURCES += \
     ../src/application.qrc
-
-LIBS +=-L$$PWD/../libs/qcustomplot -lqcustomplot2_1_1_i386
 
 LIBS += -L$$PWD/../libs/gettext -lintl \
         -lz
