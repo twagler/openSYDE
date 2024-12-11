@@ -188,7 +188,7 @@ uint32_t C_TblModelAction::DeleteSelectedItems(const std::vector<uint32_t> & orc
    {
       //Get best index to select after this action -> ideal: one item after last deleted item
       // (or the one before that if it was the end)
-      u32_Retval = std::min(this->m_GetSizeItems() - 1U, (u32_Retval - orc_SelectedIndices.size()) + 1U);
+      u32_Retval = std::min(this->m_GetSizeItems() - 1U, static_cast<uint32_t>((u32_Retval - orc_SelectedIndices.size()) + 1U));
    }
    else
    {

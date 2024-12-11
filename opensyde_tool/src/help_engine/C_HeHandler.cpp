@@ -103,7 +103,7 @@ void C_HeHandler::CallSpecificHelpPage(const QString & orc_ClassName)
          //this->mpr_HtmlHelp(GetDesktopWindow(), mh_GetHelpLocation().toStdString().c_str(), HH_DISPLAY_TOPIC, 0);
          //lint -e{923,1924,9091} Required by API interface
          this->mpr_HtmlHelp(GetDesktopWindow(),
-                            this->m_GetHelpLocation().toStdString().c_str(), HH_KEYWORD_LOOKUP, (DWORD) &c_Link);
+                            this->m_GetHelpLocation().toStdString().c_str(), HH_KEYWORD_LOOKUP, (DWORD64) &c_Link);
          delete[] (pcn_Text);
       }
    }
