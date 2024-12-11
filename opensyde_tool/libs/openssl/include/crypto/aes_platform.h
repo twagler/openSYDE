@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2021 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2019-2024 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -65,6 +65,7 @@ void AES_xts_decrypt(const unsigned char *inp, unsigned char *out, size_t len,
 #   ifdef VPAES_ASM
 #    define VPAES_CAPABLE (OPENSSL_ppccap_P & PPC_ALTIVEC)
 #   endif
+#   if !defined(OPENSSL_SYS_MACOSX)
 #   define HWAES_CAPABLE  (OPENSSL_ppccap_P & PPC_CRYPTO207)
 #   define HWAES_set_encrypt_key aes_p8_set_encrypt_key
 #   define HWAES_set_decrypt_key aes_p8_set_decrypt_key
@@ -74,6 +75,7 @@ void AES_xts_decrypt(const unsigned char *inp, unsigned char *out, size_t len,
 #   define HWAES_ctr32_encrypt_blocks aes_p8_ctr32_encrypt_blocks
 #   define HWAES_xts_encrypt aes_p8_xts_encrypt
 #   define HWAES_xts_decrypt aes_p8_xts_decrypt
+#   endif /* OPENSSL_SYS_MACOSX */
 #  endif /* PPC */
 
 #  if (defined(__arm__) || defined(__arm) || defined(__aarch64__))
@@ -100,7 +102,7 @@ void AES_xts_decrypt(const unsigned char *inp, unsigned char *out, size_t len,
 #    define AES_PMULL_CAPABLE ((OPENSSL_armcap_P & ARMV8_PMULL) && (OPENSSL_armcap_P & ARMV8_AES))
 #    define AES_GCM_ENC_BYTES 512
 #    define AES_GCM_DEC_BYTES 512
-#    if __ARM_MAX_ARCH__>=8
+#    if __ARM_MAX_ARCH__>=8 && defined(__aarch64__)
 #     define AES_gcm_encrypt armv8_aes_gcm_encrypt
 #     define AES_gcm_decrypt armv8_aes_gcm_decrypt
 #     define AES_GCM_ASM(gctx) ((gctx)->ctr==aes_v8_ctr32_encrypt_blocks && \
