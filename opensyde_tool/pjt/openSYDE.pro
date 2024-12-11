@@ -2105,7 +2105,7 @@ INCLUDEPATH += ../src \
                ../src/precompiled_headers/gui \
                ../libs/opensyde_core/aes \
                ../libs/opensyde_core/miniz \
-               ../libs/gettext \
+               #../libs/gettext \
                ../libs/flexlexer \
                ../libs/dbc_driver_library/src/ \
                ../libs/dbc_driver_library/src/Vector \
@@ -2116,8 +2116,8 @@ INCLUDEPATH += ../src \
 RESOURCES += \
     ../src/application.qrc
 
-LIBS += -L$$PWD/../libs/gettext -lintl \
-        -lz
+#LIBS += -L$$PWD/../libs/gettext -lintl \
+LIBS += -lz
 
 LIBS += -lws2_32   #WinSock
 LIBS += -lIphlpapi #IP helper API
@@ -2129,12 +2129,12 @@ LIBS += -L$$PWD/../libs/openssl -lcrypto
 LIBS += -lversion
 
 #do not warn about c++11 - we need it for Qt anyway and would else get issues with warnings in qobjectdefs_impl.h
-QMAKE_CXXFLAGS += -Wno-c++11-compat
+#QMAKE_CXXFLAGS += -Wno-c++11-compat
 
 #do not issue deprecation warnings (tested code can contain deprecated functions which we do want to provide)
-win32-g++ {
-QMAKE_CXXFLAGS += -Wno-deprecated-declarations
-}
+#win32-g++ {
+#QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+#}
 
 QMAKE_TARGET_COMPANY = STW
 QMAKE_TARGET_PRODUCT = openSYDE

@@ -18,7 +18,7 @@
 #include "C_GtGetText.hpp"
 #include "TglFile.hpp"
 #include "TglUtils.hpp"
-#include "libintl.h" //gettext header
+//#include "libintl.h" //gettext header
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
@@ -74,7 +74,7 @@ int32_t C_GtGetText::h_Initialize(const C_SclString & orc_BasePath, const C_SclS
    {
       s32_Return = stw::errors::C_RANGE;
    }
-   else
+   /*else
    {
       char_t * pcn_Return;
       pcn_Return = bindtextdomain(orc_MoFileName.c_str(), orc_BasePath.c_str());
@@ -93,7 +93,7 @@ int32_t C_GtGetText::h_Initialize(const C_SclString & orc_BasePath, const C_SclS
       {
          s32_Return = stw::errors::C_NOACT;
       }
-   }
+   }*/
    if (s32_Return == stw::errors::C_NO_ERR)
    {
       mhq_Initialized = true;
@@ -171,7 +171,8 @@ const char_t * C_GtGetText::h_GetText(const char_t * const opcn_MessageId)
    }
    else
    {
-      pcn_String = gettext(opcn_MessageId);
+      //pcn_String = gettext(opcn_MessageId);
+       pcn_String = opcn_MessageId;
    }
    return pcn_String;
 }
