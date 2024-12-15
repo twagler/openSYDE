@@ -43,7 +43,7 @@ using namespace stw::opensyde_gui_logic;
 //----------------------------------------------------------------------------------------------------------------------
 C_TblEditLineEditBase::C_TblEditLineEditBase(QWidget * const opc_Parent) :
    C_OgeLeToolTipBase(opc_Parent),
-   me_Type(QVariant::Invalid)
+    me_Type(QMetaType::UnknownType)
 {
 }
 
@@ -58,7 +58,7 @@ C_TblEditLineEditBase::C_TblEditLineEditBase(QWidget * const opc_Parent) :
 //----------------------------------------------------------------------------------------------------------------------
 void C_TblEditLineEditBase::SetFromVariant(const QVariant & orc_DisplayValue, const QVariant & orc_EditValue)
 {
-   this->me_Type = orc_EditValue.type();
+   this->me_Type = static_cast<QMetaType::Type>(orc_EditValue.typeId());
    this->setText(orc_DisplayValue.toString());
 }
 
@@ -117,27 +117,27 @@ int32_t C_TblEditLineEditBase::GetValueAsVariant(QVariant & orc_Value, QString &
 
    switch (this->me_Type) //lint !e788 //not all cases handled here explicitly
    {
-   case QVariant::Int:
+   case QMetaType::Int:
       orc_Value = this->text().toInt(&q_Worked, u32_Base);
       orc_ErrorDescription = c_ErrorDescriptionInt;
       break;
-   case QVariant::UInt:
+   case QMetaType::UInt:
       orc_Value = this->text().toUInt(&q_Worked, u32_Base);
       orc_ErrorDescription = c_ErrorDescriptionInt;
       break;
-   case QVariant::LongLong:
+   case QMetaType::LongLong:
       orc_Value = this->text().toLongLong(&q_Worked, u32_Base);
       orc_ErrorDescription = c_ErrorDescriptionInt;
       break;
-   case QVariant::ULongLong:
+   case QMetaType::ULongLong:
       orc_Value = this->text().toULongLong(&q_Worked, u32_Base);
       orc_ErrorDescription = c_ErrorDescriptionInt;
       break;
-   case QVariant::Double:
+   case QMetaType::Double:
       orc_Value = this->text().toDouble(&q_Worked);
       orc_ErrorDescription = c_ErrorDescriptionFloat;
       break;
-   case QVariant::String:
+   case QMetaType::QString:
       orc_Value = this->text();
       q_Worked = true;
       break;

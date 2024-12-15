@@ -1,14 +1,7 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2016-05-03T11:00:30
-#
-#-------------------------------------------------
 
-QT       += core gui
+QT       += core gui widgets svgwidgets printsupport
 CONFIG   += precompile_header
 CONFIG   += no_keywords
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets svg winextras printsupport
 
 TARGET = openSYDE
 TEMPLATE = app
