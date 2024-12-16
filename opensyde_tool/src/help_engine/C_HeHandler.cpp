@@ -83,13 +83,13 @@ void C_HeHandler::CallSpecificHelpPage(const QString & orc_ClassName)
       }
       else
       {
-         char_t * const pcn_Text = new char_t[static_cast<uint32_t>(c_PageSearchName.count() + 1)];
+         char_t * const pcn_Text = new char_t[static_cast<uint32_t>(c_PageSearchName.size() + 1)];
          HH_AKLINK c_Link;
-         for (int32_t s32_It = 0; s32_It < c_PageSearchName.count(); ++s32_It)
+         for (int32_t s32_It = 0; s32_It < c_PageSearchName.size(); ++s32_It)
          {
             pcn_Text[static_cast<uint32_t>(s32_It)] = c_PageSearchName.at(s32_It).toLatin1();
          }
-         pcn_Text[static_cast<uint32_t>(c_PageSearchName.count())] = '\0';
+         pcn_Text[static_cast<uint32_t>(c_PageSearchName.size())] = '\0';
          c_Link.cbStruct =     sizeof(HH_AKLINK);
          c_Link.fReserved =    FALSE;
          //Cast char * to wchar * but still interpreted as char * for some reason ...
