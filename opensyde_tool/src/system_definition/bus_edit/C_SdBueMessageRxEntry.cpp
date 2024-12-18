@@ -82,7 +82,7 @@ C_SdBueMessageRxEntry::C_SdBueMessageRxEntry(QWidget * const opc_Parent) :
    this->mc_DatapoolActive = C_SdUtil::h_InitStaticIcon("://images/system_definition/IconDataPoolSmall.svg");
    this->mc_DatapoolInactive = C_SdUtil::h_InitStaticIcon("://images/system_definition/IconDataPoolSmallInactive.svg");
 
-   connect(this->mpc_Ui->pc_CheckBoxActive, &stw::opensyde_gui_elements::C_OgeChxDefaultSmall::stateChanged,
+   connect(this->mpc_Ui->pc_CheckBoxActive, &stw::opensyde_gui_elements::C_OgeChxDefaultSmall::checkStateChanged,
            this, &C_SdBueMessageRxEntry::m_OnCheckBoxStateChanged);
    connect(this->mpc_Ui->pc_LabelTimeoutLink, &QLabel::linkActivated,
            this, &C_SdBueMessageRxEntry::m_OnTimeoutConfigLinkClicked);
@@ -705,7 +705,7 @@ void C_SdBueMessageRxEntry::m_AdaptParentCheckBoxState(void) const
       }
 
       // Disconnect due to avoiding informing the sub entries again
-      disconnect(this->mpc_Ui->pc_CheckBoxActive, &stw::opensyde_gui_elements::C_OgeChxDefaultSmall::stateChanged,
+      disconnect(this->mpc_Ui->pc_CheckBoxActive, &stw::opensyde_gui_elements::C_OgeChxDefaultSmall::checkStateChanged,
                  this, &C_SdBueMessageRxEntry::m_OnCheckBoxStateChanged);
       if (this->mq_ExclusiveMode == true)
       {

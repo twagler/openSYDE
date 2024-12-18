@@ -683,11 +683,11 @@ bool C_SyvDaItPaTreeView::event(QEvent * const opc_Event)
       if (pc_HoverEvent != NULL)
       {
          QModelIndex c_Index;
-         c_Index = this->indexAt(this->viewport()->mapFromGlobal(this->mapToGlobal(pc_HoverEvent->pos())));
+          c_Index = this->indexAt(this->viewport()->mapFromGlobal(this->mapToGlobal(pc_HoverEvent->position().toPoint())));
          if (c_Index.isValid() == true)
          {
             const QVariant c_Data = this->mc_Model.data(c_Index, static_cast<int32_t>(Qt::EditRole));
-            if (c_Data.type() == QVariant::Point)
+            if (c_Data.typeId() == QMetaType::QPoint)
             {
                q_IpAddressHovered = true;
             }

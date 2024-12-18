@@ -720,7 +720,7 @@ void C_SdNdeDpListsTreeWidget::dropEvent(QDropEvent * const opc_Event)
       {
          const std::vector<uint32_t> c_SelectedIndices = this->m_GetSelectedIndices();
          std::vector<uint32_t> c_TargetIndices;
-         int32_t s32_TargetRow = static_cast<int32_t>(this->indexAt(opc_Event->pos()).row());
+         int32_t s32_TargetRow = static_cast<int32_t>(this->indexAt(opc_Event->position().toPoint()).row());
          mh_AdaptDropTargetIndex(c_SelectedIndices, e_DropIndicator, s32_TargetRow);
          c_TargetIndices.resize(c_SelectedIndices.size());
          for (uint32_t u32_ItItem = 0; u32_ItItem < c_TargetIndices.size(); ++u32_ItItem)
@@ -1181,41 +1181,47 @@ void C_SdNdeDpListsTreeWidget::m_OnCustomContextMenuRequested(const QPoint & orc
 void C_SdNdeDpListsTreeWidget::m_SetupContextMenu(void)
 {
    this->mpc_ContextMenu = new C_OgeContextMenu(this);
-   this->mpc_ActionAdd = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                                             "Add new List"), this, &C_SdNdeDpListsTreeWidget::InsertAction,
+   this->mpc_ActionAdd = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Add new List"),
                                                           static_cast<int32_t>(Qt::CTRL) +
-                                                          static_cast<int32_t>(Qt::Key_Plus));
+                                                          static_cast<int32_t>(Qt::Key_Plus),
+                                                          this,
+                                                          &C_SdNdeDpListsTreeWidget::InsertAction);
 
    this->mpc_ContextMenu->addSeparator();
 
-   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                       "Cut"), this, &C_SdNdeDpListsTreeWidget::Cut,
-                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_X));
-   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                       "Copy"), this, &C_SdNdeDpListsTreeWidget::Copy,
-                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_C));
-   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                       "Paste"), this, &C_SdNdeDpListsTreeWidget::Paste,
-                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_V));
+   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Cut"),
+                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_X),
+                                    this,
+                                    &C_SdNdeDpListsTreeWidget::Cut);
+   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Copy"),
+                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_C),
+                                    this,
+                                    &C_SdNdeDpListsTreeWidget::Copy);
+   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Paste"),
+                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_V),
+                                    this,
+                                    &C_SdNdeDpListsTreeWidget::Paste);
 
    this->mpc_ContextMenu->addSeparator();
 
-   this->mpc_ActionMoveUp = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                                                "Move Up"), this,
-                                                             &C_SdNdeDpListsTreeWidget::DoMoveUp,
+   this->mpc_ActionMoveUp = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Move Up"),
                                                              static_cast<int32_t>(Qt::CTRL) +
-                                                             static_cast<int32_t>(Qt::Key_Up));
+                                                                 static_cast<int32_t>(Qt::Key_Up),
+                                                             this,
+                                                             &C_SdNdeDpListsTreeWidget::DoMoveUp);
    this->mpc_ActionMoveDown = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                                                  "Move Down"), this,
-                                                               &C_SdNdeDpListsTreeWidget::DoMoveDown,
+                                                                  "Move Down"),
                                                                static_cast<int32_t>(Qt::CTRL) +
-                                                               static_cast<int32_t>(Qt::Key_Down));
+                                                                   static_cast<int32_t>(Qt::Key_Down),
+                                                               this,
+                                                               &C_SdNdeDpListsTreeWidget::DoMoveDown);
 
    this->mpc_ContextMenu->addSeparator();
 
-   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                       "Delete"), this, &C_SdNdeDpListsTreeWidget::Delete,
-                                    static_cast<int32_t>(Qt::Key_Delete));
+   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Delete"),
+                                    static_cast<int32_t>(Qt::Key_Delete),
+                                    this,
+                                    &C_SdNdeDpListsTreeWidget::Delete);
 
    this->setContextMenuPolicy(Qt::CustomContextMenu);
    connect(this, &C_SdNdeDpListsTreeWidget::customContextMenuRequested, this,
