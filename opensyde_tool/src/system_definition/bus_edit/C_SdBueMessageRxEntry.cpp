@@ -748,7 +748,7 @@ void C_SdBueMessageRxEntry::m_AdaptParentCheckBoxState(void) const
          connect(this->mpc_Ui->pc_RadioButtonActive, &stw::opensyde_gui_elements::C_OgeRabProperties::toggled,
                  this, &C_SdBueMessageRxEntry::m_OnRadioButtonStateChanged);
       }
-      connect(this->mpc_Ui->pc_CheckBoxActive, &stw::opensyde_gui_elements::C_OgeChxDefaultSmall::stateChanged,
+      connect(this->mpc_Ui->pc_CheckBoxActive, &stw::opensyde_gui_elements::C_OgeChxDefaultSmall::checkStateChanged,
               this, &C_SdBueMessageRxEntry::m_OnCheckBoxStateChanged);
    }
 }
