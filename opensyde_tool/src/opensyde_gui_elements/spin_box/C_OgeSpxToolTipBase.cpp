@@ -265,58 +265,68 @@ void C_OgeSpxToolTipBase::m_SetupContextMenu(void)
    // add the actions (differentiate between normal and read-only text edits)
    if (!this->isReadOnly())
    {
-      this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Undo"),
-                                       this,
-                                       &C_OgeSpxToolTipBase::m_Undo,
-                                       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Z));
+      this->mpc_ContextMenu->addAction(
+           C_GtGetText::h_GetText("Undo"),
+           QKeySequence(Qt::CTRL | Qt::Key_Z),
+           this,
+           &C_OgeSpxToolTipBase::m_Undo);
 
-      this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Redo"),
-                                       this,
-                                       &C_OgeSpxToolTipBase::m_Redo,
-                                       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Y));
+       this->mpc_ContextMenu->addAction(
+          C_GtGetText::h_GetText("Redo"),
+          QKeySequence(Qt::CTRL | Qt::Key_Y),
+          this,
+          &C_OgeSpxToolTipBase::m_Redo);
 
       this->mpc_ContextMenu->addSeparator();
 
-      this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Cut"),
-                                       this,
-                                       &C_OgeSpxToolTipBase::m_Cut,
-                                       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_X));
+      this->mpc_ContextMenu->addAction(
+          C_GtGetText::h_GetText("Cut"),
+          QKeySequence(Qt::CTRL | Qt::Key_X),
+          this,
+          &C_OgeSpxToolTipBase::m_Cut);
    }
 
-   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Copy"),
-                                    this,
-                                    &C_OgeSpxToolTipBase::m_Copy,
-                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_C));
+   this->mpc_ContextMenu->addAction(
+       C_GtGetText::h_GetText("Copy"),
+       QKeySequence(Qt::Key_C),
+       this,
+       &C_OgeSpxToolTipBase::m_Copy);
 
    if (!this->isReadOnly())
    {
-      this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Paste"),
-                                       this,
-                                       &C_OgeSpxToolTipBase::m_Paste,
-                                       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_V));
+      this->mpc_ContextMenu->addAction(
+           C_GtGetText::h_GetText("Paste"),
+           QKeySequence(Qt::CTRL | Qt::Key_V),
+           this,
+           &C_OgeSpxToolTipBase::m_Paste);
 
-      this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Delete"),
-                                       this,
-                                       &C_OgeSpxToolTipBase::m_Delete,
-                                       static_cast<int32_t>(Qt::Key_Delete));
+      this->mpc_ContextMenu->addAction(
+          C_GtGetText::h_GetText("Delete"),
+          QKeySequence(Qt::Key_Delete),
+          this,
+          &C_OgeSpxToolTipBase::m_Delete);
    }
 
    this->mpc_ContextMenu->addSeparator();
 
-   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Select All"),
-                                    this,
-                                    &C_OgeSpxToolTipBase::selectAll,
-                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_A));
+   this->mpc_ContextMenu->addAction(
+       C_GtGetText::h_GetText("Select All"),
+       QKeySequence(Qt::CTRL | Qt::Key_A),
+       this,
+       &C_OgeSpxToolTipBase::selectAll
+       );
 
    this->mpc_ContextMenu->addSeparator();
 
-   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Step Up"),
-                                    this,
-                                    &C_OgeSpxToolTipBase::stepUp);
+   this->mpc_ContextMenu->addAction(
+       C_GtGetText::h_GetText("Step Up"),
+       this,
+       &C_OgeSpxToolTipBase::stepUp);
 
-   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Step Down"),
-                                    this,
-                                    &C_OgeSpxToolTipBase::stepDown);
+   this->mpc_ContextMenu->addAction(
+       C_GtGetText::h_GetText("Step Down"),
+       this,
+       &C_OgeSpxToolTipBase::stepDown);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

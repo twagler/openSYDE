@@ -865,10 +865,9 @@ void C_SdBueMessageSelectorWidget::m_SetupContextMenu(void)
 {
    this->mpc_ContextMenu = new C_OgeContextMenu(this);
    this->mpc_AddMessageAction = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Add new Message"),
+                                                                 static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Plus),
                                                                  this->mpc_Ui->pc_MessageTreeWidget,
-                                                                 &C_SdBueMessageSelectorTreeWidget::AddMessage,
-                                                                 static_cast<int32_t>(Qt::CTRL) +
-                                                                 static_cast<int32_t>(Qt::Key_Plus));
+                                                                 &C_SdBueMessageSelectorTreeWidget::AddMessage);
 
    this->mpc_AddMessageFromCatalogAction =
       this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
@@ -882,10 +881,9 @@ void C_SdBueMessageSelectorWidget::m_SetupContextMenu(void)
 
    this->mpc_AddSignalActionWithKey = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
                                                                           "Add new Signal"),
+                                                                       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Plus),
                                                                        this->mpc_Ui->pc_MessageTreeWidget,
-                                                                       &C_SdBueMessageSelectorTreeWidget::AddSignalFromMenu,
-                                                                       static_cast<int32_t>(Qt::CTRL) +
-                                                                       static_cast<int32_t>(Qt::Key_Plus));
+                                                                       &C_SdBueMessageSelectorTreeWidget::AddSignalFromMenu);
 
    this->mpc_ContextMenu->addSeparator();
 
@@ -900,27 +898,24 @@ void C_SdBueMessageSelectorWidget::m_SetupContextMenu(void)
    this->mpc_ContextMenu->addSeparator();
 
    this->mpc_CutAction = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Cut"),
+                                                          static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_X),
                                                           this->mpc_Ui->pc_MessageTreeWidget,
-                                                          &C_SdBueMessageSelectorTreeWidget::Cut,
-                                                          static_cast<int32_t>(Qt::CTRL) +
-                                                          static_cast<int32_t>(Qt::Key_X));
+                                                          &C_SdBueMessageSelectorTreeWidget::Cut);
    this->mpc_CopyAction = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Copy"),
+                                                           static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_C),
                                                            this->mpc_Ui->pc_MessageTreeWidget,
-                                                           &C_SdBueMessageSelectorTreeWidget::Copy,
-                                                           static_cast<int32_t>(Qt::CTRL) +
-                                                           static_cast<int32_t>(Qt::Key_C));
+                                                           &C_SdBueMessageSelectorTreeWidget::Copy);
    this->mpc_PasteAction = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Paste"),
+                                                            static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_V),
                                                             this->mpc_Ui->pc_MessageTreeWidget,
-                                                            &C_SdBueMessageSelectorTreeWidget::Paste,
-                                                            static_cast<int32_t>(Qt::CTRL) +
-                                                            static_cast<int32_t>(Qt::Key_V));
+                                                            &C_SdBueMessageSelectorTreeWidget::Paste);
 
    this->mpc_ContextMenu->addSeparator();
 
    this->mpc_DeleteAction = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Delete"),
+                                                             static_cast<int32_t>(Qt::Key_Delete),
                                                              this->mpc_Ui->pc_MessageTreeWidget,
-                                                             &C_SdBueMessageSelectorTreeWidget::Delete,
-                                                             static_cast<int32_t>(Qt::Key_Delete));
+                                                             &C_SdBueMessageSelectorTreeWidget::Delete);
 
    this->setContextMenuPolicy(Qt::CustomContextMenu);
    connect(this, &C_SdBueMessageSelectorWidget::customContextMenuRequested, this,
