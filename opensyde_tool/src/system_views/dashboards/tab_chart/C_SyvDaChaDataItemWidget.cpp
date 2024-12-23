@@ -551,12 +551,12 @@ void C_SyvDaChaDataItemWidget::paintEvent(QPaintEvent * const opc_Event)
 void C_SyvDaChaDataItemWidget::mousePressEvent(QMouseEvent * const opc_Event)
 {
    if ((this->mq_Selected == false) &&
-       ((opc_Event->buttons() == static_cast<int32_t>(Qt::LeftButton)) ||
-        (opc_Event->buttons() == static_cast<int32_t>(Qt::RightButton))))
+       ((opc_Event->buttons() == Qt::LeftButton) ||
+        (opc_Event->buttons() == Qt::RightButton)))
    {
       Q_EMIT (this->SigDataItemSelected(this->mu32_DataPoolElementConfigIndex));
 
-      if (opc_Event->buttons() == static_cast<int32_t>(Qt::RightButton))
+      if (opc_Event->buttons() == Qt::RightButton)
       {
          // Context menu shall be available anyway
          QWidget::mousePressEvent(opc_Event);

@@ -270,11 +270,11 @@ void C_SdSearchTreeWidget::SetSearchResultFocus(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdSearchTreeWidget::keyPressEvent(QKeyEvent * const opc_KeyEvent)
 {
-   if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Return))
+   if (opc_KeyEvent->key() == Qt::Key_Return)
    {
       this->m_ItemClicked();
    }
-   else if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Escape))
+   else if (opc_KeyEvent->key() == Qt::Key_Escape)
    {
       Q_EMIT this->SigHide();
    }

@@ -173,7 +173,7 @@ void C_SdNdeHalcChannelTreeView::SaveUserSettings(void) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeHalcChannelTreeView::keyPressEvent(QKeyEvent * const opc_KeyEvent)
 {
-   if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_F2))
+   if (opc_KeyEvent->key() == Qt::Key_F2)
    {
       if (this->currentIndex().isValid() == true)
       {

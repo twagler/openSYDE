@@ -991,14 +991,18 @@ void C_SdNdeDpListTableView::m_SetupContextMenu(void)
 {
    this->mpc_ContextMenu = new C_OgeContextMenu(this);
 
-   this->mpc_ActionAdd = this->mpc_ContextMenu->addAction("",
-                                                          static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Plus),
-                                                          this,
-                                                          &C_SdNdeDpListTableView::InsertAction);
-   this->mpc_ActionEditComment = this->mpc_ContextMenu->addAction("Edit Comment in Editor",
-                                                                  static_cast<int32_t>(Qt::Key_F10),
-                                                                  this,
-                                                                  &C_SdNdeDpListTableView::m_EditCommentInEditor);
+   this->mpc_ActionAdd = this->mpc_ContextMenu->addAction
+                         (
+       "",
+       QKeySequence(Qt::CTRL | Qt::Key_Plus),
+       this,
+       &C_SdNdeDpListTableView::InsertAction);
+   this->mpc_ActionEditComment = this->mpc_ContextMenu->addAction
+                                 (
+       "Edit Comment in Editor",
+       QKeySequence(Qt::Key_F10),
+       this,
+       &C_SdNdeDpListTableView::m_EditCommentInEditor);
 
    this->mpc_ContextMenu->addSeparator();
 
@@ -1007,19 +1011,19 @@ void C_SdNdeDpListTableView::m_SetupContextMenu(void)
    this->mpc_ActionCut = this->mpc_ContextMenu->addAction
                          (
        C_GtGetText::h_GetText("Cut"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_X),
+       QKeySequence(Qt::CTRL | Qt::Key_X),
        this,
        &C_SdNdeDpListTableView::Cut);
    this->mpc_ActionCopy = this->mpc_ContextMenu->addAction
                           (
        C_GtGetText::h_GetText("Copy"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_C),
+       QKeySequence(Qt::CTRL | Qt::Key_C),
        this,
        &C_SdNdeDpListTableView::Copy);
    this->mpc_ActionPaste = this->mpc_ContextMenu->addAction
                            (
        C_GtGetText::h_GetText("Paste"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_V),
+       QKeySequence(Qt::CTRL | Qt::Key_V),
        this,
        &C_SdNdeDpListTableView::Paste);
 
@@ -1028,13 +1032,13 @@ void C_SdNdeDpListTableView::m_SetupContextMenu(void)
    this->mpc_ActionMoveUp = this->mpc_ContextMenu->addAction
                             (
        C_GtGetText::h_GetText("Move Up"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Up),
+       QKeySequence(Qt::CTRL | Qt::Key_Up),
        this,
        &C_SdNdeDpListTableView::DoMoveUp);
    this->mpc_ActionMoveDown = this->mpc_ContextMenu->addAction
                               (
        C_GtGetText::h_GetText("Move Down"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Down),
+       QKeySequence(Qt::CTRL | Qt::Key_Down),
        this,
        &C_SdNdeDpListTableView::DoMoveDown);
 
@@ -1043,7 +1047,7 @@ void C_SdNdeDpListTableView::m_SetupContextMenu(void)
    this->mpc_ActionDelete = this->mpc_ContextMenu->addAction
                             (
        C_GtGetText::h_GetText("Delete"),
-       static_cast<int32_t>(Qt::Key_Delete),
+       QKeySequence(Qt::Key_Delete),
        this,
        &C_SdNdeDpListTableView::Delete);
 

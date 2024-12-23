@@ -164,13 +164,13 @@ void C_OgeSpxInt64ToolTipBase::m_SetupContextMenu(void)
    {
       this->mpc_ContextMenu->addAction(
            C_GtGetText::h_GetText("Undo"),
-           static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Z),
+           QKeySequence(Qt::CTRL | Qt::Key_Z),
            this,
            &C_OgeSpxInt64ToolTipBase::m_Undo);
 
       this->mpc_ContextMenu->addAction(
           C_GtGetText::h_GetText("Redo"),
-          static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Y),
+          QKeySequence(Qt::CTRL | Qt::Key_Y),
           this,
           &C_OgeSpxInt64ToolTipBase::m_Redo);
 
@@ -178,14 +178,14 @@ void C_OgeSpxInt64ToolTipBase::m_SetupContextMenu(void)
 
       this->mpc_ContextMenu->addAction(
           C_GtGetText::h_GetText("Cut"),
-          static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_X),
+          QKeySequence(Qt::CTRL | Qt::Key_X),
           this,
           &C_OgeSpxInt64ToolTipBase::m_Cut);
    }
 
    this->mpc_ContextMenu->addAction(
        C_GtGetText::h_GetText("Copy"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_C),
+       QKeySequence(Qt::CTRL | Qt::Key_C),
        this,
        &C_OgeSpxInt64ToolTipBase::m_Copy);
 
@@ -193,13 +193,13 @@ void C_OgeSpxInt64ToolTipBase::m_SetupContextMenu(void)
    {
       this->mpc_ContextMenu->addAction(
            C_GtGetText::h_GetText("Paste"),
-           static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_V),
+           QKeySequence(Qt::CTRL | Qt::Key_V),
            this,
            &C_OgeSpxInt64ToolTipBase::m_Paste);
 
       this->mpc_ContextMenu->addAction(
           C_GtGetText::h_GetText("Delete"),
-          static_cast<int32_t>(Qt::Key_Delete),
+          QKeySequence(Qt::Key_Delete),
           this,
           &C_OgeSpxInt64ToolTipBase::m_Delete);
    }
@@ -208,7 +208,7 @@ void C_OgeSpxInt64ToolTipBase::m_SetupContextMenu(void)
 
    this->mpc_ContextMenu->addAction(
        C_GtGetText::h_GetText("Select All"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_A),
+       QKeySequence(Qt::CTRL | Qt::Key_A),
        this,
        &C_OgeSpxInt64ToolTipBase::selectAll);
 

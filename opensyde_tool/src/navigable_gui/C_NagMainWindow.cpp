@@ -392,7 +392,7 @@ void C_NagMainWindow::keyPressEvent(QKeyEvent * const opc_KeyEvent)
    else
    {
       // Save on Ctrl+S
-      if ((opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_S)) &&
+      if ((opc_KeyEvent->key() == Qt::Key_S) &&
           (opc_KeyEvent->modifiers().testFlag(Qt::ControlModifier) == true))
       {
          //Check if valid save
@@ -408,7 +408,7 @@ void C_NagMainWindow::keyPressEvent(QKeyEvent * const opc_KeyEvent)
          }
       }
       // Save as on F12
-      else if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_F12))
+      else if (opc_KeyEvent->key() == Qt::Key_F12)
       {
          // Save as is not allowed for service projects
          if (C_PuiSvHandler::h_GetInstance()->GetServiceModeActive() == false)
@@ -418,7 +418,7 @@ void C_NagMainWindow::keyPressEvent(QKeyEvent * const opc_KeyEvent)
          }
       }
       // Open color picker
-      else if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_F8))
+      else if (opc_KeyEvent->key() == Qt::Key_F8)
       {
          // open color picker dialog
          this->mpc_MainWidget->OpenColorPicker();
@@ -429,12 +429,12 @@ void C_NagMainWindow::keyPressEvent(QKeyEvent * const opc_KeyEvent)
       }
    }
    //Trigger tool tip hide if necessary
-   if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Escape))
+   if (opc_KeyEvent->key() == Qt::Key_Escape)
    {
       q_ToolTipHidden2 = C_NagToolTip::h_HideAll();
    }
    QMainWindow::keyPressEvent(opc_KeyEvent);
-   if ((((opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Escape)) && (opc_KeyEvent->isAccepted() == false)) &&
+   if ((((opc_KeyEvent->key() == Qt::Key_Escape) && (opc_KeyEvent->isAccepted() == false)) &&
         (q_ToolTipHidden1 == false)) && (q_ToolTipHidden2 == false))
    {
       switch (this->ms32_Mode)

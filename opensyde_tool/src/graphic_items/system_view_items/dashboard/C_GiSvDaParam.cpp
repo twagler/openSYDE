@@ -340,8 +340,7 @@ void C_GiSvDaParam::ConfigureContextMenu(C_SyvDaContextMenuManager * const opc_C
             mpc_AddDataElement =
                opc_ContextMenuManager->RegisterActionWithKeyboardShortcut(C_GtGetText::h_GetText(
                                                                              "Add list(s)"),
-                                                                          static_cast<int32_t>(Qt::CTRL) +
-                                                                          static_cast<int32_t>(Qt::Key_Plus));
+                                                                          QKeySequence(Qt::CTRL | Qt::Key_Plus));
             // The action has to be set invisible initial. Only with that the function SetVisibleWithAutoHide can work.
             this->mpc_AddDataElement->setVisible(false);
             connect(mpc_AddDataElement, &QAction::triggered, this->mpc_ParamWidget,

@@ -450,8 +450,7 @@ void C_GiSvDaTableBase::ConfigureContextMenu(C_SyvDaContextMenuManager * const o
             mpc_AddDataElement =
                opc_ContextMenuManager->RegisterActionWithKeyboardShortcut(C_GtGetText::h_GetText(
                                                                              "Add data element(s)"),
-                                                                          static_cast<int32_t>(Qt::CTRL) +
-                                                                          static_cast<int32_t>(Qt::Key_Plus));
+                                                                          QKeySequence(Qt::CTRL | Qt::Key_Plus));
             // The action has to be set invisible initial. Only with that the function SetVisibleWithAutoHide can work.
             this->mpc_AddDataElement->setVisible(false);
             connect(mpc_AddDataElement, &QAction::triggered, this, &C_GiSvDaTableBase::m_AddNewDataElement);
@@ -481,8 +480,7 @@ void C_GiSvDaTableBase::ConfigureContextMenu(C_SyvDaContextMenuManager * const o
             mpc_MoveUpDataElement =
                opc_ContextMenuManager->RegisterActionWithKeyboardShortcut(C_GtGetText::h_GetText(
                                                                              "Move up"),
-                                                                          static_cast<int32_t>(Qt::CTRL) +
-                                                                          static_cast<int32_t>(Qt::Key_Up));
+                                                                          QKeySequence(Qt::CTRL | Qt::Key_Up));
             // The action has to be set invisible initial. Only with that the function SetVisibleWithAutoHide can work.
             this->mpc_MoveUpDataElement->setVisible(false);
             connect(mpc_MoveUpDataElement, &QAction::triggered, this, &C_GiSvDaTableBase::m_MoveDataElementUp);
@@ -492,8 +490,7 @@ void C_GiSvDaTableBase::ConfigureContextMenu(C_SyvDaContextMenuManager * const o
             mpc_MoveDownDataElement =
                opc_ContextMenuManager->RegisterActionWithKeyboardShortcut(C_GtGetText::h_GetText(
                                                                              "Move down"),
-                                                                          static_cast<int32_t>(Qt::CTRL) +
-                                                                          static_cast<int32_t>(Qt::Key_Down));
+                                                                          QKeySequence(Qt::CTRL | Qt::Key_Down));
             // The action has to be set invisible initial. Only with that the function SetVisibleWithAutoHide can work.
             this->mpc_MoveDownDataElement->setVisible(false);
             connect(mpc_MoveDownDataElement, &QAction::triggered, this, &C_GiSvDaTableBase::m_MoveDataElementDown);
@@ -509,7 +506,7 @@ void C_GiSvDaTableBase::ConfigureContextMenu(C_SyvDaContextMenuManager * const o
             mpc_RemoveDataElement =
                opc_ContextMenuManager->RegisterActionWithKeyboardShortcut(C_GtGetText::h_GetText(
                                                                              "Delete"),
-                                                                          static_cast<int32_t>(Qt::Key_Delete));
+                                                                          QKeySequence(Qt::Key_Delete));
             // The action has to be set invisible initial. Only with that the function SetVisibleWithAutoHide can work.
             this->mpc_RemoveDataElement->setVisible(false);
             connect(mpc_RemoveDataElement, &QAction::triggered,

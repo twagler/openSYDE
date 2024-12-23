@@ -1398,8 +1398,7 @@ void C_GiSvDaRectBaseGroup::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * con
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvDaRectBaseGroup::keyPressEvent(QKeyEvent * const opc_Event)
 {
-   if ((opc_Event->key() == static_cast<int32_t>(Qt::Key_Escape)) &&
-       (this->mq_EditContentModeEnabled == true))
+   if ((opc_Event->key() == Qt::Key_Escape) && (this->mq_EditContentModeEnabled == true))
    {
       this->DisableEditContent();
       opc_Event->accept();

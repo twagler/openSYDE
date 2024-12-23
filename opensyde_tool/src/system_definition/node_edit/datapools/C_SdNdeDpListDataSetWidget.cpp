@@ -205,8 +205,7 @@ void C_SdNdeDpListDataSetWidget::keyPressEvent(QKeyEvent * const opc_Event)
    bool q_CallOrig = true;
 
    //Handle all enter key cases manually
-   if ((opc_Event->key() == static_cast<int32_t>(Qt::Key_Enter)) ||
-       (opc_Event->key() == static_cast<int32_t>(Qt::Key_Return)))
+   if ((opc_Event->key() == Qt::Key_Enter) || (opc_Event->key() == Qt::Key_Return))
    {
       if (((opc_Event->modifiers().testFlag(Qt::ControlModifier) == true) &&
            (opc_Event->modifiers().testFlag(Qt::AltModifier) == false)) &&
@@ -489,7 +488,7 @@ void C_SdNdeDpListDataSetWidget::m_SetupContextMenu(void)
    this->mpc_ActionAdd = this->mpc_ContextMenu->addAction(
       C_GtGetText::h_GetText(
          "Add new Dataset"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Plus),
+       QKeySequence(Qt::CTRL | Qt::Key_Plus),
        this,
        &C_SdNdeDpListDataSetWidget::m_DoInsert);
 
@@ -498,18 +497,18 @@ void C_SdNdeDpListDataSetWidget::m_SetupContextMenu(void)
    this->mpc_ActionCut = this->mpc_ContextMenu->addAction(
       C_GtGetText::h_GetText(
          "Cut"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_X),
+       QKeySequence(Qt::CTRL | Qt::Key_X),
        this->mpc_Ui->pc_TableView,
        &C_SdNdeDpListDataSetView::Cut);
    this->mpc_ActionCopy = this->mpc_ContextMenu->addAction(
       C_GtGetText::h_GetText(
          "Copy"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_C),
+       QKeySequence(Qt::CTRL | Qt::Key_C),
        this->mpc_Ui->pc_TableView,
        &C_SdNdeDpListDataSetView::Copy);
    this->mpc_ActionPaste = this->mpc_ContextMenu->addAction(
-      C_GtGetText::h_GetText(
-         "Paste"),       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_V),
+      C_GtGetText::h_GetText("Paste"),
+       QKeySequence(Qt::CTRL | Qt::Key_V),
        this,
        &C_SdNdeDpListDataSetWidget::m_DoPaste);
 
@@ -518,14 +517,14 @@ void C_SdNdeDpListDataSetWidget::m_SetupContextMenu(void)
    this->mpc_ActionMoveLeft =
        this->mpc_ContextMenu->addAction(
        C_GtGetText::h_GetText("Move Left"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Left),
+       QKeySequence(Qt::CTRL | Qt::Key_Left),
        this->mpc_Ui->pc_TableView,
        &C_SdNdeDpListDataSetView::DoMoveLeft);
 
    this->mpc_ActionMoveRight =
        this->mpc_ContextMenu->addAction(
        C_GtGetText::h_GetText("Move Right"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_Right),
+       QKeySequence(Qt::CTRL | Qt::Key_Right),
        this->mpc_Ui->pc_TableView,
        &C_SdNdeDpListDataSetView::DoMoveRight);
 
@@ -534,7 +533,7 @@ void C_SdNdeDpListDataSetWidget::m_SetupContextMenu(void)
    this->mpc_ActionDelete =
        this->mpc_ContextMenu->addAction(
        C_GtGetText::h_GetText("Delete"),
-       static_cast<int32_t>(Qt::Key_Delete),
+       QKeySequence(Qt::Key_Delete),
        this->mpc_Ui->pc_TableView,
        &C_SdNdeDpListDataSetView::Delete);
 

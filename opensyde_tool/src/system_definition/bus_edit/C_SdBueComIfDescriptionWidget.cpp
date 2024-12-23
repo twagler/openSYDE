@@ -809,7 +809,7 @@ void C_SdBueComIfDescriptionWidget::keyPressEvent(QKeyEvent * const opc_KeyEvent
       }
    }
 
-   if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_F5))
+   if (opc_KeyEvent->key() == Qt::Key_F5)
    {
       this->mpc_Ui->pc_MsgSigEditWidget->RefreshColors();
    }

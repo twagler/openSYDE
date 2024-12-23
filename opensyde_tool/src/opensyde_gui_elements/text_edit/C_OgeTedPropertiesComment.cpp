@@ -81,9 +81,9 @@ void C_OgeTedPropertiesComment::keyPressEvent(QKeyEvent * const opc_KeyEvent)
    if (opc_KeyEvent != NULL)
    {
       C_OgeTedContextMenuBase::keyPressEvent(opc_KeyEvent);
-      if ((opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Tab)) ||
-          (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Return)) ||
-          (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Enter)))
+      if ((opc_KeyEvent->key() == Qt::Key_Tab) ||
+          (opc_KeyEvent->key() == Qt::Key_Return) ||
+          (opc_KeyEvent->key() == Qt::Key_Enter))
       {
          Q_EMIT (this->SigCommentConfirmed());
       }

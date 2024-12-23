@@ -73,9 +73,9 @@ void C_OgeTedTable::keyPressEvent(QKeyEvent * const opc_KeyEvent)
    {
       C_OgeTedContextMenuBase::keyPressEvent(opc_KeyEvent);
       if ((opc_KeyEvent->matches(QKeySequence::InsertLineSeparator) == false) &&
-          ((opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Tab)) ||
-           (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Return)) ||
-           (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Enter))))
+          ((opc_KeyEvent->key() == Qt::Key_Tab) ||
+           (opc_KeyEvent->key() == Qt::Key_Return) ||
+           (opc_KeyEvent->key() == Qt::Key_Enter)))
       {
          Q_EMIT (this->SigConfirmed()); // make known to delegate and afterwards to table view
       }

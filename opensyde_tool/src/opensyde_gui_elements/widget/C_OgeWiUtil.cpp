@@ -371,21 +371,21 @@ bool C_OgeWiUtil::h_CheckGlobalKey(const QKeyEvent * const opc_Event)
 {
    bool q_Retval;
 
-   if ((opc_Event->key() == static_cast<int32_t>(Qt::Key_S)) &&
+   if ((opc_Event->key() == Qt::Key_S) &&
        (opc_Event->modifiers().testFlag(Qt::ControlModifier) == true))
    {
       q_Retval = true;
    }
-   else if ((opc_Event->key() == static_cast<int32_t>(Qt::Key_F)) &&
+   else if ((opc_Event->key() == Qt::Key_F) &&
             (opc_Event->modifiers().testFlag(Qt::ControlModifier) == true))
    {
       q_Retval = true;
    }
-   else if (opc_Event->key() == static_cast<int32_t>(Qt::Key_F12))
+   else if (opc_Event->key() == Qt::Key_F12)
    {
       q_Retval = true;
    }
-   else if (opc_Event->key() == static_cast<int32_t>(Qt::Key_F8))
+   else if (opc_Event->key() == Qt::Key_F8)
    {
       q_Retval = true;
    }

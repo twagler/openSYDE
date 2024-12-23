@@ -207,7 +207,7 @@ void C_GiText::keyPressEvent(QKeyEvent * const opc_Event)
 {
    if ((C_Uti::h_CheckKeyModifier(opc_Event->modifiers(),
                                   Qt::ControlModifier) == true) &&
-       (opc_Event->key() == static_cast<int32_t>(Qt::Key_V)))
+       (opc_Event->key() == Qt::Key_V))
    {
       const QClipboard * const pc_ClipBoard = QApplication::clipboard();
       QTextCursor c_Cursor = this->textCursor();

@@ -603,22 +603,22 @@ void C_SdHandlerWidget::SetSubMode(const int32_t os32_SubMode, const uint32_t ou
 //----------------------------------------------------------------------------------------------------------------------
 bool C_SdHandlerWidget::GlobalUserKeyPress(QKeyEvent * const opc_Event)
 {
-   if ((opc_Event->key() == static_cast<int32_t>(Qt::Key_S)) &&
+   if ((opc_Event->key() == Qt::Key_S) &&
        (opc_Event->modifiers().testFlag(Qt::ControlModifier) == true))
    {
       this->Save();
    }
-   else if ((opc_Event->key() == static_cast<int32_t>(Qt::Key_F)) &&
+   else if ((opc_Event->key() == Qt::Key_F) &&
             (opc_Event->modifiers().testFlag(Qt::ControlModifier) == true))
    {
       Q_EMIT this->SigSearch();
    }
-   else if (opc_Event->key() == static_cast<int32_t>(Qt::Key_F12))
+   else if (opc_Event->key() == Qt::Key_F12)
    {
       // open project save
       this->SaveAs();
    }
-   else if (opc_Event->key() == static_cast<int32_t>(Qt::Key_F8))
+   else if (opc_Event->key() == Qt::Key_F8)
    {
       // open color picker
       this->OpenColorPicker();

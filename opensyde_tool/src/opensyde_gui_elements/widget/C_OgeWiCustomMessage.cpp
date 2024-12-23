@@ -204,8 +204,7 @@ void C_OgeWiCustomMessage::keyPressEvent(QKeyEvent * const opc_KeyEvent)
    bool q_CallOrg = true;
 
    //Handle all enter key cases manually
-   if ((opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Enter)) ||
-       (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Return)))
+   if ((opc_KeyEvent->key() == Qt::Key_Enter) || (opc_KeyEvent->key() == Qt::Key_Return))
    {
       if (((opc_KeyEvent->modifiers().testFlag(Qt::ControlModifier) == true) &&
            (opc_KeyEvent->modifiers().testFlag(Qt::AltModifier) == false)) &&
@@ -225,7 +224,7 @@ void C_OgeWiCustomMessage::keyPressEvent(QKeyEvent * const opc_KeyEvent)
    }
 
    // close window when escape key is pressed (did not work without this, and now safe cancel is called)
-   if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Escape))
+   if (opc_KeyEvent->key() == Qt::Key_Escape)
    {
       me_Output = E_Outputs::eCANCEL;
       this->reject();

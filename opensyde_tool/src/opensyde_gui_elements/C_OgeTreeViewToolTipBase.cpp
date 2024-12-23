@@ -115,8 +115,7 @@ bool C_OgeTreeViewToolTipBaseDelegate::editorEvent(QEvent * const opc_Event, QAb
             tgl_assert(pc_KeyEvent != NULL);
             if (pc_KeyEvent != NULL)
             {
-               if ((pc_KeyEvent->key() != static_cast<int32_t>(Qt::Key_Space)) &&
-                   (pc_KeyEvent->key() != static_cast<int32_t>(Qt::Key_Select)))
+               if ((pc_KeyEvent->key() != Qt::Key_Space) && (pc_KeyEvent->key() != Qt::Key_Select))
                {
                   q_AdaptState = false;
                }

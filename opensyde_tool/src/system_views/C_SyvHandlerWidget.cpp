@@ -422,7 +422,7 @@ bool C_SyvHandlerWidget::GlobalUserKeyPress(QKeyEvent * const opc_Event)
 {
    bool q_Retval = false;
 
-   if (opc_Event->key() == static_cast<int32_t>(Qt::Key_Escape))
+   if (opc_Event->key() == Qt::Key_Escape)
    {
       if (this->mpc_SetupWidget != NULL)
       {
@@ -445,12 +445,12 @@ bool C_SyvHandlerWidget::GlobalUserKeyPress(QKeyEvent * const opc_Event)
          }
       }
    }
-   else if ((opc_Event->key() == static_cast<int32_t>(Qt::Key_S)) &&
+   else if ((opc_Event->key() == Qt::Key_S) &&
             (opc_Event->modifiers().testFlag(Qt::ControlModifier) == true))
    {
       this->Save();
    }
-   else if (opc_Event->key() == static_cast<int32_t>(Qt::Key_F12))
+   else if (opc_Event->key() == Qt::Key_F12)
    {
       // Save as is not allowed for service projects
       if (C_PuiSvHandler::h_GetInstance()->GetServiceModeActive() == false)
@@ -459,7 +459,7 @@ bool C_SyvHandlerWidget::GlobalUserKeyPress(QKeyEvent * const opc_Event)
          this->SaveAs();
       }
    }
-   else if (opc_Event->key() == static_cast<int32_t>(Qt::Key_F8))
+   else if (opc_Event->key() == Qt::Key_F8)
    {
       // open color picker
       this->OpenColorPicker();

@@ -679,12 +679,12 @@ void C_SyvDaDashboardSelectorTabWidget::keyPressEvent(QKeyEvent * const opc_Even
    C_SyvDaDashboardSelectorTabWidget::m_SetCurrentTabNameForScreenshotFile();
    QTabWidget::keyPressEvent(opc_Event);
    if ((opc_Event->modifiers().testFlag(Qt::ControlModifier) == true) &&
-       (opc_Event->key() == static_cast<int32_t>(Qt::Key_F10)))
+       (opc_Event->key() == Qt::Key_F10))
    {
       mpc_ScreenshotDashboardTab->PerformScreenshotWithCtrlPress();
    }
    if ((opc_Event->modifiers().testFlag(Qt::ControlModifier) == false) &&
-       (opc_Event->key() == static_cast<int32_t>(Qt::Key_F10)))
+       (opc_Event->key() == Qt::Key_F10))
    {
       mpc_ScreenshotDashboardTab->PerformScreenshotWithoutCtrlPress();
    }

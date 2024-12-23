@@ -518,7 +518,7 @@ void C_SebGraphicsView::mousePressEvent(QMouseEvent * const opc_Event)
       this->mc_LastMouseEventPos = opc_Event->pos();
 
       // using buttonS to make sure that really only one of the button is clicked
-      if (opc_Event->buttons() == static_cast<int32_t>(Qt::RightButton))
+      if (opc_Event->buttons() == Qt::RightButton)
       {
          if (this->mq_OverrideCursorActive == true)
          {
@@ -534,7 +534,7 @@ void C_SebGraphicsView::mousePressEvent(QMouseEvent * const opc_Event)
       }
       else if (q_RubberBandModeAvailable == true)
       {
-         if (opc_Event->buttons() == static_cast<int32_t>(Qt::LeftButton))
+         if (opc_Event->buttons() == Qt::LeftButton)
          {
             // activate rubberband functionality
             this->setDragMode(QGraphicsView::RubberBandDrag);

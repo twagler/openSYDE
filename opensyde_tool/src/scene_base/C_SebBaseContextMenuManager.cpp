@@ -47,13 +47,13 @@ C_SebBaseContextMenuManager::C_SebBaseContextMenuManager() :
    // add all actions
    this->mpc_ActionCut = this->mc_ContextMenu.addAction(
        C_GtGetText::h_GetText("Cut"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_X),
+       QKeySequence(Qt::CTRL | Qt::Key_X),
        this,
        &C_SebBaseContextMenuManager::m_Cut);
 
    this->mpc_ActionCopy = this->mc_ContextMenu.addAction(
        C_GtGetText::h_GetText("Copy"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_C),
+       QKeySequence(Qt::CTRL | Qt::Key_C),
        this,
        &C_SebBaseContextMenuManager::m_Copy);
 
@@ -61,7 +61,7 @@ C_SebBaseContextMenuManager::C_SebBaseContextMenuManager() :
 
    this->mpc_ActionPaste = this->mc_ContextMenu.addAction(
        C_GtGetText::h_GetText("Paste"),
-       static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_V),
+       QKeySequence(Qt::CTRL | Qt::Key_V),
        this,
        &C_SebBaseContextMenuManager::m_Paste);
 
@@ -120,7 +120,7 @@ C_SebBaseContextMenuManager::C_SebBaseContextMenuManager() :
 
    this->mpc_ActionDelete = this->mc_ContextMenu.addAction(
        C_GtGetText::h_GetText("Delete"),
-       static_cast<int32_t>(Qt::Key_Delete),
+       QKeySequence(Qt::Key_Delete),
        this,
        &C_SebBaseContextMenuManager::m_Delete);
 

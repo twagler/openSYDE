@@ -236,7 +236,7 @@ C_OscParamSetInterpretedFileInfoData C_SyvDaItPaImageRecordWidget::h_GetFileInfo
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDaItPaImageRecordWidget::keyPressEvent(QKeyEvent * const opc_Event)
 {
-   if (opc_Event->key() == static_cast<int32_t>(Qt::Key_Escape))
+   if (opc_Event->key() == Qt::Key_Escape)
    {
       m_OnCancel();
    }

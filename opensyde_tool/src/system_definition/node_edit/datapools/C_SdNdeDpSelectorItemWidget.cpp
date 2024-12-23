@@ -573,7 +573,7 @@ uint32_t C_SdNdeDpSelectorItemWidget::GetDataPoolReservedSize(void) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeDpSelectorItemWidget::mousePressEvent(QMouseEvent * const opc_Event)
 {
-   if (opc_Event->buttons() == static_cast<int32_t>(Qt::LeftButton))
+   if (opc_Event->buttons() == Qt::LeftButton)
    {
       Q_EMIT (this->SigClicked(this->mu32_Number - 1U));
    }
@@ -591,7 +591,7 @@ void C_SdNdeDpSelectorItemWidget::mousePressEvent(QMouseEvent * const opc_Event)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeDpSelectorItemWidget::mouseDoubleClickEvent(QMouseEvent * const opc_Event)
 {
-   if (opc_Event->buttons() == static_cast<int32_t>(Qt::LeftButton))
+   if (opc_Event->buttons() == Qt::LeftButton)
    {
       Q_EMIT (this->SigDoubleClicked(this->mu32_Number - 1U));
    }

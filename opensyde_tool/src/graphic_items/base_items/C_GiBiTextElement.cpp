@@ -394,8 +394,7 @@ void C_GiBiTextElement::m_ResizeUpdateItems(const float64_t of64_DiffWidth, cons
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiBiTextElement::keyPressEvent(QKeyEvent * const opc_Event)
 {
-   if ((opc_Event->key() == static_cast<int32_t>(Qt::Key_F2)) &&
-       (this->mq_Editable == true))
+   if ((opc_Event->key() == Qt::Key_F2) && (this->mq_Editable == true))
    {
       QTextCursor c_Cursor = this->mpc_TextItem->textCursor();
 

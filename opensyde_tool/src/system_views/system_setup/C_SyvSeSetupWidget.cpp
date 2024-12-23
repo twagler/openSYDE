@@ -368,8 +368,7 @@ void C_SyvSeSetupWidget::PrepareToClose(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvSeSetupWidget::keyPressEvent(QKeyEvent * const opc_Event)
 {
-   if ((opc_Event->key() == static_cast<int32_t>(Qt::Key_Escape)) &&
-       (this->mq_EditModeActive == true))
+   if ((opc_Event->key() == Qt::Key_Escape) && (this->mq_EditModeActive == true))
    {
       this->m_CancelClicked();
    }

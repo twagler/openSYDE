@@ -207,7 +207,7 @@ bool C_NagUnUsedProjectFilesTableView::HasVisibleFiles() const
 //----------------------------------------------------------------------------------------------------------------------
 void C_NagUnUsedProjectFilesTableView::keyPressEvent(QKeyEvent * const opc_KeyEvent)
 {
-   if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_A))
+   if (opc_KeyEvent->key() == Qt::Key_A)
    {
       if (C_Uti::h_CheckKeyModifier(opc_KeyEvent->modifiers(), Qt::ControlModifier) == true)
       {
@@ -215,7 +215,7 @@ void C_NagUnUsedProjectFilesTableView::keyPressEvent(QKeyEvent * const opc_KeyEv
       }
    }
 
-   if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Delete))
+   if (opc_KeyEvent->key() == Qt::Key_Delete)
    {
       this->DeleteSelectedFiles();
    }
@@ -328,11 +328,11 @@ void C_NagUnUsedProjectFilesTableView::m_SetupContextMenu()
    this->mpc_ContextMenu = new C_OgeContextMenu(this);
 
    this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Select all"),
-                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_A),
+                                    QKeySequence(Qt::CTRL | Qt::Key_A),
                                     this,
                                     &C_NagUnUsedProjectFilesTableView::SelectAllFiles);
    this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Delete selected"),
-                                    static_cast<int32_t>(Qt::Key_Delete),
+                                    QKeySequence(Qt::Key_Delete),
                                     this,
                                     &C_NagUnUsedProjectFilesTableView::DeleteSelectedFiles);
 

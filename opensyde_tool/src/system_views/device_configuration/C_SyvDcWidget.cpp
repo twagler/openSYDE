@@ -299,7 +299,7 @@ void C_SyvDcWidget::paintEvent(QPaintEvent * const opc_Event)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDcWidget::keyPressEvent(QKeyEvent * const opc_Event)
 {
-   if (opc_Event->key() == static_cast<int32_t>(Qt::Key_Escape))
+   if (opc_Event->key() == Qt::Key_Escape)
    {
       if (m_CheckQuitPossible() == true)
       {

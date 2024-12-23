@@ -142,7 +142,7 @@ void C_NagMainWidget::paintEvent(QPaintEvent * const opc_Event)
 //----------------------------------------------------------------------------------------------------------------------
 void C_NagMainWidget::keyPressEvent(QKeyEvent * const opc_Event)
 {
-   if ((opc_Event->key() == static_cast<int32_t>(Qt::Key_Escape)) &&
+   if ((opc_Event->key() == Qt::Key_Escape) &&
        (this->mpc_Ui->pc_LineEditVersion->isVisible() == true))
    {
       // reset version

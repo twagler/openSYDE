@@ -510,17 +510,17 @@ void C_SyvDaChaWidget::keyPressEvent(QKeyEvent * const opc_KeyEvent)
    // Actions only allowed if service mode is deactivated
    if (C_PuiSvHandler::h_GetInstance()->GetServiceModeActive() == false)
    {
-      if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_F5))
+      if (opc_KeyEvent->key() == Qt::Key_F5)
       {
          this->mpc_Ui->pc_ChartWidget->RefreshColors();
       }
-      else if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Delete))
+      else if (opc_KeyEvent->key() == Qt::Key_Delete)
       {
          this->m_RemoveDataElement();
       }
       else if ((opc_KeyEvent->modifiers().testFlag(Qt::ControlModifier) == true) &&
-               ((opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Plus)) ||
-                (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_BracketRight))))
+               ((opc_KeyEvent->key() == Qt::Key_Plus) ||
+                (opc_KeyEvent->key() == Qt::Key_BracketRight)))
       {
          this->m_AddNewDataElement();
       }
@@ -631,23 +631,32 @@ void C_SyvDaChaWidget::m_SetupContextMenu(void)
 {
    this->mpc_ContextMenu = new C_OgeContextMenu(this);
 
-   this->mpc_ActionAdd = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Add data element(s)"),
-                                                          static_cast<int32_t>(Qt::CTRL) +
-                                                          static_cast<int32_t>(Qt::Key_Plus),
-                                                          this, &C_SyvDaChaWidget::m_AddNewDataElement);
+   this->mpc_ActionAdd = this->mpc_ContextMenu->addAction
+                         (
+       C_GtGetText::h_GetText("Add data element(s)"),
+       QKeySequence(Qt::CTRL | Qt::Key_Plus),
+       this, &C_SyvDaChaWidget::m_AddNewDataElement);
    this->mpc_ContextMenu->addSeparator();
 
    this->mpc_ActionConfigDataElement =
-      this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Data element properties"),
-                                       this, &C_SyvDaChaWidget::m_CallProperties);
+      this->mpc_ContextMenu->addAction
+                                       (
+       C_GtGetText::h_GetText("Data element properties"),
+       this,
+       &C_SyvDaChaWidget::m_CallProperties);
+
    this->mpc_ContextMenu->addSeparator();
 
-   this->mpc_ActionRemove = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Remove"),
-                                                             static_cast<int32_t>(Qt::Key_Delete),
-                                                             this, &C_SyvDaChaWidget::m_RemoveDataElement);
-   this->mpc_ActionRemoveAll = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Remove all"),
-                                                                this,
-                                                                &C_SyvDaChaWidget::m_RemoveAllDataElements);
+   this->mpc_ActionRemove = this->mpc_ContextMenu->addAction
+                            (
+       C_GtGetText::h_GetText("Remove"),
+       QKeySequence(Qt::Key_Delete),
+       this, &C_SyvDaChaWidget::m_RemoveDataElement);
+   this->mpc_ActionRemoveAll = this->mpc_ContextMenu->addAction
+                               (
+       C_GtGetText::h_GetText("Remove all"),
+       this,
+       &C_SyvDaChaWidget::m_RemoveAllDataElements);
 
    this->setContextMenuPolicy(Qt::CustomContextMenu);
    connect(this, &C_SyvDaChaWidget::customContextMenuRequested, this,

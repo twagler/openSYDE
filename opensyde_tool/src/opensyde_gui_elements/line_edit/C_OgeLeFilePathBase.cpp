@@ -232,8 +232,7 @@ void C_OgeLeFilePathBase::focusOutEvent(QFocusEvent * const opc_Event)
 //----------------------------------------------------------------------------------------------------------------------
 void C_OgeLeFilePathBase::keyPressEvent(QKeyEvent * const opc_KeyEvent)
 {
-   if ((opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Enter)) ||
-       (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Return)))
+   if ((opc_KeyEvent->key() == Qt::Key_Enter) || (opc_KeyEvent->key() == Qt::Key_Return))
    {
       this->SetPath(this->text(), this->mc_RelativeTo);
    }

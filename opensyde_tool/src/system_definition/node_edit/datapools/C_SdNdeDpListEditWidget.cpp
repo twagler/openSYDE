@@ -153,7 +153,7 @@ void C_SdNdeDpListEditWidget::SetDataPool(const uint32_t ou32_NodeIndex, const u
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeDpListEditWidget::keyPressEvent(QKeyEvent * const opc_Event)
 {
-   if (opc_Event->key() == static_cast<int32_t>(Qt::Key_Escape))
+   if (opc_Event->key() == Qt::Key_Escape)
    {
       this->m_OnBack();
       opc_Event->accept();

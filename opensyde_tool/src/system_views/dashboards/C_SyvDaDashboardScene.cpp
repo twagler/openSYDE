@@ -1473,7 +1473,7 @@ void C_SyvDaDashboardScene::keyPressEvent(QKeyEvent * const opc_KeyEvent)
             // to the original keyPressEvent which will forward the signal to the selected element
             q_SkipSceneSpecific = true;
          }
-         else if ((opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_F2)) &&
+         else if ((opc_KeyEvent->key() == Qt::Key_F2) &&
                   (this->mq_EditMode == true))
          {
             pc_Widget->EnableEditContent();

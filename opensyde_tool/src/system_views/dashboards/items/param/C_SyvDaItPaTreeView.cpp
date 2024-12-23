@@ -644,7 +644,7 @@ void C_SyvDaItPaTreeView::HideToolTip(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDaItPaTreeView::keyPressEvent(QKeyEvent * const opc_Event)
 {
-   if (opc_Event->key() == static_cast<int32_t>(Qt::Key_Escape))
+   if (opc_Event->key() == Qt::Key_Escape)
    {
       QWidget * const pc_Editor = this->mc_Delegate.GetEditor();
       if (pc_Editor != NULL)

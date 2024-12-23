@@ -58,7 +58,7 @@ C_OgeLeNavigation::C_OgeLeNavigation(QWidget * const opc_Parent) :
 //----------------------------------------------------------------------------------------------------------------------
 void C_OgeLeNavigation::keyPressEvent(QKeyEvent * const opc_Event)
 {
-   if (opc_Event->key() == static_cast<int32_t>(Qt::Key_Escape))
+   if (opc_Event->key() == Qt::Key_Escape)
    {
       //Signal parent
       Q_EMIT this->SigEscape();

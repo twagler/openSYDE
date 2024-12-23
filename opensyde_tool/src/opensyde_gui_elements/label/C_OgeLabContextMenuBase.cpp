@@ -75,14 +75,14 @@ void C_OgeLabContextMenuBase::m_SetupContextMenu(void)
 
    // add the actions
    this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Copy"),
-                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_C),
+                                    QKeySequence(Qt::CTRL | Qt::Key_C),
                                     this,
                                     &C_OgeLabContextMenuBase::m_Copy);
 
    this->mpc_ContextMenu->addSeparator();
 
    this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Select All"),
-                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_A),
+                                    QKeySequence(Qt::CTRL | Qt::Key_A),
                                     this,
                                     &C_OgeLabContextMenuBase::m_SelectAll);
 }

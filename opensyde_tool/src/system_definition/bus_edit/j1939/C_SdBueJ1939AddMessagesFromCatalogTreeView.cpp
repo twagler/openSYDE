@@ -359,7 +359,7 @@ bool C_SdBueJ1939AddMessagesFromCatalogTreeView::HasVisibleData() const
 void C_SdBueJ1939AddMessagesFromCatalogTreeView::keyPressEvent(QKeyEvent * const opc_KeyEvent)
 {
    // Shortcut (Ctrl + A) to select all messages
-   if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_A))
+   if (opc_KeyEvent->key() == Qt::Key_A)
    {
       if (C_Uti::h_CheckKeyModifier(opc_KeyEvent->modifiers(), Qt::ControlModifier) == true)
       {

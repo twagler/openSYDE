@@ -771,7 +771,7 @@ void C_SyvDaChaPlot::keyPressEvent(QKeyEvent * const opc_KeyEvent)
 {
    QCustomPlot::keyPressEvent(opc_KeyEvent);
 
-   if (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Escape))
+   if (opc_KeyEvent->key() == Qt::Key_Escape)
    {
       // Abort the zooming by using the rubberband with pressing escape
       if (this->selectionRect()->isActive() == true)

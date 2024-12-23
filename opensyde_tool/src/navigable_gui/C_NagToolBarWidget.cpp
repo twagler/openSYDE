@@ -332,7 +332,7 @@ bool C_NagToolBarWidget::eventFilter(QObject * const opc_Object, QEvent * const 
             QKeyEvent * const pc_KeyEvent = dynamic_cast<QKeyEvent *>(opc_Event);
             if (pc_KeyEvent != NULL)
             {
-               if (pc_KeyEvent->key() != static_cast<int32_t>(Qt::Key_Escape))
+               if (pc_KeyEvent->key() != Qt::Key_Escape)
                {
                   if (this->mpc_Ui->pc_LineEditSearch->text() == "openSYDE")
                   {
@@ -362,7 +362,7 @@ bool C_NagToolBarWidget::eventFilter(QObject * const opc_Object, QEvent * const 
          QKeyEvent * const pc_KeyEvent = dynamic_cast<QKeyEvent *>(opc_Event);
          if (pc_KeyEvent != NULL)
          {
-            if (pc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Escape))
+            if (pc_KeyEvent->key() == Qt::Key_Escape)
             {
                if (this->mc_SearchResultWidget.isVisible() == true)
                {
@@ -377,7 +377,7 @@ bool C_NagToolBarWidget::eventFilter(QObject * const opc_Object, QEvent * const 
                //Accept to not accidentally trigger something else
                q_FilterEvent = true;
             }
-            else if (pc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Down))
+            else if (pc_KeyEvent->key() == Qt::Key_Down)
             {
                if ((this->mc_SearchResultWidget.isVisible() == true) &&
                    (this->mc_SearchResultWidget.HasResults() == true))

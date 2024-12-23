@@ -184,8 +184,7 @@ void C_SdBueJ1939AddMessagesFromCatalogDialog::keyPressEvent(QKeyEvent * const o
 
    //Handle all enter key cases manually
 
-   if ((opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Enter)) ||
-       (opc_KeyEvent->key() == static_cast<int32_t>(Qt::Key_Return)))
+   if ((opc_KeyEvent->key() == Qt::Key_Enter) || (opc_KeyEvent->key() == Qt::Key_Return))
    {
       if (((opc_KeyEvent->modifiers().testFlag(Qt::ControlModifier) == true) &&
            (opc_KeyEvent->modifiers().testFlag(Qt::AltModifier) == false)) &&
@@ -707,7 +706,7 @@ void C_SdBueJ1939AddMessagesFromCatalogDialog::m_SetupContextMenu(void)
 
    // select all action
    this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Select all visible"),
-                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_A),
+                                    QKeySequence(Qt::CTRL | Qt::Key_A),
                                     this,
                                     &C_SdBueJ1939AddMessagesFromCatalogDialog::m_SelectAllMessages);
    this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Unselect all"),

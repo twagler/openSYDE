@@ -127,7 +127,7 @@ void C_SyvDaDashboardSelectorTabBar::mousePressEvent(QMouseEvent * const opc_Eve
 
    this->mq_TearOff = false;
 
-   if (((opc_Event->buttons() == static_cast<int32_t>(Qt::LeftButton)) &&
+   if (((opc_Event->buttons() == Qt::LeftButton) &&
         (s32_Index >= 0)) && (this->isTabEnabled(s32_Index) == true))
    {
       this->mq_MouseClicked = true;

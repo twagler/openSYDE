@@ -197,7 +197,7 @@ int32_t C_SyvDaItPaWriteWidget::GetChangedElements(std::map<C_OscNodeDataPoolLis
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDaItPaWriteWidget::keyPressEvent(QKeyEvent * const opc_Event)
 {
-   if (opc_Event->key() == static_cast<int32_t>(Qt::Key_Escape))
+   if (opc_Event->key() == Qt::Key_Escape)
    {
       m_OnCancel();
    }
