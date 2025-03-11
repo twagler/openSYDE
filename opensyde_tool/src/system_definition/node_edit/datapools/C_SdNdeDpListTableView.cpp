@@ -427,7 +427,7 @@ void C_SdNdeDpListTableView::DoMoveDown(void)
    {
       if (this->mpc_ModelViewManager != NULL)
       {
-         C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
+         const C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
             this->mu32_NodeIndex, this->mu32_DataPoolIndex, this->mu32_ListIndex);
          if (pc_Model != NULL)
          {
@@ -474,7 +474,7 @@ void C_SdNdeDpListTableView::EditInitial(void)
    {
       if (this->mpc_ModelViewManager != NULL)
       {
-         C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
+         const C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
             this->mu32_NodeIndex, this->mu32_DataPoolIndex, this->mu32_ListIndex);
          if (pc_Model != NULL)
          {
@@ -644,7 +644,7 @@ void C_SdNdeDpListTableView::dropEvent(QDropEvent * const opc_Event)
       {
          if (this->mpc_ModelViewManager != NULL)
          {
-            C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
+            const C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
                this->mu32_NodeIndex, this->mu32_DataPoolIndex, this->mu32_ListIndex);
             if (pc_Model != NULL)
             {
@@ -1075,7 +1075,7 @@ void C_SdNdeDpListTableView::m_HandleColumnChange(void)
 {
    if (this->mpc_ModelViewManager != NULL)
    {
-      C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
+      const C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
          this->mu32_NodeIndex, this->mu32_DataPoolIndex, this->mu32_ListIndex);
       if (pc_Model != NULL)
       {
@@ -1131,7 +1131,7 @@ void C_SdNdeDpListTableView::m_CheckActions(const std::vector<uint32_t> & orc_Se
       q_AllowMoveDown = true;
       if (this->mpc_ModelViewManager != NULL)
       {
-         C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
+         const C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
             this->mu32_NodeIndex, this->mu32_DataPoolIndex, this->mu32_ListIndex);
          if (pc_Model != NULL)
          {
@@ -1255,7 +1255,7 @@ void C_SdNdeDpListTableView::m_HandleLinkClicked(const QModelIndex & orc_Index)
       if (this->mpc_ModelViewManager != NULL)
       {
          //Model
-         C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
+         const C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
             this->mu32_NodeIndex,
             this->mu32_DataPoolIndex,
             this->mu32_ListIndex);
@@ -1369,7 +1369,7 @@ void C_SdNdeDpListTableView::m_OnColumnResize(void)
    if (this->mpc_ModelViewManager != NULL)
    {
       //Model
-      C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
+      const C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
          this->mu32_NodeIndex,
          this->mu32_DataPoolIndex,
          this->mu32_ListIndex);
@@ -1468,7 +1468,7 @@ void C_SdNdeDpListTableView::m_HandleColumnStateRestore(void)
 {
    if (this->mpc_ModelViewManager != NULL)
    {
-      C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
+      const C_SdNdeDpListTableModel * const pc_Model = this->mpc_ModelViewManager->GetElementModel(
          this->mu32_NodeIndex, this->mu32_DataPoolIndex, this->mu32_ListIndex);
       if (pc_Model != NULL)
       {
