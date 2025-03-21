@@ -383,16 +383,17 @@ void C_SdNdeDalLogJobDataSelectionWidget::m_SetupContextMenu()
    this->mpc_ContextMenu = new C_OgeContextMenu(this);
    this->setContextMenuPolicy(Qt::CustomContextMenu);
 
-   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                       "Select all"), this->mpc_Ui->pc_TableView,
-                                    &C_SdNdeDalLogJobDataSelectionTableView::selectAll,
-                                    static_cast<int32_t>(Qt::CTRL) + static_cast<int32_t>(Qt::Key_A));
+   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Select all"),
+                                    QKeySequence(Qt::CTRL | Qt::Key_A),
+                                    this->mpc_Ui->pc_TableView,
+                                    &C_SdNdeDalLogJobDataSelectionTableView::selectAll);
    // select all action
    this->mpc_ContextMenu->addSeparator();
 
    this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Delete"),
-                                    this, &C_SdNdeDalLogJobDataSelectionWidget::m_DeleteSelectedDataElements,
-                                    static_cast<int32_t>(Qt::Key_Delete));
+                                    QKeySequence(Qt::Key_Delete),
+                                    this,
+                                    &C_SdNdeDalLogJobDataSelectionWidget::m_DeleteSelectedDataElements);
 
    connect(this, &C_SdNdeDalLogJobDataSelectionWidget::customContextMenuRequested, this,
            &C_SdNdeDalLogJobDataSelectionWidget::m_OnCustomContextMenuRequested);

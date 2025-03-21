@@ -53,7 +53,7 @@ C_SdNdeDalLogJobsWidget::C_SdNdeDalLogJobsWidget(QWidget * const opc_Parent) :
    this->mpc_Ui->setupUi(this);
    this->InitStaticNames();
 
-   connect(this->mpc_Ui->pc_ChkBoxLogJob, &QCheckBox::stateChanged, this,
+   connect(this->mpc_Ui->pc_ChkBoxLogJob, &QCheckBox::checkStateChanged, this,
            &C_SdNdeDalLogJobsWidget::m_OnLogJobStateChanged);
 }
 
