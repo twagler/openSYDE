@@ -696,13 +696,13 @@ INCLUDEPATH += ../src \
                ../libs/blf_driver_library
 
 #do not issue deprecation warnings (tested code can contain deprecated functions which we do want to provide)
-win32-g++ {
-QMAKE_CXXFLAGS += -Wno-deprecated-declarations
-}
+#win32-g++ {
+#QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+#}
 
-LIBS += -L../libs/gettext -lintl \
-        -L../libs/blf_driver_library -lvector_blf \
-        -lz
+#LIBS += -L../libs/gettext -lintl
+LIBS += -L../libs/blf_driver_library -lvector_blf
+LIBS += -lz
 
 LIBS += -lws2_32   #WinSock
 LIBS += -lIphlpapi #IP helper API
@@ -719,7 +719,7 @@ QMAKE_TARGET_COPYRIGHT = STW (c) 2018
 DISTFILES +=
 
 RESOURCES += \
-    ../src/can_monitor/cam_application.qrc
+    $$PWD/../src/can_monitor/cam_application.qrc
 
 #compiler with function intrumentation (for "Embedded Profiler")
 #QMAKE_CXXFLAGS += -finstrument-functions

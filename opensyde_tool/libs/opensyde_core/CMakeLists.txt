@@ -33,6 +33,8 @@ project("opensyde_core")
 
 # --- Project source files ---------------------------------------------------------------------------------------------
 #basic infrastructure (also requires Windows target layer, or a corresponding implementation for e.g. Linux)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/scl)
+
 set(OPENSYDE_CORE_COMMON_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscBinaryHash.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscChecksummedIniFile.cpp
@@ -42,11 +44,7 @@ set(OPENSYDE_CORE_COMMON_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/stwcompid/stwcompid.c
    ${CMAKE_CURRENT_SOURCE_DIR}/logging/C_OscLoggingHandler.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/md5/C_Md5Checksum.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclChecksums.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclDateTime.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclIniFile.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclString.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclStringList.cpp
+
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/C_OscXmlParser.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/C_OscXmlParserLog.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/C_OscChecksummedXml.cpp
@@ -540,6 +538,8 @@ else()
       ${CMAKE_CURRENT_SOURCE_DIR}/protocol_drivers/system_update/package
       ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib
       ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/cmonprotocol
+      ${CMAKE_CURRENT_SOURCE_DIR}/../openssl/include
+
    )
 endif()
 
@@ -753,6 +753,13 @@ set(OPENSYDE_CORE_INCLUDE_DIRECTORIES
 
 # define library target including all sources
 add_library(opensyde_core ${OPENSYDE_CORE_SOURCES})
+
+#target_link_libraries(opensyde_core PUBLIC stw_class_library stw_target_glue_layer)
+
+# add path to "local" precompiled_header.hpp but do *not* add to public path (so application can provide its own precompiled_headers.hpp)
+target_include_directories(opensyde_core BEFORE PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers)
+# make precompiled_header file known
+target_precompile_headers(opensyde_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers/precomp_headers.hpp)
 
 # add all include directories to library target and make public
 target_include_directories(opensyde_core PUBLIC ${OPENSYDE_CORE_INCLUDE_DIRECTORIES})
