@@ -327,6 +327,7 @@ void C_NagUnUsedProjectFilesTableView::m_SetupContextMenu()
                                     QKeySequence(Qt::CTRL | Qt::Key_A),
                                     this,
                                     &C_NagUnUsedProjectFilesTableView::m_SelectAllFiles);
+   this->mpc_ContextMenu->addSeparator();
    this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Delete selected"),
                                     QKeySequence(Qt::Key_Delete),
                                     this,
