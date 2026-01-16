@@ -1252,7 +1252,7 @@ set(OPENSYDE_HEADERS
    ${PROJECT_ROOT}/src/system_definition/managers/undo/C_SdManUnoTopologyReconnectBaseCommand.hpp
    ${PROJECT_ROOT}/src/system_definition/managers/undo/C_SdManUnoTopologyReconnectBusCommand.hpp
    ${PROJECT_ROOT}/src/system_definition/managers/undo/C_SdManUnoTopologySetupStyleCommand.hpp
-   ${PROJECT_ROOT}/src/gettext/C_GtGetText.hpp
+
    ${PROJECT_ROOT}/src/system_definition/managers/undo/C_SdManUnoTopologyChangeInterfaceCommand.hpp
    ${PROJECT_ROOT}/src/opensyde_gui_elements/label/C_OgeLabGroupItem.hpp
    ${PROJECT_ROOT}/src/opensyde_gui_elements/label/C_OgeLabGroupSubItem.hpp
@@ -2168,7 +2168,7 @@ set(OPENSYDE_LINK_LIBRARIES
    Iphlpapi #IP helper API
    ${PROJECT_ROOT}/libs/openssl/libssl.a
    ${PROJECT_ROOT}/libs/openssl/libcrypto.a
-   ${PROJECT_ROOT}/libs/gettext/libintl.a
+
 )
 
 # COMPILER SWITCHES
