@@ -14,6 +14,7 @@
 
 #include "C_PuiSdDataElement.hpp"
 #include "C_PuiSdHandler.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

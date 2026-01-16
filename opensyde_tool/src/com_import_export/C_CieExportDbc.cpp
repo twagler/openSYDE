@@ -40,6 +40,7 @@ using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::tgl;
 using namespace stw::scl;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const std::string C_CieExportDbc::mhc_SIG_INITIAL_VALUE = "GenSigStartValue";

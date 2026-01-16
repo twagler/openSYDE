@@ -17,6 +17,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui_elements;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const int32_t C_OgeHorizontalListWidget::mhs32_SCROLL_AREA = 70;

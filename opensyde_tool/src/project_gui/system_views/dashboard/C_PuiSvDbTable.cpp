@@ -14,6 +14,7 @@
 
 #include "C_SclChecksums.hpp"
 #include "C_PuiSvDbTable.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

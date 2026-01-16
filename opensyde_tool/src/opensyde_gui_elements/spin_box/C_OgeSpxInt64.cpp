@@ -20,6 +20,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::tgl;
 using namespace stw::opensyde_gui_elements;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const QChar C_OgeSpxInt64::hc_UNIT_SEPERATION_CHARACTER = ' ';

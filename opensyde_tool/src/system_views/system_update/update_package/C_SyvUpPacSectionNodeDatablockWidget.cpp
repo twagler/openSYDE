@@ -34,6 +34,7 @@ using namespace stw::scl;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_core;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const QString C_SyvUpPacSectionNodeDatablockWidget::mhc_REMOVE_PATH_TEXT("<Add File>");

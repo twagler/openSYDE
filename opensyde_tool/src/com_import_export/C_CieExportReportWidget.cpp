@@ -26,6 +26,7 @@ using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::scl;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const QString C_CieExportReportWidget::mhc_HTML_TABLE_HEADER_START =

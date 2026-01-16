@@ -17,6 +17,7 @@
 #include "C_SclChecksums.hpp"
 #include "C_PuiUtil.hpp"
 #include "C_PuiSvPc.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

@@ -19,6 +19,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const float64_t C_GiCustomFunctions::hf64_SCENE_MIN_BORDER_SIZE = 6.0;

@@ -19,6 +19,7 @@
 #include "C_PopErrorHandling.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_FlaUtiStyleSheets.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

@@ -35,6 +35,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
 using namespace stw::tgl;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const float64_t mf64_SCENE_RECT_BORDER = 0.0; //SSI: no border needed so far

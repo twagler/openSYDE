@@ -20,6 +20,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const QString C_SyvUpPieChart::mhc_FILE_PATH = "../../src/images/custom.gif";

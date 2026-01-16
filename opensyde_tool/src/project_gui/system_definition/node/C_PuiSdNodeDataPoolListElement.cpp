@@ -15,6 +15,7 @@
 #include "C_PuiSdNodeDataPoolListElement.hpp"
 
 #include "C_SclChecksums.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

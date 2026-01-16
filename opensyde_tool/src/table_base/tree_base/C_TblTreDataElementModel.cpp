@@ -29,6 +29,7 @@
 using namespace stw::tgl;
 using namespace stw::errors;
 using namespace stw::opensyde_core;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const QString C_TblTreDataElementModel::mhc_ICON_NODE = ":/images/system_definition/IconNode.svg";

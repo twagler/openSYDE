@@ -24,6 +24,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
 using namespace stw::errors;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const uint8_t C_UsHandler::mhu8_MAX_RECENT_PROJECTS = 42;

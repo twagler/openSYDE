@@ -23,6 +23,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const float64_t C_GiImageGroupWithoutData::mhf64_ACTION_POINT_OFFSET_IMAGE = 8.0;

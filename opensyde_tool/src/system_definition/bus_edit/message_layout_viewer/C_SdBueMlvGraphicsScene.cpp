@@ -36,6 +36,7 @@
 using namespace stw::tgl;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const float64_t C_SdBueMlvGraphicsScene::mhf64_SPACE = 2.0;

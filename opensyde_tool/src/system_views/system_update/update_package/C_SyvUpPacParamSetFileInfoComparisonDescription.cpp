@@ -11,6 +11,7 @@
 
 #include "TglUtils.hpp"
 #include "C_SyvUpPacParamSetFileInfoComparisonDescription.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

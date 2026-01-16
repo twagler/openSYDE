@@ -14,6 +14,7 @@
 
 #include "C_SclChecksums.hpp"
 #include "C_PuiSvDbDataElementScaling.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

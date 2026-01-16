@@ -36,6 +36,7 @@ using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_core;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const int32_t C_GiSvDaSliderBase::mhs32_SLIDER_MIN = std::numeric_limits<int32_t>::lowest();

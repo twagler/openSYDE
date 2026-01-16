@@ -13,6 +13,7 @@
 #include "TglTime.hpp"
 
 #include "C_PuiSvDbDataElementContent.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

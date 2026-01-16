@@ -17,6 +17,7 @@
 #include "C_SyvDaUnoAddCommand.hpp"
 #include "C_SyvDaUnoAddSnapshotCommand.hpp"
 #include "C_SyvDaUnoDeleteCommand.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

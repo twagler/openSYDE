@@ -14,6 +14,7 @@
 
 #include "stwtypes.hpp"
 #include "C_SebUnoRemoveBendPointCommand.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

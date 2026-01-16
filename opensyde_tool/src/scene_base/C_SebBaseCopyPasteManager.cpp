@@ -14,6 +14,7 @@
 
 #include <limits>
 #include "C_SebBaseCopyPasteManager.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 

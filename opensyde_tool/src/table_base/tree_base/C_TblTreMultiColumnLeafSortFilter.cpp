@@ -15,6 +15,7 @@
 
 #include "stwtypes.hpp"
 #include "C_TblTreMultiColumnLeafSortFilter.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
