@@ -17,7 +17,6 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
-using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const QString C_FlaUpHexFileView::mhc_START_TD = "<td style=\"padding: 0 9px 0 0;\">";

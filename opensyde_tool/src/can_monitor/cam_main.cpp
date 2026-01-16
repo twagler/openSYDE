@@ -73,14 +73,7 @@ int32_t main(int32_t os32_Argc, char_t * opacn_Argv[])
       c_Appl.setStyleSheet(stw::opensyde_gui_logic::C_CamUtiStyleSheets::h_GetStylesheet());
    }
    {
-      const QString c_TranslationLocation = stw::opensyde_gui_logic::C_Uti::h_GetExePath() + "/Translations";
-      //Set language (THIRD)
-      //stw::opensyde_core::C_OscGetText::h_SetLanguage("en_US");
-      stw::opensyde_gui_logic::C_PopErrorHandling::h_GetTextInitializeErr(
-
-   }
-   {
-      //Application (FOURTH)
+      //Application (THIRD)
       stw::opensyde_gui::C_CamMainWindow c_Window;
 
       c_Window.show();

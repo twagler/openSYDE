@@ -18,7 +18,6 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace std;
-using namespace stw::opensyde_gui_logic;
 using namespace stw::opensyde_gui;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */

@@ -25,7 +25,6 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
-using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 std::vector<QPointer<C_NagToolTipWithImage> > C_NagToolTipWithImage::mhc_ExistingToolTips;

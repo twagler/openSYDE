@@ -30,7 +30,6 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace std;
 using namespace stw::opensyde_gui;
-using namespace stw::opensyde_gui_logic;
 using namespace stw::tgl;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */

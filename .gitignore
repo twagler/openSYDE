@@ -96,3 +96,9 @@ out/
 # Test results
 Testing/
 test_results/
+
+# Documentation artifacts (local only)
+opensyde_tool/doc/c_gtgettext_removal_implementation_plan.md
+opensyde_tool/doc/c_gtgettext_removal_walkthrough.md
+
+fix_orphaned_namespaces.py

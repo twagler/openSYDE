@@ -35,7 +35,6 @@ using namespace stw::errors;
 using namespace stw::tgl;
 using namespace stw::scl;
 using namespace stw::opensyde_gui;
-using namespace stw::opensyde_gui_logic;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_core;
 
