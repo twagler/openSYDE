@@ -181,7 +181,7 @@ void C_CamTitleBarWidget::UpdateRecentProjectsAndWindowTitle(void)
    // show browse action if no recent project was found
    if (this->mpc_Menu->actions().size() == 0)
    {
-      this->mpc_Menu->addAction(QString::fromStdString(mhc_NORECENTPROJECT));
+      this->mpc_Menu->addAction(mhc_NORECENTPROJECT);
    }
 
    // update window title (window title of this widget is connected to main window)
