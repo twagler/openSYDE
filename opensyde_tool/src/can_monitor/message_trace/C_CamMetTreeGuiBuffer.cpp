@@ -13,6 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "C_CamMetTreeGuiBuffer.hpp"
+using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
