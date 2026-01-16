@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       short description (implementation)
@@ -13,7 +13,6 @@
 #include "precomp_headers.hpp"
 
 #include "gitypes.hpp"
-#include "C_GtGetText.hpp"
 #include "C_GiLiLineGroup.hpp"
 #include "C_SebTopologyBaseContextMenuManager.hpp"
 

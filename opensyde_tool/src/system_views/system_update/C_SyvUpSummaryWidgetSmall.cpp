@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Small summary widget to show below update package.
@@ -14,7 +14,6 @@
 
 #include "C_SyvUpSummaryWidgetSmall.hpp"
 #include "ui_C_SyvUpSummaryWidgetSmall.h"
-#include "C_GtGetText.hpp"
 #include "constants.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */

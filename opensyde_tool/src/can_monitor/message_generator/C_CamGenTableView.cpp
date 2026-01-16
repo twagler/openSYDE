@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       View (display) component for message generator table (implementation)
@@ -22,7 +22,6 @@
 #include "TglTime.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "C_GtGetText.hpp"
 #include "C_UsHandler.hpp"
 #include "cam_constants.hpp"
 #include "C_CamDbHandler.hpp"
@@ -680,38 +679,31 @@ std::vector<uint32_t> C_CamGenTableView::m_GetSelectedRows(void) const
 void C_CamGenTableView::m_SetupContextMenu(void)
 {
    this->mpc_ContextMenu = new C_OgeContextMenu(this);
-   this->mpc_ActionAddFromDatabase = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                                                         "Add message from database"), this,
+   this->mpc_ActionAddFromDatabase = this->mpc_ContextMenu->addAction("Add message from database", this,
                                                                       &C_CamGenTableView::AddMessageFromDatabase);
-   this->mpc_ActionAdd = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                                             "Add new message"), this, &C_CamGenTableView::AddMessage,
+   this->mpc_ActionAdd = this->mpc_ContextMenu->addAction("Add new message", this, &C_CamGenTableView::AddMessage,
                                                           static_cast<int32_t>(Qt::CTRL) +
                                                           static_cast<int32_t>(Qt::Key_Plus));
 
    this->mpc_ContextMenu->addSeparator();
 
-   this->mpc_ActionCut = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                                             "Cut"), this, &C_CamGenTableView::CutMessage,
+   this->mpc_ActionCut = this->mpc_ContextMenu->addAction("Cut", this, &C_CamGenTableView::CutMessage,
                                                           static_cast<int32_t>(Qt::CTRL) +
                                                           static_cast<int32_t>(Qt::Key_X));
-   this->mpc_ActionCopy = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                                              "Copy"), this, &C_CamGenTableView::CopyMessage,
+   this->mpc_ActionCopy = this->mpc_ContextMenu->addAction("Copy", this, &C_CamGenTableView::CopyMessage,
                                                            static_cast<int32_t>(Qt::CTRL) +
                                                            static_cast<int32_t>(Qt::Key_C));
-   this->mpc_ActionPaste = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                                               "Paste"), this, &C_CamGenTableView::PasteMessage,
+   this->mpc_ActionPaste = this->mpc_ContextMenu->addAction("Paste", this, &C_CamGenTableView::PasteMessage,
                                                             static_cast<int32_t>(Qt::CTRL) +
                                                             static_cast<int32_t>(Qt::Key_V));
 
    //Deactivate move (kept for fast reactivation if necessary)
    //   this->mpc_ContextMenu->addSeparator();
 
-   //   this->mpc_ActionMoveUp = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
    //                                                                "Move Up"), this,
    //                                                             &C_CamGenTableView::MoveMessageUp,
    //                                                             static_cast<int32_t>(Qt::CTRL) +
    //                                                             static_cast<int32_t>(Qt::Key_Up));
-   //   this->mpc_ActionMoveDown = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
    //                                                                  "Move Down"), this,
    //                                                               &C_CamGenTableView::MoveMessageDown,
    //                                                               static_cast<int32_t>(Qt::CTRL) +
@@ -719,8 +711,7 @@ void C_CamGenTableView::m_SetupContextMenu(void)
 
    this->mpc_ContextMenu->addSeparator();
 
-   this->mpc_ActionDelete = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                                                "Delete"), this, &C_CamGenTableView::DeleteMessage,
+   this->mpc_ActionDelete = this->mpc_ContextMenu->addAction("Delete", this, &C_CamGenTableView::DeleteMessage,
                                                              static_cast<int32_t>(Qt::Key_Delete));
 
    this->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -825,10 +816,10 @@ void C_CamGenTableView::m_HandleLinkClicked(const QModelIndex & orc_Index)
          else
          {
             C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eINFORMATION);
-            c_Message.SetHeading(C_GtGetText::h_GetText("Measurement not started"));
-            c_Message.SetDescription(C_GtGetText::h_GetText("The transmission of messages is only allowed as long "
+            c_Message.SetHeading("Measurement not started");
+            c_Message.SetDescription("The transmission of messages is only allowed as long "
                                                             "as the measurement is running. \nClick the play button "
-                                                            "in trace to start measurement."));
+                                                            "in trace to start measurement.");
             c_Message.Execute();
          }
       }

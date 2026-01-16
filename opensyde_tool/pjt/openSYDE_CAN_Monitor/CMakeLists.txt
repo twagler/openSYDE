@@ -92,10 +92,8 @@ set (OPENSYDE_INCLUDES
    ${PROJECT_ROOT}/src/system_definition/node_edit/datapools
    ${PROJECT_ROOT}/src/system_views/communication
    ${PROJECT_ROOT}/src/project_operations/
-   ${PROJECT_ROOT}/src/gettext
    ${PROJECT_ROOT}/src/util
    ${PROJECT_ROOT}/src/precompiled_headers/can_monitor
-   ${PROJECT_ROOT}/libs/gettext
    ${PROJECT_ROOT}/libs/flexlexer
    ${PROJECT_ROOT}/libs/dbc_driver_library/src
    ${PROJECT_ROOT}/libs/dbc_driver_library/src/Vector
@@ -105,7 +103,6 @@ set (OPENSYDE_INCLUDES
 
 # Include path with library modules
 set (OPENSYDE_LIB_INCLUDES
-   ${PROJECT_ROOT}/libs/gettext
    ${PROJECT_ROOT}/libs/flexlexer
 )
 
@@ -116,7 +113,6 @@ set(OPENSYDE_SOURCES
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget/C_CamOgeWiSettingsBase.cpp
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings/C_CamMosDllWidgetLogic.cpp
    ${PROJECT_ROOT}/src/can_monitor/util/C_CamUtiGeneric.cpp
-   ${PROJECT_ROOT}/src/gettext/C_GtGetText.cpp
    ${PROJECT_ROOT}/src/util/C_Uti.cpp
    ${PROJECT_ROOT}/src/system_views/communication/C_SyvComMessageMonitor.cpp
    ${PROJECT_ROOT}/src/system_views/communication/C_SyvComMessageLoggerFileBlf.cpp
@@ -332,7 +328,6 @@ set(OPENSYDE_HEADERS
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget/C_CamOgeWiSettingsBase.hpp
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings/C_CamMosDllWidgetLogic.hpp
    ${PROJECT_ROOT}/src/can_monitor/util/C_CamUtiGeneric.hpp
-   ${PROJECT_ROOT}/src/gettext/C_GtGetText.hpp
    ${PROJECT_ROOT}/src/util/C_Uti.hpp
    ${PROJECT_ROOT}/src/system_views/communication/C_SyvComMessageMonitor.hpp
    ${PROJECT_ROOT}/src/system_views/communication/C_SyvComMessageLoggerFileBlf.hpp
@@ -734,7 +729,6 @@ set(OPENSYDE_LINK_LIBRARIES
    version
    ws2_32   #WinSock
    Iphlpapi #IP helper API
-   ${PROJECT_ROOT}/libs/gettext/libintl.a
    ${PROJECT_ROOT}/libs/blf_driver_library/libvector_blf.a
    ${PROJECT_ROOT}/libs/zlib/libzlibstatic.a
 )

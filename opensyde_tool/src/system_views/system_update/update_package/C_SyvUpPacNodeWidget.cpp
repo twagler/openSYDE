@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for one node in the update package
@@ -23,7 +23,6 @@
 
 #include "constants.hpp"
 #include "TglUtils.hpp"
-#include "C_GtGetText.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -104,13 +103,11 @@ C_SyvUpPacNodeWidget::C_SyvUpPacNodeWidget(const uint32_t ou32_ViewIndex, const 
                                                          "://images/system_views/IconAddKey.svg",
                                                          "://images/system_views/IconAddKey.svg",
                                                          "://images/system_views/IconAddKeyDisabled.svg");
-   this->mpc_Ui->pc_PbAddSecurityPackage->SetToolTipInformation(C_GtGetText::h_GetText(
-                                                                   "Create Security Certificate Package"),
-                                                                C_GtGetText::h_GetText(
-                                                                   "Security Certificate Package enables "
+   this->mpc_Ui->pc_PbAddSecurityPackage->SetToolTipInformation("Create Security Certificate Package",
+                                                                "Security Certificate Package enables "
                                                                    "file-based targets to execute the openSYDE client security features "
                                                                    "like 'Secure Autentication' and 'Secure Updates'. "
-                                                                   "\nAll relevant PEM files and configuration is packed together."));
+                                                                   "\nAll relevant PEM files and configuration is packed together.");
 
    //lint -e{1938}  static const is guaranteed preinitialized before main
    this->mpc_Ui->pc_WidgetTitle->SetColorReserved(mc_STYLE_GUIDE_COLOR_10);
@@ -121,14 +118,14 @@ C_SyvUpPacNodeWidget::C_SyvUpPacNodeWidget(const uint32_t ou32_ViewIndex, const 
 
    this->mpc_Ui->pc_LabIconWarning->SetSvg("://images/system_views/IconWarning.svg");
    this->mpc_Ui->pc_LabIconWarning->SetToolTipInformation(
-      C_GtGetText::h_GetText("Missing Files"),
-      C_GtGetText::h_GetText("The Update Package for this node contains files that were not found."));
+      "Missing Files",
+      "The Update Package for this node contains files that were not found.");
    this->mpc_Ui->pc_LabIconWarning->setVisible(false);
 
    this->mpc_Ui->pc_LabIconLock->SetSvg("://images/system_views/IconLockedGrey.svg");
    this->mpc_Ui->pc_LabIconLock->SetToolTipInformation(
-      C_GtGetText::h_GetText("Update Package Locked"),
-      C_GtGetText::h_GetText("Update Package cannot be configured while update mode is active."));
+      "Update Package Locked",
+      "Update Package cannot be configured while update mode is active.");
    this->mpc_Ui->pc_LabIconLock->setVisible(false);
 
    //Drag & drop of files
@@ -1654,10 +1651,9 @@ bool C_SyvUpPacNodeWidget::m_CheckFileAlreadyContained(const QString & orc_File)
    {
       // inform user that file already exists
       C_OgeWiCustomMessage c_Message(this);
-      c_Message.SetHeading(C_GtGetText::h_GetText("Add file"));
-      c_Message.SetDescription(static_cast<QString>(C_GtGetText::h_GetText(
-                                                       "The file is already contained in the Update Package "
-                                                       "for this node and therefore not added again.")));
+      c_Message.SetHeading("Add file");
+      c_Message.SetDescription(static_cast<QString>("The file is already contained in the Update Package "
+                                                       "for this node and therefore not added again."));
       c_Message.SetDetails(C_PuiUtil::h_GetResolvedAbsPathFromProject(orc_File));
       c_Message.Execute();
    }
@@ -1702,17 +1698,16 @@ void C_SyvUpPacNodeWidget::m_CheckForMultipleSecurityCertificatePackages(const Q
       {
          // inform user that there are multiple security certificate packages
          C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eWARNING);
-         c_Message.SetHeading(C_GtGetText::h_GetText("Multiple Security Certificate Packages"));
+         c_Message.SetHeading("Multiple Security Certificate Packages");
          c_Message.SetDescription(
-            static_cast<QString>(C_GtGetText::h_GetText("There are multiple security certificate packages contained "
-                                                        "in the update package of node %1.")).
+            static_cast<QString>("There are multiple security certificate packages contained "
+                                                        "in the update package of node %1.").
             arg(pc_Node->c_Properties.c_Name.c_str()));
          c_Message.SetDetails(
-            static_cast<QString>(C_GtGetText::h_GetText(
-                                    "The node can probably only handle one security certificate package "
+            static_cast<QString>("The node can probably only handle one security certificate package "
                                     "and thus the rest will be ignored. You can remove unused packages.\n\n"
                                     "The following security certificate packages are contained in the update package:\n"
-                                    "%1"))
+                                    "%1")
             .arg(c_FoundPaths));
          c_Message.SetCustomMinHeight(200, 300);
          c_Message.Execute();
@@ -1839,10 +1834,10 @@ void C_SyvUpPacNodeWidget::m_OnCreatePackage(const QString & orc_PublicKeyPath, 
    {
       c_DefaultFilename = pc_ViewData->GetName().c_str();
    }
-   c_FilterName = C_GtGetText::h_GetText("Security Certificate Package (*");
+   c_FilterName = "Security Certificate Package (*";
    c_FilterName += C_OscXceBase::h_GetPackageExtension().c_str();
    c_FilterName += ")";
-   c_DefaultFilename += C_GtGetText::h_GetText("_SecurityCertificatePackage");
+   c_DefaultFilename += "_SecurityCertificatePackage";
    c_DefaultFilename += static_cast<QString>(C_OscXceBase::h_GetPackageExtension().c_str());
 
    c_Folder = C_UsHandler::h_GetInstance()->GetLastKnownSecureCertificatePackagePath();
@@ -1854,7 +1849,7 @@ void C_SyvUpPacNodeWidget::m_OnCreatePackage(const QString & orc_PublicKeyPath, 
    }
 
    c_FullPackagePath =
-      C_OgeWiUtil::h_GetSaveFileName(this, C_GtGetText::h_GetText("Select Directory for Secure Certificate Package"),
+      C_OgeWiUtil::h_GetSaveFileName(this, "Select Directory for Secure Certificate Package",
                                      c_Folder, c_FilterName, c_DefaultFilename,
                                      QFileDialog::Options(), &c_SelectedFilterName);
    if (!c_FullPackagePath.isEmpty())
@@ -1879,13 +1874,13 @@ void C_SyvUpPacNodeWidget::m_OnCreatePackage(const QString & orc_PublicKeyPath, 
       if (s32_Return == C_NO_ERR)
       {
          C_OgeWiCustomMessage c_MessageResult(this);
-         c_MessageResult.SetHeading(C_GtGetText::h_GetText("Create Security Certificate Package"));
-         c_MessageResult.SetDescription(C_GtGetText::h_GetText("Security certificate package successfully created. "
-                                                               "Do you want to add it to the update package now?"));
+         c_MessageResult.SetHeading("Create Security Certificate Package");
+         c_MessageResult.SetDescription("Security certificate package successfully created. "
+                                                               "Do you want to add it to the update package now?");
          c_MessageResult.SetDetails("Package saved at " +
                                     C_Uti::h_GetLink(c_FullPackagePath, mc_STYLE_GUIDE_COLOR_LINK, c_FullPackagePath));
-         c_MessageResult.SetOkButtonText(C_GtGetText::h_GetText("Add to Update Package"));
-         c_MessageResult.SetNoButtonText(C_GtGetText::h_GetText("Cancel"));
+         c_MessageResult.SetOkButtonText("Add to Update Package");
+         c_MessageResult.SetNoButtonText("Cancel");
          if (c_MessageResult.Execute() == C_OgeWiCustomMessage::eOK)
          {
             const QString c_AddPath =
@@ -1897,10 +1892,10 @@ void C_SyvUpPacNodeWidget::m_OnCreatePackage(const QString & orc_PublicKeyPath, 
       else
       {
          C_OgeWiCustomMessage c_MessageResult(this, C_OgeWiCustomMessage::E_Type::eERROR);
-         c_MessageResult.SetHeading(C_GtGetText::h_GetText("Create Security Certificate Package"));
-         c_MessageResult.SetDescription(C_GtGetText::h_GetText("Could not create security certificate package!"));
-         c_MessageResult.SetDetails(C_GtGetText::h_GetText("Error code: ") + QString::number(s32_Return) + "\n" +
-                                    C_GtGetText::h_GetText(c_Error.c_str()));
+         c_MessageResult.SetHeading("Create Security Certificate Package");
+         c_MessageResult.SetDescription("Could not create security certificate package!");
+         c_MessageResult.SetDetails("Error code: " + QString::number(s32_Return) + "\n" +
+                                    QString::fromStdString(c_Error));
          c_MessageResult.SetCustomMinHeight(180, 250);
          c_MessageResult.Execute();
       }

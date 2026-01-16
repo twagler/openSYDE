@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Max performance model (implementation)
@@ -20,7 +20,6 @@
 #include "TglTime.hpp"
 #include "stwtypes.hpp"
 #include "constants.hpp"
-#include "C_GtGetText.hpp"
 #include "C_CamMetUtil.hpp"
 #include "cam_constants.hpp"
 #include "C_CanMonProtocol.hpp"
@@ -519,28 +518,28 @@ QVariant C_CamMetTreeModel::headerData(const int32_t os32_Section, const Qt::Ori
          switch (e_Col)
          {
          case eTIME_STAMP:
-            c_Retval = C_GtGetText::h_GetText("Time");
+            c_Retval = "Time";
             break;
          case eCAN_ID:
-            c_Retval = C_GtGetText::h_GetText("ID");
+            c_Retval = "ID";
             break;
          case eCAN_NAME:
-            c_Retval = C_GtGetText::h_GetText("Name");
+            c_Retval = "Name";
             break;
          case eCAN_DIR:
-            c_Retval = C_GtGetText::h_GetText("Dir");
+            c_Retval = "Dir";
             break;
          case eCAN_DLC:
-            c_Retval = C_GtGetText::h_GetText("DLC");
+            c_Retval = "DLC";
             break;
          case eCAN_DATA:
-            c_Retval = C_GtGetText::h_GetText("Data");
+            c_Retval = "Data";
             break;
          case eCAN_COUNTER:
-            c_Retval = C_GtGetText::h_GetText("Counter");
+            c_Retval = "Counter";
             break;
          case eCAN_STATUS:
-            c_Retval = C_GtGetText::h_GetText("Status");
+            c_Retval = "Status";
             break;
          default:
             break;
@@ -551,28 +550,28 @@ QVariant C_CamMetTreeModel::headerData(const int32_t os32_Section, const Qt::Ori
          switch (e_Col)
          {
          case eTIME_STAMP:
-            c_Retval = C_GtGetText::h_GetText("Time");
+            c_Retval = "Time";
             break;
          case eCAN_ID:
-            c_Retval = C_GtGetText::h_GetText("Identifier");
+            c_Retval = "Identifier";
             break;
          case eCAN_NAME:
-            c_Retval = C_GtGetText::h_GetText("Name");
+            c_Retval = "Name";
             break;
          case eCAN_DIR:
-            c_Retval = C_GtGetText::h_GetText("Direction");
+            c_Retval = "Direction";
             break;
          case eCAN_DLC:
-            c_Retval = C_GtGetText::h_GetText("Data Length Code");
+            c_Retval = "Data Length Code";
             break;
          case eCAN_DATA:
-            c_Retval = C_GtGetText::h_GetText("Data");
+            c_Retval = "Data";
             break;
          case eCAN_COUNTER:
-            c_Retval = C_GtGetText::h_GetText("Counter");
+            c_Retval = "Counter";
             break;
          case eCAN_STATUS:
-            c_Retval = C_GtGetText::h_GetText("Status");
+            c_Retval = "Status";
             break;
          default:
             break;
@@ -585,39 +584,39 @@ QVariant C_CamMetTreeModel::headerData(const int32_t os32_Section, const Qt::Ori
          case eTIME_STAMP:
             if (this->mq_DisplayTimestampAbsoluteTimeOfDay == false)
             {
-               c_Retval = C_GtGetText::h_GetText("Absolute time (hh:mm:ss.ms.us) from the measurement start, or relative "
-                                                 "to the previous event.");
+               c_Retval = "Absolute time (hh:mm:ss.ms.us) from the measurement start, or relative "
+                                                 "to the previous event.";
             }
             else
             {
-               c_Retval = C_GtGetText::h_GetText("Absolute time (hh:mm:ss.ms.us) with time of day, or relative "
-                                                 "to the previous event.");
+               c_Retval = "Absolute time (hh:mm:ss.ms.us) with time of day, or relative "
+                                                 "to the previous event.";
             }
             break;
          case eCAN_ID:
-            c_Retval = C_GtGetText::h_GetText("CAN identifier of the message.");
+            c_Retval = "CAN identifier of the message.";
             break;
          case eCAN_NAME:
-            c_Retval = C_GtGetText::h_GetText("Symbolic name of the CAN message. Empty if not defined in one of the "
-                                              "active database(s).");
+            c_Retval = "Symbolic name of the CAN message. Empty if not defined in one of the "
+                                              "active database(s).";
             break;
          case eCAN_DIR:
-            c_Retval = C_GtGetText::h_GetText("Direction of the CAN message.\n"
+            c_Retval = "Direction of the CAN message.\n"
                                               "   - Rx: Received message\n"
-                                              "   - Tx: Sent by this instance of openSYDE CAN Monitor");
+                                              "   - Tx: Sent by this instance of openSYDE CAN Monitor";
             break;
          case eCAN_DLC:
-            c_Retval = C_GtGetText::h_GetText("Number of data bytes in decimal representation.");
+            c_Retval = "Number of data bytes in decimal representation.";
             break;
          case eCAN_DATA:
-            c_Retval = C_GtGetText::h_GetText("CAN message data in bytes.");
+            c_Retval = "CAN message data in bytes.";
             break;
          case eCAN_COUNTER:
-            c_Retval = C_GtGetText::h_GetText("Indicates the number of times the event has appeared since "
-                                              "measurement start.");
+            c_Retval = "Indicates the number of times the event has appeared since "
+                                              "measurement start.";
             break;
          case eCAN_STATUS:
-            c_Retval = C_GtGetText::h_GetText("Indicates the validity of a (ECeS/ECoS) message.");
+            c_Retval = "Indicates the validity of a (ECeS/ECoS) message.";
             break;
          default:
             break;
@@ -815,16 +814,16 @@ QVariant C_CamMetTreeModel::data(const QModelIndex & orc_Index, const int32_t os
                case eCAN_DIR:
                   if (pc_CurMessage->q_IsTx == true)
                   {
-                     c_Text = C_GtGetText::h_GetText("Tx");
+                     c_Text = "Tx";
                   }
                   else
                   {
-                     c_Text = C_GtGetText::h_GetText("Rx");
+                     c_Text = "Rx";
                   }
 
                   if (pc_CurMessage->c_CanMsg.u8_RTR > 0U)
                   {
-                     c_Text += C_GtGetText::h_GetText(" (RTR)");
+                     c_Text += " (RTR)";
                   }
 
                   c_Retval = c_Text;

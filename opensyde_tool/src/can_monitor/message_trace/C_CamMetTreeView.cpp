@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Max performance view (implementation)
@@ -27,8 +27,6 @@
 #include "C_CamProHandler.hpp"
 #include "C_CamMetTreeView.hpp"
 #include "C_CamMetClipBoardHelper.hpp"
-#include "C_GtGetText.hpp"
-
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
@@ -797,20 +795,19 @@ void C_CamMetTreeView::startDrag(const Qt::DropActions oc_SupportedActions)
 void C_CamMetTreeView::m_SetupContextMenu(void)
 {
    this->mpc_ContextMenu = new C_OgeContextMenu(this);
-   this->mpc_ActionCopy = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText(
-                                                              "Copy as Text"), this, &C_CamMetTreeView::m_CopySelection,
+   this->mpc_ActionCopy = this->mpc_ContextMenu->addAction("Copy as Text", this, &C_CamMetTreeView::m_CopySelection,
                                                            static_cast<int32_t>(Qt::CTRL) +
                                                            static_cast<int32_t>(Qt::Key_C));
 
-   this->mpc_AddFilter = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Add to Receive Filter"),
+   this->mpc_AddFilter = this->mpc_ContextMenu->addAction("Add to Receive Filter",
                                                           this, &C_CamMetTreeView::m_OnAddFilterClicked);
 
    this->mpc_ContextMenu->addSeparator();
 
-   this->mpc_ActionExpandAll = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Expand all"),
+   this->mpc_ActionExpandAll = this->mpc_ContextMenu->addAction("Expand all",
                                                                 this, &C_CamMetTreeView::m_ExpandAll);
 
-   this->mpc_ActionCollapseAll = this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Collapse all"),
+   this->mpc_ActionCollapseAll = this->mpc_ContextMenu->addAction("Collapse all",
                                                                   this, &C_CamMetTreeView::m_CollapseAll);
 
    this->setContextMenuPolicy(Qt::CustomContextMenu);

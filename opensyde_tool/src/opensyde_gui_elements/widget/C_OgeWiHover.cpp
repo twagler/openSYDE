@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Hover widget in material design
@@ -21,7 +21,6 @@
 
 #include "C_OgeWiHover.hpp"
 #include "C_OgeWiUtil.hpp"
-#include "C_GtGetText.hpp"
 #include "ui_C_OgeWiHover.h"
 #include "constants.hpp"
 
@@ -170,8 +169,8 @@ C_OgeWiHover::~C_OgeWiHover()
 //----------------------------------------------------------------------------------------------------------------------
 void C_OgeWiHover::InitStaticNames() const
 {
-   this->mpc_Ui->pc_LabelTitle->setText(C_GtGetText::h_GetText("Default Title"));
-   this->mpc_Ui->pc_LineEditSearch->setPlaceholderText(C_GtGetText::h_GetText("Search"));
+   this->mpc_Ui->pc_LabelTitle->setText("Default Title");
+   this->mpc_Ui->pc_LineEditSearch->setPlaceholderText("Search");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

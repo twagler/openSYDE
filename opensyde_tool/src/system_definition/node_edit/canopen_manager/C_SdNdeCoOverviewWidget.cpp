@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Overview widget with current CANopen configuration of Manager and devices on the used interfaces
@@ -12,7 +12,6 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "C_GtGetText.hpp"
 #include "C_SdNdeCoOverviewWidget.hpp"
 #include "ui_C_SdNdeCoOverviewWidget.h"
 #include "C_SdNdeCoOverviewTableView.hpp"
@@ -93,7 +92,7 @@ void C_SdNdeCoOverviewWidget::SaveUserSettings() const
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeCoOverviewWidget::InitStaticNames() const
 {
-   this->mpc_Ui->pc_LabelNoChannels->setText(C_GtGetText::h_GetText("No CANopen data for node found."));
+   this->mpc_Ui->pc_LabelNoChannels->setText("No CANopen data for node found.");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

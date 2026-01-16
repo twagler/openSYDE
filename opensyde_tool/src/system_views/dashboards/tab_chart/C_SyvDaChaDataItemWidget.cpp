@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing information and offering configuration of one chart data series
@@ -16,7 +16,6 @@
 #include "C_SyvDaChaDataItemWidget.hpp"
 #include "ui_C_SyvDaChaDataItemWidget.h"
 
-#include "C_GtGetText.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_OscNodeDataPoolListElement.hpp"
 #include "C_UtiStyleSheets.hpp"
@@ -370,11 +369,11 @@ void C_SyvDaChaDataItemWidget::UpdateError(const QString & orc_ErrorText, const 
    this->mc_ToolTipErrorText = orc_ErrorText;
    if (oq_IsTransmissionError == true)
    {
-      this->mc_ToolTipErrorTextHeading = C_GtGetText::h_GetText("Transmission error");
+      this->mc_ToolTipErrorTextHeading = "Transmission error";
    }
    else
    {
-      this->mc_ToolTipErrorTextHeading = C_GtGetText::h_GetText("Signal error");
+      this->mc_ToolTipErrorTextHeading = "Signal error";
    }
 
    // Adapt the icon

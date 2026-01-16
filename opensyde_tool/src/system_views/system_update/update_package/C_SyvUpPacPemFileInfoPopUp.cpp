@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Screen for pem file information
@@ -15,7 +15,6 @@
 #include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "C_GtGetText.hpp"
 #include "C_OscSecurityPem.hpp"
 #include "C_SyvUpPacPemFileInfoPopUp.hpp"
 #include "ui_C_SyvUpPacPemFileInfoPopUp.h"
@@ -74,7 +73,7 @@ C_SyvUpPacPemFileInfoPopUp::C_SyvUpPacPemFileInfoPopUp(stw::opensyde_gui_element
    else
    {
       //lint -e{1946} Qt interface
-      c_DisplayText += QString(C_GtGetText::h_GetText("Error loading file %1: %2")).arg(orc_Path,
+      c_DisplayText += QString("Error loading file %1: %2").arg(orc_Path,
                                                                                         c_ErrorMessage.c_str());
    }
    this->mpc_Ui->pc_TextEditFlash_2->setText(c_DisplayText);
@@ -101,9 +100,9 @@ C_SyvUpPacPemFileInfoPopUp::~C_SyvUpPacPemFileInfoPopUp(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvUpPacPemFileInfoPopUp::InitStaticNames(void) const
 {
-   this->mrc_ParentDialog.SetTitle(C_GtGetText::h_GetText("PEM File"));
-   this->mpc_Ui->pc_LabelHeadingPreview->setText(C_GtGetText::h_GetText("File Information"));
-   this->mpc_Ui->pc_PushButtonOk->setText(C_GtGetText::h_GetText("OK"));
+   this->mrc_ParentDialog.SetTitle("PEM File");
+   this->mpc_Ui->pc_LabelHeadingPreview->setText("File Information");
+   this->mpc_Ui->pc_PushButtonOk->setText("OK");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

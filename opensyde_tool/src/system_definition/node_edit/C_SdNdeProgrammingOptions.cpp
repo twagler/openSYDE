@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Dialog for system node programming properties (implementation)
@@ -14,7 +14,6 @@
 
 #include "stwerrors.hpp"
 #include "TglUtils.hpp"
-#include "C_GtGetText.hpp"
 #include "C_PuiSdHandler.hpp"
 
 #include "C_SdNdeProgrammingOptions.hpp"
@@ -72,7 +71,7 @@ C_SdNdeProgrammingOptions::C_SdNdeProgrammingOptions(stw::opensyde_gui_elements:
                                                 static_cast<int32_t>(C_OscNodeCodeExportSettings::eFLOAT32));
    this->mpc_Ui->pc_ComboBoxScaling->insertItem(1, "Float64",
                                                 static_cast<int32_t>(C_OscNodeCodeExportSettings::eFLOAT64));
-   this->mpc_Ui->pc_ComboBoxScaling->insertItem(2, C_GtGetText::h_GetText("Disabled"),
+   this->mpc_Ui->pc_ComboBoxScaling->insertItem(2, "Disabled",
                                                 static_cast<int32_t>(C_OscNodeCodeExportSettings::eNONE));
 
    //Load AFTER ranges are valid
@@ -82,8 +81,8 @@ C_SdNdeProgrammingOptions::C_SdNdeProgrammingOptions(stw::opensyde_gui_elements:
    this->mrc_ParentDialog.SetWidget(this);
 
    // set main title
-   this->mrc_ParentDialog.SetTitle(C_GtGetText::h_GetText("Source Code Generation"));
-   this->mrc_ParentDialog.SetSubTitle(C_GtGetText::h_GetText("Settings"));
+   this->mrc_ParentDialog.SetTitle("Source Code Generation");
+   this->mrc_ParentDialog.SetSubTitle("Settings");
 
    // connects
    connect(this->mpc_Ui->pc_BushButtonOk, &QPushButton::clicked, this, &C_SdNdeProgrammingOptions::m_OkClicked);
@@ -107,49 +106,49 @@ C_SdNdeProgrammingOptions::~C_SdNdeProgrammingOptions(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeProgrammingOptions::InitStaticNames(void) const
 {
-   this->mpc_Ui->pc_BushButtonOk->setText(C_GtGetText::h_GetText("OK"));
-   this->mpc_Ui->pc_BushButtonCancel->setText(C_GtGetText::h_GetText("Cancel"));
+   this->mpc_Ui->pc_BushButtonOk->setText("OK");
+   this->mpc_Ui->pc_BushButtonCancel->setText("Cancel");
 
-   this->mpc_Ui->pc_LabelGeneral->setText(C_GtGetText::h_GetText("General"));
-   this->mpc_Ui->pc_LabelScaling->setText(C_GtGetText::h_GetText("Scaling values data type"));
+   this->mpc_Ui->pc_LabelGeneral->setText("General");
+   this->mpc_Ui->pc_LabelScaling->setText("Scaling values data type");
 
-   this->mpc_Ui->pc_LabelDPDHeading->setText(C_GtGetText::h_GetText("Diagnostic Protocol Driver"));
-   this->mpc_Ui->pc_LabelDPD->setText(C_GtGetText::h_GetText("Diagnostic protocol driver is implemented by"));
-   this->mpc_Ui->pc_LabelNBT->setText(C_GtGetText::h_GetText("Number of buffered CAN Tx messages"));
-   this->mpc_Ui->pc_LabelNBR->setText(C_GtGetText::h_GetText("Number of buffered CAN Rx routing messages"));
-   this->mpc_Ui->pc_LabelMNO->setText(C_GtGetText::h_GetText("Maximum number of cyclic/event driven transmissions "
-                                                             "in parallel"));
+   this->mpc_Ui->pc_LabelDPDHeading->setText("Diagnostic Protocol Driver");
+   this->mpc_Ui->pc_LabelDPD->setText("Diagnostic protocol driver is implemented by");
+   this->mpc_Ui->pc_LabelNBT->setText("Number of buffered CAN Tx messages");
+   this->mpc_Ui->pc_LabelNBR->setText("Number of buffered CAN Rx routing messages");
+   this->mpc_Ui->pc_LabelMNO->setText("Maximum number of cyclic/event driven transmissions "
+                                                             "in parallel");
 
    //Tool tips
    this->mpc_Ui->pc_LabelScaling->SetToolTipInformation(
-      C_GtGetText::h_GetText("Scaling Values"),
-      C_GtGetText::h_GetText("Choose data type for offset and factor constants or disable scaling support.\n"
+      "Scaling Values",
+      "Choose data type for offset and factor constants or disable scaling support.\n"
                              "Options:\n"
                              " - Float32: Offset and factor constants are generated as single-precision float, e.g. 1.23F\n"
                              " - Float64: Offset and factor constants are generated as double-precision float, e.g. 1.23\n"
-                             " - Disabled: Offset, factor and scaling macros are not generated at all"));
+                             " - Disabled: Offset, factor and scaling macros are not generated at all");
    this->mpc_Ui->pc_LabelDPDHeading->SetToolTipInformation(
-      C_GtGetText::h_GetText("Diagnostic Protocol Driver"),
-      C_GtGetText::h_GetText("The diagnostic protocol driver provides access to Datapool content via the openSYDE "
-                             "communication protocol."));
+      "Diagnostic Protocol Driver",
+      "The diagnostic protocol driver provides access to Datapool content via the openSYDE "
+                             "communication protocol.");
    this->mpc_Ui->pc_LabelDPD->SetToolTipInformation(
-      C_GtGetText::h_GetText("Diagnostic protocol driver is implemented by"),
-      C_GtGetText::h_GetText("To which application should the diagnostic protocol driver be added?"));
+      "Diagnostic protocol driver is implemented by",
+      "To which application should the diagnostic protocol driver be added?");
    this->mpc_Ui->pc_LabelNBT->SetToolTipInformation(
-      C_GtGetText::h_GetText("Number of buffered CAN Tx messages"),
-      C_GtGetText::h_GetText("Maximum number of CAN Tx messages the server can buffer "
+      "Number of buffered CAN Tx messages",
+      "Maximum number of CAN Tx messages the server can buffer "
                              "(used for all transferred CAN messages).\n"
-                             "\nDefault value: 585"));
+                             "\nDefault value: 585");
    this->mpc_Ui->pc_LabelNBR->SetToolTipInformation(
-      C_GtGetText::h_GetText("Number of buffered CAN Rx routing messages"),
-      C_GtGetText::h_GetText("Maximum number of CAN Rx routing messages the server can buffer before the client has "
+      "Number of buffered CAN Rx routing messages",
+      "Maximum number of CAN Rx routing messages the server can buffer before the client has "
                              "to wait for an acknowledge.\n"
-                             "\nDefault value: 585"));
+                             "\nDefault value: 585");
    this->mpc_Ui->pc_LabelMNO->SetToolTipInformation(
-      C_GtGetText::h_GetText("Max number of cyclic/event driven transmissions in parallel"),
-      C_GtGetText::h_GetText("This refers to the maximum number of parallel cyclic and event driven diagnostic "
+      "Max number of cyclic/event driven transmissions in parallel",
+      "This refers to the maximum number of parallel cyclic and event driven diagnostic "
                              "transmissions you are allowed to configure for this server.\n"
-                             "\nDefault value: 64"));
+                             "\nDefault value: 64");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

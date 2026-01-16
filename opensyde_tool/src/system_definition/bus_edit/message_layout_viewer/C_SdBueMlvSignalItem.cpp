@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Graphics item for signal items of message layout viewer (implementation)
@@ -18,8 +18,6 @@
 #include "constants.hpp"
 
 #include "C_SdBueMlvSignalItem.hpp"
-#include "C_GtGetText.hpp"
-
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
@@ -396,14 +394,14 @@ void C_SdBueMlvSignalItem::paint(QPainter * const opc_Painter, const QStyleOptio
          u32_Alignment |= static_cast<uint32_t>(Qt::AlignLeft);
 
          // draw the text
-         opc_Painter->drawText(c_Rect, static_cast<int32_t>(u32_Alignment), C_GtGetText::h_GetText("MSB"));
+         opc_Painter->drawText(c_Rect, static_cast<int32_t>(u32_Alignment), "MSB");
       }
       if (this->mq_ShowLsb == true)
       {
          u32_Alignment |= static_cast<uint32_t>(Qt::AlignRight);
 
          // draw the text
-         opc_Painter->drawText(c_Rect, static_cast<int32_t>(u32_Alignment), C_GtGetText::h_GetText("LSB"));
+         opc_Painter->drawText(c_Rect, static_cast<int32_t>(u32_Alignment), "LSB");
       }
    }
 }

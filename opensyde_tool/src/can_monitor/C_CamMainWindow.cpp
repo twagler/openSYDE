@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Main window for project openSYDE CAN Monitor (implementation)
@@ -31,7 +31,6 @@
 #include "C_CamProHandler.hpp"
 #include "C_CamDbHandler.hpp"
 #include "C_OgeWiCustomMessage.hpp"
-#include "C_GtGetText.hpp"
 #include "C_HeHandler.hpp"
 
 #include <QDebug>
@@ -495,28 +494,28 @@ void C_CamMainWindow::m_StartLogging(void)
       switch (s32_Return)
       {
       case C_RD_WR:
-         c_Text = C_GtGetText::h_GetText("No valid CAN DLL found.");
+         c_Text = "No valid CAN DLL found.";
          break;
       case C_CONFIG:
          {
             const uint32_t u32_BITNESS = 8 * sizeof(size_t);
-            c_Text = static_cast<QString>(C_GtGetText::h_GetText("CAN DLL loading not successful. "
-                                                                 "Make sure to use a %1-bit DLL.")).arg(u32_BITNESS);
+            c_Text = static_cast<QString>("CAN DLL loading not successful. "
+                                                                 "Make sure to use a %1-bit DLL.").arg(u32_BITNESS);
             break;
          }
       case C_COM:
-         c_Text = C_GtGetText::h_GetText("CAN DLL initialization not successful.");
+         c_Text = "CAN DLL initialization not successful.";
          break;
       case C_WARN:
          c_MessageBox.SetType(C_OgeWiCustomMessage::eWARNING);
-         c_Text = C_GtGetText::h_GetText("Used bitrate could not used for bus load calculation."
-                                         " Bus load will not work.");
+         c_Text = "Used bitrate could not used for bus load calculation."
+                                         " Bus load will not work.";
          break;
       default:
          break;
       }
 
-      c_MessageBox.SetHeading(C_GtGetText::h_GetText("Starting CAN monitoring"));
+      c_MessageBox.SetHeading("Starting CAN monitoring");
       c_MessageBox.SetDescription(c_Text);
       c_MessageBox.Execute();
    }
@@ -1392,9 +1391,9 @@ void C_CamMainWindow::m_OnCanDllConfigChange(void)
       {
          C_OgeWiCustomMessage c_MessageBox(this, C_OgeWiCustomMessage::eERROR);
          c_MessageBox.SetType(C_OgeWiCustomMessage::eWARNING);
-         c_MessageBox.SetHeading(C_GtGetText::h_GetText("Starting CAN monitoring"));
-         c_MessageBox.SetDescription(C_GtGetText::h_GetText("Used bitrate could not used for bus load calculation."
-                                                            " Bus load will not work."));
+         c_MessageBox.SetHeading("Starting CAN monitoring");
+         c_MessageBox.SetDescription("Used bitrate could not used for bus load calculation."
+                                                            " Bus load will not work.");
          c_MessageBox.Execute();
 
          s32_Bitrate = 0;
@@ -1457,11 +1456,11 @@ void C_CamMainWindow::m_DisplayCheckMessagesDialog(const QString & orc_DatabaseP
       QString c_Details;
       C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eINFORMATION);
 
-      c_Message.SetHeading(C_GtGetText::h_GetText("Message Generator consistency check"));
-      c_Message.SetDescription(C_GtGetText::h_GetText("Inconsistent messages in message generator found. "
-                                                      "These are removed from message generator. "));
+      c_Message.SetHeading("Message Generator consistency check");
+      c_Message.SetDescription("Inconsistent messages in message generator found. "
+                                                      "These are removed from message generator. ");
 
-      c_Details = C_GtGetText::h_GetText("Following messages are removed from message generator: \n");
+      c_Details = "Following messages are removed from message generator: \n";
 
       for (uint32_t u32_It = 0UL; u32_It < orc_Indices.size(); ++u32_It)
       {

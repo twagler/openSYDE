@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for toolbox of system definition
@@ -21,7 +21,6 @@
 #include "constants.hpp"
 #include "C_SclIniFile.hpp"
 #include "C_SdTopologyToolbox.hpp"
-#include "C_GtGetText.hpp"
 #include "ui_C_SdTopologyToolbox.h"
 #include "C_SebToolboxUtil.hpp"
 #include "C_OscSystemDefinition.hpp"
@@ -82,7 +81,7 @@ C_SdTopologyToolbox::C_SdTopologyToolbox(QWidget * const opc_Parent) :
    this->mpc_Ui->pc_BlankTopWidgetSearch->setVisible(false);
    this->mpc_Ui->pc_BlankTopWidgetSearch->SetBackgroundColor(12);
    this->mpc_Ui->pc_LabelSearchNotFound->setVisible(false);
-   this->mpc_Ui->pc_LabelSearchNotFound->setText(C_GtGetText::h_GetText("No results found"));
+   this->mpc_Ui->pc_LabelSearchNotFound->setText("No results found");
    this->mpc_Ui->pc_LabelSearchNotFound->setStyleSheet("background-color: rgb(250, 250, 250);");
 
    this->mpc_Ui->pc_ScrollAreaNodesWidget->SetBackgroundColor(-1);
@@ -194,10 +193,10 @@ void C_SdTopologyToolbox::SearchChanged(const QString & orc_Text)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdTopologyToolbox::InitStaticNames(void) const
 {
-   this->mpc_Ui->pc_TabWidget->tabBar()->setTabText(0, C_GtGetText::h_GetText("Nodes"));
-   this->mpc_Ui->pc_TabWidget->tabBar()->setTabText(1, C_GtGetText::h_GetText("Buses"));
-   this->mpc_Ui->pc_TabWidget->tabBar()->setTabText(2, C_GtGetText::h_GetText("Meta"));
-   this->mpc_Ui->pc_LabelFreeElements->setText(C_GtGetText::h_GetText("Meta Information Elements"));
+   this->mpc_Ui->pc_TabWidget->tabBar()->setTabText(0, "Nodes");
+   this->mpc_Ui->pc_TabWidget->tabBar()->setTabText(1, "Buses");
+   this->mpc_Ui->pc_TabWidget->tabBar()->setTabText(2, "Meta");
+   this->mpc_Ui->pc_LabelFreeElements->setText("Meta Information Elements");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -355,16 +354,14 @@ void C_SdTopologyToolbox::m_FillToolboxDynamic(void)
                                                          this->mpc_Ui->pc_VerticalLayout1,
                                                          this);
          C_OgePubIconOnly * const pc_IconButton = c_Icons[0];
-         pc_IconButton->SetToolTipInformation(C_GtGetText::h_GetText("Add User Nodes"),
-                                              C_GtGetText::h_GetText(
-                                                 "Add user nodes to toolbox from file device desription file (.syde_defdev)"
-                                                 " or user nodes ini file (.ini)."));
+         pc_IconButton->SetToolTipInformation("Add User Nodes",
+                                              "Add user nodes to toolbox from file device desription file (.syde_defdev)"
+                                                 " or user nodes ini file (.ini).");
          connect(pc_IconButton, &C_OgePubIconOnly::clicked, this, &C_SdTopologyToolbox::m_FileBrowseDialog);
 
          C_OgePubIconOnly * const pc_ClearAllUserNodesButton = c_Icons[1];
-         pc_ClearAllUserNodesButton->SetToolTipInformation(C_GtGetText::h_GetText("Clear User Nodes"),
-                                                           C_GtGetText::h_GetText(
-                                                              "Delete all user nodes from toolbox."));
+         pc_ClearAllUserNodesButton->SetToolTipInformation("Clear User Nodes",
+                                                           "Delete all user nodes from toolbox.");
 
          connect(pc_ClearAllUserNodesButton, &C_OgePubIconOnly::clicked, this,
                  &C_SdTopologyToolbox::m_IconClearAllClicked);
@@ -410,16 +407,13 @@ void C_SdTopologyToolbox::m_FillToolboxStatic(void)
    QListWidget * pc_List;
 
    // fill draw lists with items
-   pc_List = C_SebToolboxUtil::h_AddNewList(C_GtGetText::h_GetText(
-                                               "Bus Types"), this->mpc_Ui->pc_VerticalLayout1_3, this->mc_ListWidgets,
+   pc_List = C_SebToolboxUtil::h_AddNewList("Bus Types", this->mpc_Ui->pc_VerticalLayout1_3, this->mc_ListWidgets,
                                             this);
 
-   C_SebToolboxUtil::h_AddElementToList(pc_List, C_GtGetText::h_GetText(
-                                           "CAN Bus"), "://images/system_definition/IconBus.svg", "",
-                                        C_GtGetText::h_GetText("CAN Bus"));
-   C_SebToolboxUtil::h_AddElementToList(pc_List, C_GtGetText::h_GetText(
-                                           "Ethernet Bus"), "://images/system_definition/IconBus.svg", "",
-                                        C_GtGetText::h_GetText("Ethernet Bus"));
+   C_SebToolboxUtil::h_AddElementToList(pc_List, "CAN Bus", "://images/system_definition/IconBus.svg", "",
+                                        "CAN Bus");
+   C_SebToolboxUtil::h_AddElementToList(pc_List, "Ethernet Bus", "://images/system_definition/IconBus.svg", "",
+                                        "Ethernet Bus");
    C_SebToolboxUtil::h_AddFinalSpacer(this->mpc_Ui->pc_VerticalLayout1_3, pc_List);
 
    C_SebToolboxUtil::h_InitFreeElements(this->mpc_Ui->pc_ListWidgetDrawing);
@@ -462,11 +456,10 @@ void C_SdTopologyToolbox::m_IconClearAllClicked()
    // ask user to confirm
    C_OgeWiCustomMessage c_MessageBox(this, C_OgeWiCustomMessage::E_Type::eQUESTION);
 
-   c_MessageBox.SetHeading(C_GtGetText::h_GetText("Delete User Nodes"));
-   c_MessageBox.SetDescription(C_GtGetText::h_GetText(
-                                  "Do you really want to delete all user nodes?"));
-   c_MessageBox.SetOkButtonText(C_GtGetText::h_GetText("Delete"));
-   c_MessageBox.SetNoButtonText(C_GtGetText::h_GetText("Keep"));
+   c_MessageBox.SetHeading("Delete User Nodes");
+   c_MessageBox.SetDescription("Do you really want to delete all user nodes?");
+   c_MessageBox.SetOkButtonText("Delete");
+   c_MessageBox.SetNoButtonText("Keep");
    c_MessageBox.SetCustomMinHeight(180, 180);
 
    if (c_MessageBox.Execute() == C_OgeWiCustomMessage::eYES)
@@ -490,22 +483,22 @@ void C_SdTopologyToolbox::m_ErrorHandlingUserFeedback(const QStringList & orc_Er
    C_OgeWiCustomMessage c_Message(this);
    QString c_Description;
    QString c_Details;
-   const QString c_LogLink = C_GtGetText::h_GetText("For details and possible errors see ") +
-                             C_Uti::h_GetLink(C_GtGetText::h_GetText("log file."), mc_STYLE_GUIDE_COLOR_LINK,
+   const QString c_LogLink = "For details and possible errors see " +
+                             C_Uti::h_GetLink("log file.", mc_STYLE_GUIDE_COLOR_LINK,
                                               C_OscLoggingHandler::h_GetCompleteLogFileLocation().c_str());
 
    // nodes could be added (possibly with errors) -> info box with count of added nodes
    if (ors32_AddDeviceCount > 0)
    {
-      c_Description = QString::number(ors32_AddDeviceCount) + C_GtGetText::h_GetText(" of ") + QString::number(
-         ors32_DeviceCount) + C_GtGetText::h_GetText(" node(s) successfully added to toolbox.<br/>");
+      c_Description = QString::number(ors32_AddDeviceCount) + " of " + QString::number(
+         ors32_DeviceCount) + " node(s) successfully added to toolbox.<br/>";
       c_Message.SetType(C_OgeWiCustomMessage::eINFORMATION);
       c_Message.SetCustomMinHeight(180, 210);
    }
    else
    {
       // something went wrong. Wrong ini, broken xml, node already exists
-      c_Description = C_GtGetText::h_GetText("Errors occured! See details for further information.");
+      c_Description = "Errors occured! See details for further information.";
       for (int32_t s32_Error = 0; s32_Error < orc_Errors.size(); ++s32_Error)
       {
          c_Details += "* " + orc_Errors[s32_Error] + "<br/>";
@@ -516,7 +509,7 @@ void C_SdTopologyToolbox::m_ErrorHandlingUserFeedback(const QStringList & orc_Er
 
    c_Details += c_LogLink;
 
-   c_Message.SetHeading(C_GtGetText::h_GetText("Add User Node"));
+   c_Message.SetHeading("Add User Node");
    c_Message.SetDescription(c_Description);
    c_Message.SetDetails(c_Details);
    c_Message.Execute();
@@ -536,9 +529,8 @@ void C_SdTopologyToolbox::m_FileBrowseDialog(void)
    }
 
    {
-      QFileDialog c_Dialog(this, C_GtGetText::h_GetText("Select Device Definition or Ini File"),
-                           c_Folder, static_cast<QString>(C_GtGetText::h_GetText(
-                                                             "Device Definition")) + " (*.syde_devdef *.ini)");
+      QFileDialog c_Dialog(this, "Select Device Definition or Ini File",
+                           c_Folder, static_cast<QString>("Device Definition") + " (*.syde_devdef *.ini)");
 
       c_Dialog.setDefaultSuffix("*.syde_devdef");
       c_Dialog.setFileMode(QFileDialog::ExistingFiles);
@@ -620,12 +612,11 @@ void C_SdTopologyToolbox::m_LoadUserDeviceDefinitionPaths(const QString & orc_Pa
       if (q_IsValidUserIni == false)
       {
          // info for user how a valid user_devices.ini should look like
-         QString c_ErrorDetails = C_GtGetText::h_GetText(
-            ". File must have this structure:<br/>");
+         QString c_ErrorDetails = ". File must have this structure:<br/>";
          c_ErrorDetails +=
             "<br/>[DeviceTypes]<br/>NumTypes=1<br/>TypeName1=User Nodes<br/><br/>[User Nodes]<br/>DeviceCount="
             "&lt;number_of_user_devices&gt;<br/>Device1=&lt;path_to_user_syde_devdef&gt;<br/>...<br/>";
-         orc_Errors.append(static_cast<QString>(C_GtGetText::h_GetText("Could not load file: ")) +
+         orc_Errors.append(static_cast<QString>("Could not load file: ") +
                            orc_Path + c_ErrorDetails);
 
          osc_write_log_error("Loading from ini file",
@@ -641,7 +632,7 @@ void C_SdTopologyToolbox::m_LoadUserDeviceDefinitionPaths(const QString & orc_Pa
    else
    {
       orc_Errors.append(
-         static_cast<QString>(C_GtGetText::h_GetText("File type '%1' not allowed.")).arg(c_FileInfo.completeSuffix()));
+         static_cast<QString>("File type '%1' not allowed.").arg(c_FileInfo.completeSuffix()));
       osc_write_log_error("Loading file",
                           "Wrong file suffix \"" + static_cast<stw::scl::C_SclString>(orc_Path.toStdString().c_str()) +
                           "\".");
@@ -673,11 +664,11 @@ int32_t C_SdTopologyToolbox::m_AddUserNodesToIni(const QStringList & orc_UserDev
 
          if (s32_Result != C_NO_ERR)
          {
-            QString c_Error = C_GtGetText::h_GetText("Could not add device: \"") + orc_UserDeviceDefPaths[s32_ItPath] +
+            QString c_Error = "Could not add device: \"" + orc_UserDeviceDefPaths[s32_ItPath] +
                               ("\".<br/>");
             if (s32_Result == C_OVERFLOW)
             {
-               c_Error += C_GtGetText::h_GetText("Device does already exist.<br/>");
+               c_Error += "Device does already exist.<br/>";
             }
             orc_Errors.append(c_Error);
          }
@@ -790,8 +781,8 @@ int32_t C_SdTopologyToolbox::m_DeleteUserNode(const QPoint & orc_Pos)
             if (pc_Node->c_DeviceType == (*c_ItEraseDevice).GetDisplayName().c_str())
             {
                C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eERROR);
-               c_Message.SetHeading(C_GtGetText::h_GetText("Delete User Nodes"));
-               c_Message.SetDescription(C_GtGetText::h_GetText("Selected user node is still used in Network Topology."));
+               c_Message.SetHeading("Delete User Nodes");
+               c_Message.SetDescription("Selected user node is still used in Network Topology.");
                c_Message.SetCustomMinHeight(180, 180);
                c_Message.Execute();
                s32_Result = C_BUSY;
@@ -865,9 +856,8 @@ int32_t C_SdTopologyToolbox::m_ClearAllUserNodes()
                if (pc_Node->c_DeviceType == c_Devices[u32_ItDevice].c_DeviceName)
                {
                   C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eERROR);
-                  c_Message.SetHeading(C_GtGetText::h_GetText("Delete User Nodes"));
-                  c_Message.SetDescription(C_GtGetText::h_GetText(
-                                              "At least one user node is used in Network Topology."));
+                  c_Message.SetHeading("Delete User Nodes");
+                  c_Message.SetDescription("At least one user node is used in Network Topology.");
                   c_Message.SetCustomMinHeight(180, 180);
                   c_Message.Execute();
                   s32_Result = C_DEFAULT;

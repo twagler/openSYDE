@@ -127,14 +127,12 @@ set (OPENSYDE_GUI_INCLUDES
    ${PROJECT_ROOT}/src/project_gui/system_definition/node
    ${PROJECT_ROOT}/src/project_gui/system_definition/node/can
    ${PROJECT_ROOT}/src/help_engine
-   ${PROJECT_ROOT}/src/gettext
    ${PROJECT_ROOT}/src/util
    ${PROJECT_ROOT}/src/precompiled_headers/gui
 )
 
 # Include path with library modules
 set (OPENSYDE_GUI_LIB_INCLUDES
-   ${PROJECT_ROOT}/libs/gettext
    ${PROJECT_ROOT}/libs/flexlexer
    ${PROJECT_ROOT}/libs/qcustomplot
    ${PROJECT_ROOT}/libs/openssl/include
@@ -256,7 +254,6 @@ set(OPENSYDE_SOURCES
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacPemFileInfoPopUp.cpp
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacPemFileOptionsPopUp.cpp
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacPemFilesListWidget.cpp
-   ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacPemFilesWidget.cpp
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacSectionNodeDatablockWidget.cpp
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacSectionNodeFilesWidget.cpp
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacSectionNodeWidget.cpp
@@ -357,7 +354,6 @@ set(OPENSYDE_SOURCES
    ${PROJECT_ROOT}/src/system_definition/managers/undo/C_SdManUnoTopologyReconnectBaseCommand.cpp
    ${PROJECT_ROOT}/src/system_definition/managers/undo/C_SdManUnoTopologyReconnectBusCommand.cpp
    ${PROJECT_ROOT}/src/system_definition/managers/undo/C_SdManUnoTopologySetupStyleCommand.cpp
-   ${PROJECT_ROOT}/src/gettext/C_GtGetText.cpp
    ${PROJECT_ROOT}/src/system_definition/managers/undo/C_SdManUnoTopologyChangeInterfaceCommand.cpp
    ${PROJECT_ROOT}/src/opensyde_gui_elements/label/C_OgeLabGroupItem.cpp
    ${PROJECT_ROOT}/src/opensyde_gui_elements/label/C_OgeLabGroupSubItem.cpp

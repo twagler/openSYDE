@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Label with custom context menu (implementation)
@@ -21,8 +21,6 @@
 #include "C_Uti.hpp"
 #include "constants.hpp"
 #include "stwtypes.hpp"
-#include "C_GtGetText.hpp"
-
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_gui_logic;
@@ -90,7 +88,7 @@ void C_OgeLabExternalLink::m_SetupContextMenu(void)
    this->mpc_ContextMenu->clear();
 
    // add the actions
-   this->mpc_ContextMenu->addAction(C_GtGetText::h_GetText("Copy Link Location"),
+   this->mpc_ContextMenu->addAction("Copy Link Location",
                                     this, &C_OgeLabExternalLink::m_CopyLinkLocation);
 }
 

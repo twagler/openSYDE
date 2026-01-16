@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Complete project information (implementation)
@@ -30,7 +30,6 @@
 #include "stwerrors.hpp"
 #include "C_Uti.hpp"
 #include "C_UsHandler.hpp"
-#include "C_GtGetText.hpp"
 #include "C_PuiSvHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -549,7 +548,7 @@ void C_PuiProject::LoadEmpty(void)
    this->c_Editor = c_Author;
    this->c_CreationTime = c_Tmp.c_CreationTime;
    this->c_ModificationTime = c_Tmp.c_ModificationTime;
-   this->c_Template = C_GtGetText::h_GetText("New project");
+   this->c_Template = "New project";
    this->c_Version = c_Tmp.c_Version;
    C_PuiSdHandler::h_GetInstance()->Clear(true);
    C_PuiSvHandler::h_GetInstance()->Clear();

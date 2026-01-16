@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Offers visualization and functionality of a PC. (implementation)
@@ -17,7 +17,6 @@
 
 #include "gitypes.hpp"
 #include "C_GiSvPc.hpp"
-#include "C_GtGetText.hpp"
 #include "C_PuiSvHandler.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_OgePopUpDialog.hpp"
@@ -286,9 +285,9 @@ bool C_GiSvPc::OpenDialog(void) const
       {
          QGraphicsView * const pc_GraphicsView = this->scene()->views().at(0);
          C_OgeWiCustomMessage c_Message(pc_GraphicsView);
-         c_Message.SetHeading(C_GtGetText::h_GetText("Ethernet settings"));
-         c_Message.SetDescription(C_GtGetText::h_GetText("Setup your Ethernet adapter settings in Windows system "
-                                                         "network configuration."));
+         c_Message.SetHeading("Ethernet settings");
+         c_Message.SetDescription("Setup your Ethernet adapter settings in Windows system "
+                                                         "network configuration.");
          c_Message.SetCustomMinHeight(180, 180);
          c_Message.Execute();
       }
@@ -297,8 +296,8 @@ bool C_GiSvPc::OpenDialog(void) const
    {
       QGraphicsView * const pc_GraphicsView = this->scene()->views().at(0);
       C_OgeWiCustomMessage c_Message(pc_GraphicsView);
-      c_Message.SetHeading(C_GtGetText::h_GetText("Configure PC Interface settings"));
-      c_Message.SetDescription(C_GtGetText::h_GetText("Not available while being connected."));
+      c_Message.SetHeading("Configure PC Interface settings");
+      c_Message.SetDescription("Not available while being connected.");
       c_Message.SetCustomMinHeight(180, 180);
       c_Message.Execute();
    }
@@ -395,7 +394,7 @@ void C_GiSvPc::GenerateHint()
       const C_PuiSvPc c_PcData = pc_View->GetPuiPcData();
 
       // content
-      c_ToolTipContent += C_GtGetText::h_GetText("CAN Interface: ");
+      c_ToolTipContent += "CAN Interface: ";
       switch (c_PcData.GetCanDllType())
       {
       case C_PuiSvPc::ePEAK:
@@ -405,18 +404,18 @@ void C_GiSvPc::GenerateHint()
          c_ToolTipContent += "Vector";
          break;
       case C_PuiSvPc::eOTHER:
-         c_ToolTipContent += static_cast<QString>(C_GtGetText::h_GetText("Other (%1)")).arg(
+         c_ToolTipContent += static_cast<QString>("Other (%1)").arg(
             c_PcData.GetCustomCanDllPath());
          break;
       default:
          break;
       }
 
-      c_ToolTipContent += C_GtGetText::h_GetText("\nDouble click on PC to enter CAN interface settings.");
+      c_ToolTipContent += "\nDouble click on PC to enter CAN interface settings.";
       this->SetDefaultToolTipContent(c_ToolTipContent);
 
       // heading
-      this->SetDefaultToolTipHeading(C_GtGetText::h_GetText("openSYDE Client PC"));
+      this->SetDefaultToolTipHeading("openSYDE Client PC");
    }
 }
 

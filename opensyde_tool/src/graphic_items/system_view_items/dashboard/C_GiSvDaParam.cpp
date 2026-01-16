@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Class for system view dashboard parameterization table item (implementation)
@@ -19,7 +19,6 @@
 #include "stwtypes.hpp"
 #include "TglUtils.hpp"
 #include "stwerrors.hpp"
-#include "C_GtGetText.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_GiSvDaParam.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -329,8 +328,7 @@ void C_GiSvDaParam::ConfigureContextMenu(C_SyvDaContextMenuManager * const opc_C
          if (mpc_AddDataElement == NULL)
          {
             mpc_AddDataElement =
-               opc_ContextMenuManager->RegisterActionWithKeyboardShortcut(C_GtGetText::h_GetText(
-                                                                             "Add list(s)"),
+               opc_ContextMenuManager->RegisterActionWithKeyboardShortcut("Add list(s)",
                                                                           static_cast<int32_t>(Qt::CTRL) +
                                                                           static_cast<int32_t>(Qt::Key_Plus));
             // The action has to be set invisible initial. Only with that the function SetVisibleWithAutoHide can work.

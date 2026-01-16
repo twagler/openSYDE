@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Offers system view setup specific visualization and functionality of a node. (implementation)
@@ -18,7 +18,6 @@
 #include "stwerrors.hpp"
 #include "constants.hpp"
 
-#include "C_GtGetText.hpp"
 #include "C_ImpUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"

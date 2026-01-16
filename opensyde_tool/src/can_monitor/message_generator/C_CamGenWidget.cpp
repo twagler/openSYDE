@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for configuring and showing the CAN message generation (implementation)
@@ -16,7 +16,6 @@
 #include "ui_C_CamGenWidget.h"
 
 #include "C_CamOgeWiSectionHeader.hpp"
-#include "C_GtGetText.hpp"
 #include "C_UsHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -50,7 +49,7 @@ C_CamGenWidget::C_CamGenWidget(QWidget * const opc_Parent) :
 {
    this->mpc_Ui->setupUi(this);
 
-   this->mpc_Ui->pc_WiTitle->SetTitle(C_GtGetText::h_GetText("Message Generator"));
+   this->mpc_Ui->pc_WiTitle->SetTitle("Message Generator");
    this->mpc_Ui->pc_WiTitle->SetIconType(C_CamOgeWiSectionHeader::E_ButtonType::eUPDOWN);
 
    // distribute remaining space equal over messages and signals widgets

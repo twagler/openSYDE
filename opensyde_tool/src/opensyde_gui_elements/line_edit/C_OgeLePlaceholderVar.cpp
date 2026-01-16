@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Class for line edit with placeholder variables support (implementation)
@@ -16,8 +16,6 @@
 
 #include "C_PuiUtil.hpp"
 #include "C_OgeLePlaceholderVar.hpp"
-#include "C_GtGetText.hpp"
-
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
@@ -109,6 +107,6 @@ void C_OgeLePlaceholderVar::focusOutEvent(QFocusEvent * const opc_Event)
 //----------------------------------------------------------------------------------------------------------------------
 void C_OgeLePlaceholderVar::m_UpdateTooltip(void)
 {
-   this->SetToolTipInformation(C_GtGetText::h_GetText("Path"),
+   this->SetToolTipInformation("Path",
                                C_PuiUtil::h_ResolvePlaceholderVariables(this->text(), this->mc_DbProjectPath));
 }

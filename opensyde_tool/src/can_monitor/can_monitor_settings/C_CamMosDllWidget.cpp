@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Generic part for handling CAN DLL configuration (implementation)
@@ -21,7 +21,6 @@
 #include "stwerrors.hpp"
 #include "C_Can.hpp"
 #include "C_OscUtils.hpp"
-#include "C_GtGetText.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_Uti.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -153,16 +152,16 @@ void C_CamMosDllWidget::m_InitUi(void)
    this->mpc_LineEditCustomDllPath->SetDragAndDropActiveForFile("dll");
 
    // initialize title widget
-   this->mpc_Ui->pc_WiHeader->SetTitle(C_GtGetText::h_GetText("PC CAN Interface Configuration"));
+   this->mpc_Ui->pc_WiHeader->SetTitle("PC CAN Interface Configuration");
    this->mpc_Ui->pc_WiHeader->SetIcon("://images/IconConfig.svg");
    this->mpc_Ui->pc_WiHeader->SetToggle(false);
 
    // initialize text
-   this->mpc_Ui->pc_PushButtonConfigure->setText(C_GtGetText::h_GetText("Configure Interface"));
-   this->mpc_Ui->pc_PushButtonConfigure->SetToolTipInformation(C_GtGetText::h_GetText("Configure Interface"),
-                                                               C_GtGetText::h_GetText("Configure CAN DLL interface."));
-   this->mpc_Ui->pc_LabelCustomDllPath->setText(C_GtGetText::h_GetText("DLL path"));
-   this->mpc_Ui->pc_RadioButtonOther->setText(C_GtGetText::h_GetText("Other"));
+   this->mpc_Ui->pc_PushButtonConfigure->setText("Configure Interface");
+   this->mpc_Ui->pc_PushButtonConfigure->SetToolTipInformation("Configure Interface",
+                                                               "Configure CAN DLL interface.");
+   this->mpc_Ui->pc_LabelCustomDllPath->setText("DLL path");
+   this->mpc_Ui->pc_RadioButtonOther->setText("Other");
    this->mpc_Ui->pc_PushButtonBrowse->setText("");
    this->mpc_PushButtonVariables->setText("");
 
@@ -289,10 +288,10 @@ void C_CamMosDllWidget::m_ConfigureDllClicked(void)
       {
          const uint32_t u32_BITNESS = 8 * sizeof(size_t);
          C_OgeWiCustomMessage c_MessageBox(this->parentWidget(), C_OgeWiCustomMessage::E_Type::eWARNING);
-         c_MessageBox.SetHeading(C_GtGetText::h_GetText("PC CAN Interface configuration"));
+         c_MessageBox.SetHeading("PC CAN Interface configuration");
          c_MessageBox.SetDescription(
-            static_cast<QString>(C_GtGetText::h_GetText("CAN DLL initialization not successful. "
-                                                        "Make sure to use a %1-bit DLL.")).arg(u32_BITNESS));
+            static_cast<QString>("CAN DLL initialization not successful. "
+                                                        "Make sure to use a %1-bit DLL.").arg(u32_BITNESS));
          c_MessageBox.Execute();
       }
       (void)c_Can.DLL_Close();
@@ -300,8 +299,8 @@ void C_CamMosDllWidget::m_ConfigureDllClicked(void)
    else
    {
       C_OgeWiCustomMessage c_MessageBox(this->parentWidget(), C_OgeWiCustomMessage::E_Type::eWARNING);
-      c_MessageBox.SetHeading(C_GtGetText::h_GetText("PC CAN Interface configuration"));
-      c_MessageBox.SetDescription(C_GtGetText::h_GetText("CAN DLL not found."));
+      c_MessageBox.SetHeading("PC CAN Interface configuration");
+      c_MessageBox.SetDescription("CAN DLL not found.");
       c_MessageBox.Execute();
    }
 }
@@ -383,8 +382,8 @@ void C_CamMosDllWidget::m_OnBrowse(void)
 {
    QString c_Path;
    QString c_Folder = this->m_GetCurrentDllPath();
-   const QString c_Filter = static_cast<QString>(C_GtGetText::h_GetText("CAN DLL ")) + "(*.dll)";
-   QFileDialog c_Dialog(this, C_GtGetText::h_GetText("Select CAN DLL"), c_Folder, c_Filter);
+   const QString c_Filter = static_cast<QString>("CAN DLL ") + "(*.dll)";
+   QFileDialog c_Dialog(this, "Select CAN DLL", c_Folder, c_Filter);
 
    if ((c_Folder == "") || (static_cast<QFileInfo>(c_Folder).dir().exists() == false))
    {
@@ -471,17 +470,17 @@ void C_CamMosDllWidget::m_OnCustomDllEdited(void)
    {
       // Invalid name: revert and inform user
       C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eERROR);
-      const QString c_Heading = C_GtGetText::h_GetText("PC CAN Interface configuration");
+      const QString c_Heading = "PC CAN Interface configuration";
       const QString c_MessageText =
-         C_GtGetText::h_GetText("CAN DLL path contains invalid characters.");
+         "CAN DLL path contains invalid characters.";
       QString c_Details;
 
-      c_Details = C_GtGetText::h_GetText("Path:\n");
+      c_Details = "Path:\n";
       c_Details += c_Path;
 
       if (c_Path != c_ResolvedPath)
       {
-         c_Details += C_GtGetText::h_GetText(" (resolved: ") + c_ResolvedPath + ")";
+         c_Details += " (resolved: " + c_ResolvedPath + ")";
       }
 
       // disconnect to ignore editingFinished signal on focus lose because of popup

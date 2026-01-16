@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Model component for message generator table (implementation)
@@ -18,7 +18,6 @@
 #include "TglUtils.hpp"
 #include "constants.hpp"
 #include "stwerrors.hpp"
-#include "C_GtGetText.hpp"
 #include "cam_constants.hpp"
 #include "C_CamGenSigUtil.hpp"
 #include "C_CamProHandler.hpp"
@@ -166,37 +165,37 @@ QVariant C_CamGenTableModel::headerData(const int32_t os32_Section, const Qt::Or
          switch (e_Col)
          {
          case eRTR:
-            c_Header = C_GtGetText::h_GetText("RTR");
+            c_Header = "RTR";
             break;
          case eNAME:
-            c_Header = C_GtGetText::h_GetText("Name");
+            c_Header = "Name";
             break;
          case eID:
-            c_Header = C_GtGetText::h_GetText("ID");
+            c_Header = "ID";
             break;
          case eDLC:
-            c_Header = C_GtGetText::h_GetText("DLC");
+            c_Header = "DLC";
             break;
          case eDATA:
-            c_Header = C_GtGetText::h_GetText("Data");
+            c_Header = "Data";
             break;
          case eCYCLIC_TRIGGER:
-            c_Header = C_GtGetText::h_GetText("Cyclic");
+            c_Header = "Cyclic";
             break;
          case eCYCLIC_TIME:
-            c_Header = C_GtGetText::h_GetText("Cycle Time");
+            c_Header = "Cycle Time";
             break;
          case eMANUAL_TRIGGER:
-            c_Header = C_GtGetText::h_GetText("Manual Trigger");
+            c_Header = "Manual Trigger";
             break;
          case eXTD:
-            c_Header = C_GtGetText::h_GetText("XTD");
+            c_Header = "XTD";
             break;
          case eKEY:
-            c_Header = C_GtGetText::h_GetText("Key");
+            c_Header = "Key";
             break;
          case eAUTO_SUPPORT:
-            c_Header = C_GtGetText::h_GetText("Auto Protocol");
+            c_Header = "Auto Protocol";
             break;
          default:
             tgl_assert(false);
@@ -211,37 +210,37 @@ QVariant C_CamGenTableModel::headerData(const int32_t os32_Section, const Qt::Or
          switch (e_Col)
          {
          case eRTR:
-            c_Retval = C_GtGetText::h_GetText("Remote Transmission Request");
+            c_Retval = "Remote Transmission Request";
             break;
          case eNAME:
-            c_Retval = C_GtGetText::h_GetText("Name");
+            c_Retval = "Name";
             break;
          case eID:
-            c_Retval = C_GtGetText::h_GetText("Identifier");
+            c_Retval = "Identifier";
             break;
          case eDLC:
-            c_Retval = C_GtGetText::h_GetText("Data Length Code");
+            c_Retval = "Data Length Code";
             break;
          case eDATA:
-            c_Retval = C_GtGetText::h_GetText("Data");
+            c_Retval = "Data";
             break;
          case eCYCLIC_TRIGGER:
-            c_Retval = C_GtGetText::h_GetText("Cyclic Trigger");
+            c_Retval = "Cyclic Trigger";
             break;
          case eCYCLIC_TIME:
-            c_Retval = C_GtGetText::h_GetText("Cycle Time");
+            c_Retval = "Cycle Time";
             break;
          case eMANUAL_TRIGGER:
-            c_Retval = C_GtGetText::h_GetText("Manual Trigger");
+            c_Retval = "Manual Trigger";
             break;
          case eXTD:
-            c_Retval = C_GtGetText::h_GetText("Extended");
+            c_Retval = "Extended";
             break;
          case eKEY:
-            c_Retval = C_GtGetText::h_GetText("Key");
+            c_Retval = "Key";
             break;
          case eAUTO_SUPPORT:
-            c_Retval = C_GtGetText::h_GetText("Auto ECeS/ECoS Protocol Support");
+            c_Retval = "Auto ECeS/ECoS Protocol Support";
             break;
          default:
             tgl_assert(false);
@@ -258,40 +257,40 @@ QVariant C_CamGenTableModel::headerData(const int32_t os32_Section, const Qt::Or
          switch (e_Col)
          {
          case eRTR:
-            c_Header = C_GtGetText::h_GetText("CAN message sent as remote transmission frame.");
+            c_Header = "CAN message sent as remote transmission frame.";
             break;
          case eNAME:
-            c_Header = C_GtGetText::h_GetText("Symbolic name of the CAN message.");
+            c_Header = "Symbolic name of the CAN message.";
             break;
          case eID:
-            c_Header = C_GtGetText::h_GetText("CAN identifier of the message.");
+            c_Header = "CAN identifier of the message.";
             break;
          case eDLC:
-            c_Header = C_GtGetText::h_GetText("Number of data bytes in decimal representation.");
+            c_Header = "Number of data bytes in decimal representation.";
             break;
          case eDATA:
-            c_Header = C_GtGetText::h_GetText("CAN message data in bytes.");
+            c_Header = "CAN message data in bytes.";
             break;
          case eCYCLIC_TRIGGER:
-            c_Header = C_GtGetText::h_GetText("Transmit this CAN message cyclically.");
+            c_Header = "Transmit this CAN message cyclically.";
             break;
          case eCYCLIC_TIME:
-            c_Header = C_GtGetText::h_GetText("CAN message cycle time in ms.");
+            c_Header = "CAN message cycle time in ms.";
             break;
          case eMANUAL_TRIGGER:
-            c_Header = C_GtGetText::h_GetText("Trigger the transmission of this CAN message manually.");
+            c_Header = "Trigger the transmission of this CAN message manually.";
             break;
          case eXTD:
-            c_Header = C_GtGetText::h_GetText("CAN message ID uses extended format.");
+            c_Header = "CAN message ID uses extended format.";
             break;
          case eKEY:
-            c_Header = C_GtGetText::h_GetText("Configure key for triggering transmission of message.");
+            c_Header = "Configure key for triggering transmission of message.";
             break;
          case eAUTO_SUPPORT:
-            c_Header = C_GtGetText::h_GetText("ECeS: When sending automatic calculation of the CRC and incrementing of "
+            c_Header = "ECeS: When sending automatic calculation of the CRC and incrementing of "
                                               "the block counter is applied.\n"
                                               "ECoS: When sending the inverted second frame will be sent automatically "
-                                              "immediately after the first frame gets sent.");
+                                              "immediately after the first frame gets sent.";
             break;
          default:
             tgl_assert(false);
@@ -391,12 +390,12 @@ QVariant C_CamGenTableModel::data(const QModelIndex & orc_Index, const int32_t o
                c_Retval = static_cast<qulonglong>(pc_Message->u32_CyclicTriggerTime);
                break;
             case eMANUAL_TRIGGER:
-               c_Retval = C_GtGetText::h_GetText("Send now");
+               c_Retval = "Send now";
                break;
             case eKEY:
                if (pc_Message->c_Key.IsEmpty())
                {
-                  c_Retval = C_GtGetText::h_GetText("<none>");
+                  c_Retval = "<none>";
                }
                else
                {
@@ -1318,9 +1317,8 @@ void C_CamGenTableModel::m_SpecialXtdFlagSetHandling(const int32_t os32_Row, con
                                                                          u32_NEW_VAL) == C_NO_ERR);
       //Message
       Q_EMIT (this->SigReport(stw::opensyde_gui_elements::C_OgeWiCustomMessage::eWARNING,
-                              C_GtGetText::h_GetText("Check Message ID"),
-                              C_GtGetText::h_GetText(
-                                 "XTD flag is disabled, message ID is invalid and is reset to \"0\"")));
+                              "Check Message ID",
+                              "XTD flag is disabled, message ID is invalid and is reset to \"0\""));
 
       //lint -e{1793} Qt example
       Q_EMIT (this->dataChanged(this->index(os32_Row, s32_Col),

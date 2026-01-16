@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       System views data manager (implementation)
@@ -22,7 +22,6 @@
 #include "C_Uti.hpp"
 #include "TglFile.hpp"
 #include "TglUtils.hpp"
-#include "C_GtGetText.hpp"
 #include "C_SclChecksums.hpp"
 #include "C_OscXmlParser.hpp"
 #include "C_OscXmlParserLog.hpp"
@@ -3095,7 +3094,7 @@ QString C_PuiSvHandler::h_GetNamespace(const C_PuiSvDbNodeDataPoolListElementId 
          //            {
          //               //Append array element index
          //               c_Retval +=
-         // static_cast<QString>(C_GtGetText::h_GetText("[%1]")).arg(orc_Id.GetArrayElementIndex());
+         // static_cast<QString>("[%1]").arg(orc_Id.GetArrayElementIndex());
          //            }
          //         }
          c_Retval = C_PuiSdUtil::h_GetNamespaceDatapoolElement(orc_Id);
@@ -3119,7 +3118,7 @@ QString C_PuiSvHandler::h_GetNamespace(const C_PuiSvDbNodeDataPoolListElementId 
 //----------------------------------------------------------------------------------------------------------------------
 QString C_PuiSvHandler::h_GetShortNamespace(const C_PuiSvDbNodeDataPoolListElementId & orc_Id)
 {
-   QString c_Retval = C_GtGetText::h_GetText("Unknown HAL data element");
+   QString c_Retval = "Unknown HAL data element";
    uint32_t u32_DomainIndex;
    bool q_UseChannelIndex;
    uint32_t u32_ChannelIndex;
@@ -4292,7 +4291,7 @@ const
                    (c_RouteCalcDiag.GetState() == C_CONFIG))
                {
                   const QString c_Text = static_cast<QString>(pc_Node->c_Properties.c_Name.c_str()) +
-                                         C_GtGetText::h_GetText(" (CAN to Ethernet routing not supported)");
+                                         " (CAN to Ethernet routing not supported)";
 
                   orc_ErrorRoutingDetails[ms32_SUBMODE_SYSVIEW_SETUP][u32_Counter] = c_Text;
                }
@@ -4307,8 +4306,7 @@ const
                   if (q_RoutingCheckError == true)
                   {
                      const QString c_Text = static_cast<QString>(pc_Node->c_Properties.c_Name.c_str()) +
-                                            C_GtGetText::h_GetText(
-                        " (Communication interface flags \"Routing\" disabled or not supported.)");
+                                            " (Communication interface flags \"Routing\" disabled or not supported.)";
 
                      // Generic routing error independent of the functionality
                      orc_ErrorRoutingDetails[ms32_SUBMODE_SYSVIEW_SETUP][u32_Counter] = c_Text;
@@ -4359,25 +4357,25 @@ const
                      if ((q_RoutingDiagnosticError == true) || (q_RoutingUpdateError == true))
                      {
                         QString c_Text = static_cast<QString>(pc_Node->c_Properties.c_Name.c_str()) +
-                                         C_GtGetText::h_GetText(" (");
+                                         " (";
 
                         if (q_RoutingUpdateError == true)
                         {
-                           c_Text += C_GtGetText::h_GetText("Update ");
+                           c_Text += "Update ";
                         }
 
                         if ((q_RoutingDiagnosticError == true) && (q_RoutingUpdateError == true))
                         {
                            // Combined warning
-                           c_Text += C_GtGetText::h_GetText("and ");
+                           c_Text += "and ";
                         }
 
                         if (q_RoutingDiagnosticError == true)
                         {
-                           c_Text += C_GtGetText::h_GetText("Dashboard ");
+                           c_Text += "Dashboard ";
                         }
 
-                        c_Text += C_GtGetText::h_GetText("disabled)");
+                        c_Text += "disabled)";
 
                         orc_SetupWarningRoutingDetails[u32_Counter] = c_Text;
                      }
@@ -4449,35 +4447,30 @@ int32_t C_PuiSvHandler::m_CheckRouting(const uint32_t ou32_ViewIndex,
          switch (u32_ErrorCounter)
          {
          case ms32_SUBMODE_SYSVIEW_SETUP:
-            orc_ErrorMessages[u32_ErrorCounter] = C_GtGetText::h_GetText(
-               "Following nodes can not be reached by the PC:");
+            orc_ErrorMessages[u32_ErrorCounter] = "Following nodes can not be reached by the PC:";
             break;
          case ms32_SUBMODE_SYSVIEW_UPDATE:
             if (orc_ErrorMessages[ms32_SUBMODE_SYSVIEW_SETUP].size() == 0)
             {
                // Update view specific error
-               orc_ErrorMessages[u32_ErrorCounter] = C_GtGetText::h_GetText(
-                  "Following node communication interface flags are disabled for Update:");
+               orc_ErrorMessages[u32_ErrorCounter] = "Following node communication interface flags are disabled for Update:";
             }
             else
             {
                // Generic routing error due to an error in the setup too
-               orc_ErrorMessages[u32_ErrorCounter] = C_GtGetText::h_GetText(
-                  "Following nodes can not be reached by the PC for Update:");
+               orc_ErrorMessages[u32_ErrorCounter] = "Following nodes can not be reached by the PC for Update:";
             }
             break;
          case ms32_SUBMODE_SYSVIEW_DASHBOARD:
             if (orc_ErrorMessages[ms32_SUBMODE_SYSVIEW_SETUP].size() == 0)
             {
                // Update view specific error
-               orc_ErrorMessages[u32_ErrorCounter] = C_GtGetText::h_GetText(
-                  "Following node communication interface flags are disabled for Dashboard:");
+               orc_ErrorMessages[u32_ErrorCounter] = "Following node communication interface flags are disabled for Dashboard:";
             }
             else
             {
                // Generic routing error due to an error in the setup too
-               orc_ErrorMessages[u32_ErrorCounter] = C_GtGetText::h_GetText(
-                  "Following nodes can not be reached by the PC for Dashboard:");
+               orc_ErrorMessages[u32_ErrorCounter] = "Following nodes can not be reached by the PC for Dashboard:";
             }
             break;
          default:
@@ -4499,8 +4492,7 @@ int32_t C_PuiSvHandler::m_CheckRouting(const uint32_t ou32_ViewIndex,
    if (c_SetupWarningDetails.size() > 0)
    {
       QString c_Space = " ";
-      orc_SetupWarningMessage = C_GtGetText::h_GetText(
-         "Following node communication interface flags are disabled:");
+      orc_SetupWarningMessage = "Following node communication interface flags are disabled:";
 
       for (std::map<uint32_t, QString>::const_iterator c_It = c_SetupWarningDetails.begin();
            c_It != c_SetupWarningDetails.end();

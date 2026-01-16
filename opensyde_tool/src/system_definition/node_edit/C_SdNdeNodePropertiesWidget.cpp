@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Properties dialog for node properties
@@ -20,7 +20,6 @@
 #include "C_SdNdeStwFlashloaderOptions.hpp"
 #include "C_SdNdeNodePropertiesWidget.hpp"
 #include "ui_C_SdNdeNodePropertiesWidget.h"
-#include "C_GtGetText.hpp"
 #include "C_OscUtils.hpp"
 #include "C_SdNdeComIfSettingsTableDelegate.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -245,149 +244,132 @@ void C_SdNdeNodePropertiesWidget::InitStaticNames(void) const
    const int32_t s32_COL_ROUTING = static_cast<int32_t>(C_SdNdeComIfSettingsTableDelegate::eROUTING);
    const int32_t s32_COL_DIAGNOSTIC = static_cast<int32_t>(C_SdNdeComIfSettingsTableDelegate::eDIAGNOSTIC);
 
-   this->mpc_Ui->pc_LabSubNodeTitle->setText(C_GtGetText::h_GetText("Sub-Node"));
-   this->mpc_Ui->pc_LabelName->setText(C_GtGetText::h_GetText("Name"));
-   this->mpc_Ui->pc_LabelComment->setText(C_GtGetText::h_GetText("Comment"));
-   this->mpc_Ui->pc_LabelConfiguration->setText(C_GtGetText::h_GetText("Configuration"));
-   this->mpc_Ui->pc_LabelProtocol->setText(C_GtGetText::h_GetText("Protocol Support"));
-   this->mpc_Ui->pc_LabelProgramming->setText(C_GtGetText::h_GetText("Programming Support"));
-   this->mpc_Ui->pc_LabelXAppSupport->setText(C_GtGetText::h_GetText("X.App Support"));
-   this->mpc_Ui->pc_LabelComIfSettings->setText(C_GtGetText::h_GetText("Communication Interfaces Settings"));
+   this->mpc_Ui->pc_LabSubNodeTitle->setText("Sub-Node");
+   this->mpc_Ui->pc_LabelName->setText("Name");
+   this->mpc_Ui->pc_LabelComment->setText("Comment");
+   this->mpc_Ui->pc_LabelConfiguration->setText("Configuration");
+   this->mpc_Ui->pc_LabelProtocol->setText("Protocol Support");
+   this->mpc_Ui->pc_LabelProgramming->setText("Programming Support");
+   this->mpc_Ui->pc_LabelXAppSupport->setText("X.App Support");
+   this->mpc_Ui->pc_LabelComIfSettings->setText("Communication Interfaces Settings");
 
-   this->mpc_Ui->pc_ComboBoxProtocol->addItem(C_GtGetText::h_GetText("openSYDE"));
-   this->mpc_Ui->pc_ComboBoxProtocol->addItem(C_GtGetText::h_GetText("KEFEX"));
-   this->mpc_Ui->pc_ComboBoxProtocol->addItem(C_GtGetText::h_GetText("None"));
+   this->mpc_Ui->pc_ComboBoxProtocol->addItem("openSYDE");
+   this->mpc_Ui->pc_ComboBoxProtocol->addItem("KEFEX");
+   this->mpc_Ui->pc_ComboBoxProtocol->addItem("None");
 
-   this->mpc_Ui->pc_ComboBoxProgramming->addItem(C_GtGetText::h_GetText("Disabled"));
-   this->mpc_Ui->pc_ComboBoxProgramming->addItem(C_GtGetText::h_GetText("Enabled"));
+   this->mpc_Ui->pc_ComboBoxProgramming->addItem("Disabled");
+   this->mpc_Ui->pc_ComboBoxProgramming->addItem("Enabled");
 
-   this->mpc_Ui->pc_ComboBoxXAppSupport->addItem(C_GtGetText::h_GetText("Disabled"));
-   this->mpc_Ui->pc_ComboBoxXAppSupport->addItem(C_GtGetText::h_GetText("Enabled"));
+   this->mpc_Ui->pc_ComboBoxXAppSupport->addItem("Disabled");
+   this->mpc_Ui->pc_ComboBoxXAppSupport->addItem("Enabled");
 
    //Add space because of spacing issue between icon and text
    this->mpc_Ui->pc_PushButtonFlashloaderOptions->setText(static_cast<QString>(' ') +
-                                                          C_GtGetText::h_GetText("STW Flashloader Settings"));
+                                                          "STW Flashloader Settings");
 
    //table column text
    //fake padding with Spaces. No other solution known so far
    c_InterfaceString = "          ";
-   c_InterfaceString.append(C_GtGetText::h_GetText("Interface"));
+   c_InterfaceString.append("Interface");
    this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_INTERFACE)->setText(c_InterfaceString);
 
    //fake padding with Spaces. No other solution known so far
    c_ConnectString = "  ";
-   c_ConnectString.append(C_GtGetText::h_GetText("Linked to..."));
+   c_ConnectString.append("Linked to...");
    this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_CONNECTION)->setText(c_ConnectString);
-   this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_NODE_ID)->setText(C_GtGetText::h_GetText(
-                                                                                                "Node ID"));
-   this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_IP_ADDRESS)->setText(C_GtGetText::h_GetText(
-                                                                                                   "IP Address"));
-   this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_UPDATE)->setText(C_GtGetText::h_GetText(
-                                                                                               "Usable for Update"));
-   this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_ROUTING)->setText(C_GtGetText::h_GetText(
-                                                                                                "Usable for Routing"));
-   this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_DIAGNOSTIC)->setText(C_GtGetText::h_GetText(
-                                                                                                   "Usable for Dashboard"));
+   this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_NODE_ID)->setText("Node ID");
+   this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_IP_ADDRESS)->setText("IP Address");
+   this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_UPDATE)->setText("Usable for Update");
+   this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_ROUTING)->setText("Usable for Routing");
+   this->mpc_Ui->pc_TableWidgetComIfSettings->horizontalHeaderItem(s32_COL_DIAGNOSTIC)->setText("Usable for Dashboard");
 
-   this->mpc_Ui->pc_TextEditComment->setPlaceholderText(C_GtGetText::h_GetText("Add your comment here ..."));
+   this->mpc_Ui->pc_TextEditComment->setPlaceholderText("Add your comment here ...");
 
    //Tool tips
-   this->mpc_Ui->pc_LabSubNodeTitle->SetToolTipInformation(C_GtGetText::h_GetText("Sub-Node"),
-                                                           C_GtGetText::h_GetText("Name of the Sub-Node."));
+   this->mpc_Ui->pc_LabSubNodeTitle->SetToolTipInformation("Sub-Node",
+                                                           "Name of the Sub-Node.");
 
-   this->mpc_Ui->pc_LabelName->SetToolTipInformation(C_GtGetText::h_GetText(
-                                                        "Name"),
-                                                     static_cast<QString>(C_GtGetText::h_GetText(
-                                                                             "Symbolic node name. Unique within Network Topology.\n"
+   this->mpc_Ui->pc_LabelName->SetToolTipInformation("Name",
+                                                     static_cast<QString>("Symbolic node name. Unique within Network Topology.\n"
                                                                              "\nFollowing C naming conventions are required:"
                                                                              "\n - must not be empty"
                                                                              "\n - must not start with digits"
                                                                              "\n - only alphanumeric characters and \"_\""
-                                                                             "\n - should not be longer than %1 (= project setting) characters")).arg(
+                                                                             "\n - should not be longer than %1 (= project setting) characters").arg(
                                                         C_PuiSdHandler::h_GetInstance()->GetNameMaxCharLimit()));
 
-   this->mpc_Ui->pc_LabelComment->SetToolTipInformation(C_GtGetText::h_GetText("Comment"),
-                                                        C_GtGetText::h_GetText("Comment for this node."));
+   this->mpc_Ui->pc_LabelComment->SetToolTipInformation("Comment",
+                                                        "Comment for this node.");
 
-   this->mpc_Ui->pc_LabelProgramming->SetToolTipInformation(C_GtGetText::h_GetText("Programming Support"),
-                                                            C_GtGetText::h_GetText(
-                                                               "This property shows if the device is user programmable."
+   this->mpc_Ui->pc_LabelProgramming->SetToolTipInformation("Programming Support",
+                                                            "This property shows if the device is user programmable."
                                                                "\nDefined in read only *.syde_devdef file."
                                                                "\n\nIf enabled, the source code generation feature can "
-                                                               "be activated for Data Blocks ."));
-   this->mpc_Ui->pc_LabelXAppSupport->SetToolTipInformation(C_GtGetText::h_GetText("X.App Support"),
-                                                            C_GtGetText::h_GetText(
-                                                               "Node properties option, available only for file-based targets.\n\n"
+                                                               "be activated for Data Blocks .");
+   this->mpc_Ui->pc_LabelXAppSupport->SetToolTipInformation("X.App Support",
+                                                            "Node properties option, available only for file-based targets.\n\n"
                                                                "If enabled:\n"
                                                                "- The X.App configuration support in Data Blocks is enabled\n"
-                                                               "- The tab Data Logger is enabled"));
+                                                               "- The tab Data Logger is enabled");
 
-   this->mpc_Ui->pc_LabelProtocol->SetToolTipInformation(C_GtGetText::h_GetText("Protocol Support"),
-                                                         C_GtGetText::h_GetText(
-                                                            "Type of flashloader and diagnostic server.\n"
+   this->mpc_Ui->pc_LabelProtocol->SetToolTipInformation("Protocol Support",
+                                                         "Type of flashloader and diagnostic server.\n"
                                                             "Options:\n"
                                                             "   - openSYDE: openSYDE Server and openSYDE Flashloader support\n"
                                                             "   - KEFEX: KEFEX server and STW Flashloader support\n"
                                                             "   - none: no STW protocol support (e.g.: 3rd party node)\n"
                                                             "\nSupported protocols defined in read only "
-                                                            "*.syde_devdef file."));
+                                                            "*.syde_devdef file.");
 
    this->mpc_Ui->pc_TableWidgetComIfSettings->SetToolTipHeadingAt(s32_COL_INTERFACE, Qt::Horizontal,
-                                                                  C_GtGetText::h_GetText("Interface"),
-                                                                  C_GtGetText::h_GetText(
-                                                                     "Name of communication interface (CAN/ETHERNET)."));
+                                                                  "Interface",
+                                                                  "Name of communication interface (CAN/ETHERNET).");
 
    this->mpc_Ui->pc_TableWidgetComIfSettings->SetToolTipHeadingAt(s32_COL_CONNECTION, Qt::Horizontal,
-                                                                  C_GtGetText::h_GetText("Linked to..."),
-                                                                  C_GtGetText::h_GetText(
-                                                                     "Name of bus to which the interface is linked to."));
+                                                                  "Linked to...",
+                                                                  "Name of bus to which the interface is linked to.");
 
    this->mpc_Ui->pc_TableWidgetComIfSettings->SetToolTipHeadingAt(s32_COL_NODE_ID, Qt::Horizontal,
-                                                                  C_GtGetText::h_GetText("Node ID"),
-                                                                  C_GtGetText::h_GetText(
-                                                                     "Node ID is unique on connected bus. The ID is "
+                                                                  "Node ID",
+                                                                  "Node ID is unique on connected bus. The ID is "
                                                                      "used for addressing in the communication "
                                                                      "protocol. \nThis property is configured for all "
                                                                      "connected interfaces on device while \"Device "
-                                                                     "configuration\" (SYSTEM COMMISSIONING/Setup)."));
+                                                                     "configuration\" (SYSTEM COMMISSIONING/Setup).");
 
    this->mpc_Ui->pc_TableWidgetComIfSettings->SetToolTipHeadingAt(s32_COL_IP_ADDRESS, Qt::Horizontal,
-                                                                  C_GtGetText::h_GetText("IP Address"),
-                                                                  C_GtGetText::h_GetText(
-                                                                     "IP address settings: IP address and subnet mask"
+                                                                  "IP Address",
+                                                                  "IP address settings: IP address and subnet mask"
                                                                      "\nThese properties are configured for all "
                                                                      "connected interfaces on device while \"Device "
-                                                                     "configuration\" (SYSTEM COMMISSIONING/Setup)"));
+                                                                     "configuration\" (SYSTEM COMMISSIONING/Setup)");
 
    this->mpc_Ui->pc_TableWidgetComIfSettings->SetToolTipHeadingAt(s32_COL_UPDATE, Qt::Horizontal,
-                                                                  C_GtGetText::h_GetText("Usable for Update"),
-                                                                  C_GtGetText::h_GetText(
-                                                                     "If enabled, the interface is usable for System Update. "
+                                                                  "Usable for Update",
+                                                                  "If enabled, the interface is usable for System Update. "
                                                                      "(SYSTEM COMMISSIONING - Update)"
                                                                      "\n\nThis property is just "
                                                                      "a configuration for openSYDE PC tool, "
-                                                                     "it is NOT configured on device."));
+                                                                     "it is NOT configured on device.");
 
    this->mpc_Ui->pc_TableWidgetComIfSettings->SetToolTipHeadingAt(s32_COL_DIAGNOSTIC, Qt::Horizontal,
-                                                                  C_GtGetText::h_GetText("Usable for Dashboard"),
-                                                                  C_GtGetText::h_GetText(
-                                                                     "If enabled, the interface is usable for Dashboard "
+                                                                  "Usable for Dashboard",
+                                                                  "If enabled, the interface is usable for Dashboard "
                                                                      "(Access of Datapool data elements via diagnostic protocol). "
                                                                      "(SYSTEM COMMISSIONING - Dashboards)"
                                                                      "\n\nThis property is just "
                                                                      "a configuration for openSYDE PC tool, "
-                                                                     "it is NOT configured on device."));
+                                                                     "it is NOT configured on device.");
 
    this->mpc_Ui->pc_TableWidgetComIfSettings->SetToolTipHeadingAt(s32_COL_ROUTING, Qt::Horizontal,
-                                                                  C_GtGetText::h_GetText("Usable for Routing"),
-                                                                  C_GtGetText::h_GetText(
-                                                                     "If enabled, the interface is usable for Routing. "
+                                                                  "Usable for Routing",
+                                                                  "If enabled, the interface is usable for Routing. "
                                                                      "\nAttention: This property is intended as additive "
                                                                      "feature in addition to \"System Update\" and \"Dashboards\" "
                                                                      "\nUse cases: SYSTEM COMMISSIONING - Update "
                                                                      "SYSTEM COMMISSIONING - Dashboards.\n\nThis "
                                                                      "property is just a configuration for openSYDE tool, "
-                                                                     "it is NOT configured on device."));
+                                                                     "it is NOT configured on device.");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -604,7 +586,7 @@ void C_SdNdeNodePropertiesWidget::m_LoadFromData(void)
                }
 
                this->mpc_Ui->pc_LabelProductPageLink->SetLink(
-                  C_GtGetText::h_GetText("Visit Product Page"), pc_DevDef->c_ProductPageLink.c_str());
+                  "Visit Product Page", pc_DevDef->c_ProductPageLink.c_str());
                this->mpc_Ui->pc_LabelProductPageLink->SetToolTipInformation(
                   pc_DevDef->c_ManufacturerDisplayValue.c_str(), pc_DevDef->c_ProductPageLink.c_str());
                this->mpc_Ui->pc_WidgetCompLogo->setVisible(true);
@@ -1264,21 +1246,21 @@ void C_SdNdeNodePropertiesWidget::m_CheckNodeName(void)
 
    if ((q_NameIsUnique == true) && (q_NameIsValid == true))
    {
-      this->mpc_Ui->pc_LineEditNodeName->SetToolTipInformation(C_GtGetText::h_GetText(""),
-                                                               C_GtGetText::h_GetText(""),
+      this->mpc_Ui->pc_LineEditNodeName->SetToolTipInformation("",
+                                                               "",
                                                                C_NagToolTip::eDEFAULT);
    }
    else
    {
-      const QString c_Heading = C_GtGetText::h_GetText("Node Name");
+      const QString c_Heading = "Node Name";
       QString c_Content;
       if (q_NameIsUnique == false)
       {
-         c_Content += C_GtGetText::h_GetText("- is already in use\n");
+         c_Content += "- is already in use\n";
       }
       if (q_NameIsValid == false)
       {
-         c_Content += C_GtGetText::h_GetText("- is empty or contains invalid characters.\n");
+         c_Content += "- is empty or contains invalid characters.\n";
       }
       this->mpc_Ui->pc_LineEditNodeName->SetToolTipInformation(c_Heading, c_Content, C_NagToolTip::eERROR);
    }
@@ -1343,14 +1325,13 @@ void C_SdNdeNodePropertiesWidget::m_RegisterNameChange(void)
              &c_ExistingNames) == false)
       {
          const QString c_Description =
-            static_cast<QString>(C_GtGetText::h_GetText(
-                                    "A node with the name \"%1\" already exists. Choose another name.")).
+            static_cast<QString>("A node with the name \"%1\" already exists. Choose another name.").
             arg(this->mpc_Ui->pc_LineEditNodeName->text());
          QString c_Details;
          C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eERROR);
-         c_Message.SetHeading(C_GtGetText::h_GetText("Node naming"));
+         c_Message.SetHeading("Node naming");
          c_Message.SetDescription(c_Description);
-         c_Details.append(C_GtGetText::h_GetText("Used node names:\n"));
+         c_Details.append("Used node names:\n");
          for (uint32_t u32_ItExistingName = 0UL; u32_ItExistingName < c_ExistingNames.size(); ++u32_ItExistingName)
          {
             const C_SclString & rc_Name = c_ExistingNames[u32_ItExistingName];
@@ -1394,8 +1375,7 @@ void C_SdNdeNodePropertiesWidget::m_RegisterNameChange(void)
 
          if (pc_Node != NULL)
          {
-            Q_EMIT (this->SigNameChanged(C_GtGetText::h_GetText(
-                                            "NETWORK TOPOLOGY"), pc_Node->c_Properties.c_Name.c_str(), false));
+            Q_EMIT (this->SigNameChanged("NETWORK TOPOLOGY", pc_Node->c_Properties.c_Name.c_str(), false));
          }
       }
       hq_InProgress = false; //lint !e838 its static and could be used on strange second call
@@ -1578,10 +1558,10 @@ void C_SdNdeNodePropertiesWidget::m_HandleErrorFeedback(const int32_t os32_Inter
                      q_ShowIcon = true;
                      const std::vector<uint32_t> c_UsedIds = C_SdUtil::h_GetUsedNodeIdsForBusUniqueAndSortedAscending(
                         rc_Interface.u32_BusIndex, this->mu32_NodeIndex, static_cast<int32_t>(os32_InterfaceIndex));
-                     const QString c_Heading = C_GtGetText::h_GetText("Interface: Node ID invalid");
+                     const QString c_Heading = "Interface: Node ID invalid";
                      c_TooltipContent = C_SdUtil::h_InitUsedIdsString(c_UsedIds,
                                                                       pc_Bus->c_Name.c_str(),
-                                                                      C_GtGetText::h_GetText("bus"));
+                                                                      "bus");
                      this->mpc_Ui->pc_TableWidgetComIfSettings->SetToolTipAt(os32_InterfaceIndex,
                                                                              static_cast<uint32_t> (
                                                                                 C_SdNdeComIfSettingsTableDelegate
@@ -1595,10 +1575,10 @@ void C_SdNdeNodePropertiesWidget::m_HandleErrorFeedback(const int32_t os32_Inter
                      const std::vector<std::vector<uint8_t> > c_Ips = C_SdUtil::h_GetAllUsedIpAddressesForBus(
                         rc_Interface.u32_BusIndex, this->mu32_NodeIndex,
                         static_cast<int32_t>(os32_InterfaceIndex));
-                     const QString c_Heading = C_GtGetText::h_GetText("Interface: IP Address invalid");
+                     const QString c_Heading = "Interface: IP Address invalid";
                      c_TooltipContent = C_SdUtil::h_InitUsedIpsString(c_Ips,
                                                                       pc_Bus->c_Name.c_str(),
-                                                                      C_GtGetText::h_GetText("bus"));
+                                                                      "bus");
 
                      this->mpc_Ui->pc_TableWidgetComIfSettings->SetToolTipAt(os32_InterfaceIndex,
                                                                              static_cast<uint32_t> (
@@ -1614,14 +1594,14 @@ void C_SdNdeNodePropertiesWidget::m_HandleErrorFeedback(const int32_t os32_Inter
                         rc_Interface.u32_BusIndex, this->mu32_NodeIndex, static_cast<int32_t>(os32_InterfaceIndex));
                      const std::vector<std::vector<uint8_t> > c_Ips = C_SdUtil::h_GetAllUsedIpAddressesForBus(
                         rc_Interface.u32_BusIndex, this->mu32_NodeIndex, static_cast<int32_t>(os32_InterfaceIndex));
-                     const QString c_Heading = C_GtGetText::h_GetText("Interface: Property invalid");
+                     const QString c_Heading = "Interface: Property invalid";
                      c_TooltipContent = C_SdUtil::h_InitUsedIdsString(c_UsedIds,
                                                                       pc_Bus->c_Name.c_str(),
-                                                                      C_GtGetText::h_GetText("bus"));
+                                                                      "bus");
                      c_TooltipContent += "\n";
                      c_TooltipContent += C_SdUtil::h_InitUsedIpsString(c_Ips,
                                                                        pc_Bus->c_Name.c_str(),
-                                                                       C_GtGetText::h_GetText("bus"));
+                                                                       "bus");
 
                      this->mpc_Ui->pc_TableWidgetComIfSettings->SetToolTipAt(os32_InterfaceIndex,
                                                                              static_cast<uint32_t> (
@@ -1856,32 +1836,32 @@ void C_SdNdeNodePropertiesWidget::m_XappSupportChange(const int32_t os32_Index)
       QString c_Details;
       C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eQUESTION);
       const QString c_EnableDisable =
-         (os32_Index == mhs32_PR_INDEX_ENABLED) ? C_GtGetText::h_GetText("Enable") : C_GtGetText::h_GetText("Disable");
+         (os32_Index == mhs32_PR_INDEX_ENABLED) ? "Enable" : "Disable";
 
-      c_Description = C_GtGetText::h_GetText("Do you really want to ") + c_EnableDisable.toLower() +
-                      C_GtGetText::h_GetText(" X.App Support?");
+      c_Description = "Do you really want to " + c_EnableDisable.toLower() +
+                      " X.App Support?";
 
       if (q_FileGenDatablockExists == true)
       {
-         c_Description += C_GtGetText::h_GetText(" All existing Data Blocks with enabled file "
-                                                 "generation will be deleted.");
-         c_Details += C_GtGetText::h_GetText("The following Data Blocks will be deleted:\n") +
+         c_Description += " All existing Data Blocks with enabled file "
+                                                 "generation will be deleted.";
+         c_Details += "The following Data Blocks will be deleted:\n" +
                       c_ConcernedDataBlocks.join("\n") + "\n\n";
       }
 
       if (q_LogJobExists == true)
       {
-         c_Description += C_GtGetText::h_GetText(" All log jobs will be deleted.");
-         c_Details += C_GtGetText::h_GetText("The following log jobs will be deleted:\n") +
+         c_Description += " All log jobs will be deleted.";
+         c_Details += "The following log jobs will be deleted:\n" +
                       c_ConcernedLogJobs.join("\n");
       }
 
-      c_Message.SetHeading(c_EnableDisable + C_GtGetText::h_GetText(" X.App Support"));
+      c_Message.SetHeading(c_EnableDisable + " X.App Support");
       c_Message.SetDescription(c_Description);
       c_Message.SetDetails(c_Details);
 
-      c_Message.SetOkButtonText(c_EnableDisable + C_GtGetText::h_GetText(" X.App Support"));
-      c_Message.SetNoButtonText(C_GtGetText::h_GetText("Cancel"));
+      c_Message.SetOkButtonText(c_EnableDisable + " X.App Support");
+      c_Message.SetNoButtonText("Cancel");
 
       if (c_Message.Execute() != C_OgeWiCustomMessage::eYES)
       {

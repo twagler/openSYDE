@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for title, about and help elements
@@ -19,7 +19,6 @@
 #include "C_Uti.hpp"
 #include "stwerrors.hpp"
 
-#include "C_GtGetText.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_OgePopUpDialog.hpp"
 #include "C_NagAboutDialog.hpp"
@@ -42,7 +41,7 @@ using namespace stw::opensyde_gui_logic;
 using namespace stw::opensyde_gui_elements;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
-//C_GtGetText does not work here (executed before main)
+
 const QString C_CamTitleBarWidget::mhc_FILTER = "openSYDE CAN Monitor Project (*.syde_cam)";
 const QString C_CamTitleBarWidget::mhc_NORECENTPROJECT = "No recent project found. Click here to browse.";
 
@@ -139,25 +138,23 @@ C_CamTitleBarWidget::~C_CamTitleBarWidget()
 void C_CamTitleBarWidget::InitStaticNames(void) const
 {
    // initialize button texts
-   this->mpc_Ui->pc_PushButtonAbout->setText(C_GtGetText::h_GetText("About")); // no icon therefore no icon-only mode
+   this->mpc_Ui->pc_PushButtonAbout->setText("About"); // no icon therefore no icon-only mode
    this->m_SetButtonsText(false);
 
    //tooltips
-   this->mpc_Ui->pc_PushButtonHelp->SetToolTipInformation(C_GtGetText::h_GetText("Help"),
-                                                          C_GtGetText::h_GetText("Open user manual for help."));
-   this->mpc_Ui->pc_PushButtonAbout->SetToolTipInformation(C_GtGetText::h_GetText("About"),
-                                                           C_GtGetText::h_GetText(
-                                                              "Show information about openSYDE CAN Monitor."));
+   this->mpc_Ui->pc_PushButtonHelp->SetToolTipInformation("Help",
+                                                          "Open user manual for help.");
+   this->mpc_Ui->pc_PushButtonAbout->SetToolTipInformation("About",
+                                                           "Show information about openSYDE CAN Monitor.");
 
-   this->mpc_Ui->pc_ToolButtonLoad->SetToolTipInformation(C_GtGetText::h_GetText("Open Project"),
-                                                          C_GtGetText::h_GetText("Browse to open existing project."));
-   this->mpc_Ui->pc_PushButtonNew->SetToolTipInformation(C_GtGetText::h_GetText("New Project"),
-                                                         C_GtGetText::h_GetText("Create new empty project."));
-   this->mpc_Ui->pc_PushButtonSave->SetToolTipInformation(C_GtGetText::h_GetText("Save Project"),
-                                                          C_GtGetText::h_GetText("Save Project data to file."));
-   this->mpc_Ui->pc_PushButtonSaveAs->SetToolTipInformation(C_GtGetText::h_GetText("Save Project as"),
-                                                            C_GtGetText::h_GetText(
-                                                               "Choose name and location to save the project."));
+   this->mpc_Ui->pc_ToolButtonLoad->SetToolTipInformation("Open Project",
+                                                          "Browse to open existing project.");
+   this->mpc_Ui->pc_PushButtonNew->SetToolTipInformation("New Project",
+                                                         "Create new empty project.");
+   this->mpc_Ui->pc_PushButtonSave->SetToolTipInformation("Save Project",
+                                                          "Save Project data to file.");
+   this->mpc_Ui->pc_PushButtonSaveAs->SetToolTipInformation("Save Project as",
+                                                            "Choose name and location to save the project.");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -184,7 +181,7 @@ void C_CamTitleBarWidget::UpdateRecentProjectsAndWindowTitle(void)
    // show browse action if no recent project was found
    if (this->mpc_Menu->actions().size() == 0)
    {
-      this->mpc_Menu->addAction(C_GtGetText::h_GetText(mhc_NORECENTPROJECT.toStdString().c_str()));
+      this->mpc_Menu->addAction(QString::fromStdString(mhc_NORECENTPROJECT));
    }
 
    // update window title (window title of this widget is connected to main window)
@@ -217,10 +214,10 @@ bool C_CamTitleBarWidget::HandleProjectComparison(void)
    {
       C_OgeWiCustomMessage::E_Outputs e_Output;
       C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eQUESTION);
-      c_Message.SetHeading(C_GtGetText::h_GetText("Unsaved changes"));
-      c_Message.SetDescription(C_GtGetText::h_GetText("Do you want to save the project changes?"));
-      c_Message.SetOkButtonText(C_GtGetText::h_GetText("Save"));
-      c_Message.SetNoButtonText(C_GtGetText::h_GetText("Don't Save"));
+      c_Message.SetHeading("Unsaved changes");
+      c_Message.SetDescription("Do you want to save the project changes?");
+      c_Message.SetOkButtonText("Save");
+      c_Message.SetNoButtonText("Don't Save");
       c_Message.ShowCancelButton();
       e_Output = c_Message.Execute();
       switch (e_Output)
@@ -284,7 +281,7 @@ bool C_CamTitleBarWidget::SaveAsConfig(void)
    {
       c_PreviousDir = C_Uti::h_GetExePath();
    }
-   c_FileName = C_OgeWiUtil::h_GetSaveFileName(this, C_GtGetText::h_GetText("Save CAN Monitor Configuration"),
+   c_FileName = C_OgeWiUtil::h_GetSaveFileName(this, "Save CAN Monitor Configuration",
                                                c_PreviousDir, C_CamTitleBarWidget::mhc_FILTER, "");
    if (c_FileName.isEmpty() == false)
    {
@@ -323,10 +320,10 @@ int32_t C_CamTitleBarWidget::LoadConfig(const QString & orc_FilePath)
       C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eERROR);
       QString c_Details;
 
-      c_Message.SetHeading(C_GtGetText::h_GetText("Project load"));
-      c_Message.SetDescription(C_GtGetText::h_GetText("Failed to load project: ") + orc_FilePath);
-      c_Details = C_GtGetText::h_GetText("For more information see ");
-      c_Details += C_Uti::h_GetLink(C_GtGetText::h_GetText("log file"), mc_STYLE_GUIDE_COLOR_LINK,
+      c_Message.SetHeading("Project load");
+      c_Message.SetDescription("Failed to load project: " + orc_FilePath);
+      c_Details = "For more information see ";
+      c_Details += C_Uti::h_GetLink("log file", mc_STYLE_GUIDE_COLOR_LINK,
                                     C_OscLoggingHandler::h_GetCompleteLogFileLocation().c_str());
       c_Details += ".";
       c_Message.SetDetails(c_Details);
@@ -367,7 +364,7 @@ void C_CamTitleBarWidget::m_ShowAbout(void)
    const QPointer<C_OgePopUpDialog> c_New = new C_OgePopUpDialog(this, this);
 
    new C_NagAboutDialog(*c_New, "openSYDE CAN Monitor", ":/images/CAN_Monitor_logo.png", 20,
-                        C_GtGetText::h_GetText("Vector::DBC Module by Tobias Lorenz;Bison;Flex")); //Default +
+                        "Vector::DBC Module by Tobias Lorenz;Bison;Flex"); //Default +
                                                                                                    //Vector DBC
 
    //Resize
@@ -436,8 +433,8 @@ bool C_CamTitleBarWidget::m_DoSaveToFileAction(const QString & orc_File)
          C_OscLoggingHandler::h_GetCompleteLogFileLocation().c_str(), mc_STYLE_GUIDE_COLOR_LINK,
          static_cast<QString>("file:\\\\\\") + C_OscLoggingHandler::h_GetCompleteLogFileLocation().c_str());
       C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eERROR);
-      c_Message.SetHeading(C_GtGetText::h_GetText("Project save"));
-      c_Message.SetDescription(static_cast<QString>(C_GtGetText::h_GetText("For more details see log file %1")).arg(
+      c_Message.SetHeading("Project save");
+      c_Message.SetDescription(static_cast<QString>("For more details see log file %1").arg(
                                   c_Log));
 
       //Update log file
@@ -469,7 +466,7 @@ void C_CamTitleBarWidget::m_OnOpenProjectClicked(void)
          c_PreviousDir = C_Uti::h_GetExePath();
       }
       const QString c_FullFilePath =
-         C_OgeWiUtil::h_GetOpenFileName(this, C_GtGetText::h_GetText("Select openSYDE CAN Monitor Project File"),
+         C_OgeWiUtil::h_GetOpenFileName(this, "Select openSYDE CAN Monitor Project File",
                                         c_PreviousDir, C_CamTitleBarWidget::mhc_FILTER, "*.syde_cam");
       if (c_FullFilePath != "")
       {
@@ -567,10 +564,10 @@ void C_CamTitleBarWidget::m_SetButtonsText(const bool oq_IconOnly) const
    if (oq_IconOnly == true)
    {
       const uint32_t u32_SMALL_MAXIMUM_SIZE = 34;
-      this->mpc_Ui->pc_PushButtonNew->setText(C_GtGetText::h_GetText(""));
-      this->mpc_Ui->pc_ToolButtonLoad->setText(C_GtGetText::h_GetText(""));
-      this->mpc_Ui->pc_PushButtonSaveAs->setText(C_GtGetText::h_GetText(""));
-      this->mpc_Ui->pc_PushButtonSave->setText(C_GtGetText::h_GetText(""));
+      this->mpc_Ui->pc_PushButtonNew->setText("");
+      this->mpc_Ui->pc_ToolButtonLoad->setText("");
+      this->mpc_Ui->pc_PushButtonSaveAs->setText("");
+      this->mpc_Ui->pc_PushButtonSave->setText("");
 
       this->mpc_Ui->pc_PushButtonNew->setMaximumWidth(u32_SMALL_MAXIMUM_SIZE);
       this->mpc_Ui->pc_ToolButtonLoad->setMaximumWidth((2 * u32_SMALL_MAXIMUM_SIZE) + 6);
@@ -579,10 +576,10 @@ void C_CamTitleBarWidget::m_SetButtonsText(const bool oq_IconOnly) const
    }
    else
    {
-      this->mpc_Ui->pc_PushButtonNew->setText(C_GtGetText::h_GetText("New Project"));
-      this->mpc_Ui->pc_ToolButtonLoad->setText(C_GtGetText::h_GetText("Open Project"));
-      this->mpc_Ui->pc_PushButtonSaveAs->setText(C_GtGetText::h_GetText("Save Project As"));
-      this->mpc_Ui->pc_PushButtonSave->setText(C_GtGetText::h_GetText("Save Project"));
+      this->mpc_Ui->pc_PushButtonNew->setText("New Project");
+      this->mpc_Ui->pc_ToolButtonLoad->setText("Open Project");
+      this->mpc_Ui->pc_PushButtonSaveAs->setText("Save Project As");
+      this->mpc_Ui->pc_PushButtonSave->setText("Save Project");
 
       // we cannot change Qt constant but it is still better than using the hard coded magic number 16777215
       this->mpc_Ui->pc_PushButtonNew->setMaximumWidth(QWIDGETSIZE_MAX);    //lint !e893 !e9130 !e9136

@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Screen for pem file options
@@ -14,7 +14,6 @@
 
 #include "stwtypes.hpp"
 #include "TglUtils.hpp"
-#include "C_GtGetText.hpp"
 #include "C_SyvUpPacPemFileOptionsPopUp.hpp"
 #include "ui_C_SyvUpPacPemFileOptionsPopUp.h"
 
@@ -91,34 +90,32 @@ C_SyvUpPacPemFileOptionsPopUp::~C_SyvUpPacPemFileOptionsPopUp(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvUpPacPemFileOptionsPopUp::InitStaticNames(void) const
 {
-   const QString c_ToolTipContent = C_GtGetText::h_GetText("No Change: Do not send service\n"
+   const QString c_ToolTipContent = "No Change: Do not send service\n"
                                                            "Activate: Change current state to %1 active\n"
-                                                           "Deactivate: Change current state to %1 inactive");
+                                                           "Deactivate: Change current state to %1 inactive";
 
-   this->mrc_ParentDialog.SetTitle(C_GtGetText::h_GetText("PEM File"));
-   this->mrc_ParentDialog.SetSubTitle(C_GtGetText::h_GetText("Settings"));
-   this->mpc_Ui->pc_LabelHeading->setText(C_GtGetText::h_GetText("Services"));
-   this->mpc_Ui->pc_LabelSecurity->setText(C_GtGetText::h_GetText("Activate Security"));
-   this->mpc_Ui->pc_LabelDebugger->setText(C_GtGetText::h_GetText("Activate Debugger"));
+   this->mrc_ParentDialog.SetTitle("PEM File");
+   this->mrc_ParentDialog.SetSubTitle("Settings");
+   this->mpc_Ui->pc_LabelHeading->setText("Services");
+   this->mpc_Ui->pc_LabelSecurity->setText("Activate Security");
+   this->mpc_Ui->pc_LabelDebugger->setText("Activate Debugger");
 
-   this->mpc_Ui->pc_PushButtonCancel->setText(C_GtGetText::h_GetText("Cancel"));
-   this->mpc_Ui->pc_PushButtonOk->setText(C_GtGetText::h_GetText("OK"));
+   this->mpc_Ui->pc_PushButtonCancel->setText("Cancel");
+   this->mpc_Ui->pc_PushButtonOk->setText("OK");
 
    //Combo Box
-   this->mpc_Ui->pc_ComboBoxSecurity->addItem(C_GtGetText::h_GetText("No Change"));
-   this->mpc_Ui->pc_ComboBoxSecurity->addItem(C_GtGetText::h_GetText("Activate"));
-   this->mpc_Ui->pc_ComboBoxSecurity->addItem(C_GtGetText::h_GetText("Deactivate"));
-   this->mpc_Ui->pc_ComboBoxDebugger->addItem(C_GtGetText::h_GetText("No Change"));
-   this->mpc_Ui->pc_ComboBoxDebugger->addItem(C_GtGetText::h_GetText("Activate"));
-   this->mpc_Ui->pc_ComboBoxDebugger->addItem(C_GtGetText::h_GetText("Deactivate"));
+   this->mpc_Ui->pc_ComboBoxSecurity->addItem("No Change");
+   this->mpc_Ui->pc_ComboBoxSecurity->addItem("Activate");
+   this->mpc_Ui->pc_ComboBoxSecurity->addItem("Deactivate");
+   this->mpc_Ui->pc_ComboBoxDebugger->addItem("No Change");
+   this->mpc_Ui->pc_ComboBoxDebugger->addItem("Activate");
+   this->mpc_Ui->pc_ComboBoxDebugger->addItem("Deactivate");
 
    //ToolTips
-   this->mpc_Ui->pc_LabelSecurity->SetToolTipInformation(C_GtGetText::h_GetText(
-                                                            "Activate Security"),
-                                                         c_ToolTipContent.arg(C_GtGetText::h_GetText("Security")));
-   this->mpc_Ui->pc_LabelDebugger->SetToolTipInformation(C_GtGetText::h_GetText(
-                                                            "Activate Debugger"),
-                                                         c_ToolTipContent.arg(C_GtGetText::h_GetText("Debugger")));
+   this->mpc_Ui->pc_LabelSecurity->SetToolTipInformation("Activate Security",
+                                                         c_ToolTipContent.arg("Security"));
+   this->mpc_Ui->pc_LabelDebugger->SetToolTipInformation("Activate Debugger",
+                                                         c_ToolTipContent.arg("Debugger"));
 }
 
 //----------------------------------------------------------------------------------------------------------------------

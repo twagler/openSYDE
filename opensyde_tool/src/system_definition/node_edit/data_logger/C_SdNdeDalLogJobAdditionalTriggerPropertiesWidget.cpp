@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for log job additional trigger properties configuration
@@ -15,7 +15,6 @@
 #include "TglUtils.hpp"
 #include "stwerrors.hpp"
 #include "C_PuiSdUtil.hpp"
-#include "C_GtGetText.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeDpContentUtil.hpp"
 #include "C_OscNodeDataPoolContentUtil.hpp"
@@ -105,22 +104,18 @@ void C_SdNdeDalLogJobAdditionalTriggerPropertiesWidget::Save()
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeDalLogJobAdditionalTriggerPropertiesWidget::InitStaticNames() const
 {
-   this->mpc_Ui->pc_ChkBoxAdditionalTrigger->setText(C_GtGetText::h_GetText("Additional Trigger"));
-   this->mpc_Ui->pc_ChkBoxAdditionalTrigger->SetToolTipInformation(C_GtGetText::h_GetText("Additional Trigger"),
-                                                                   C_GtGetText::h_GetText(
-                                                                      "Activate additional data trigger for logging"));
-   this->mpc_Ui->pc_LabelDataElement->setText(C_GtGetText::h_GetText("Data Element"));
-   this->mpc_Ui->pc_LabelDataElement->SetToolTipInformation(C_GtGetText::h_GetText("Data Element"),
-                                                            C_GtGetText::h_GetText(
-                                                               "Which data element changes should be used to trigger logging"));
-   this->mpc_Ui->pc_LabelOperation->setText(C_GtGetText::h_GetText("Operation"));
-   this->mpc_Ui->pc_LabelOperation->SetToolTipInformation(C_GtGetText::h_GetText("Operation"),
-                                                          C_GtGetText::h_GetText(
-                                                             "Which operation should be used for the threshold to trigger logging"));
-   this->mpc_Ui->pc_LabelThreshold->setText(C_GtGetText::h_GetText("Threshold"));
-   this->mpc_Ui->pc_LabelThreshold->SetToolTipInformation(C_GtGetText::h_GetText("Threshold"),
-                                                          C_GtGetText::h_GetText(
-                                                             "Threshold for configured data element to reach to trigger logging"));
+   this->mpc_Ui->pc_ChkBoxAdditionalTrigger->setText("Additional Trigger");
+   this->mpc_Ui->pc_ChkBoxAdditionalTrigger->SetToolTipInformation("Additional Trigger",
+                                                                   "Activate additional data trigger for logging");
+   this->mpc_Ui->pc_LabelDataElement->setText("Data Element");
+   this->mpc_Ui->pc_LabelDataElement->SetToolTipInformation("Data Element",
+                                                            "Which data element changes should be used to trigger logging");
+   this->mpc_Ui->pc_LabelOperation->setText("Operation");
+   this->mpc_Ui->pc_LabelOperation->SetToolTipInformation("Operation",
+                                                          "Which operation should be used for the threshold to trigger logging");
+   this->mpc_Ui->pc_LabelThreshold->setText("Threshold");
+   this->mpc_Ui->pc_LabelThreshold->SetToolTipInformation("Threshold",
+                                                          "Threshold for configured data element to reach to trigger logging");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -224,17 +219,15 @@ void C_SdNdeDalLogJobAdditionalTriggerPropertiesWidget::m_InitSupportedOperation
 {
    this->mc_MapCoreOperationToUi.clear();
    this->mc_MapCoreOperationToUi.emplace_back(std::pair<QString, QString>("<",
-                                                                          C_GtGetText::h_GetText("<  (smaller than)")));
+                                                                          "<  (smaller than)"));
    this->mc_MapCoreOperationToUi.emplace_back(std::pair<QString, QString>("<=",
-                                                                          C_GtGetText::h_GetText(
-                                                                             "<= (smaller than or equal)")));
+                                                                          "<= (smaller than or equal)"));
    this->mc_MapCoreOperationToUi.emplace_back(std::pair<QString, QString>("==",
-                                                                          C_GtGetText::h_GetText("== (equal to)")));
+                                                                          "== (equal to)"));
    this->mc_MapCoreOperationToUi.emplace_back(std::pair<QString, QString>(">",
-                                                                          C_GtGetText::h_GetText(">  (greater than)")));
+                                                                          ">  (greater than)"));
    this->mc_MapCoreOperationToUi.emplace_back(std::pair<QString, QString>(">=",
-                                                                          C_GtGetText::h_GetText(
-                                                                             ">= (greater than or equal)")));
+                                                                          ">= (greater than or equal)"));
 }
 
 //----------------------------------------------------------------------------------------------------------------------

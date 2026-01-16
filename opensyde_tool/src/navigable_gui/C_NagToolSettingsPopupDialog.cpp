@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Popup dialog for global tool settings
@@ -13,7 +13,6 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "C_GtGetText.hpp"
 #include "C_NagToolSettingsPopupDialog.hpp"
 #include "ui_C_NagToolSettingsPopupDialog.h"
 #include "C_OscUtils.hpp"
@@ -84,29 +83,27 @@ C_NagToolSettingsPopupDialog::~C_NagToolSettingsPopupDialog(void)
 void C_NagToolSettingsPopupDialog::InitStaticNames(void) const
 {
    //Global settings section
-   this->mrc_ParentDialog.SetTitle(C_GtGetText::h_GetText("Tool"));
-   this->mrc_ParentDialog.SetSubTitle(C_GtGetText::h_GetText("Settings"));
-   this->mpc_Ui->pc_LabelGlobalSettings->setText(C_GtGetText::h_GetText("General"));
+   this->mrc_ParentDialog.SetTitle("Tool");
+   this->mrc_ParentDialog.SetSubTitle("Settings");
+   this->mpc_Ui->pc_LabelGlobalSettings->setText("General");
 
-   this->mpc_Ui->pc_LabelPathHandling->setText(C_GtGetText::h_GetText("Relative/absolute path handling"));
-   this->mpc_Ui->pc_LabelSkipTsp->setText(C_GtGetText::h_GetText("Skip TSP Import assistance"));
+   this->mpc_Ui->pc_LabelPathHandling->setText("Relative/absolute path handling");
+   this->mpc_Ui->pc_LabelSkipTsp->setText("Skip TSP Import assistance");
 
-   this->mpc_Ui->pc_LabelPathHandling->SetToolTipInformation(C_GtGetText::h_GetText("Path handling"),
-                                                             C_GtGetText::h_GetText(
-                                                                "Choose if file paths shall be handled as relative or absolute paths."
-                                                                "\nIf the option \"Ask User\" is active, openSYDE will ask everytime a file action is performed."));
+   this->mpc_Ui->pc_LabelPathHandling->SetToolTipInformation("Path handling",
+                                                             "Choose if file paths shall be handled as relative or absolute paths."
+                                                                "\nIf the option \"Ask User\" is active, openSYDE will ask everytime a file action is performed.");
 
-   this->mpc_Ui->pc_LabelSkipTsp->SetToolTipInformation(C_GtGetText::h_GetText("TSP Import assistance"),
-                                                        C_GtGetText::h_GetText(
-                                                           "Choose if openSYDE automatically redirects you to TSP Import when a new node is added to the Topology."
-                                                           "\nIf the option \"Ask User\" is active, openSYDE will ask everytime a node is added."));
+   this->mpc_Ui->pc_LabelSkipTsp->SetToolTipInformation("TSP Import assistance",
+                                                        "Choose if openSYDE automatically redirects you to TSP Import when a new node is added to the Topology."
+                                                           "\nIf the option \"Ask User\" is active, openSYDE will ask everytime a node is added.");
 
-   this->mpc_Ui->pc_CbxPathHandling->addItem(C_GtGetText::h_GetText("Ask User"));
-   this->mpc_Ui->pc_CbxPathHandling->addItem(C_GtGetText::h_GetText("Relative"));
-   this->mpc_Ui->pc_CbxPathHandling->addItem(C_GtGetText::h_GetText("Absolute"));
+   this->mpc_Ui->pc_CbxPathHandling->addItem("Ask User");
+   this->mpc_Ui->pc_CbxPathHandling->addItem("Relative");
+   this->mpc_Ui->pc_CbxPathHandling->addItem("Absolute");
 
-   this->mpc_Ui->pc_CbxSkipTsp->addItem(C_GtGetText::h_GetText("Ask User"));
-   this->mpc_Ui->pc_CbxSkipTsp->addItem(C_GtGetText::h_GetText("Skip"));
+   this->mpc_Ui->pc_CbxSkipTsp->addItem("Ask User");
+   this->mpc_Ui->pc_CbxSkipTsp->addItem("Skip");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

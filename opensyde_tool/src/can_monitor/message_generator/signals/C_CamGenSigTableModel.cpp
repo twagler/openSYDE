@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Model for message generator signals table (implementation)
@@ -18,7 +18,6 @@
 #include "TglUtils.hpp"
 #include "stwerrors.hpp"
 #include "constants.hpp"
-#include "C_GtGetText.hpp"
 #include "C_Uti.hpp"
 #include "C_CamDbHandler.hpp"
 #include "C_SdTooltipUtil.hpp"
@@ -132,19 +131,19 @@ QVariant C_CamGenSigTableModel::headerData(const int32_t os32_Section, const Qt:
          switch (e_Col)
          {
          case eNAME:
-            c_Retval = C_GtGetText::h_GetText("Name");
+            c_Retval = "Name";
             break;
          case eBIT_POS:
-            c_Retval = C_GtGetText::h_GetText("SB");
+            c_Retval = "SB";
             break;
          case eRAW:
-            c_Retval = C_GtGetText::h_GetText("RAW Value");
+            c_Retval = "RAW Value";
             break;
          case ePHYSICAL:
-            c_Retval = C_GtGetText::h_GetText("Phys Value");
+            c_Retval = "Phys Value";
             break;
          case eUNIT:
-            c_Retval = C_GtGetText::h_GetText("Unit");
+            c_Retval = "Unit";
             break;
          default:
             tgl_assert(false);
@@ -156,19 +155,19 @@ QVariant C_CamGenSigTableModel::headerData(const int32_t os32_Section, const Qt:
          switch (e_Col)
          {
          case eNAME:
-            c_Retval = C_GtGetText::h_GetText("Name");
+            c_Retval = "Name";
             break;
          case eBIT_POS:
-            c_Retval = C_GtGetText::h_GetText("Start Bit");
+            c_Retval = "Start Bit";
             break;
          case eRAW:
-            c_Retval = C_GtGetText::h_GetText("Raw Value");
+            c_Retval = "Raw Value";
             break;
          case ePHYSICAL:
-            c_Retval = C_GtGetText::h_GetText("Physical Value");
+            c_Retval = "Physical Value";
             break;
          case eUNIT:
-            c_Retval = C_GtGetText::h_GetText("Unit");
+            c_Retval = "Unit";
             break;
          default:
             tgl_assert(false);
@@ -184,19 +183,19 @@ QVariant C_CamGenSigTableModel::headerData(const int32_t os32_Section, const Qt:
          switch (e_Col)
          {
          case eNAME:
-            c_Retval = C_GtGetText::h_GetText("CAN message signal name");
+            c_Retval = "CAN message signal name";
             break;
          case eBIT_POS:
-            c_Retval = C_GtGetText::h_GetText("CAN message signal start bit position");
+            c_Retval = "CAN message signal start bit position";
             break;
          case eRAW:
-            c_Retval = C_GtGetText::h_GetText("CAN message signal raw value (= as seen on CAN)");
+            c_Retval = "CAN message signal raw value (= as seen on CAN)";
             break;
          case ePHYSICAL:
-            c_Retval = C_GtGetText::h_GetText("CAN message signal physical value (=interpreted/scaled value)");
+            c_Retval = "CAN message signal physical value (=interpreted/scaled value)";
             break;
          case eUNIT:
-            c_Retval = C_GtGetText::h_GetText("CAN message signal unit  (=interpreted/scaled value unit)");
+            c_Retval = "CAN message signal unit  (=interpreted/scaled value unit)";
             break;
          default:
             tgl_assert(false);

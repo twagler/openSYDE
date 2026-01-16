@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Label for error frame label (implementation)
@@ -15,8 +15,6 @@
 #include "C_Uti.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_OgeLabFrameError.hpp"
-#include "C_GtGetText.hpp"
-
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui_logic;
 using namespace stw::opensyde_gui_elements;
@@ -72,11 +70,11 @@ void C_OgeLabFrameError::SetCompleteText(const QString & orc_Text, const QString
 
    if (oe_TooltipType == stw::opensyde_gui::C_NagToolTip::eERROR)
    {
-      c_ToolTipHeading = C_GtGetText::h_GetText("Invalid");
+      c_ToolTipHeading = "Invalid";
    }
    else
    {
-      c_ToolTipHeading = C_GtGetText::h_GetText("Note");
+      c_ToolTipHeading = "Note";
    }
 
    this->mc_Text = orc_Text;

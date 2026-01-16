@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for save-as dialog (implementation)
@@ -18,7 +18,6 @@
 
 #include "stwtypes.hpp"
 #include "C_OscUtils.hpp"
-#include "C_GtGetText.hpp"
 #include "C_PuiProject.hpp"
 #include "C_PopErrorHandling.hpp"
 #include "C_OgeWiCustomMessage.hpp"
@@ -102,30 +101,27 @@ C_PopSaveAsDialogWidget::~C_PopSaveAsDialogWidget(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_PopSaveAsDialogWidget::InitStaticNames(void) const
 {
-   this->mrc_ParentDialog.SetTitle(C_GtGetText::h_GetText("Project"));
-   this->mrc_ParentDialog.SetSubTitle(C_GtGetText::h_GetText("Save As"));
-   this->mpc_Ui->pc_LabelHeadingPreview->setText(C_GtGetText::h_GetText("Location"));
-   this->mpc_Ui->pc_LabelName->setText(C_GtGetText::h_GetText("Project Name"));
-   this->mpc_Ui->pc_LabelPath->setText(C_GtGetText::h_GetText("Path"));
-   this->mpc_Ui->pc_LabelVersion->setText(C_GtGetText::h_GetText("File Format"));
-   this->mpc_Ui->pc_ComboBoxVersion->addItem(C_GtGetText::h_GetText("V3 (default)"));
-   this->mpc_Ui->pc_ComboBoxVersion->addItem(C_GtGetText::h_GetText("V2"));
-   this->mpc_Ui->pc_LineEditName->setPlaceholderText(C_GtGetText::h_GetText(""));
-   this->mpc_Ui->pc_LineEditPath->setPlaceholderText(C_GtGetText::h_GetText(""));
-   this->mpc_Ui->pc_PushButtonSave->setText(C_GtGetText::h_GetText("Save"));
-   this->mpc_Ui->pc_PushButtonCancel->setText(C_GtGetText::h_GetText("Cancel"));
+   this->mrc_ParentDialog.SetTitle("Project");
+   this->mrc_ParentDialog.SetSubTitle("Save As");
+   this->mpc_Ui->pc_LabelHeadingPreview->setText("Location");
+   this->mpc_Ui->pc_LabelName->setText("Project Name");
+   this->mpc_Ui->pc_LabelPath->setText("Path");
+   this->mpc_Ui->pc_LabelVersion->setText("File Format");
+   this->mpc_Ui->pc_ComboBoxVersion->addItem("V3 (default)");
+   this->mpc_Ui->pc_ComboBoxVersion->addItem("V2");
+   this->mpc_Ui->pc_LineEditName->setPlaceholderText("");
+   this->mpc_Ui->pc_LineEditPath->setPlaceholderText("");
+   this->mpc_Ui->pc_PushButtonSave->setText("Save");
+   this->mpc_Ui->pc_PushButtonCancel->setText("Cancel");
    //Tool tips
-   this->mpc_Ui->pc_LabelName->SetToolTipInformation(C_GtGetText::h_GetText("Project Name"),
-                                                     C_GtGetText::h_GetText(
-                                                        "Project name to choose. This will also be used as the default folder name your project is saved in."));
-   this->mpc_Ui->pc_LabelPath->SetToolTipInformation(C_GtGetText::h_GetText("Path"),
-                                                     C_GtGetText::h_GetText(
-                                                        "Path to create the new folder for the new project in"));
-   this->mpc_Ui->pc_LabelVersion->SetToolTipInformation(C_GtGetText::h_GetText("File Format"),
-                                                        C_GtGetText::h_GetText(
-                                                           "File format to use when saving this project.\n"
+   this->mpc_Ui->pc_LabelName->SetToolTipInformation("Project Name",
+                                                     "Project name to choose. This will also be used as the default folder name your project is saved in.");
+   this->mpc_Ui->pc_LabelPath->SetToolTipInformation("Path",
+                                                     "Path to create the new folder for the new project in");
+   this->mpc_Ui->pc_LabelVersion->SetToolTipInformation("File Format",
+                                                        "File format to use when saving this project.\n"
                                                            "V3 (default): Project split into multiple files to improve support for multi user edit of any system definition properties\n"
-                                                           "V2: Compatibility mode for previous versions of provided tools (not recommended as this does not save all supported project properties)"));
+                                                           "V2: Compatibility mode for previous versions of provided tools (not recommended as this does not save all supported project properties)");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -264,7 +260,7 @@ void C_PopSaveAsDialogWidget::m_OnBrowse(void)
    const QString c_Folder = m_GetValidPath(this->mpc_Ui->pc_LineEditPath->GetPath());
 
    const QString c_Path =
-      QFileDialog::getExistingDirectory(this, C_GtGetText::h_GetText("Select Project Location"), c_Folder,
+      QFileDialog::getExistingDirectory(this, "Select Project Location", c_Folder,
                                         QFileDialog::ShowDirsOnly);
 
    if (c_Path.compare("") != 0)
@@ -299,12 +295,12 @@ void C_PopSaveAsDialogWidget::m_OnSave(void)
          if (this->mpc_Ui->pc_ComboBoxVersion->currentIndex() == C_PopSaveAsDialogWidget::mhs32_VERSION_INDEX_V2)
          {
             C_OgeWiCustomMessage c_Box(this, C_OgeWiCustomMessage::eINFORMATION);
-            c_Box.SetHeading(C_GtGetText::h_GetText("Project save as \"V2\""));
-            c_Box.SetDescription(C_GtGetText::h_GetText("Project is exported in file format \"V2\" "
+            c_Box.SetHeading("Project save as \"V2\"");
+            c_Box.SetDescription("Project is exported in file format \"V2\" "
                                                         "as a copy of the current project.\n"
-                                                        "You are still working on current project."));
-            c_Box.SetOkButtonText(C_GtGetText::h_GetText("Continue"));
-            c_Box.SetNoButtonText(C_GtGetText::h_GetText("Cancel"));
+                                                        "You are still working on current project.");
+            c_Box.SetOkButtonText("Continue");
+            c_Box.SetNoButtonText("Cancel");
             c_Box.SetCustomMinHeight(180, 180);
             if (c_Box.Execute() == C_OgeWiCustomMessage::eOK)
             {
@@ -333,8 +329,8 @@ void C_PopSaveAsDialogWidget::m_OnSave(void)
       {
          C_OgeWiCustomMessage c_Box(this, C_OgeWiCustomMessage::E_Type::eERROR);
          QApplication::restoreOverrideCursor();
-         c_Box.SetHeading(C_GtGetText::h_GetText("Project save"));
-         c_Box.SetDescription(C_GtGetText::h_GetText("A project with this name already exists. Choose another name."));
+         c_Box.SetHeading("Project save");
+         c_Box.SetDescription("A project with this name already exists. Choose another name.");
          c_Box.SetCustomMinHeight(180, 180);
          c_Box.Execute();
       }
@@ -343,21 +339,21 @@ void C_PopSaveAsDialogWidget::m_OnSave(void)
    {
       C_OgeWiCustomMessage c_Box(this, C_OgeWiCustomMessage::E_Type::eERROR);
       QApplication::restoreOverrideCursor();
-      QString c_Details = C_GtGetText::h_GetText("Invalid content: \n");
+      QString c_Details = "Invalid content: \n";
       if (q_ValidName == false)
       {
-         c_Details += (c_Name.isEmpty()) ?  C_GtGetText::h_GetText("Empty project name") : c_Name;
+         c_Details += (c_Name.isEmpty()) ?  "Empty project name" : c_Name;
          c_Details += "\n";
       }
 
       if (q_ValidPath == false)
       {
-         c_Details += (c_BasePath.isEmpty()) ?  C_GtGetText::h_GetText("Empty project path") : c_BasePath;
+         c_Details += (c_BasePath.isEmpty()) ?  "Empty project path" : c_BasePath;
       }
 
-      c_Box.SetHeading(C_GtGetText::h_GetText("Save project as"));
-      c_Box.SetDescription(C_GtGetText::h_GetText("Name or/and path is empty or contains invalid characters. "
-                                                  "Please choose valid name and path."));
+      c_Box.SetHeading("Save project as");
+      c_Box.SetDescription("Name or/and path is empty or contains invalid characters. "
+                                                  "Please choose valid name and path.");
       c_Box.SetDetails(c_Details);
       c_Box.SetCustomMinHeight(230, 270);
       c_Box.Execute();

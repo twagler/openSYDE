@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Pop up dialog widget for updating the EDS file for any existing device
@@ -16,7 +16,6 @@
 #include "C_SdUtil.hpp"
 #include "stwerrors.hpp"
 #include "C_CieUtil.hpp"
-#include "C_GtGetText.hpp"
 #include "C_SdNdeDpUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_CieImportReportWidget.hpp"
@@ -86,10 +85,10 @@ C_SdNdeCoDeviceUpdateEdsDialog::C_SdNdeCoDeviceUpdateEdsDialog(
    this->mrc_ParentDialog.SetWidget(this);
 
    // set main title
-   this->mrc_ParentDialog.SetTitle(static_cast<QString>(C_GtGetText::h_GetText("%1 File Update")).arg(c_FileInfo.
+   this->mrc_ParentDialog.SetTitle(static_cast<QString>("%1 File Update").arg(c_FileInfo.
                                                                                                       completeSuffix().
                                                                                                       toUpper()));
-   this->mrc_ParentDialog.SetSubTitle(C_GtGetText::h_GetText("Report"));
+   this->mrc_ParentDialog.SetSubTitle("Report");
 
    //Before data processing
    m_InitMessageNames(this->mc_ImportedNodeAssignment);
@@ -158,9 +157,9 @@ void C_SdNdeCoDeviceUpdateEdsDialog::DoApplyData(void) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeCoDeviceUpdateEdsDialog::InitStaticNames(void) const
 {
-   this->mpc_Ui->pc_LabelHeadingPreview->setText(C_GtGetText::h_GetText("Details"));
-   this->mpc_Ui->pc_BushButtonOk->setText(C_GtGetText::h_GetText("OK"));
-   this->mpc_Ui->pc_BushButtonCancel->setText(C_GtGetText::h_GetText("Cancel"));
+   this->mpc_Ui->pc_LabelHeadingPreview->setText("Details");
+   this->mpc_Ui->pc_BushButtonOk->setText("OK");
+   this->mpc_Ui->pc_BushButtonCancel->setText("Cancel");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -269,13 +268,13 @@ void C_SdNdeCoDeviceUpdateEdsDialog::m_ShowReport()
                                                                       this->mc_ImportedNodeAssignment.u32_NewMessageCount >
                                                                       0UL);
 
-   C_SdNdeCoDeviceUpdateEdsDialog::mh_AddToReport(C_GtGetText::h_GetText("New Messages"),
+   C_SdNdeCoDeviceUpdateEdsDialog::mh_AddToReport("New Messages",
                                                   c_FileInfo, this->mc_NewNodeAssignment, c_Report);
-   C_SdNdeCoDeviceUpdateEdsDialog::mh_AddToReport(C_GtGetText::h_GetText("Adapted Messages"),
+   C_SdNdeCoDeviceUpdateEdsDialog::mh_AddToReport("Adapted Messages",
                                                   c_FileInfo, this->mc_AdaptedNodeAssignment, c_Report);
-   C_SdNdeCoDeviceUpdateEdsDialog::mh_AddToReport(C_GtGetText::h_GetText("Deleted Messages"),
+   C_SdNdeCoDeviceUpdateEdsDialog::mh_AddToReport("Deleted Messages",
                                                   c_FileInfo, this->mc_DeletedNodeAssignment, c_Report);
-   C_SdNdeCoDeviceUpdateEdsDialog::mh_AddToReport(C_GtGetText::h_GetText("Skipped Messages"),
+   C_SdNdeCoDeviceUpdateEdsDialog::mh_AddToReport("Skipped Messages",
                                                   c_FileInfo, this->mc_ImportedInvalidNodeAssignment, c_Report);
 
    this->mpc_Ui->pc_TextEditFlash_2->setHtml(c_Report);
@@ -821,8 +820,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::m_HandleSignalChangesForAdaptedMessageVecto
       }
       if (!c_RemovedSignalsInfo.isEmpty())
       {
-         rc_MessageInfoString += static_cast<QString>(C_GtGetText::h_GetText(
-                                                         "Signals removed, because it could not be found in the updated EDS: %1\n"))
+         rc_MessageInfoString += static_cast<QString>("Signals removed, because it could not be found in the updated EDS: %1\n")
                                  .arg(c_RemovedSignalsInfo);
       }
    }
@@ -916,8 +914,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AddAdaptedMessage(const C_OscCanOpenMana
    {
       //Add info
       c_WarningMessages +=
-         static_cast<QString>(C_GtGetText::h_GetText(
-                                 "Message mapping is read-only. Message layout will be reset. Replaced existing signals (%1) by (%2)\n"))
+         static_cast<QString>("Message mapping is read-only. Message layout will be reset. Replaced existing signals (%1) by (%2)\n")
          .arg(C_SdNdeCoDeviceUpdateEdsDialog::mh_GetSignalNames(orc_ExistingOscMessage, orc_ExistingOscSignalData)).arg(C_SdNdeCoDeviceUpdateEdsDialog::mh_GetSignalNames(
                                                                                                                            orc_ImportedOscMessageData,
                                                                                                                            orc_ImportedOscSignalData));
@@ -1089,8 +1086,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AdaptMessageProperties(const C_OscCanOpe
       if (orc_NewOscMessage.u32_CanId != orc_ImportedOscMessageData.u32_CanId)
       {
          orc_WarningMessages +=
-            static_cast<QString>(C_GtGetText::h_GetText(
-                                    "CAN-ID read-only so the current CAN-ID value 0x%1 was replaced by 0x%2\n"))
+            static_cast<QString>("CAN-ID read-only so the current CAN-ID value 0x%1 was replaced by 0x%2\n")
             .
             arg(QString::number(
                    orc_NewOscMessage.u32_CanId, 16).toUpper()).arg(QString::number(
@@ -1101,8 +1097,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AdaptMessageProperties(const C_OscCanOpe
       if (orc_NewOscMessage.q_CanOpenManagerMessageActive != orc_ImportedOscMessageData.q_CanOpenManagerMessageActive)
       {
          orc_WarningMessages +=
-            static_cast<QString>(C_GtGetText::h_GetText(
-                                    "CAN-ID read-only so the current message active value %1 was replaced by %2\n"))
+            static_cast<QString>("CAN-ID read-only so the current message active value %1 was replaced by %2\n")
             .
             arg(
                C_SdNdeCoDeviceUpdateEdsDialog::mh_BoolToString(orc_NewOscMessage.q_CanOpenManagerMessageActive)).arg(
@@ -1113,8 +1108,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AdaptMessageProperties(const C_OscCanOpe
           orc_ImportedOscMessageData.q_CanOpenManagerCobIdIncludesNodeId)
       {
          orc_WarningMessages +=
-            static_cast<QString>(C_GtGetText::h_GetText(
-                                    "CAN-ID read-only so the current setting to include the Node-ID %1 was replaced by %2\n"))
+            static_cast<QString>("CAN-ID read-only so the current setting to include the Node-ID %1 was replaced by %2\n")
             .
             arg(
                C_SdNdeCoDeviceUpdateEdsDialog::mh_BoolToString(orc_NewOscMessage.q_CanOpenManagerCobIdIncludesNodeId)).
@@ -1127,8 +1121,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AdaptMessageProperties(const C_OscCanOpe
       if (orc_NewOscMessage.q_IsExtended != orc_ImportedOscMessageData.q_IsExtended)
       {
          orc_WarningMessages +=
-            static_cast<QString>(C_GtGetText::h_GetText(
-                                    "CAN-ID read-only so the current extended type value %1 was replaced by %2\n"))
+            static_cast<QString>("CAN-ID read-only so the current extended type value %1 was replaced by %2\n")
             .
             arg(
                C_SdNdeCoDeviceUpdateEdsDialog::mh_BoolToString(orc_NewOscMessage.q_IsExtended)).arg(
@@ -1143,8 +1136,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AdaptMessageProperties(const C_OscCanOpe
       if (orc_NewOscMessage.e_TxMethod != orc_ImportedOscMessageData.e_TxMethod)
       {
          orc_WarningMessages +=
-            static_cast<QString>(C_GtGetText::h_GetText(
-                                    "Tx method read-only so the current Tx method value %1 was replaced by %2\n"))
+            static_cast<QString>("Tx method read-only so the current Tx method value %1 was replaced by %2\n")
             .
             arg(
                C_SdUtil::h_ConvertTxMethodToName(orc_NewOscMessage.e_TxMethod)).arg(C_SdUtil::h_ConvertTxMethodToName(
@@ -1163,8 +1155,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AdaptMessageProperties(const C_OscCanOpe
          if (orc_NewOscMessage.u16_DelayTimeMs != orc_ImportedOscMessageData.u16_DelayTimeMs)
          {
             orc_WarningMessages +=
-               static_cast<QString>(C_GtGetText::h_GetText(
-                                       "Inhibit time read-only so the current value %1 was replaced by %2\n"))
+               static_cast<QString>("Inhibit time read-only so the current value %1 was replaced by %2\n")
                .
                arg(orc_NewOscMessage.u16_DelayTimeMs).arg(
                   orc_ImportedOscMessageData.
@@ -1183,8 +1174,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AdaptMessageProperties(const C_OscCanOpe
             if (orc_NewOscMessage.u32_CycleTimeMs != orc_ImportedOscMessageData.u32_CycleTimeMs)
             {
                orc_WarningMessages +=
-                  static_cast<QString>(C_GtGetText::h_GetText(
-                                          "Event time read-only so the current value %1 was replaced by %2\n"))
+                  static_cast<QString>("Event time read-only so the current value %1 was replaced by %2\n")
                   .
                   arg(orc_NewOscMessage.u32_CycleTimeMs).arg(
                      orc_ImportedOscMessageData.
@@ -1197,8 +1187,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AdaptMessageProperties(const C_OscCanOpe
             if (orc_NewOscMessage.u32_TimeoutMs != orc_ImportedOscMessageData.u32_TimeoutMs)
             {
                orc_WarningMessages +=
-                  static_cast<QString>(C_GtGetText::h_GetText(
-                                          "Event time read-only so the current timeout value %1 was replaced by %2\n"))
+                  static_cast<QString>("Event time read-only so the current timeout value %1 was replaced by %2\n")
                   .
                   arg(orc_NewOscMessage.u32_TimeoutMs).arg(
                      orc_ImportedOscMessageData.
@@ -1229,8 +1218,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::m_AdaptSignalProperties(C_OscCanSignal & or
    if (orc_Signal.u16_ComBitLength != orc_OrgSignal.c_SignalData.u16_ComBitLength)
    {
       orc_AdaptedMessageInfo +=
-         static_cast<QString>(C_GtGetText::h_GetText(
-                                 "Signal %1 length changed from current value %2 to %3\n"))
+         static_cast<QString>("Signal %1 length changed from current value %2 to %3\n")
          .
          arg(C_SdNdeCoDeviceUpdateEdsDialog::mh_GetSignalNameForDisplay(orc_OscSignalData.c_Name)).arg(
             orc_Signal.u16_ComBitLength).arg(
@@ -1240,8 +1228,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::m_AdaptSignalProperties(C_OscCanSignal & or
    if (orc_Signal.e_ComByteOrder != orc_OrgSignal.c_SignalData.e_ComByteOrder)
    {
       orc_AdaptedMessageInfo +=
-         static_cast<QString>(C_GtGetText::h_GetText(
-                                 "Signal %1 byte order changed from current value %2 to %3\n"))
+         static_cast<QString>("Signal %1 byte order changed from current value %2 to %3\n")
          .
          arg(C_SdNdeCoDeviceUpdateEdsDialog::mh_GetSignalNameForDisplay(orc_OscSignalData.c_Name)).arg(C_SdUtil::h_ConvertByteOrderToName(
                                                                                                           orc_Signal.
@@ -1253,8 +1240,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::m_AdaptSignalProperties(C_OscCanSignal & or
    if (orc_OscSignalData.GetType() != orc_OrgSignal.c_DatapoolData.GetType())
    {
       orc_AdaptedMessageInfo +=
-         static_cast<QString>(C_GtGetText::h_GetText(
-                                 "Signal %1 data type changed from current value %2 to %3\n"))
+         static_cast<QString>("Signal %1 data type changed from current value %2 to %3\n")
          .
          arg(C_SdNdeCoDeviceUpdateEdsDialog::mh_GetSignalNameForDisplay(orc_OscSignalData.c_Name)).arg(C_SdNdeDpUtil::h_ConvertContentTypeToString(
                                                                                                           orc_OscSignalData
@@ -1279,8 +1265,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::m_AdaptSignalProperties(C_OscCanSignal & or
       orc_OscSignalData.c_Unit = orc_OrgSignal.c_DatapoolData.c_Unit;
       //Add info
       orc_AdaptedMessageInfo +=
-         static_cast<QString>(C_GtGetText::h_GetText(
-                                 "Signal %1 data type changes occured therefore the min, max and init values were replaced by the imported values\n"))
+         static_cast<QString>("Signal %1 data type changes occured therefore the min, max and init values were replaced by the imported values\n")
          .arg(C_SdNdeCoDeviceUpdateEdsDialog::mh_GetSignalNameForDisplay(orc_OscSignalData.c_Name));
    }
 }
@@ -1326,11 +1311,11 @@ QString C_SdNdeCoDeviceUpdateEdsDialog::mh_BoolToString(const bool oq_Value)
 
    if (oq_Value)
    {
-      c_Retval = C_GtGetText::h_GetText("True");
+      c_Retval = "True";
    }
    else
    {
-      c_Retval = C_GtGetText::h_GetText("False");
+      c_Retval = "False";
    }
    return c_Retval;
 }

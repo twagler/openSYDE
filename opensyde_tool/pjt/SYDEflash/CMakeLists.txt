@@ -44,7 +44,6 @@ find_package(Qt6 REQUIRED COMPONENTS SvgWidgets)
 include_directories()
 set (OPENSYDE_INCLUDES
    ${PROJECT_ROOT}/src
-   ${PROJECT_ROOT}/libs/gettext
    ${PROJECT_ROOT}/src/syde_flash/gui_elements/line_edit
    ${PROJECT_ROOT}/src/syde_flash/gui_elements/push_button
    ${PROJECT_ROOT}/src/syde_flash/gui_elements/spin_box
@@ -62,8 +61,6 @@ set (OPENSYDE_INCLUDES
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings
    ${PROJECT_ROOT}/src/can_monitor/util
-   ${PROJECT_ROOT}/src/gettext
-   ${PROJECT_ROOT}/src/gettext
    ${PROJECT_ROOT}/src/help_engine
    ${PROJECT_ROOT}/src/navigable_gui
    ${PROJECT_ROOT}/src/opensyde_gui_elements
@@ -105,7 +102,6 @@ set (OPENSYDE_INCLUDES
 
 # Include path with library modules
 set (OPENSYDE_LIB_INCLUDES
-   ${PROJECT_ROOT}/libs/gettext
 )
 
 # --- PROJECT SOURCE FILE PATHS ----------------------------------------------------------------------------------------
@@ -137,7 +133,6 @@ set(OPENSYDE_SOURCES
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings/C_CamMosDllWidget.cpp
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings/C_CamMosSectionPopup.cpp
    ${PROJECT_ROOT}/src/can_monitor/util/C_CamUtiGeneric.cpp
-   ${PROJECT_ROOT}/src/gettext/C_GtGetText.cpp
    ${PROJECT_ROOT}/src/help_engine/C_HeHandler.cpp
    ${PROJECT_ROOT}/src/navigable_gui/C_NagAboutDialog.cpp
    ${PROJECT_ROOT}/src/navigable_gui/C_NagToolTip.cpp
@@ -307,7 +302,6 @@ set(OPENSYDE_HEADERS
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings/C_CamMosSectionPopup.hpp
    ${PROJECT_ROOT}/src/can_monitor/util/C_CamUtiGeneric.hpp
    ${PROJECT_ROOT}/src/constants.hpp
-   ${PROJECT_ROOT}/src/gettext/C_GtGetText.hpp
    ${PROJECT_ROOT}/src/help_engine/C_HeHandler.hpp
    ${PROJECT_ROOT}/src/navigable_gui/C_NagAboutDialog.hpp
    ${PROJECT_ROOT}/src/navigable_gui/C_NagToolTip.hpp
@@ -506,7 +500,6 @@ set(OPENSYDE_LINK_LIBRARIES
    version
    ws2_32   #WinSock
    Iphlpapi #IP helper API
-   ${PROJECT_ROOT}/libs/gettext/libintl.a
 )
 
 # COMPILER SWITCHES

@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Combo box with multi-selection functionality
@@ -19,7 +19,6 @@
 
 #include "stwtypes.hpp"
 
-#include "C_GtGetText.hpp"
 #include "C_OgeCbxMultiSelect.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -52,7 +51,7 @@ C_OgeCbxMultiSelect::C_OgeCbxMultiSelect(QWidget * const opc_Parent) :
    mpc_ListWidget(new QListWidget),
    mq_IsShown(false)
 {
-   this->SetDisplayText(C_GtGetText::h_GetText("<none>"));
+   this->SetDisplayText("<none>");
 
    //Handle pop up interaction even with parent
    this->mpc_PopFrame->setAttribute(Qt::WA_WindowPropagation);
@@ -276,7 +275,7 @@ void C_OgeCbxMultiSelect::SetItem(const QString & orc_DisplayName)
 {
    QString c_Display;
 
-   if (this->mc_DisplayText.contains(C_GtGetText::h_GetText("<none>")))
+   if (this->mc_DisplayText.contains("<none>"))
    {
       this->mc_DisplayText = "";
    }
@@ -399,11 +398,11 @@ void C_OgeCbxMultiSelect::m_UpdateDisplayName(void)
    // no checked item found
    if (q_Found == false)
    {
-      c_Display = C_GtGetText::h_GetText("<none>");
-      c_ToolTip = C_GtGetText::h_GetText("Nothing selected");
+      c_Display = "<none>";
+      c_ToolTip = "Nothing selected";
    }
 
    // set the item names to combo box
    this->SetDisplayText(c_Display);
-   this->SetToolTipInformation(C_GtGetText::h_GetText("Selected Elements:"), c_ToolTip);
+   this->SetToolTipInformation("Selected Elements:", c_ToolTip);
 }

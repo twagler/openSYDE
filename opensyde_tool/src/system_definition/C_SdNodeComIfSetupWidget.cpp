@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Node Com Interface Setup
@@ -13,7 +13,6 @@
 #include "C_SdNodeComIfSetupWidget.hpp"
 #include "ui_C_SdNodeComIfSetupWidget.h"
 #include "constants.hpp"
-#include "C_GtGetText.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSdUtil.hpp"
 #include "C_SdUtil.hpp"
@@ -91,10 +90,10 @@ C_SdNodeComIfSetupWidget::~C_SdNodeComIfSetupWidget()
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNodeComIfSetupWidget::InitStaticNames(void) const
 {
-   this->mrc_ParentDialog.SetSubTitle(C_GtGetText::h_GetText("Communication Interface Setup"));
-   this->mpc_Ui->pc_BushButtonOk->setText(C_GtGetText::h_GetText("OK"));
-   this->mpc_Ui->pc_BushButtonCancel->setText(C_GtGetText::h_GetText("Cancel"));
-   this->mpc_Ui->pc_LabelComInterfaceHeading->setText(C_GtGetText::h_GetText("Select COMM Interface"));
+   this->mrc_ParentDialog.SetSubTitle("Communication Interface Setup");
+   this->mpc_Ui->pc_BushButtonOk->setText("OK");
+   this->mpc_Ui->pc_BushButtonCancel->setText("Cancel");
+   this->mpc_Ui->pc_LabelComInterfaceHeading->setText("Select COMM Interface");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

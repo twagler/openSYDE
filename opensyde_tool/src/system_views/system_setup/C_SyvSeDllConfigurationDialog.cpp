@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Dialog for choosing and configuring the CAN communication DLL
@@ -20,7 +20,6 @@
 
 #include "C_OscUtils.hpp"
 #include "C_Uti.hpp"
-#include "C_GtGetText.hpp"
 #include "C_Can.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_ImpUtil.hpp"
@@ -116,22 +115,21 @@ C_SyvSeDllConfigurationDialog::~C_SyvSeDllConfigurationDialog()
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvSeDllConfigurationDialog::InitText(void) const
 {
-   this->mrc_ParentDialog.SetTitle(C_GtGetText::h_GetText("PC CAN Interface"));
-   this->mrc_ParentDialog.SetSubTitle(C_GtGetText::h_GetText("Configuration"));
+   this->mrc_ParentDialog.SetTitle("PC CAN Interface");
+   this->mrc_ParentDialog.SetSubTitle("Configuration");
 
-   this->mpc_Ui->pc_LabelBusHeading->setText(C_GtGetText::h_GetText("Select Interface"));
-   this->mpc_Ui->pc_BushButtonOk->setText(C_GtGetText::h_GetText("OK"));
-   this->mpc_Ui->pc_BushButtonCancel->setText(C_GtGetText::h_GetText("Cancel"));
-   this->mpc_Ui->pc_BushButtonConfigureDll->setText(C_GtGetText::h_GetText("Configure"));
-   this->mpc_Ui->pc_BushButtonTestConnection->setText(C_GtGetText::h_GetText("Test Connection"));
-   this->mpc_Ui->pc_LabelCustomDllPath->setText(C_GtGetText::h_GetText("DLL path"));
-   this->mpc_Ui->pc_LabelBitrateInfo->setText(C_GtGetText::h_GetText(
-                                                 "CAN bitrate will be applied automatically."));
-   this->mpc_Ui->pc_RadioButtonOther->setText(C_GtGetText::h_GetText("Other"));
+   this->mpc_Ui->pc_LabelBusHeading->setText("Select Interface");
+   this->mpc_Ui->pc_BushButtonOk->setText("OK");
+   this->mpc_Ui->pc_BushButtonCancel->setText("Cancel");
+   this->mpc_Ui->pc_BushButtonConfigureDll->setText("Configure");
+   this->mpc_Ui->pc_BushButtonTestConnection->setText("Test Connection");
+   this->mpc_Ui->pc_LabelCustomDllPath->setText("DLL path");
+   this->mpc_Ui->pc_LabelBitrateInfo->setText("CAN bitrate will be applied automatically.");
+   this->mpc_Ui->pc_RadioButtonOther->setText("Other");
 
    this->mpc_Ui->pc_PushButtonBrowse->SetToolTipInformation(
-      C_GtGetText::h_GetText("Browse"),
-      C_GtGetText::h_GetText("Browse for custom DLL file."));
+      "Browse",
+      "Browse for custom DLL file.");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -308,10 +306,10 @@ void C_SyvSeDllConfigurationDialog::m_ConfigureDllClicked(void) const
          {
             const uint32_t u32_BITNESS = 8 * sizeof(size_t);
             C_OgeWiCustomMessage c_MessageBox(this->parentWidget(), C_OgeWiCustomMessage::E_Type::eWARNING);
-            c_MessageBox.SetHeading(C_GtGetText::h_GetText("PC CAN Interface configuration"));
+            c_MessageBox.SetHeading("PC CAN Interface configuration");
             c_MessageBox.SetDescription(
-               static_cast<QString>(C_GtGetText::h_GetText("CAN DLL initialization not successful. "
-                                                           "Make sure to use a %1-bit DLL.")).arg(u32_BITNESS));
+               static_cast<QString>("CAN DLL initialization not successful. "
+                                                           "Make sure to use a %1-bit DLL.").arg(u32_BITNESS));
             c_MessageBox.SetCustomMinHeight(180, 180);
             c_MessageBox.Execute();
          }
@@ -320,8 +318,8 @@ void C_SyvSeDllConfigurationDialog::m_ConfigureDllClicked(void) const
       else
       {
          C_OgeWiCustomMessage c_MessageBox(this->parentWidget(), C_OgeWiCustomMessage::E_Type::eWARNING);
-         c_MessageBox.SetHeading(C_GtGetText::h_GetText("PC CAN Interface configuration"));
-         c_MessageBox.SetDescription(C_GtGetText::h_GetText("CAN DLL not found."));
+         c_MessageBox.SetHeading("PC CAN Interface configuration");
+         c_MessageBox.SetDescription("CAN DLL not found.");
          c_MessageBox.SetCustomMinHeight(180, 180);
          c_MessageBox.Execute();
       }
@@ -338,7 +336,7 @@ void C_SyvSeDllConfigurationDialog::m_TestConnectionClicked(void) const
       C_OgeWiCustomMessage c_MessageBox(this->parentWidget(), C_OgeWiCustomMessage::E_Type::eWARNING);
       QString c_Description;
       const QString c_Path = this->m_GetAbsoluteDllPath();
-      const QString c_Heading = C_GtGetText::h_GetText("PC CAN Interface configuration");
+      const QString c_Heading = "PC CAN Interface configuration";
 
       if (QFile::exists(c_Path) == true)
       {
@@ -360,12 +358,12 @@ void C_SyvSeDllConfigurationDialog::m_TestConnectionClicked(void) const
             if (s32_Return == C_NO_ERR)
             {
                c_MessageBox.SetType(C_OgeWiCustomMessage::E_Type::eINFORMATION);
-               c_Description = C_GtGetText::h_GetText("Connection test successful. CAN Interface is ready for use.");
+               c_Description = "Connection test successful. CAN Interface is ready for use.";
             }
             else
             {
                c_Description =
-                  C_GtGetText::h_GetText("CAN bus initialization not successful: could not initialize bus.");
+                  "CAN bus initialization not successful: could not initialize bus.";
             }
             (void)c_Can.CAN_Exit();
          }
@@ -373,14 +371,14 @@ void C_SyvSeDllConfigurationDialog::m_TestConnectionClicked(void) const
          {
             const uint32_t u32_BITNESS = 8 * sizeof(size_t);
             c_Description = static_cast<QString>(
-               C_GtGetText::h_GetText("CAN DLL initialization not successful. Make sure to use a %1-bit DLL.")).
+               "CAN DLL initialization not successful. Make sure to use a %1-bit DLL.").
                             arg(u32_BITNESS);
          }
          (void)c_Can.DLL_Close();
       }
       else
       {
-         c_Description = C_GtGetText::h_GetText("CAN DLL not found.");
+         c_Description = "CAN DLL not found.";
       }
 
       // Show the result
@@ -413,8 +411,8 @@ void C_SyvSeDllConfigurationDialog::m_OtherDllClicked(void) const
 void C_SyvSeDllConfigurationDialog::m_OnBrowse(void) const
 {
    const QString c_Folder = C_PuiUtil::h_GetResolvedAbsPathFromExe(this->mpc_Ui->pc_LineEditCustomDllPath->GetPath());
-   const QString c_Filter = static_cast<QString>(C_GtGetText::h_GetText("CAN DLL ")) + "(*.dll)";
-   QFileDialog c_Dialog(this->parentWidget(), C_GtGetText::h_GetText("Select CAN DLL"), c_Folder, c_Filter);
+   const QString c_Filter = static_cast<QString>("CAN DLL ") + "(*.dll)";
+   QFileDialog c_Dialog(this->parentWidget(), "Select CAN DLL", c_Folder, c_Filter);
 
    c_Dialog.setDefaultSuffix(".dll");
 
@@ -478,8 +476,8 @@ bool C_SyvSeDllConfigurationDialog::m_CheckCustomDllPath(void) const
       if (c_ResolvedPath.isEmpty() == true)
       {
          C_OgeWiCustomMessage c_MessageBox(this->parentWidget(), C_OgeWiCustomMessage::E_Type::eERROR);
-         c_MessageBox.SetHeading(C_GtGetText::h_GetText("PC CAN Interface configuration"));
-         c_MessageBox.SetDescription(C_GtGetText::h_GetText("CAN DLL path is empty. Please choose a valid path."));
+         c_MessageBox.SetHeading("PC CAN Interface configuration");
+         c_MessageBox.SetDescription("CAN DLL path is empty. Please choose a valid path.");
          c_MessageBox.SetCustomMinHeight(180, 180);
          c_MessageBox.Execute();
          q_Return = false;

@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for dashboard interactions (connect and dark mode)
@@ -13,7 +13,6 @@
 #include "precomp_headers.hpp"
 
 #include "constants.hpp"
-#include "C_GtGetText.hpp"
 #include "C_SyvDaDashboardInteraction.hpp"
 #include "ui_C_SyvDaDashboardInteraction.h"
 
@@ -85,10 +84,9 @@ C_SyvDaDashboardInteraction::~C_SyvDaDashboardInteraction(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDaDashboardInteraction::InitStaticNames(void) const
 {
-   this->mpc_Ui->pc_LabelConnectText->setText(C_GtGetText::h_GetText("Online"));
-   this->mpc_Ui->pc_PushButtonDarkMode->SetToolTipInformation(C_GtGetText::h_GetText("Switch Mode"),
-                                                              C_GtGetText::h_GetText(
-                                                                 "Switch between dark and bright mode."));
+   this->mpc_Ui->pc_LabelConnectText->setText("Online");
+   this->mpc_Ui->pc_PushButtonDarkMode->SetToolTipInformation("Switch Mode",
+                                                              "Switch between dark and bright mode.");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

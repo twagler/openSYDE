@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       short description (implementation)
@@ -14,7 +14,6 @@
 
 #include "TglUtils.hpp"
 #include "constants.hpp"
-#include "C_GtGetText.hpp"
 #include "C_OgeCbxTable.hpp"
 #include "C_OgeSpxTable.hpp"
 #include "C_SdNdeSfoResetMessageTableModel.hpp"
@@ -80,7 +79,7 @@ QWidget * C_SdNdeSfoResetMessageTableDelegate::createEditor(QWidget * const opc_
       {
       case C_SdNdeSfoResetMessageTableModel::eID:
          pc_SpinBox = new C_OgeSpxTable(opc_Parent);
-         pc_SpinBox->setPrefix(C_GtGetText::h_GetText("0x"));
+         pc_SpinBox->setPrefix("0x");
          pc_SpinBox->setDisplayIntegerBase(16);
          pc_SpinBox->SetMinimumCustom(0);
          if (orc_Index.data(ms32_USER_ROLE_CONDITIONAL_VALUE) == 0)
@@ -108,7 +107,7 @@ QWidget * C_SdNdeSfoResetMessageTableDelegate::createEditor(QWidget * const opc_
       case C_SdNdeSfoResetMessageTableModel::eBYTE7:
       case C_SdNdeSfoResetMessageTableModel::eBYTE8:
          pc_SpinBox = new C_OgeSpxTable(opc_Parent);
-         pc_SpinBox->setPrefix(C_GtGetText::h_GetText("0x"));
+         pc_SpinBox->setPrefix("0x");
          pc_SpinBox->setDisplayIntegerBase(16);
          pc_SpinBox->SetMinimumCustom(0);
          pc_SpinBox->SetMaximumCustom(255);
@@ -116,8 +115,8 @@ QWidget * C_SdNdeSfoResetMessageTableDelegate::createEditor(QWidget * const opc_
          break;
       case C_SdNdeSfoResetMessageTableModel::eEXTENDED_FORMAT:
          pc_ComboBox = new C_OgeCbxTable(opc_Parent);
-         pc_ComboBox->addItem(C_GtGetText::h_GetText("11 Bit"));
-         pc_ComboBox->addItem(C_GtGetText::h_GetText("29 Bit"));
+         pc_ComboBox->addItem("11 Bit");
+         pc_ComboBox->addItem("29 Bit");
          pc_Retval = pc_ComboBox;
          break;
       default:

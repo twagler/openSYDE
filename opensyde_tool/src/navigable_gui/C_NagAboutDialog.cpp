@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for "About openSYDE" popup dialog. (implementation)
@@ -13,7 +13,6 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "C_GtGetText.hpp"
 #include "C_NagAboutDialog.hpp"
 #include "ui_C_NagAboutDialog.h"
 #include "C_HeHandler.hpp"
@@ -91,25 +90,25 @@ void C_NagAboutDialog::InitStaticNames(void) const
 {
    QString c_Text;
 
-   c_Text =  C_GtGetText::h_GetText("Sensor-Technik Wiedemann GmbH. All rights reserved.\n");
-   c_Text += C_GtGetText::h_GetText("\n");
+   c_Text =  "Sensor-Technik Wiedemann GmbH. All rights reserved.\n";
+   c_Text += "\n";
    c_Text += this->mc_ProductName;
-   c_Text += C_GtGetText::h_GetText(" is provided under GPL V3 license.\n");
-   c_Text += C_GtGetText::h_GetText("\n");
+   c_Text += " is provided under GPL V3 license.\n";
+   c_Text += "\n";
    c_Text += this->mc_ProductName;
-   c_Text += C_GtGetText::h_GetText(" uses the following open source libraries:\n");
-   c_Text += C_GtGetText::h_GetText("    - Qt 6.8.3 by The Qt Company\n");
-   c_Text += C_GtGetText::h_GetText("    - gettext by the Free Software Foundation\n");
-   c_Text += C_GtGetText::h_GetText("    - TinyXML-2 by Lee Thomason and others\n");
-   c_Text += C_GtGetText::h_GetText("    - The MinGW Runtime\n");
+   c_Text += " uses the following open source libraries:\n";
+   c_Text += "    - Qt 6.8.3 by The Qt Company\n";
+   c_Text += "    - gettext by the Free Software Foundation\n";
+   c_Text += "    - TinyXML-2 by Lee Thomason and others\n";
+   c_Text += "    - The MinGW Runtime\n";
 
-   //   c_Text += C_GtGetText::h_GetText("    - Vector::DBC Module by Tobias Lorenz\n");
-   //   c_Text += C_GtGetText::h_GetText("    - Bison\n");
-   //   c_Text += C_GtGetText::h_GetText("    - Flex\n");
+   //   c_Text += "    - Vector::DBC Module by Tobias Lorenz\n";
+   //   c_Text += "    - Bison\n";
+   //   c_Text += "    - Flex\n";
 
-   //   c_Text += C_GtGetText::h_GetText("    - Miniz\n");
-   //   c_Text += C_GtGetText::h_GetText("    - AES implementation by SergeyBel\n");
-   //   c_Text += C_GtGetText::h_GetText("    - OpenSSL\n");
+   //   c_Text += "    - Miniz\n";
+   //   c_Text += "    - AES implementation by SergeyBel\n";
+   //   c_Text += "    - OpenSSL\n";
 
    if (this->mc_OptionalComponents != "")
    {
@@ -124,9 +123,9 @@ void C_NagAboutDialog::InitStaticNames(void) const
 
    this->mpc_Ui->pc_LabelValCopyright->setText(c_Text);
 
-   this->mrc_ParentDialog.SetTitle(C_GtGetText::h_GetText("About"));
+   this->mrc_ParentDialog.SetTitle("About");
    this->mrc_ParentDialog.SetSubTitle(this->mc_ProductName);
-   this->mpc_Ui->pc_PushButtonOk->setText(C_GtGetText::h_GetText("OK"));
+   this->mpc_Ui->pc_PushButtonOk->setText("OK");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

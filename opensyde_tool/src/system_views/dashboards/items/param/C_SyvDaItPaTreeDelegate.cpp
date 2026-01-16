@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Parameter table model (implementation)
@@ -17,7 +17,6 @@
 
 #include "TglUtils.hpp"
 #include "constants.hpp"
-#include "C_GtGetText.hpp"
 #include "C_OgeCbxParam.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeDpUtil.hpp"
@@ -113,11 +112,11 @@ QWidget * C_SyvDaItPaTreeDelegate::createEditor(QWidget * const opc_Parent, cons
                if (pc_List != NULL)
                {
                   pc_ComboBox = new C_OgeCbxParam(opc_Parent);
-                  pc_ComboBox->addItem(C_GtGetText::h_GetText("Custom values"));
+                  pc_ComboBox->addItem("Custom values");
                   for (uint32_t u32_ItDataSet = 0UL; u32_ItDataSet < pc_List->c_DataSets.size(); ++u32_ItDataSet)
                   {
                      const C_OscNodeDataPoolDataSet & rc_DataSet = pc_List->c_DataSets[u32_ItDataSet];
-                     pc_ComboBox->addItem(static_cast<QString>(C_GtGetText::h_GetText("Dataset \"%1\"")).arg(
+                     pc_ComboBox->addItem(static_cast<QString>("Dataset \"%1\"").arg(
                                              rc_DataSet.c_Name.c_str()));
                   }
                   pc_Retval = pc_ComboBox;

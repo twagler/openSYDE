@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing a specific application or data block as part of a node
@@ -15,8 +15,6 @@
 #include "ui_C_SyvUpPacListNodeItemWidget.h"
 
 #include "stwerrors.hpp"
-#include "C_GtGetText.hpp"
-
 #include "C_PuiProject.hpp"
 #include "C_PuiSvData.hpp"
 #include "C_OscViewNodeUpdate.hpp"
@@ -92,19 +90,19 @@ C_SyvUpPacListNodeItemWidget::C_SyvUpPacListNodeItemWidget(const uint32_t ou32_V
 
    if (this->mq_FileBased == false)
    {
-      this->mpc_Ui->pc_LabelVersion->setText(C_GtGetText::h_GetText("Missing"));
+      this->mpc_Ui->pc_LabelVersion->setText("Missing");
    }
    else
    {
       this->mpc_Ui->pc_LabelVersion->setText("");
    }
 
-   this->mpc_Ui->pc_LabelUserHint->setText(C_GtGetText::h_GetText("User"));
+   this->mpc_Ui->pc_LabelUserHint->setText("User");
    this->mpc_Ui->pc_LabelUserHint->SetFontPixel(10);
    this->mpc_Ui->pc_LabelUserHint->SetForegroundColor(0);
    this->mpc_Ui->pc_LabelUserHint->SetBackgroundColor(9);
 
-   this->mpc_Ui->pc_LabelSkip->setText(C_GtGetText::h_GetText("Skip"));
+   this->mpc_Ui->pc_LabelSkip->setText("Skip");
    this->mpc_Ui->pc_LabelSkip->SetFontPixel(10);
    this->mpc_Ui->pc_LabelSkip->SetForegroundColor(0);
    this->mpc_Ui->pc_LabelSkip->SetBackgroundColor(24);
@@ -114,7 +112,7 @@ C_SyvUpPacListNodeItemWidget::C_SyvUpPacListNodeItemWidget(const uint32_t ou32_V
    this->mpc_Ui->pc_LabelSecurity->setVisible(false);
    this->mpc_Ui->pc_LabelDebugger->setVisible(false);
 
-   this->mpc_Ui->pc_LabelPath->setText(C_GtGetText::h_GetText("<Add File>"));
+   this->mpc_Ui->pc_LabelPath->setText("<Add File>");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -216,7 +214,7 @@ void C_SyvUpPacListNodeItemWidget::SetAppFile(const QString & orc_File, const bo
    }
    else
    {
-      this->mc_FilePath = C_GtGetText::h_GetText("<Add File>");
+      this->mc_FilePath = "<Add File>";
    }
 
    this->mq_DefaultFilePath = oq_DefaultFile;
@@ -620,7 +618,7 @@ void C_SyvUpPacListNodeItemWidget::m_LoadFileInformation(bool & orq_FileExists, 
    orq_FileExists = c_FileInfo.exists() && c_FileInfo.isFile();
 
    // Default text
-   this->mc_Date = C_GtGetText::h_GetText("NA");
+   this->mc_Date = "NA";
    this->mc_Time = "";
    this->mu32_FileSize = 0U;
 
@@ -642,7 +640,7 @@ void C_SyvUpPacListNodeItemWidget::m_LoadFileInformation(bool & orq_FileExists, 
    }
    else
    {
-      this->mpc_Ui->pc_LabelVersion->setText(C_GtGetText::h_GetText("Missing"));
+      this->mpc_Ui->pc_LabelVersion->setText("Missing");
    }
 }
 
@@ -673,7 +671,7 @@ QString C_SyvUpPacListNodeItemWidget::m_CreateToolTipContent(void) const
 {
    QString c_Content = "";
 
-   c_Content += C_GtGetText::h_GetText("Last modified: ");
+   c_Content += "Last modified: ";
    c_Content += this->mc_Date + " " + this->mc_Time;
 
    return c_Content;
@@ -683,7 +681,7 @@ QString C_SyvUpPacListNodeItemWidget::m_CreateToolTipContent(void) const
 void C_SyvUpPacListNodeItemWidget::m_UpateFilePathLabel(void) const
 {
    if ((this->mc_AbsoluteFilePath != "") &&
-       (this->mc_AbsoluteFilePath != C_GtGetText::h_GetText("<Add File>")))
+       (this->mc_AbsoluteFilePath != "<Add File>"))
    {
       //Use topmost widget (in list) as reference for width
       const int32_t s32_SPACING = 6U;
@@ -741,14 +739,14 @@ void C_SyvUpPacListNodeItemWidget::m_UpateFilePathLabel(void) const
    }
    else
    {
-      this->mpc_Ui->pc_LabelPath->setText(C_GtGetText::h_GetText("<Add File>"));
+      this->mpc_Ui->pc_LabelPath->setText("<Add File>");
    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvUpPacListNodeItemWidget::m_UpdateAbsolutePath(void)
 {
-   if (this->mc_FilePath == C_GtGetText::h_GetText("<Add File>"))
+   if (this->mc_FilePath == "<Add File>")
    {
       this->mc_AbsoluteFilePath = this->mc_FilePath;
    }
@@ -772,31 +770,31 @@ void C_SyvUpPacListNodeItemWidget::m_UpdateToolTip(void)
    {
       if (this->mq_DefaultFilePath == false)
       {
-         c_Content += C_GtGetText::h_GetText("\nFile path origin: Defined by User");
+         c_Content += "\nFile path origin: Defined by User";
       }
       else
       {
-         c_Content += C_GtGetText::h_GetText("\nFile path origin: Default, defined in Data Block properties");
+         c_Content += "\nFile path origin: Default, defined in Data Block properties";
       }
    }
 
    if (this->mc_FilePath == this->mc_AbsoluteFilePath)
    {
-      c_Content += C_GtGetText::h_GetText("\nFile path: ");
+      c_Content += "\nFile path: ";
       c_Content += this->mc_AbsoluteFilePath;
    }
    else
    {
-      c_Content += C_GtGetText::h_GetText("\nFile path: ");
+      c_Content += "\nFile path: ";
       c_Content += this->mc_FilePath;
-      c_Content += C_GtGetText::h_GetText("\nFile path absolute: ");
+      c_Content += "\nFile path absolute: ";
       c_Content += this->mc_AbsoluteFilePath;
    }
 
-   c_Content += C_GtGetText::h_GetText("\nFile size: ");
+   c_Content += "\nFile size: ";
 
    c_Content += QString::number(this->mu32_FileSize);
-   c_Content += C_GtGetText::h_GetText(" kB");
+   c_Content += " kB";
 
    this->SetToolTipInformation(c_Title, c_Content);
 }

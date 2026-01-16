@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing the progress and the state of the update process
@@ -11,7 +11,6 @@
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_OgeWiUtil.hpp"
-#include "C_GtGetText.hpp"
 #include "C_OscHexFile.hpp"
 #include "C_PuiProject.hpp"
 #include "C_PuiSvHandler.hpp"

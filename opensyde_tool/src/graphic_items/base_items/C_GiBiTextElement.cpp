@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Custom text element graphics item (implementation)
@@ -19,7 +19,6 @@
 #include "C_GiBiTextElement.hpp"
 #include "C_GiCustomFunctions.hpp"
 #include "C_OgePopUpDialog.hpp"
-#include "C_GtGetText.hpp"
 #include "C_GiSyBaseWidget.hpp"
 #include "C_GiSyTextElementWidget.hpp"
 #include "C_PuiSdDataElement.hpp"
@@ -166,7 +165,7 @@ bool C_GiBiTextElement::OpenStyleDialog(const bool oq_DarkMode)
 
    const QPointer<C_OgePopUpDialog> c_New = new C_OgePopUpDialog(pc_View, pc_View);
    C_GiSyBaseWidget * const pc_Dialog =
-      new C_GiSyBaseWidget(*c_New, C_GtGetText::h_GetText("Text Element"), oq_DarkMode);
+      new C_GiSyBaseWidget(*c_New, "Text Element", oq_DarkMode);
    C_GiSyTextElementWidget * const pc_SettingsWidget = new C_GiSyTextElementWidget(*pc_Dialog);
 
    const QSize c_SIZE(880, 506);

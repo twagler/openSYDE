@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Popup dialog widget to show the report of an RAMView project import.
@@ -13,7 +13,6 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "C_GtGetText.hpp"
 #include "constants.hpp"
 #include "C_Uti.hpp"
 #include "C_PuiSdUtil.hpp"
@@ -90,11 +89,11 @@ C_SdNdeDpImportRamViewReport::~C_SdNdeDpImportRamViewReport(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeDpImportRamViewReport::InitStaticNames(void) const
 {
-   this->mrc_ParentDialog.SetTitle(C_GtGetText::h_GetText("RAMView Project Import"));
-   this->mrc_ParentDialog.SetSubTitle(C_GtGetText::h_GetText("Report"));
-   this->mpc_Ui->pc_LabelHeadingPreview->setText(C_GtGetText::h_GetText("Details"));
-   this->mpc_Ui->pc_PushButtonCancel->setText(C_GtGetText::h_GetText("Cancel"));
-   this->mpc_Ui->pc_PushButtonOk->setText(C_GtGetText::h_GetText("Continue"));
+   this->mrc_ParentDialog.SetTitle("RAMView Project Import");
+   this->mrc_ParentDialog.SetSubTitle("Report");
+   this->mpc_Ui->pc_LabelHeadingPreview->setText("Details");
+   this->mpc_Ui->pc_PushButtonCancel->setText("Cancel");
+   this->mpc_Ui->pc_PushButtonOk->setText("Continue");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -177,49 +176,49 @@ void C_SdNdeDpImportRamViewReport::m_FillReport(const QString & orc_ProjectPath,
    // Source File Information
    c_Text += "<h3>";
 
-   c_Text += C_GtGetText::h_GetText("Source File Information");
+   c_Text += "Source File Information";
    c_Text += "</h3>";
    c_Text += "<table><tr>";
    c_Text += c_HtmlTableDataStart;
-   c_Text += C_GtGetText::h_GetText("Path:");
+   c_Text += "Path:";
    c_Text += "</td>";
    c_Text += c_HtmlTableDataStart;
    c_Text += C_Uti::h_GetLink(orc_ProjectPath, mc_STYLE_GUIDE_COLOR_LINK, orc_ProjectPath);
    c_Text += "</td></tr><tr>";
    c_Text += c_HtmlTableDataStart;
-   c_Text += C_GtGetText::h_GetText("Read Content: ");
+   c_Text += "Read Content: ";
    c_Text += "</td>";
    c_Text += c_HtmlTableDataStart;
-   c_Text += static_cast<QString>(C_GtGetText::h_GetText("Found %1 %2 Datapool list(s) containing %3 element(s) that "
-                                                         "will be added to a new %4 Datapool.")).
+   c_Text += static_cast<QString>("Found %1 %2 Datapool list(s) containing %3 element(s) that "
+                                                         "will be added to a new %4 Datapool.").
              arg(orc_DataPool.c_Lists.size()).
              arg(c_RamOrEeprom).
              arg(u32_ElementCount).
              arg(C_PuiSdUtil::h_ConvertDataPoolTypeToString(orc_DataPool.e_Type));
    c_Text += "<br/>";
-   c_Text += C_GtGetText::h_GetText("For parsing errors, warnings and detailed information see ");
-   c_Text += C_Uti::h_GetLink(C_GtGetText::h_GetText("log file"), mc_STYLE_GUIDE_COLOR_LINK,
+   c_Text += "For parsing errors, warnings and detailed information see ";
+   c_Text += C_Uti::h_GetLink("log file", mc_STYLE_GUIDE_COLOR_LINK,
                               C_OscLoggingHandler::h_GetCompleteLogFileLocation().c_str());
    c_Text += ".";
    c_Text += "</td></tr></table>";
 
    // Import information (warnings, adaptions, ...)
    c_Text += "<h3>";
-   c_Text += C_GtGetText::h_GetText("Import Information");
+   c_Text += "Import Information";
    c_Text += "</h3><p>";
-   c_Text += C_GtGetText::h_GetText("General: Datapool names, list names and element names are adapted as follows:");
+   c_Text += "General: Datapool names, list names and element names are adapted as follows:";
    c_Text += "<br/>";
    c_Text += "- ";
-   c_Text += C_GtGetText::h_GetText("Eliminate spaces");
+   c_Text += "Eliminate spaces";
    c_Text += "<br/>";
    c_Text += "- ";
-   c_Text += static_cast<QString>(C_GtGetText::h_GetText("Cut to %1 (= project setting) characters")).arg(
+   c_Text += static_cast<QString>("Cut to %1 (= project setting) characters").arg(
       C_PuiSdHandler::h_GetInstance()->GetNameMaxCharLimit());
    c_Text += "</p>";
    if (orc_ImportInformation.GetCount() > 0)
    {
       c_Text += "<p><b>";
-      c_Text += C_GtGetText::h_GetText("Import Details");
+      c_Text += "Import Details";
       c_Text += "</b></p>";
 
       // List with "-" as bullet points is not supported by Qt's rich text engine, so we use a table as workaround

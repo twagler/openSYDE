@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing entire CAN trace and its buttons (implementation)
@@ -18,7 +18,6 @@
 #include "stwerrors.hpp"
 #include "C_Uti.hpp"
 #include "C_CamOgeWiSectionHeader.hpp"
-#include "C_GtGetText.hpp"
 #include "C_OscSystemBus.hpp"
 #include "C_CamMainWindow.hpp"
 
@@ -58,7 +57,7 @@ C_CamMetWidget::C_CamMetWidget(QWidget * const opc_Parent) :
 
    this->SetBackgroundColor(11);
 
-   this->mpc_Ui->pc_WiTitle->SetTitle(C_GtGetText::h_GetText("Trace"));
+   this->mpc_Ui->pc_WiTitle->SetTitle("Trace");
    this->mpc_Ui->pc_WiTitle->SetIconType(C_CamOgeWiSectionHeader::E_ButtonType::eNOBUTTON);
 
    connect(this->mpc_Ui->pc_ControlWidget, &C_CamMetControlBarWidget::SigStartLogging,

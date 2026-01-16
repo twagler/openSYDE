@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Precompiled header (header)
@@ -80,7 +80,6 @@
 #include "C_PuiProject.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdTopologyScene.hpp"
-#include "C_GtGetText.hpp"
 #include "C_SclChecksums.hpp"
 
 #endif

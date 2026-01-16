@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Table model for dashboard table widget (implementation)
@@ -19,7 +19,6 @@
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_SyvUtil.hpp"
-#include "C_GtGetText.hpp"
 #include "C_NagToolTip.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -373,13 +372,13 @@ QVariant C_SyvDaItTaModel::headerData(const int32_t os32_Section, const Qt::Orie
             c_Retval = "";
             break;
          case eNAME:
-            c_Retval = C_GtGetText::h_GetText("Name");
+            c_Retval = "Name";
             break;
          case eVALUE:
-            c_Retval = C_GtGetText::h_GetText("Value");
+            c_Retval = "Value";
             break;
          case eBAR:
-            c_Retval = C_GtGetText::h_GetText("Bar");
+            c_Retval = "Bar";
             break;
          default:
             break;
@@ -749,18 +748,18 @@ QVariant C_SyvDaItTaModel::data(const QModelIndex & orc_Index, const int32_t os3
                         if ((pc_TableWidget->GetViewActive(*pc_DataElementId) == false) ||
                             (pc_TableWidget->GetViewDashboardRouteValid(*pc_DataElementId) == false))
                         {
-                           c_Retval = C_GtGetText::h_GetText("Configuration warning");
+                           c_Retval = "Configuration warning";
                         }
                         else if (pc_TableWidget->CheckItemError(*pc_DataElementId, c_Error,
                                                                 q_IsTransmissionError) == true)
                         {
                            if (q_IsTransmissionError == true)
                            {
-                              c_Retval = C_GtGetText::h_GetText("Transmission error");
+                              c_Retval = "Transmission error";
                            }
                            else
                            {
-                              c_Retval = C_GtGetText::h_GetText("Signal error");
+                              c_Retval = "Signal error";
                            }
                         }
                         else
@@ -794,17 +793,17 @@ QVariant C_SyvDaItTaModel::data(const QModelIndex & orc_Index, const int32_t os3
                         {
                            if (pc_DataElementId->GetType() == C_PuiSvDbNodeDataPoolListElementId::eDATAPOOL_ELEMENT)
                            {
-                              c_Retval = C_GtGetText::h_GetText("There is a data element of an inactive node");
+                              c_Retval = "There is a data element of an inactive node";
                            }
                            else
                            {
-                              c_Retval = C_GtGetText::h_GetText("There is a signal of a not connected bus");
+                              c_Retval = "There is a signal of a not connected bus";
                            }
                         }
                         else if (pc_TableWidget->GetViewDashboardRouteValid(*pc_DataElementId) == false)
                         {
-                           c_Retval = C_GtGetText::h_GetText("There is a data element of a node with "
-                                                             "disabled communication interface flags for Dashboard");
+                           c_Retval = "There is a data element of a node with "
+                                                             "disabled communication interface flags for Dashboard";
                         }
                         else if (pc_TableWidget->CheckItemError(*pc_DataElementId, c_Error,
                                                                 q_IsTransmissionError) == true)
@@ -918,7 +917,7 @@ QVariant C_SyvDaItTaModel::data(const QModelIndex & orc_Index, const int32_t os3
                   switch (e_Col)
                   {
                   case C_SyvDaItTaModel::eICON:
-                     c_Retval = C_GtGetText::h_GetText("Configuration warning");
+                     c_Retval = "Configuration warning";
                      break;
                   case C_SyvDaItTaModel::eNAME:
                   case C_SyvDaItTaModel::eVALUE:

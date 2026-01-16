@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Base class for line edit field with file paths (implementation)
@@ -23,8 +23,6 @@
 #include "C_Uti.hpp"
 #include "constants.hpp"
 #include "C_OgeLeFilePathBase.hpp"
-#include "C_GtGetText.hpp"
-
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
@@ -82,7 +80,7 @@ void C_OgeLeFilePathBase::SetPath(const QString & orc_New, const QString & orc_R
    this->mc_RelativeTo = c_Dir.absolutePath();
    if (this->mc_Path != "")
    {
-      C_OgeLeToolTipBase::SetToolTipInformation(C_GtGetText::h_GetText("Path"), c_FileInfo.absoluteFilePath(),
+      C_OgeLeToolTipBase::SetToolTipInformation("Path", c_FileInfo.absoluteFilePath(),
                                                 stw::opensyde_gui::C_NagToolTip::eDEFAULT);
    }
    else

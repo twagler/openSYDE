@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing all possible openSYDE CAN Monitor settings
@@ -17,7 +17,6 @@
 #include "ui_C_CamMosWidget.h"
 
 #include "C_CamOgeWiSectionHeader.hpp"
-#include "C_GtGetText.hpp"
 #include "C_UsHandler.hpp"
 #include "C_CamMosSectionPopup.hpp"
 
@@ -58,7 +57,7 @@ C_CamMosWidget::C_CamMosWidget(QWidget * const opc_Parent) :
 
    // initialize GUI elements
    this->SetBackgroundColor(5);
-   this->mpc_Ui->pc_WiTitle->SetTitle(C_GtGetText::h_GetText("Settings"));
+   this->mpc_Ui->pc_WiTitle->SetTitle("Settings");
    this->mpc_Ui->pc_WiTitle->SetIconType(C_CamOgeWiSectionHeader::E_ButtonType::eLEFTRIGHT);
 
    this->m_InitSettingsSection(this->mpc_PopupDatabase, this->mpc_Ui->pc_PbDatabase, opc_Parent,

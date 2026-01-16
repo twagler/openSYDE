@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       short description (implementation)
@@ -14,7 +14,6 @@
 
 #include "TglUtils.hpp"
 #include "constants.hpp"
-#include "C_GtGetText.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeSfoResetMessageTableModel.hpp"
 
@@ -89,37 +88,37 @@ QVariant C_SdNdeSfoResetMessageTableModel::headerData(const int32_t os32_Section
          switch (e_Col)
          {
          case eID:
-            c_Retval = C_GtGetText::h_GetText("CAN ID");
+            c_Retval = "CAN ID";
             break;
          case eEXTENDED_FORMAT:
-            c_Retval = C_GtGetText::h_GetText("Type");
+            c_Retval = "Type";
             break;
          case eDLC:
-            c_Retval = C_GtGetText::h_GetText("DLC");
+            c_Retval = "DLC";
             break;
          case eBYTE1:
-            c_Retval = C_GtGetText::h_GetText("Byte 1");
+            c_Retval = "Byte 1";
             break;
          case eBYTE2:
-            c_Retval = C_GtGetText::h_GetText("Byte 2");
+            c_Retval = "Byte 2";
             break;
          case eBYTE3:
-            c_Retval = C_GtGetText::h_GetText("Byte 3");
+            c_Retval = "Byte 3";
             break;
          case eBYTE4:
-            c_Retval = C_GtGetText::h_GetText("Byte 4");
+            c_Retval = "Byte 4";
             break;
          case eBYTE5:
-            c_Retval = C_GtGetText::h_GetText("Byte 5");
+            c_Retval = "Byte 5";
             break;
          case eBYTE6:
-            c_Retval = C_GtGetText::h_GetText("Byte 6");
+            c_Retval = "Byte 6";
             break;
          case eBYTE7:
-            c_Retval = C_GtGetText::h_GetText("Byte 7");
+            c_Retval = "Byte 7";
             break;
          case eBYTE8:
-            c_Retval = C_GtGetText::h_GetText("Byte 8");
+            c_Retval = "Byte 8";
             break;
          default:
             break;
@@ -237,11 +236,11 @@ QVariant C_SdNdeSfoResetMessageTableModel::data(const QModelIndex & orc_Index, c
                {
                   if (pc_OscNode->c_Properties.c_StwFlashloaderSettings.q_ResetMessageExtendedId == true)
                   {
-                     c_Retval = C_GtGetText::h_GetText("29 Bit");
+                     c_Retval = "29 Bit";
                   }
                   else
                   {
-                     c_Retval = C_GtGetText::h_GetText("11 Bit");
+                     c_Retval = "11 Bit";
                   }
                }
                else

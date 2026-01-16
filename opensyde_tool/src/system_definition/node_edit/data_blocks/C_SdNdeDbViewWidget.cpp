@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing all node applications of a specific node (implementation)
@@ -11,7 +11,6 @@
 #include "TglUtils.hpp"
 #include "stwerrors.hpp"
 #include "C_UsHandler.hpp"
-#include "C_GtGetText.hpp"
 #include "C_PuiProject.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeDbViewWidget.hpp"
@@ -97,20 +96,17 @@ void C_SdNdeDbViewWidget::InitStaticNames(void) const
 {
    //Tool tips
    this->mpc_Ui->pc_LabelApplicationName->SetToolTipInformation(
-      C_GtGetText::h_GetText("Data Blocks"),
-      C_GtGetText::h_GetText(
-         "Data Blocks specify files that must be updated to the node.\n\n"
+      "Data Blocks",
+      "Data Blocks specify files that must be updated to the node.\n\n"
          "Those files can represent any kind of application or data. They can be either created by another tool chain "
          "or developed by using the openSYDE file generation feature. The second is available for devices with "
-         "programming support or with NVM-based hardware configuration. "));
+         "programming support or with NVM-based hardware configuration. ");
 
-   this->mpc_Ui->pc_PushButtonAdd->SetToolTipInformation(C_GtGetText::h_GetText("Add"),
-                                                         C_GtGetText::h_GetText("Add new Data Block."));
+   this->mpc_Ui->pc_PushButtonAdd->SetToolTipInformation("Add",
+                                                         "Add new Data Block.");
 
-   this->mpc_Ui->pc_PushButtonCodeGenerationOptions->SetToolTipInformation(C_GtGetText::h_GetText(
-                                                                              "Source Code Generation Settings"),
-                                                                           C_GtGetText::h_GetText(
-                                                                              "Edit source code generation settings."));
+   this->mpc_Ui->pc_PushButtonCodeGenerationOptions->SetToolTipInformation("Source Code Generation Settings",
+                                                                           "Edit source code generation settings.");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -168,15 +164,13 @@ void C_SdNdeDbViewWidget::AddApp(void)
       // warn user
       C_OgeWiCustomMessage c_MessageBox(this);
       c_MessageBox.SetType(C_OgeWiCustomMessage::eWARNING);
-      c_MessageBox.SetHeading(C_GtGetText::h_GetText("Add Data Blocks"));
-      c_MessageBox.SetDescription(C_GtGetText::h_GetText(
-                                     "This project is not saved yet. Adding Data Blocks might cause "
-                                     "problems with file or directory paths."));
-      c_MessageBox.SetDetails(C_GtGetText::h_GetText(
-                                 "Paths that are handled as relative to *.syde file can not be resolved correctly!"));
-      c_MessageBox.SetOkButtonText(C_GtGetText::h_GetText("Continue"));
+      c_MessageBox.SetHeading("Add Data Blocks");
+      c_MessageBox.SetDescription("This project is not saved yet. Adding Data Blocks might cause "
+                                     "problems with file or directory paths.");
+      c_MessageBox.SetDetails("Paths that are handled as relative to *.syde file can not be resolved correctly!");
+      c_MessageBox.SetOkButtonText("Continue");
       c_MessageBox.SetCustomMinHeight(230, 270);
-      c_MessageBox.SetCancelButtonText(C_GtGetText::h_GetText("Cancel"));
+      c_MessageBox.SetCancelButtonText("Cancel");
       if (c_MessageBox.Execute() != C_OgeWiCustomMessage::eOK)
       {
          q_Continue = false;
@@ -199,9 +193,9 @@ void C_SdNdeDbViewWidget::AddApp(void)
             //no fbl support
             C_OgeWiCustomMessage c_MessageBox(this);
             c_MessageBox.SetType(C_OgeWiCustomMessage::E_Type::eWARNING);
-            c_MessageBox.SetHeading(C_GtGetText::h_GetText("Add Datablocks"));
-            c_MessageBox.SetDescription(C_GtGetText::h_GetText("There is no Flashloader support for this device type. "
-                                                               "Data Blocks cannot be added."));
+            c_MessageBox.SetHeading("Add Datablocks");
+            c_MessageBox.SetDescription("There is no Flashloader support for this device type. "
+                                                               "Data Blocks cannot be added.");
             c_MessageBox.SetCustomMinHeight(180, 180);
             c_MessageBox.Execute();
          }
@@ -253,17 +247,17 @@ void C_SdNdeDbViewWidget::AddFromTsp(const bool oq_IsNewNode)
       {
          const QString c_HalcFileName = pc_Dialog->GetHalcDefinitionFileName();
          C_OgeWiCustomMessage c_Message(this);
-         c_Message.SetHeading(C_GtGetText::h_GetText("Import TSP"));
+         c_Message.SetHeading("Import TSP");
          QString c_Description = "";
          if (c_HalcFileName == "")
          {
-            c_Description = static_cast<QString>(C_GtGetText::h_GetText("Successfully created %1 Data Block(s).")).
+            c_Description = static_cast<QString>("Successfully created %1 Data Block(s).").
                             arg(pc_Dialog->GetTspApplicationCount());
          }
          else
          {
-            c_Description = static_cast<QString>(C_GtGetText::h_GetText("Successfully created %1 Data Block(s).\n"
-                                                                        "Hardware Configurator: Hardware Definition File (%2) selected."))
+            c_Description = static_cast<QString>("Successfully created %1 Data Block(s).\n"
+                                                                        "Hardware Configurator: Hardware Definition File (%2) selected.")
                             .arg(pc_Dialog->GetTspApplicationCount()).arg(c_HalcFileName);
          }
          QString c_Details = "";
@@ -296,7 +290,7 @@ void C_SdNdeDbViewWidget::AddFromTsp(const bool oq_IsNewNode)
          if (c_Details.isEmpty() == false)
          {
             c_Message.SetType(C_OgeWiCustomMessage::eWARNING);
-            c_Description += C_GtGetText::h_GetText(" Some warnings occured. See details for more information.");
+            c_Description += " Some warnings occured. See details for more information.";
             c_Message.SetCustomMinHeight(180, 300);
             c_Message.SetDetails(c_Details);
          }
@@ -311,9 +305,9 @@ void C_SdNdeDbViewWidget::AddFromTsp(const bool oq_IsNewNode)
          const QString c_Details = "";
          pc_Dialog->ApplyV3Content();
          this->m_UpdateTrigger(false);
-         c_Message.SetHeading(C_GtGetText::h_GetText("Import TSP"));
+         c_Message.SetHeading("Import TSP");
 
-         c_Description = static_cast<QString>(C_GtGetText::h_GetText("Node definition successfully imported."));
+         c_Description = static_cast<QString>("Node definition successfully imported.");
 
          c_Message.SetCustomMinHeight(180, 180);
          c_Message.SetCustomMinWidth(650);
@@ -371,11 +365,10 @@ void C_SdNdeDbViewWidget::AddHalcDefFromTsp(C_SdNdeDbAddNewProject * const opc_D
    {
       C_OgeWiCustomMessage c_MessageBox(this, C_OgeWiCustomMessage::eERROR);
 
-      c_MessageBox.SetHeading(C_GtGetText::h_GetText("Select Hardware Description"));
-      c_MessageBox.SetDescription(static_cast<QString>(C_GtGetText::h_GetText(
-                                                          "Cannot select hardware description,\n"
+      c_MessageBox.SetHeading("Select Hardware Description");
+      c_MessageBox.SetDescription(static_cast<QString>("Cannot select hardware description,\n"
                                                           "because HAL Datapools may not be created,\n"
-                                                          "as the max Datapool count (%1) would be exceeded.")).arg(
+                                                          "as the max Datapool count (%1) would be exceeded.").arg(
                                      C_OscNode::hu32_MAX_NUMBER_OF_DATA_POOLS_PER_NODE));
       c_MessageBox.SetCustomMinHeight(200, 270);
       c_MessageBox.Execute();
@@ -421,8 +414,7 @@ void C_SdNdeDbViewWidget::m_HandleNoDatablocksLabel(void) const
       {
          //no data blocks display label
          this->mpc_Ui->pc_LabelNoDatablocks->setVisible(true);
-         this->mpc_Ui->pc_LabelNoDatablocks->setText(C_GtGetText::h_GetText(
-                                                        "No Data Block declared. \nAdd any via the '+' button"));
+         this->mpc_Ui->pc_LabelNoDatablocks->setText("No Data Block declared. \nAdd any via the '+' button");
       }
       else
       {
@@ -433,8 +425,7 @@ void C_SdNdeDbViewWidget::m_HandleNoDatablocksLabel(void) const
    else
    {
       this->mpc_Ui->pc_LabelNoDatablocks->setVisible(true);
-      this->mpc_Ui->pc_LabelNoDatablocks->setText(C_GtGetText::h_GetText(
-                                                     "No openSYDE/KEFEX protocol support. \nData Blocks cannot be added."));
+      this->mpc_Ui->pc_LabelNoDatablocks->setText("No openSYDE/KEFEX protocol support. \nData Blocks cannot be added.");
    }
 }
 
@@ -637,10 +628,9 @@ void C_SdNdeDbViewWidget::m_ProgrammingOptions(void) const
    else
    {
       C_OgeWiCustomMessage c_Message(this->parentWidget(), C_OgeWiCustomMessage::E_Type::eWARNING);
-      c_Message.SetHeading(C_GtGetText::h_GetText("File generation settings"));
-      c_Message.SetDescription(C_GtGetText::h_GetText(
-                                  "File generation settings are not available. "
-                                  "\nThere are no Data Blocks with active file generation declared."));
+      c_Message.SetHeading("File generation settings");
+      c_Message.SetDescription("File generation settings are not available. "
+                                  "\nThere are no Data Blocks with active file generation declared.");
       c_Message.SetCustomMinHeight(180, 180);
       c_Message.Execute();
    }

@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       main function of project
@@ -17,7 +17,6 @@
 #include "C_UtiStyleSheets.hpp"
 #include "C_NagMainWindow.hpp"
 #include "C_PuiProject.hpp"
-#include "C_GtGetText.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_PopErrorHandling.hpp"
 #include "stwtypes.hpp"
@@ -89,7 +88,7 @@ int32_t main(int32_t os32_Argc, char_t * opacn_Argv[])
       //Set language (THIRD)
       //stw::opensyde_core::C_OscGetText::h_SetLanguage("en_US");
       stw::opensyde_gui_logic::C_PopErrorHandling::h_GetTextInitializeErr(
-         stw::opensyde_gui_logic::C_GtGetText::h_Initialize(c_TranslationLocation.toStdString().c_str(), "en_US"));
+
    }
    {
       //Application (FOURTH)

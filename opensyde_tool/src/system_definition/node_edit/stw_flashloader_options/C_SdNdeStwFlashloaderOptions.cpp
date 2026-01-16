@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for STW flashloader options (implementation)
@@ -10,7 +10,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
-#include "C_GtGetText.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeStwFlashloaderOptions.hpp"
 #include "ui_C_SdNdeStwFlashloaderOptions.h"
@@ -53,8 +52,8 @@ C_SdNdeStwFlashloaderOptions::C_SdNdeStwFlashloaderOptions(stw::opensyde_gui_ele
    // register the widget for showing
    this->mrc_ParentDialog.SetWidget(this);
 
-   this->mrc_ParentDialog.SetTitle(static_cast<QString>(C_GtGetText::h_GetText("STW Flashloader")));
-   this->mrc_ParentDialog.SetSubTitle(static_cast<QString>(C_GtGetText::h_GetText("Settings")));
+   this->mrc_ParentDialog.SetTitle(static_cast<QString>("STW Flashloader"));
+   this->mrc_ParentDialog.SetSubTitle(static_cast<QString>("Settings"));
 
    //Init
    InitStaticNames();
@@ -86,14 +85,14 @@ C_SdNdeStwFlashloaderOptions::~C_SdNdeStwFlashloaderOptions(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeStwFlashloaderOptions::InitStaticNames(void) const
 {
-   this->mpc_Ui->pc_BushButtonOk->setText(C_GtGetText::h_GetText("OK"));
-   this->mpc_Ui->pc_BushButtonCancel->setText(C_GtGetText::h_GetText("Cancel"));
-   this->mpc_Ui->pc_LabelDataElement->setText(C_GtGetText::h_GetText("STW Flashloader Settings"));
-   this->mpc_Ui->pc_CheckBoxUseResetMessage->setText(C_GtGetText::h_GetText("Use reset message"));
-   this->mpc_Ui->pc_LabelSendId->setText(C_GtGetText::h_GetText("Send ID"));
-   this->mpc_Ui->pc_LabelCompanyId->setText(C_GtGetText::h_GetText("Company ID"));
-   this->mpc_Ui->pc_LabelSendIdValue->setText(C_GtGetText::h_GetText("0x51 (11 bit)"));
-   this->mpc_Ui->pc_LabelCompanyIdValue->setText(C_GtGetText::h_GetText("Auto detect"));
+   this->mpc_Ui->pc_BushButtonOk->setText("OK");
+   this->mpc_Ui->pc_BushButtonCancel->setText("Cancel");
+   this->mpc_Ui->pc_LabelDataElement->setText("STW Flashloader Settings");
+   this->mpc_Ui->pc_CheckBoxUseResetMessage->setText("Use reset message");
+   this->mpc_Ui->pc_LabelSendId->setText("Send ID");
+   this->mpc_Ui->pc_LabelCompanyId->setText("Company ID");
+   this->mpc_Ui->pc_LabelSendIdValue->setText("0x51 (11 bit)");
+   this->mpc_Ui->pc_LabelCompanyIdValue->setText("Auto detect");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Base widget for style setup to customize graphic elements
@@ -16,8 +16,6 @@
 #include "C_GiSyBaseWidget.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "ui_C_GiSyBaseWidget.h"
-
-#include "C_GtGetText.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::tgl;
@@ -106,11 +104,11 @@ C_GiSyBaseWidget::~C_GiSyBaseWidget(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSyBaseWidget::InitStaticNames(void)
 {
-   this->mpc_ParentDialog->SetSubTitle(C_GtGetText::h_GetText("Setup Style"));
-   this->mpc_Ui->pc_BushButtonOk->setText(C_GtGetText::h_GetText("OK"));
-   this->mpc_Ui->pc_BushButtonCancel->setText(C_GtGetText::h_GetText("Cancel"));
-   this->mpc_Ui->pc_LabelStyle->setText(C_GtGetText::h_GetText("Style"));
-   this->mpc_Ui->pc_LabelPreview->setText(C_GtGetText::h_GetText("Example Preview"));
+   this->mpc_ParentDialog->SetSubTitle("Setup Style");
+   this->mpc_Ui->pc_BushButtonOk->setText("OK");
+   this->mpc_Ui->pc_BushButtonCancel->setText("Cancel");
+   this->mpc_Ui->pc_LabelStyle->setText("Style");
+   this->mpc_Ui->pc_LabelPreview->setText("Example Preview");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

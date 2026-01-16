@@ -1,4 +1,4 @@
-//----------------------------------------------------------------------------------------------------------------------
+﻿//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Utility class to copy a message and its detected signals to the clipboard as text (implementation)
@@ -11,8 +11,6 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "C_GtGetText.hpp"
-
 #include "C_CamMetUtil.hpp"
 #include "C_CamMetClipBoardHelper.hpp"
 
@@ -122,34 +120,34 @@ void C_CamMetClipBoardHelper::mh_AddHeader(QString & orc_Text, const int32_t os3
    orc_Text = orc_Text.leftJustified(os32_WidthInitial, ' ');
 
    s32_TextLength = orc_Text.length();
-   orc_Text += C_GtGetText::h_GetText("Time");
+   orc_Text += "Time";
    orc_Text = orc_Text.leftJustified(s32_TextLength + os32_WidthTime, ' ');
 
    s32_TextLength = orc_Text.length();
-   orc_Text += C_GtGetText::h_GetText("ID");
+   orc_Text += "ID";
    orc_Text = orc_Text.leftJustified(s32_TextLength + os32_WidthId, ' ');
 
    s32_TextLength = orc_Text.length();
-   orc_Text += C_GtGetText::h_GetText("Name");
+   orc_Text += "Name";
    orc_Text = orc_Text.leftJustified(s32_TextLength + os32_WidthName, ' ');
 
    s32_TextLength = orc_Text.length();
-   orc_Text += C_GtGetText::h_GetText("Dir");
+   orc_Text += "Dir";
    orc_Text = orc_Text.leftJustified(s32_TextLength + os32_WidthDir, ' ');
 
    s32_TextLength = orc_Text.length();
-   orc_Text += C_GtGetText::h_GetText("DLC");
+   orc_Text += "DLC";
    orc_Text = orc_Text.leftJustified(s32_TextLength + os32_WidthDlc, ' ');
 
    s32_TextLength = orc_Text.length();
-   orc_Text += C_GtGetText::h_GetText("Data");
+   orc_Text += "Data";
    orc_Text = orc_Text.leftJustified(s32_TextLength + os32_WidthData, ' ');
 
    s32_TextLength = orc_Text.length();
-   orc_Text += C_GtGetText::h_GetText("Counter");
+   orc_Text += "Counter";
    orc_Text = orc_Text.leftJustified(s32_TextLength + os32_WidthCounter, ' ');
 
-   orc_Text += C_GtGetText::h_GetText("Status");
+   orc_Text += "Status";
    orc_Text += "\n";
 }
 
@@ -248,15 +246,15 @@ void C_CamMetClipBoardHelper::mh_AddMessage(QString & orc_Text, const C_OscComMe
    s32_LineLength = c_Line.length();
    if (orc_MessageData.q_IsTx == true)
    {
-      c_Line += C_GtGetText::h_GetText("Tx");
+      c_Line += "Tx";
    }
    else
    {
-      c_Line += C_GtGetText::h_GetText("Rx");
+      c_Line += "Rx";
    }
    if (orc_MessageData.c_CanMsg.u8_RTR != 0)
    {
-      c_Line += C_GtGetText::h_GetText(" (RTR)");
+      c_Line += " (RTR)";
    }
    c_Line = c_Line.leftJustified(s32_LineLength + os32_WidthDir, ' ');
 
@@ -265,7 +263,7 @@ void C_CamMetClipBoardHelper::mh_AddMessage(QString & orc_Text, const C_OscComMe
    c_Line += orc_MessageData.c_CanDlc.c_str();
    if (orc_MessageData.q_CanDlcError)
    {
-      c_Line += C_GtGetText::h_GetText(" (!= DB)");
+      c_Line += " (!= DB)";
    }
    c_Line = c_Line.leftJustified(s32_LineLength + os32_WidthDlc, ' ');
 
@@ -495,7 +493,7 @@ void C_CamMetClipBoardHelper::mh_AddCanSignal(const int32_t os32_LineWidthInitia
    {
       // DLC error, signal did not fit into CAN message
       s32_LineLength = c_LineSignal.length();
-      c_LineSignal += C_GtGetText::h_GetText("DLC error detected");
+      c_LineSignal += "DLC error detected";
 
       if (orc_Signal.c_Comment != "")
       {

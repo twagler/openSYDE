@@ -1,0 +1,98 @@
+# Build directories
+build/
+**/build/
+cmake-build-*/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+*.cmake.in
+
+# Qt specific
+*.autogen/
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.qm
+*.pro.user
+*.pro.user.*
+.qmake.cache
+.qmake.stash
+
+# C++ compiled files
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.exp
+*.pdb
+*.ilk
+
+# Precompiled headers
+*.gch
+*.pch
+
+# Ninja
+.ninja_deps
+.ninja_log
+
+# Visual Studio / Visual Studio Code
+.vs/
+.vscode/
+*.vcxproj.user
+*.sln.docstates
+
+# JetBrains IDEs
+.idea/
+cmake-build-*/
+
+# Temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Python scripts (cleanup scripts from C_GtGetText removal)
+remove_gtgettext.ps1
+remove_gtgettext_v2.ps1
+remove_gtgettext_final.py
+fix_runtime_gtgettext.py
+fix_complex_concatenations.py
+final_cleanup.py
+ninja-win.zip
+
+# Build logs
+build.log
+build_log.txt
+*.log
+
+# Package files
+*.zip
+*.tar.gz
+*.7z
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Binary output directories
+bin/
+lib/
+out/
+
+# Test results
+Testing/
+test_results/
