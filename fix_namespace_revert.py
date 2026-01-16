@@ -13,8 +13,6 @@ def main():
         log_content = f.read()
 
     # Regex to find file paths
-    # Matches "Drive:/Path/To/File.cpp:Line:Col: error: ... not a namespace-name"
-    # Note: Windows paths might be detected.
     pattern = re.compile(r'([a-zA-Z]:[\\/].+\.cpp):\d+:\d+: error:.*not a namespace-name')
     
     files_to_fix = set()
@@ -28,9 +26,7 @@ def main():
     
     fixed_count = 0
     for filepath in files_to_fix:
-        # Normalize path separators
         filepath = os.path.normpath(filepath)
-        
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
@@ -40,7 +36,7 @@ def main():
             for line in lines:
                 if remove_line in line:
                     removed = True
-                    continue # Skip this line
+                    continue 
                 new_lines.append(line)
             
             if removed:
@@ -49,7 +45,7 @@ def main():
                 print(f"Fixed {filepath}")
                 fixed_count += 1
             else:
-                print(f"Namespace line not found in {filepath} (already fixed?)")
+                print(f"Namespace line not found in {filepath}")
                 
         except Exception as e:
             print(f"Error fixing {filepath}: {e}")
