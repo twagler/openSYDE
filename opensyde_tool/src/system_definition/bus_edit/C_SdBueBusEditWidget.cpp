@@ -24,6 +24,7 @@ using namespace stw::tgl;
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const int32_t C_SdBueBusEditWidget::hs32_TAB_INDEX_PROPERTIES = 0;

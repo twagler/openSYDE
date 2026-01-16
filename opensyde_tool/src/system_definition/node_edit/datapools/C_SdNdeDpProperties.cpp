@@ -35,6 +35,7 @@ using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::scl;
 using namespace stw::tgl;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const int32_t C_SdNdeDpProperties::mhs32_INDEX_PRIVATE = 0;

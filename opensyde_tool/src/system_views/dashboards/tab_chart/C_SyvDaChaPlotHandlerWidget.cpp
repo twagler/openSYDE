@@ -43,6 +43,7 @@ using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::scl;
 using namespace stw::tgl;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const uint8_t C_SyvDaChaPlotHandlerWidget::mhu8_COUNT_COLORS = 47U;

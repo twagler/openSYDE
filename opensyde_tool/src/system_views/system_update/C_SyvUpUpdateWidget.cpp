@@ -37,6 +37,7 @@ using namespace stw::scl;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_core;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const QString C_SyvUpUpdateWidget::mhc_TEMP_FOLDER = "system_update_temp";

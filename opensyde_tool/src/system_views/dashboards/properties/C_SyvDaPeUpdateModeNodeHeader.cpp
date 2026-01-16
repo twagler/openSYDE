@@ -22,6 +22,7 @@
 using namespace stw::tgl;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
+using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const uint32_t C_SyvDaPeUpdateModeNodeHeader::mhu32_HEADER_HEIGHT = 40;
