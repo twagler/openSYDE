@@ -104,7 +104,7 @@ C_SdBueJ1939PgPropertiesDialog::~C_SdBueJ1939PgPropertiesDialog(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdBueJ1939PgPropertiesDialog::InitStaticNames(void) const
 {
-   this->mrc_ParentDialog.SetTitle(QString::fromStdString(mc_MessageName));
+   this->mrc_ParentDialog.SetTitle(mc_MessageName);
    this->mrc_ParentDialog.SetSubTitle("J1939 CAN Settings");
    this->mpc_Ui->pc_LabelHeadingPreview->setText("Settings");
    this->mpc_Ui->pc_LabelPgn->setText("PGN");

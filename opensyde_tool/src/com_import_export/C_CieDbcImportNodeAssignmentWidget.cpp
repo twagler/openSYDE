@@ -74,7 +74,7 @@ C_CieDbcImportNodeAssignmentWidget::C_CieDbcImportNodeAssignmentWidget(
    this->mpc_Ui->pc_LabPath->setText(
       C_Uti::h_MinimizePath(orc_FilePath, C_Uti::h_GetFontPixel(mc_STYLE_GUIDE_FONT_REGULAR_13), 520, 0));
    this->mpc_Ui->pc_LabPath->SetToolTipInformation("DBC Source File",
-                                                   QString::fromStdString(orc_FilePath));
+                                                   orc_FilePath);
 
    this->m_InitNodes(ou32_BusIndex, orc_CieCommDef);
 

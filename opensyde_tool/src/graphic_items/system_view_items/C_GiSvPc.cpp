@@ -22,7 +22,7 @@
 #include "C_OgePopUpDialog.hpp"
 #include "C_GiCustomFunctions.hpp"
 #include "C_OgeWiCustomMessage.hpp"
-#include "C_SyvSeDllConfigurationDialog.hpp"
+
 #include "C_OscSystemBus.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -395,21 +395,7 @@ void C_GiSvPc::GenerateHint()
 
       // content
       c_ToolTipContent += "CAN Interface: ";
-      switch (c_PcData.GetCanDllType())
-      {
-      case C_PuiSvPc::ePEAK:
-         c_ToolTipContent += "PEAK";
-         break;
-      case C_PuiSvPc::eVECTOR:
-         c_ToolTipContent += "Vector";
-         break;
-      case C_PuiSvPc::eOTHER:
-         c_ToolTipContent += static_cast<QString>("Other (%1)").arg(
-            c_PcData.GetCustomCanDllPath());
-         break;
-      default:
-         break;
-      }
+      c_ToolTipContent += "PEAK";
 
       c_ToolTipContent += "\nDouble click on PC to enter CAN interface settings.";
       this->SetDefaultToolTipContent(c_ToolTipContent);
@@ -478,44 +464,19 @@ bool C_GiSvPc::m_OpenCanDllDialog(void) const
 
    if (pc_View != NULL)
    {
-      const C_OscViewPc & rc_OscPcData = pc_View->GetOscPcData();
-      const C_PuiSvPc & rc_PcData = pc_View->GetPuiPcData();
+      // Force Peak DLL
+      C_PuiSvHandler::h_GetInstance()->SetViewPcCanDll(this->mu32_ViewIndex,
+                                                      C_PuiSvPc::ePEAK, "");
+      
       QGraphicsView * const pc_GraphicsView = this->scene()->views().at(0);
-      const QPointer<C_OgePopUpDialog> c_DllDialog = new C_OgePopUpDialog(pc_GraphicsView, pc_GraphicsView);
-      C_SyvSeDllConfigurationDialog * const pc_DllWidget = new C_SyvSeDllConfigurationDialog(*c_DllDialog);
+      C_OgeWiCustomMessage c_Message(pc_GraphicsView);
+      c_Message.SetHeading("PC Interface");
+      c_Message.SetDescription("Configuration not required.\nUsing Peak (PCAN) interface.");
+      c_Message.SetCustomMinHeight(180, 180);
+      c_Message.Execute();
 
-      // Resize
-      const QSize c_SIZE(700, 490);
-      c_DllDialog->SetSize(c_SIZE);
-
-      // Initialize the data
-      pc_DllWidget->SetDllType(rc_PcData.GetCanDllType());
-      pc_DllWidget->SetCustomDllPath(rc_PcData.GetCustomCanDllPath());
-      // Bitrate
-      if (rc_OscPcData.GetConnected() == true)
-      {
-         const C_OscSystemBus * const pc_Bus = C_PuiSdHandler::h_GetInstance()->GetOscBus(rc_OscPcData.GetBusIndex());
-
-         if (pc_Bus != NULL)
-         {
-            pc_DllWidget->SetBitrate(pc_Bus->u64_BitRate);
-         }
-      }
-
-      if (c_DllDialog->exec() == static_cast<int32_t>(QDialog::Accepted))
-      {
-         // Update the data
-         C_PuiSvHandler::h_GetInstance()->SetViewPcCanDll(this->mu32_ViewIndex,
-                                                          pc_DllWidget->GetDllType(), pc_DllWidget->GetCustomDllPath());
-         q_Retval = true;
-      }
-
-      if (c_DllDialog != NULL)
-      {
-         c_DllDialog->HideOverlay();
-         c_DllDialog->deleteLater();
-      }
-   } //lint !e429  //no memory leak because of the parent of pc_DllWidget and the Qt memory management
+      q_Retval = true;
+   } 
    return q_Retval;
 }
 

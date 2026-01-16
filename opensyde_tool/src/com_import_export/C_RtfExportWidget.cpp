@@ -801,8 +801,8 @@ int32_t C_RtfExportWidget::m_CheckSettings(void) const
 
       C_OgeWiCustomMessage c_MessageResult(this->parentWidget(), C_OgeWiCustomMessage::E_Type::eERROR);
       c_MessageResult.SetHeading("RTF File Export");
-      c_MessageResult.SetDescription(QString::fromStdString(c_Description));
-      c_MessageResult.SetDetails(QString::fromStdString(c_Details));
+      c_MessageResult.SetDescription(QString(c_Description.c_str()));
+      c_MessageResult.SetDetails(QString(c_Details.c_str()));
       c_MessageResult.SetCustomMinHeight(180, 250);
       c_MessageResult.Execute();
    }
@@ -832,8 +832,8 @@ int32_t C_RtfExportWidget::m_CheckSettings(void) const
 
          C_OgeWiCustomMessage c_MessageResult(this->parentWidget(), C_OgeWiCustomMessage::E_Type::eERROR);
          c_MessageResult.SetHeading("RTF File Export");
-         c_MessageResult.SetDescription(QString::fromStdString(c_Description));
-         c_MessageResult.SetDetails(QString::fromStdString(c_Details));
+         c_MessageResult.SetDescription(QString(c_Description.c_str()));
+         c_MessageResult.SetDetails(QString(c_Details.c_str()));
          c_MessageResult.SetCustomMinHeight(180, 250);
          c_MessageResult.Execute();
       }

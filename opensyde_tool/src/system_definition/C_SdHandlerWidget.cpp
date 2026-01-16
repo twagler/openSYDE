@@ -882,7 +882,7 @@ void C_SdHandlerWidget::m_Export(void)
                                                  "DBC file export cannot be performed.";
          C_OgeWiCustomMessage c_ExportWarnings(this, C_OgeWiCustomMessage::E_Type::eERROR);
          c_ExportWarnings.SetHeading("DBC file export");
-         c_ExportWarnings.SetDescription(QString::fromStdString(c_Message));
+         c_ExportWarnings.SetDescription(QString(c_Message.c_str()));
          c_ExportWarnings.SetCustomMinHeight(180, 180);
          c_ExportWarnings.Execute();
       }
@@ -1244,7 +1244,7 @@ void C_SdHandlerWidget::m_RtfExport(void)
                C_OgeWiCustomMessage c_MessageResult(this, C_OgeWiCustomMessage::E_Type::eWARNING);
                c_MessageResult.SetHeading("RTF File Export");
                c_MessageResult.SetDescription("Warnings occurred on RTF File Export.");
-               c_MessageResult.SetDetails(QString::fromStdString(c_Details));
+               c_MessageResult.SetDetails(QString(c_Details.c_str()));
                c_MessageResult.SetCustomMinHeight(180, 250);
                c_MessageResult.Execute();
             }
@@ -1253,7 +1253,7 @@ void C_SdHandlerWidget::m_RtfExport(void)
                C_OgeWiCustomMessage c_MessageResult(this, C_OgeWiCustomMessage::E_Type::eERROR);
                c_MessageResult.SetHeading("RTF File Export");
                c_MessageResult.SetDescription("RTF file export error occurred.");
-               c_MessageResult.SetDetails(QString::fromStdString(c_Error));
+               c_MessageResult.SetDetails(QString(c_Error.c_str()));
                c_MessageResult.SetCustomMinHeight(180, 250);
                c_MessageResult.Execute();
             }

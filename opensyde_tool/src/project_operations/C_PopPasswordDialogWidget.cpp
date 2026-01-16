@@ -174,8 +174,7 @@ void C_PopPasswordDialogWidget::InitStaticNames(void) const
    this->mpc_Ui->pc_PubTogglePwd->setText("");
    this->mpc_Ui->pc_LabPassword->setText("Password");
    this->mpc_Ui->pc_LabProject->setText("Project");
-   this->mpc_Ui->pc_LabProjectName->setText(C_GtGetText::h_GetText(
-                                               C_PuiProject::h_GetInstance()->GetName().toStdString().c_str()));
+   this->mpc_Ui->pc_LabProjectName->setText(C_PuiProject::h_GetInstance()->GetName());
 
    // tooltip
    this->mpc_Ui->pc_LabPassword->SetToolTipInformation("Password",

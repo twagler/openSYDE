@@ -330,7 +330,7 @@ void C_SdNdeHalcWidget::m_OnImportConfigClicked(void)
          C_OgeWiCustomMessage c_MessageResult(this, C_OgeWiCustomMessage::E_Type::eERROR);
          c_MessageResult.SetHeading("openSYDE Hardware Configuration Import");
          c_MessageResult.SetDescription("Import error occurred.");
-         c_MessageResult.SetDetails(QString::fromStdString(c_ErrorDetails));
+         c_MessageResult.SetDetails(c_ErrorDetails);
          c_MessageResult.SetCustomMinHeight(180, 250);
          c_MessageResult.Execute();
 
@@ -635,7 +635,7 @@ void C_SdNdeHalcWidget::m_OnUpdateClicked(void)
                   c_MessageResult.SetHeading("Load hardware description");
                   c_MessageResult.SetDescription("Error occured during update of existing "
                                                                         "description.");
-                  c_MessageResult.SetDetails(QString::fromStdString(c_ErrorDetails));
+                  c_MessageResult.SetDetails(c_ErrorDetails);
                   c_MessageResult.SetCustomMinHeight(180, 250);
                   c_MessageResult.Execute();
 

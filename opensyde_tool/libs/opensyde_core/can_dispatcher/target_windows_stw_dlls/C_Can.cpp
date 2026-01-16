@@ -75,14 +75,11 @@ C_Can::~C_Can(void)
       (void)this->DLL_Close();
    }
 
-   try
+   if (mpc_Can != NULL)
    {
       delete mpc_Can;
+      mpc_Can = NULL;
    }
-   catch (...)
-   {
-   }
-   mpc_Can = NULL;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -177,9 +177,6 @@ C_CamMainWindow::C_CamMainWindow(QWidget * const opc_Parent) :
    // Saving user settings
    connect(this->mpc_Ui->pc_TitleBarWidget, &C_CamTitleBarWidget::SigPrepareForSave,
            this, &C_CamMainWindow::m_SaveUserSettings);
-   // CAN DLL configuration
-   connect(this->mpc_Ui->pc_SettingsWidget, &C_CamMosWidget::SigCanDllConfigured, this,
-           &C_CamMainWindow::m_OnCanDllConfigChange);
 
    mpc_CanThread = new stw::opensyde_gui_logic::C_SyvComDriverThread(&C_CamMainWindow::mh_ThreadFunc, this);
 
@@ -625,6 +622,12 @@ int32_t C_CamMainWindow::m_InitCan(int32_t & ors32_Bitrate)
    // Initialize
    ors32_Bitrate = 0;
 
+   // Safety check
+   if (this->mpc_CanDllDispatcher == NULL)
+   {
+      return C_CONFIG;
+   }
+
    // Get absolute DLL path (resolve variables and make absolute if it is relative ant not empty)
    c_DllPath = C_CamProHandler::h_GetInstance()->GetCanDllPath();
    if (c_DllPath.isEmpty() == false)
@@ -642,24 +645,14 @@ int32_t C_CamMainWindow::m_InitCan(int32_t & ors32_Bitrate)
 
       if (s32_Return == C_NO_ERR)
       {
-         // Init the CAN with the current configured bitrate
-         s32_Return = this->mpc_CanDllDispatcher->CAN_Init();
+         // Init the CAN with the user-configured bitrate
+         const int32_t s32_ConfiguredBitrate = C_UsHandler::h_GetInstance()->GetCanBitrate();
+         s32_Return = this->mpc_CanDllDispatcher->CAN_Init(s32_ConfiguredBitrate);
 
          if (s32_Return == C_NO_ERR)
          {
-            stw::can::T_STWCAN_Status c_Status;
-
-            // Get the bitrate of the CAN DLL
-            s32_Return = this->mpc_CanDllDispatcher->CAN_Status(c_Status);
-            if (s32_Return == C_NO_ERR)
-            {
-               ors32_Bitrate = c_Status.iActBitrate;
-            }
-            else
-            {
-               s32_Return = C_WARN;
-               ors32_Bitrate = 0;
-            }
+            // Use the configured bitrate directly
+            ors32_Bitrate = s32_ConfiguredBitrate;
          }
          else
          {
@@ -683,8 +676,11 @@ int32_t C_CamMainWindow::m_InitCan(int32_t & ors32_Bitrate)
 //----------------------------------------------------------------------------------------------------------------------
 void C_CamMainWindow::m_CloseCan(void)
 {
-   this->mpc_CanDllDispatcher->CAN_Exit();
-   this->mpc_CanDllDispatcher->DLL_Close();
+   if (this->mpc_CanDllDispatcher != NULL)
+   {
+      this->mpc_CanDllDispatcher->CAN_Exit();
+      this->mpc_CanDllDispatcher->DLL_Close();
+   }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1366,43 +1362,7 @@ void C_CamMainWindow::m_OnOsyChangeBus(const QString & orc_File, const QString &
    }
 }
 
-//----------------------------------------------------------------------------------------------------------------------
-/*! \brief  Slot for a change of the CAN dll configuration
 
-   Check and update of current CAN bitrate
-*/
-//----------------------------------------------------------------------------------------------------------------------
-void C_CamMainWindow::m_OnCanDllConfigChange(void)
-{
-   if (this->mq_LoggingStarted == true)
-   {
-      int32_t s32_Result;
-
-      stw::can::T_STWCAN_Status c_Status;
-      int32_t s32_Bitrate;
-
-      // Get the bitrate of the CAN DLL
-      s32_Result = this->mpc_CanDllDispatcher->CAN_Status(c_Status);
-      if (s32_Result == C_NO_ERR)
-      {
-         s32_Bitrate = c_Status.iActBitrate;
-      }
-      else
-      {
-         C_OgeWiCustomMessage c_MessageBox(this, C_OgeWiCustomMessage::eERROR);
-         c_MessageBox.SetType(C_OgeWiCustomMessage::eWARNING);
-         c_MessageBox.SetHeading("Starting CAN monitoring");
-         c_MessageBox.SetDescription("Used bitrate could not used for bus load calculation."
-                                                            " Bus load will not work.");
-         c_MessageBox.Execute();
-
-         s32_Bitrate = 0;
-      }
-
-      this->mc_ComDriver.UpdateBitrate(s32_Bitrate);
-      this->mpc_Ui->pc_TraceWidget->SetCanBitrate(s32_Bitrate);
-   }
-}
 
 //----------------------------------------------------------------------------------------------------------------------
 /*! \brief  Check messages for loaded database

@@ -19,7 +19,7 @@
 #include "C_PopErrorHandling.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_FlaUtiStyleSheets.hpp"
-using namespace stw::opensyde_gui_logic;
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
@@ -73,15 +73,9 @@ int32_t main(int32_t os32_Argc, char_t * opacn_Argv[])
       //Set stylesheet (SECOND)
       c_Appl.setStyleSheet(stw::opensyde_gui_logic::C_FlaUtiStyleSheets::h_GetStylesheet());
    }
-   {
-      const QString c_TranslationLocation = stw::opensyde_gui_logic::C_Uti::h_GetExePath() + "/Translations";
-      //Set language (THIRD)
-      //stw::opensyde_core::C_OscGetText::h_SetLanguage("en_US");
-      stw::opensyde_gui_logic::C_PopErrorHandling::h_GetTextInitializeErr(
 
-   }
    {
-      //Application (FOURTH)
+      //Application (THIRD)
       stw::opensyde_gui::C_FlaMainWindow c_Window;
 
       c_Window.show();

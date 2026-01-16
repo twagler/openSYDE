@@ -131,22 +131,22 @@ int32_t C_SdNdeHalcConfigImportDialog::PrepareDialog(QString & orc_ErrorDetails)
          {
             s32_Return = C_CHECKSUM;
             orc_ErrorDetails =
-               C_GtGetText::h_GetText(("Imported Hardware configuration is not compatible to this device type.\n"
+               ("Imported Hardware configuration is not compatible to this device type.\n"
                                        "Current device type: " + pc_Config->c_DeviceName + "\n"
                                        "Device type of imported Hardware configuration: " +
-                                       this->mc_ImportConfig.c_DeviceType + "\n").c_str());
+                                       this->mc_ImportConfig.c_DeviceType + "\n").c_str();
          }
          else if (this->mc_ImportConfig.u32_DefinitionContentVersion != pc_Config->u32_ContentVersion)
          {
             s32_Return = C_CHECKSUM;
             orc_ErrorDetails =
-               C_GtGetText::h_GetText(("Imported Hardware configuration version does not match the current "
+               ("Imported Hardware configuration version does not match the current "
                                        "used Hardware configuration version of this node.\n"
                                        "Current used version: " +
                                        C_SclString::IntToStr(pc_Config->u32_ContentVersion) + "\n"
                                        "Version of imported Hardware configuration: " +
                                        C_SclString::IntToStr(this->mc_ImportConfig.u32_DefinitionContentVersion) +
-                                       "\n").c_str());
+                                       "\n").c_str();
          }
          else
          {

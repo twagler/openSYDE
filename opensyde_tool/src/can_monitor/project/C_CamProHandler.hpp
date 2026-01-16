@@ -39,9 +39,7 @@ class C_CamProHandler :
 public:
    enum E_CanDllType
    {
-      ePEAK = 0,
-      eVECTOR = 1,
-      eOTHER = 2
+      ePEAK = 0
    };
 
    //Get

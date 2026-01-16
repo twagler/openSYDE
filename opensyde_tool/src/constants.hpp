@@ -203,7 +203,7 @@ const QSize mc_ICON_SIZE_16 = QSize(16, 16);
 
 // Paths
 const QString mc_DLL_PATH_PEAK = "STW_dlls\\stwpeak2\\stwpeak2_64.dll";
-const QString mc_DLL_PATH_VECTOR = "STW_dlls\\stwvec\\stwvec64.dll";
+
 
 // Identifier of update package subsections or items
 const uint32_t mu32_UPDATE_PACKAGE_NODE_SECTION_TYPE_DATABLOCK = 0U;

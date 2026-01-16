@@ -825,25 +825,15 @@ int32_t C_PuiSvHandlerFilerV1::mh_LoadPc(C_OscViewPc & orc_OscPc, C_PuiSvPc & or
       QString c_Path = orc_XmlParser.GetNodeContent().c_str();
       if (orc_XmlParser.AttributeExists("type"))
       {
-         orc_PuiPc.SetCanDllType(static_cast<C_PuiSvPc::E_CanDllType>(orc_XmlParser.GetAttributeSint32("type")));
+         // Ignore stored type, force PEAK
+         orc_PuiPc.SetCanDllType(C_PuiSvPc::E_CanDllType::ePEAK);
       }
       else
       {
-         // translate from path to type+path for compatibility reasons (type was not present in old openSYDE versions)
-         if ((c_Path == stw::opensyde_gui::mc_DLL_PATH_PEAK) || (c_Path.isEmpty() == true))
-         {
-            orc_PuiPc.SetCanDllType(C_PuiSvPc::E_CanDllType::ePEAK);
-            c_Path = "";
-         }
-         else if (c_Path == stw::opensyde_gui::mc_DLL_PATH_VECTOR)
-         {
-            orc_PuiPc.SetCanDllType(C_PuiSvPc::E_CanDllType::eVECTOR);
-            c_Path = "";
-         }
-         else
-         {
-            orc_PuiPc.SetCanDllType(C_PuiSvPc::E_CanDllType::eOTHER);
-         }
+         // translate from path to type+path for compatibility reasons
+         // Always force PEAK, ignoring legacy paths for Vector/Other
+         orc_PuiPc.SetCanDllType(C_PuiSvPc::E_CanDllType::ePEAK);
+         c_Path = "";
       }
       orc_PuiPc.SetCustomCanDllPath(c_Path);
       //Return

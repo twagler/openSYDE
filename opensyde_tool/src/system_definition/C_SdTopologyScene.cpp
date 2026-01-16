@@ -4029,9 +4029,9 @@ bool C_SdTopologyScene::m_ShowShortcutTspOption(const QString & orc_NodeName,
       QGraphicsView * const pc_View = this->views().at(0);
       C_OgeWiCustomMessage c_MessageBox(pc_View, C_OgeWiCustomMessage::E_Type::eQUESTION);
 
-      c_MessageBox.SetHeading(QString::fromStdString(c_MessageBoxTitle));
-      c_MessageBox.SetDescription(QString::fromStdString(c_MessageBoxText));
-      c_MessageBox.SetDetails(QString::fromStdString(c_MessageBoxDetails));
+      c_MessageBox.SetHeading(QString(c_MessageBoxTitle.c_str()));
+      c_MessageBox.SetDescription(QString(c_MessageBoxText.c_str()));
+      c_MessageBox.SetDetails(QString(c_MessageBoxDetails.c_str()));
       c_MessageBox.SetOkButtonText("Continue");
       c_MessageBox.SetNoButtonText("Skip");
       c_MessageBox.SetCheckboxText("Always skip TSP Import assistance");

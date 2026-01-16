@@ -224,7 +224,7 @@ void C_UsFiler::mh_SaveProjectIndependentSection(const C_UsHandler & orc_UserSet
 
    // Settings expanded collapsed
    orc_Ini.WriteBool("Settings", "DatabaseExpanded", orc_UserSettings.GetWiDatabaseExpanded());
-   orc_Ini.WriteBool("Settings", "DllExpanded", orc_UserSettings.GetWiDllConfigExpanded());
+
    orc_Ini.WriteBool("Settings", "FilterExpanded", orc_UserSettings.GetWiFilterExpanded());
    orc_Ini.WriteBool("Settings", "LoggingExpanded", orc_UserSettings.GetWiLoggingExpanded());
    orc_Ini.WriteInteger("Settings", "PopOpenSection", static_cast<int32_t>(orc_UserSettings.GetPopOpenSection()));
@@ -378,8 +378,7 @@ void C_UsFiler::mh_LoadProjectIndependentSection(C_UsHandler & orc_UserSettings,
    // Settings expanded collapsed
    q_Flag = orc_Ini.ReadBool("Settings", "DatabaseExpanded", true);
    orc_UserSettings.SetWiDatabaseExpanded(q_Flag);
-   q_Flag = orc_Ini.ReadBool("Settings", "DllExpanded", true);
-   orc_UserSettings.SetWiDllConfigExpanded(q_Flag);
+
    q_Flag = orc_Ini.ReadBool("Settings", "FilterExpanded", true);
    orc_UserSettings.SetWiFilterExpanded(q_Flag);
    q_Flag = orc_Ini.ReadBool("Settings", "LoggingExpanded", true);

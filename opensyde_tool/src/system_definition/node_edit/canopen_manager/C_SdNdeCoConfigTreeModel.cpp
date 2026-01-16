@@ -1540,7 +1540,7 @@ bool C_SdNdeCoConfigTreeModel::m_CheckIfCoManagerCanBeActivated(const uint32_t o
 
          C_OgeWiCustomMessage c_Message(this->mpc_Parent, C_OgeWiCustomMessage::eINFORMATION);
          c_Message.SetHeading("Activate CANopen Manager");
-         c_Message.SetDescription(QString::fromStdString(c_Text));
+         c_Message.SetDescription(QString(c_Text.c_str()));
          c_Message.Execute();
       }
    }

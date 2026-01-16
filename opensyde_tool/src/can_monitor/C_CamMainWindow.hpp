@@ -113,7 +113,7 @@ private:
    void m_OnDatabaseRemove(const QString & orc_File, const QString & orc_OrgPath, const bool oq_IsUpdate);
    void m_OnActivateDatabase(const QString & orc_File, const QString & orc_OrgPath, const bool oq_Active);
    void m_OnOsyChangeBus(const QString & orc_File, const QString & orc_OrgPath, const uint32_t ou32_BusIndex);
-   void m_OnCanDllConfigChange(void);
+
    void m_CheckMessagesForLoadedDatabase(const QString & orc_DatabasePath);
    void m_CheckForLastDatabaseLoaded(const QString & orc_DatabasePath);
    void m_DisplayCheckMessagesDialog(const QString & orc_DatabasePath, const std::vector<uint32_t> & orc_Indices);

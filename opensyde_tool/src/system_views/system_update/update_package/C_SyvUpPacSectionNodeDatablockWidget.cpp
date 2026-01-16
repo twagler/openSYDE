@@ -75,7 +75,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::AdaptFile(const QString & orc_File,
 {
    bool q_FileIsOk = false;
 
-   if (orc_File == QString::fromStdString(mhc_REMOVE_PATH_TEXT))
+   if (orc_File == mhc_REMOVE_PATH_TEXT)
    {
       // Special case. Removing file. No check necessary
       if (this->me_Type == C_OscNodeApplication::ePARAMETER_SET_HALC)
@@ -339,7 +339,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::RevertFile(C_SyvUpPacListNodeItemWidg
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvUpPacSectionNodeDatablockWidget::RemoveFile(C_SyvUpPacListNodeItemWidget * const opc_App)
 {
-   this->AdaptFile(QString::fromStdString(mhc_REMOVE_PATH_TEXT), opc_App);
+   this->AdaptFile(mhc_REMOVE_PATH_TEXT, opc_App);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

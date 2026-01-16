@@ -397,17 +397,7 @@ bool C_UsHandler::GetWiDatabaseExpanded() const
    return this->mq_WiDatabaseExpanded;
 }
 
-//----------------------------------------------------------------------------------------------------------------------
-/*! \brief   Get DLL configuration widget expanded flag.
 
-   \return
-   true: expanded, false: collapsed
-*/
-//----------------------------------------------------------------------------------------------------------------------
-bool C_UsHandler::GetWiDllConfigExpanded() const
-{
-   return this->mq_WiDllConfigExpanded;
-}
 
 //----------------------------------------------------------------------------------------------------------------------
 /*! \brief   Get filter widget expanded flag.
@@ -791,16 +781,7 @@ void C_UsHandler::SetWiDatabaseExpanded(const bool oq_New)
    this->mq_WiDatabaseExpanded = oq_New;
 }
 
-//----------------------------------------------------------------------------------------------------------------------
-/*! \brief   Set DLL configuration widget expanded.
 
-   \param[in]     oq_New        expanded flag
-*/
-//----------------------------------------------------------------------------------------------------------------------
-void C_UsHandler::SetWiDllConfigExpanded(const bool oq_New)
-{
-   this->mq_WiDllConfigExpanded = oq_New;
-}
 
 //----------------------------------------------------------------------------------------------------------------------
 /*! \brief   Set filter widget expanded.
@@ -966,10 +947,11 @@ C_UsHandler::C_UsHandler(void) :
    mq_MessageGenIsExpanded(true),
    ms32_SplitterMesSigHorizontal(0),
    mq_WiDatabaseExpanded(true),
-   mq_WiDllConfigExpanded(true),
+
    mq_WiFilterExpanded(true),
    mq_WiLoggingExpanded(true),
-   me_PopOpenSection(E_SettingsSubSection::eNONE)
+   me_PopOpenSection(E_SettingsSubSection::eNONE),
+   ms32_CanBitrate(500)
 {
    // Load all project independent information
    C_UsFiler::h_Load(*this, mc_IniPathAndName, "");
@@ -984,4 +966,26 @@ C_UsHandler::C_UsHandler(void) :
 C_UsHandler::~C_UsHandler()
 {
    this->Save();
+}
+//----------------------------------------------------------------------------------------------------------------------
+/*! \brief   Get CAN bitrate
+
+   \return
+   CAN bitrate in kBit/s
+*/
+//----------------------------------------------------------------------------------------------------------------------
+int32_t C_UsHandler::GetCanBitrate(void) const
+{
+   return this->ms32_CanBitrate;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+/*! \brief   Set CAN bitrate
+
+   \param[in]  os32_New   New CAN bitrate in kBit/s
+*/
+//----------------------------------------------------------------------------------------------------------------------
+void C_UsHandler::SetCanBitrate(const int32_t os32_New)
+{
+   this->ms32_CanBitrate = os32_New;
 }

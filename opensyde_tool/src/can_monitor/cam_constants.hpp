@@ -49,7 +49,7 @@ const int32_t ms32_TRACE_TRANSPARENCY_STEPS = ms32_TRACE_TRANSPARENCY_START - ms
 
 // Paths (different from paths in constants.h!)
 const QString mc_DLL_PATH_PEAK_CAM = "..\\STW_dlls\\stwpeak2\\stwpeak2_64.dll";
-const QString mc_DLL_PATH_VECTOR_CAM = "..\\STW_dlls\\stwvec\\stwvec64.dll";
+
 
 // Path variables for can monitor only
 const QString mc_PATH_VARIABLE_CAN_MONITOR_BIN = "%{CAN_MONITOR_BINARY}";

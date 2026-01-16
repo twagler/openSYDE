@@ -917,7 +917,7 @@ void C_SyvUpPacListWidget::CreateServiceUpdatePackage(const bool oq_SaveAsFile, 
             c_MessageResult.SetHeading("Create Service Update Package");
             c_MessageResult.SetDescription("Created Service Update Package but there are warnings." +
                                            this->mc_LastPath);
-            c_MessageResult.SetDetails(QString::fromStdString(c_Warnings.GetText()));
+            c_MessageResult.SetDetails(QString(c_Warnings.GetText().c_str()));
             c_MessageResult.SetCustomMinHeight(250, 300);
             c_MessageResult.Execute();
          }
@@ -927,7 +927,7 @@ void C_SyvUpPacListWidget::CreateServiceUpdatePackage(const bool oq_SaveAsFile, 
             c_MessageResult.SetHeading("Create Service Update Package");
             c_MessageResult.SetDescription("Could not create Service Update Package!");
             c_MessageResult.SetDetails("Error code: " + QString::number(s32_Return) + "\n" +
-                                       QString::fromStdString(c_Error));
+                                       QString(c_Error.c_str()));
             c_MessageResult.SetCustomMinHeight(180, 250);
             c_MessageResult.Execute();
          }

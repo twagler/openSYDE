@@ -69,8 +69,7 @@ C_CamMetTreeView::C_CamMetTreeView(QWidget * const opc_Parent) :
    C_OgeTreeViewToolTipBase(opc_Parent),
    C_SyvComMessageMonitor(),
    mq_UniqueMessageMode(false),
-   mq_IsRunning(false),
-   mq_AllowSorting(false)
+   mq_IsRunning(false)
 {
    QItemSelectionModel * const pc_LastSelectionModel = this->selectionModel();
 
@@ -104,17 +103,10 @@ C_CamMetTreeView::C_CamMetTreeView(QWidget * const opc_Parent) :
    this->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
    this->horizontalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
 
-   //Deactivate trace sorting as there are some known issues (not allowed while active, signals cut off)
-   if (mq_AllowSorting)
-   {
-      this->setSortingEnabled(true);
-      this->mc_SortProxyModel.setDynamicSortFilter(true);
-   }
-   else
-   {
-      this->setSortingEnabled(false);
-      this->mc_SortProxyModel.setDynamicSortFilter(false);
-   }
+   //Deactivate trace sorting by default (enabled only in unique message mode)
+   //Continuous mode has known issues: not allowed while active, signals cut off
+   this->setSortingEnabled(false);
+   this->mc_SortProxyModel.setDynamicSortFilter(false);
 
    this->m_SetupContextMenu();
 
@@ -284,6 +276,20 @@ void C_CamMetTreeView::SetDisplayTree(const bool oq_Value)
 void C_CamMetTreeView::SetDisplayUniqueMessages(const bool oq_Value)
 {
    this->mq_UniqueMessageMode = oq_Value;
+   
+   // Enable sorting only in unique message mode to allow sorting by CAN ID
+   // Continuous mode has known issues: not allowed while active, signals cut off
+   if (oq_Value == true)
+   {
+      this->setSortingEnabled(true);
+      this->mc_SortProxyModel.setDynamicSortFilter(true);
+   }
+   else
+   {
+      this->setSortingEnabled(false);
+      this->mc_SortProxyModel.setDynamicSortFilter(false);
+   }
+   
    this->mc_Model.SetDisplayUniqueMessages(oq_Value);
    m_SetAllChildren();
    m_HandleSorting();
@@ -1311,27 +1317,14 @@ bool C_CamMetTreeView::m_ColumnsSortedAsExpected(const std::vector<int32_t> & or
 //----------------------------------------------------------------------------------------------------------------------
 void C_CamMetTreeView::m_HandleSorting(void)
 {
-   //Deactivate trace sorting as there are some known issues (not allowed while active, signals cut off)
-   if (mq_AllowSorting)
+   // Sorting is now controlled dynamically based on unique/continuous mode
+   // Only handle sorting behavior if sorting is enabled (i.e., in unique message mode)
+   if (this->isSortingEnabled())
    {
-      //Don't allow sorting while in unique mode as long as this bug is not resolved:
-      // https://bugreports.qt.io/browse/QTBUG-27289 (can happen if items were inserted and sorting was active)
-      if (this->mq_IsRunning == true)
+      // special case: sort initial by column 0 (timestamp) if no other column is sorted
+      if (this->header()->sortIndicatorSection() == -1)
       {
-         //Required sort to allow handling as before (append at bottom) -> before internal deactivate!
-         //Overwrite last user sort behavior to avoid jumping back to last sorting behavior on pausing
-         this->header()->setSortIndicator(0, Qt::AscendingOrder);
-         //User
-         this->setSortingEnabled(false);
-         //Internal
-         this->mc_SortProxyModel.setDynamicSortFilter(false);
-      }
-      else
-      {
-         //User
-         this->setSortingEnabled(true);
-         //Internal
-         this->mc_SortProxyModel.setDynamicSortFilter(true);
+         this->sortByColumn(0, Qt::AscendingOrder);
       }
    }
 }

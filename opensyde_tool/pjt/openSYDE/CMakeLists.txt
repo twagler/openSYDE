@@ -254,6 +254,7 @@ set(OPENSYDE_SOURCES
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacPemFileInfoPopUp.cpp
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacPemFileOptionsPopUp.cpp
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacPemFilesListWidget.cpp
+   ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacPemFilesWidget.cpp
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacSectionNodeDatablockWidget.cpp
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacSectionNodeFilesWidget.cpp
    ${PROJECT_ROOT}/src/system_views/system_update/update_package/C_SyvUpPacSectionNodeWidget.cpp
@@ -605,7 +606,7 @@ set(OPENSYDE_SOURCES
    ${PROJECT_ROOT}/src/scene_base/undo/topology/C_SebUnoTopBusConnectorMoveCommand.cpp
    ${PROJECT_ROOT}/src/system_views/dashboards/C_SyvDaTearOffWidget.cpp
    ${PROJECT_ROOT}/src/scene_base/C_SebTopologyBaseContextMenuManager.cpp
-   ${PROJECT_ROOT}/src/system_views/system_setup/C_SyvSeDllConfigurationDialog.cpp
+
    ${PROJECT_ROOT}/src/opensyde_gui_elements/group_box/C_OgeGbxRead.cpp
    ${PROJECT_ROOT}/src/opensyde_gui_elements/label/C_OgeLabReadMain.cpp
    ${PROJECT_ROOT}/src/opensyde_gui_elements/label/C_OgeLabReadSub.cpp
@@ -1504,7 +1505,7 @@ set(OPENSYDE_HEADERS
    ${PROJECT_ROOT}/src/scene_base/undo/topology/C_SebUnoTopBaseManager.hpp
    ${PROJECT_ROOT}/src/system_views/dashboards/C_SyvDaTearOffWidget.hpp
    ${PROJECT_ROOT}/src/scene_base/C_SebTopologyBaseContextMenuManager.hpp
-   ${PROJECT_ROOT}/src/system_views/system_setup/C_SyvSeDllConfigurationDialog.hpp
+
    ${PROJECT_ROOT}/src/opensyde_gui_elements/group_box/C_OgeGbxRead.hpp
    ${PROJECT_ROOT}/src/opensyde_gui_elements/label/C_OgeLabReadMain.hpp
    ${PROJECT_ROOT}/src/opensyde_gui_elements/label/C_OgeLabReadSub.hpp
@@ -2036,7 +2037,7 @@ set(OPENSYDE_FORMS
    ${PROJECT_ROOT}/src/system_views/system_update/C_SyvUpOverviewWidget.ui
    ${PROJECT_ROOT}/src/opensyde_gui_elements/widget/C_OgeWiDashboardTab.ui
    ${PROJECT_ROOT}/src/system_views/dashboards/C_SyvDaTearOffWidget.ui
-   ${PROJECT_ROOT}/src/system_views/system_setup/C_SyvSeDllConfigurationDialog.ui
+
    ${PROJECT_ROOT}/src/opensyde_gui_elements/widget/C_OgeWiFontConfig.ui
    ${PROJECT_ROOT}/src/system_views/dashboards/C_SyvDaDashboardSettings.ui
    ${PROJECT_ROOT}/src/system_views/dashboards/items/C_SyvDaItDashboardLabelWidget.ui

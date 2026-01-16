@@ -11,6 +11,7 @@
 #include "precomp_headers.hpp"
 
 #include "C_SyvComDriverThread.hpp"
+#include "C_OscLoggingHandler.hpp"
 using namespace stw::opensyde_gui_logic;
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -54,7 +55,25 @@ void C_SyvComDriverThread::run(void)
    {
       while (this->isInterruptionRequested() == false)
       {
-         this->mpr_ThreadFunc(this->mpv_FuncInstance);
+         try
+         {
+            this->mpr_ThreadFunc(this->mpv_FuncInstance);
+         }
+         catch (const std::exception & orc_Exception)
+         {
+            // Log the exception and exit gracefully instead of crashing
+            osc_write_log_error("Communication thread",
+                                stw::scl::C_SclString("Exception in thread: ") +
+                                orc_Exception.what());
+            break; // Exit thread loop on exception
+         }
+         catch (...)
+         {
+            // Catch any other exceptions
+            osc_write_log_error("Communication thread",
+                                "Unknown exception in thread");
+            break; // Exit thread loop on exception
+         }
       }
    }
 }

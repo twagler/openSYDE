@@ -266,9 +266,8 @@ QVariant C_SdNdeCoPdoTableModel::headerData(const int32_t os32_Section, const Qt
             c_Retval = "Data Length Code of PDO.";
             break;
          case eTXMETHOD:
-            c_Retval = C_GtGetText::h_GetText(
-               "Transmission type of PDO. Asynchronous manufacturer specific value of 254 " \
-               "or asynchronous device specific value of 255.");
+            c_Retval = "Transmission type of PDO. Asynchronous manufacturer specific value of 254 " \
+                       "or asynchronous device specific value of 255.";
             break;
          case eINHIBITTIME:
             c_Retval = "Minimum time in milliseconds between two consecutives CAN messages of PDO.";

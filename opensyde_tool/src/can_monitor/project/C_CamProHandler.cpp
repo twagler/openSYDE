@@ -103,21 +103,8 @@ const QString C_CamProHandler::GetCanDllPath() const
 {
    QString c_Return;
 
-   switch (this->me_CanDllType)
-   {
-   case ePEAK:
-      c_Return = mc_DLL_PATH_PEAK_CAM;
-      break;
-   case eVECTOR:
-      c_Return = mc_DLL_PATH_VECTOR_CAM;
-      break;
-   case eOTHER:
-      c_Return = this->mc_CustomCanDllPath;
-      break;
-   default:
-      c_Return = mc_DLL_PATH_PEAK_CAM;
-      break;
-   }
+   Q_UNUSED(this->me_CanDllType);
+   c_Return = mc_DLL_PATH_PEAK_CAM;
 
    return c_Return;
 }

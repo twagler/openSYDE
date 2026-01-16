@@ -69,7 +69,7 @@ C_CieDcfEdsImportNodeSelectWidget::C_CieDcfEdsImportNodeSelectWidget(
       C_Uti::h_MinimizePath(orc_FilePath, C_Uti::h_GetFontPixel(mc_STYLE_GUIDE_FONT_REGULAR_13), 500, 0));
    this->mpc_Ui->pc_LabPath->SetToolTipInformation(static_cast<QFileInfo>(orc_FilePath).completeSuffix().toUpper() +
                                                    " Configuration File",
-                                                   QString::fromStdString(orc_FilePath));
+                                                   orc_FilePath);
    mrc_ParentDialog.SetSubTitle(static_cast<QFileInfo>(orc_FilePath).completeSuffix().toUpper() +
                                 " File");
 

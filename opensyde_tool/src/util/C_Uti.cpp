@@ -1112,7 +1112,7 @@ bool C_Uti::h_IsPathRelativeToDir(const QString & orc_PathIn, const QString & or
 //----------------------------------------------------------------------------------------------------------------------
 QString C_Uti::h_GetHashValueAsQtString(void)
 {
-   return QString::fromStdString(stw::opensyde_core::C_OscBinaryHash::h_CreateBinaryHash().c_str());
+   return QString(stw::opensyde_core::C_OscBinaryHash::h_CreateBinaryHash().c_str());
 }
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -1895,7 +1895,7 @@ void C_SyvUpPacNodeWidget::m_OnCreatePackage(const QString & orc_PublicKeyPath, 
          c_MessageResult.SetHeading("Create Security Certificate Package");
          c_MessageResult.SetDescription("Could not create security certificate package!");
          c_MessageResult.SetDetails("Error code: " + QString::number(s32_Return) + "\n" +
-                                    QString::fromStdString(c_Error));
+                                    QString(c_Error.c_str()));
          c_MessageResult.SetCustomMinHeight(180, 250);
          c_MessageResult.Execute();
       }

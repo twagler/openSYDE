@@ -103,7 +103,6 @@ private:
    QAction * mpc_AddFilter;
    bool mq_UniqueMessageMode;
    bool mq_IsRunning;
-   const bool mq_AllowSorting;
 
    void m_SetupContextMenu(void);
    void m_OnCustomContextMenuRequested(const QPoint & orc_Pos);

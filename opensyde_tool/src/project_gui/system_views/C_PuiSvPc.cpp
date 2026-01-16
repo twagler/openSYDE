@@ -107,21 +107,7 @@ QString C_PuiSvPc::GetCanDll(void) const
 {
    QString c_Return;
 
-   switch (this->me_CanDllType)
-   {
-   case ePEAK:
-      c_Return = stw::opensyde_gui::mc_DLL_PATH_PEAK;
-      break;
-   case eVECTOR:
-      c_Return = stw::opensyde_gui::mc_DLL_PATH_VECTOR;
-      break;
-   case eOTHER:
-      c_Return = this->mc_CustomCanDllPath;
-      break;
-   default:
-      c_Return = stw::opensyde_gui::mc_DLL_PATH_PEAK;
-      break;
-   }
+   c_Return = stw::opensyde_gui::mc_DLL_PATH_PEAK;
 
    return c_Return;
 }

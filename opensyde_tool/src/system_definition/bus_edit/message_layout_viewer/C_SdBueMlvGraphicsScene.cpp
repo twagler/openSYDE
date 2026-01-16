@@ -792,10 +792,10 @@ void C_SdBueMlvGraphicsScene::m_InitProtocolItems(void)
 {
    this->mapc_EcesHints[0] = new C_SdBueMlvBaseItem(QColor(0, 0, 0, 0),
                                                     mc_STYLE_GUIDE_COLOR_10, mc_STYLE_GUIDE_FONT_REGULAR_16,
-                                                    stw::opensyde_gui_logic::"Reserved by Message Counter", true);
+                                                    "Reserved by Message Counter", true);
    this->mapc_EcesHints[1] = new C_SdBueMlvBaseItem(QColor(0, 0, 0, 0),
                                                     mc_STYLE_GUIDE_COLOR_10, mc_STYLE_GUIDE_FONT_REGULAR_16,
-                                                    stw::opensyde_gui_logic::"Reserved by Checksum", true);
+                                                    "Reserved by Checksum", true);
 
    this->mapc_EcesHints[0]->setZValue(mhf64_Z_ORDER_HINT_ITEM);
    this->mapc_EcesHints[1]->setZValue(mhf64_Z_ORDER_HINT_ITEM);
