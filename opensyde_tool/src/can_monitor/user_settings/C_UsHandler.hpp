@@ -39,7 +39,7 @@ public:
    {
       eNONE = 0,
       eDATABASE,
-      eDLLCONFIG,
+      eBITRATE,
       eFILTER,
       eLOGGING
    };
@@ -77,10 +77,11 @@ public:
    const std::vector<int32_t> & GetMessageColWidths(void) const;
    const std::vector<int32_t> & GetSignalsColWidths(void) const;
    bool GetWiDatabaseExpanded(void) const;
-   bool GetWiDllConfigExpanded(void) const;
+
    bool GetWiFilterExpanded(void) const;
    bool GetWiLoggingExpanded(void) const;
    E_SettingsSubSection GetPopOpenSection(void) const;
+   int32_t GetCanBitrate(void) const;
 
    void GetMostRecentFolder(QString & orc_Str) const;
    void GetRecentFolders(QStringList & orc_Folders) const;
@@ -110,10 +111,11 @@ public:
    void SetMessageColWidths(const std::vector<int32_t> & orc_Value);
    void SetSignalsColWidths(const std::vector<int32_t> & orc_Value);
    void SetWiDatabaseExpanded(const bool oq_New);
-   void SetWiDllConfigExpanded(const bool oq_New);
+
    void SetWiFilterExpanded(const bool oq_New);
    void SetWiLoggingExpanded(const bool oq_New);
    void SetPopOpenSection(const E_SettingsSubSection oe_PopOpenSection);
+   void SetCanBitrate(const int32_t os32_New);
 
    void AddToRecentProjects(const QString & orc_Str);
    void RemoveOfRecentProjects(const QString & orc_Str);
@@ -161,8 +163,7 @@ private:
                                                // (collapsed/expanded)
    int32_t ms32_SplitterMesSigHorizontal;      ///< History of last known settings-splitter position x value
    bool mq_WiDatabaseExpanded;                 ///< History of last known database widget expanded state
-   bool mq_WiDllConfigExpanded;                ///< History of last known DLL configuration widget expanded
-                                               // state
+
    bool mq_WiFilterExpanded;                   ///< History of last known filter widget expanded state
    bool mq_WiLoggingExpanded;                  ///< History of last known logging widget expanded state
    std::vector<int32_t> mc_SelectedMessages;   ///< History of last known selected message generator indices
@@ -172,6 +173,7 @@ private:
    std::vector<int32_t> mc_SignalsColWidth;    ///< History of last known message generator signals table
    // column widths
    E_SettingsSubSection me_PopOpenSection; ///< History of last known expanded settings subsection
+   int32_t ms32_CanBitrate;                ///< History of last known CAN bitrate in kBit/s
 };
 
 /* -- Extern Global Variables --------------------------------------------------------------------------------------- */
@@ -179,3 +181,4 @@ private:
 } //end of namespace
 
 #endif
+

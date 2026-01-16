@@ -49,7 +49,7 @@ C_CamMosWidget::C_CamMosWidget(QWidget * const opc_Parent) :
    C_CamOgeWiSettingsBase(opc_Parent),
    mpc_Ui(new Ui::C_CamMosWidget),
    mpc_PopupDatabase(new C_CamMosSectionPopup()),
-   mpc_PopupDllConfig(new C_CamMosSectionPopup()),
+   mpc_PopupBitrate(new C_CamMosSectionPopup()),
    mpc_PopupFilter(new C_CamMosSectionPopup()),
    mpc_PopupLogging(new C_CamMosSectionPopup())
 {
@@ -66,14 +66,14 @@ C_CamMosWidget::C_CamMosWidget(QWidget * const opc_Parent) :
                                "://images/IconFilter.svg");
    this->m_InitSettingsSection(this->mpc_PopupLogging, this->mpc_Ui->pc_PbLogging, opc_Parent,
                                "://images/IconLogging.svg");
-   this->m_InitSettingsSection(this->mpc_PopupDllConfig, this->mpc_Ui->pc_PbDllConfig, opc_Parent,
+   this->m_InitSettingsSection(this->mpc_PopupBitrate, this->mpc_Ui->pc_PbBitrate, opc_Parent,
                                "://images/IconConfig.svg");
    this->mpc_Ui->pc_WiCollapsed->SetBackgroundColor(1);
    this->mpc_Ui->pc_WiExpanded->SetBackgroundColor(1);
 
    // connect hide signal of widgets
    connect(this->mpc_Ui->pc_WiDatabase, &C_CamMosDatabaseWidget::SigHide, this, &C_CamMosWidget::m_HidePopupDatabase);
-   connect(this->mpc_Ui->pc_WiDllConfig, &C_CamMosDllWidget::SigHide, this, &C_CamMosWidget::m_HidePopupDllConfig);
+   connect(this->mpc_Ui->pc_WiBitrate, &C_CamMosBitrateWidget::SigHide, this, &C_CamMosWidget::m_HidePopupBitrate);
    connect(this->mpc_Ui->pc_WiFilter, &C_CamMosFilterWidget::SigHide, this, &C_CamMosWidget::m_HidePopupFilter);
    connect(this->mpc_Ui->pc_WiLogging, &C_CamMosLoggingWidget::SigHide, this, &C_CamMosWidget::m_HidePopupLogging);
 
@@ -108,8 +108,8 @@ C_CamMosWidget::C_CamMosWidget(QWidget * const opc_Parent) :
            this, &C_CamMosWidget::SigAddLogFileBlf);
    connect(this->mpc_Ui->pc_WiLogging, &C_CamMosLoggingWidget::SigRemoveAllLogFiles,
            this, &C_CamMosWidget::SigRemoveAllLogFiles);
-   connect(this->mpc_Ui->pc_WiDllConfig, &C_CamMosDllWidget::SigCanDllConfigured,
-           this, &C_CamMosWidget::SigCanDllConfigured);
+   connect(this->mpc_Ui->pc_WiBitrate, &C_CamMosBitrateWidget::SigCanBitrateConfigured,
+           this, &C_CamMosWidget::SigCanBitrateConfigured);
    connect(this, &C_CamMosWidget::SigEmitAddFilterToChildWidget, this->mpc_Ui->pc_WiFilter,
            &C_CamMosFilterWidget::SetAddFilter);
    connect(this->mpc_Ui->pc_WiFilter, &C_CamMosFilterWidget::SigSendCanFilterMsgDroppedToParentWidget, this,
@@ -124,7 +124,7 @@ C_CamMosWidget::~C_CamMosWidget()
 {
    delete this->mpc_Ui;
    delete this->mpc_PopupDatabase;
-   delete this->mpc_PopupDllConfig;
+   delete this->mpc_PopupBitrate;
    delete this->mpc_PopupFilter;
    delete this->mpc_PopupLogging;
 }
@@ -136,7 +136,7 @@ C_CamMosWidget::~C_CamMosWidget()
 void C_CamMosWidget::LoadUserSettings(void)
 {
    this->mpc_Ui->pc_WiDatabase->LoadUserSettings();
-   this->mpc_Ui->pc_WiDllConfig->LoadUserSettings();
+   this->mpc_Ui->pc_WiBitrate->LoadUserSettings();
    this->mpc_Ui->pc_WiFilter->LoadUserSettings();
    this->mpc_Ui->pc_WiLogging->LoadUserSettings();
 
@@ -205,7 +205,7 @@ void C_CamMosWidget::OnSigOsySysDefBusResult(const QString & orc_PathSystemDefin
 void C_CamMosWidget::OnCommunicationStarted(const bool oq_Online) const
 {
    this->mpc_Ui->pc_WiDatabase->OnCommunicationStarted(oq_Online);
-   this->mpc_Ui->pc_WiDllConfig->OnCommunicationStarted(oq_Online);
+   this->mpc_Ui->pc_WiBitrate->OnCommunicationStarted(oq_Online);
    this->mpc_Ui->pc_WiLogging->OnCommunicationStarted(oq_Online);
 }
 
@@ -308,7 +308,7 @@ void C_CamMosWidget::m_OnExpandSettings(const bool oq_Expand)
 {
    // always show whole widget in popup state
    this->mpc_Ui->pc_WiDatabase->PrepareForExpanded(oq_Expand);
-   this->mpc_Ui->pc_WiDllConfig->PrepareForExpanded(oq_Expand);
+   this->mpc_Ui->pc_WiBitrate->PrepareForExpanded(oq_Expand);
    this->mpc_Ui->pc_WiFilter->PrepareForExpanded(oq_Expand);
    this->mpc_Ui->pc_WiLogging->PrepareForExpanded(oq_Expand);
 
@@ -325,11 +325,11 @@ void C_CamMosWidget::m_OnExpandSettings(const bool oq_Expand)
       this->mpc_Ui->pc_WiExpanded->layout()->addWidget(this->mpc_Ui->pc_WiDatabase);
       this->mpc_Ui->pc_WiExpanded->layout()->addWidget(this->mpc_Ui->pc_WiFilter);
       this->mpc_Ui->pc_WiExpanded->layout()->addWidget(this->mpc_Ui->pc_WiLogging);
-      this->mpc_Ui->pc_WiExpanded->layout()->addWidget(this->mpc_Ui->pc_WiDllConfig);
+      this->mpc_Ui->pc_WiExpanded->layout()->addWidget(this->mpc_Ui->pc_WiBitrate);
 
       // hide all popups
       this->mpc_Ui->pc_PbDatabase->setChecked(false);
-      this->mpc_Ui->pc_PbDllConfig->setChecked(false);
+      this->mpc_Ui->pc_PbBitrate->setChecked(false);
       this->mpc_Ui->pc_PbFilter->setChecked(false);
       this->mpc_Ui->pc_PbLogging->setChecked(false);
    }
@@ -341,7 +341,7 @@ void C_CamMosWidget::m_OnExpandSettings(const bool oq_Expand)
 
       // move widgets to popups
       this->mpc_PopupDatabase->SetWidget(this->mpc_Ui->pc_WiDatabase);
-      this->mpc_PopupDllConfig->SetWidget(this->mpc_Ui->pc_WiDllConfig);
+      this->mpc_PopupBitrate->SetWidget(this->mpc_Ui->pc_WiBitrate);
       this->mpc_PopupFilter->SetWidget(this->mpc_Ui->pc_WiFilter);
       this->mpc_PopupLogging->SetWidget(this->mpc_Ui->pc_WiLogging);
 
@@ -351,8 +351,8 @@ void C_CamMosWidget::m_OnExpandSettings(const bool oq_Expand)
       case C_UsHandler::eDATABASE:
          this->mpc_Ui->pc_PbDatabase->setChecked(true);
          break;
-      case C_UsHandler::eDLLCONFIG:
-         this->mpc_Ui->pc_PbDllConfig->setChecked(true);
+      case C_UsHandler::eBITRATE:
+         this->mpc_Ui->pc_PbBitrate->setChecked(true);
          break;
       case C_UsHandler::eFILTER:
          this->mpc_Ui->pc_PbFilter->setChecked(true);
@@ -379,12 +379,12 @@ void C_CamMosWidget::m_HidePopupDatabase(void) const
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/*! \brief   Hide CAN DLL configuration popup.
+/*! \brief   Hide CAN Bitrate configuration popup.
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_CamMosWidget::m_HidePopupDllConfig(void) const
+void C_CamMosWidget::m_HidePopupBitrate(void) const
 {
-   this->mpc_Ui->pc_PbDllConfig->setChecked(false);
+   this->mpc_Ui->pc_PbBitrate->setChecked(false);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -419,9 +419,9 @@ C_UsHandler::E_SettingsSubSection C_CamMosWidget::m_GetPopOpenIdentity(void) con
    {
       e_Return = C_UsHandler::eDATABASE;
    }
-   else if (this->mpc_PopupDllConfig->isVisible() == true)
+   else if (this->mpc_PopupBitrate->isVisible() == true)
    {
-      e_Return = C_UsHandler::eDLLCONFIG;
+      e_Return = C_UsHandler::eBITRATE;
    }
    else if (this->mpc_PopupFilter->isVisible() == true)
    {

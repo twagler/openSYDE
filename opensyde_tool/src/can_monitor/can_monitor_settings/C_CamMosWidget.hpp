@@ -58,6 +58,7 @@ public:
    void ExpandSettings(const bool oq_Expand) const;
    void AddFilterData(const QList<int32_t> oc_CanMsgId, const QList<uint8_t> oc_CanMsgXtd);
    void CanFilterMsgDropped(void);
+   int32_t GetSelectedBitrate(void) const;
 
    //The signals keyword is necessary for Qt signal slot functionality
    //lint -save -e1736
@@ -77,25 +78,27 @@ Q_SIGNALS:
    void SigAddLogFileAsc(const QString & orc_FilePath);
    void SigAddLogFileBlf(const QString & orc_FilePath);
    void SigRemoveAllLogFiles(void);
-   void SigCanDllConfigured(void);
+   void SigCanBitrateConfigured(void);
    void SigNotifyMissingDataBase(const QString & orc_Path);
    void SigEmitAddFilterToChildWidget(const QList<int32_t> oc_CanMsgId, const QList<uint8_t> oc_CanMsgXtd);
    void SigSendCanMsgDroppedToParentWidget(void);
+   void SigBitrateChanged(const int32_t os32_Bitrate);
 
 private:
    Ui::C_CamMosWidget * mpc_Ui;
 
    stw::opensyde_gui::C_CamMosSectionPopup * mpc_PopupDatabase;
-   stw::opensyde_gui::C_CamMosSectionPopup * mpc_PopupDllConfig;
+   stw::opensyde_gui::C_CamMosSectionPopup * mpc_PopupBitrate;
    stw::opensyde_gui::C_CamMosSectionPopup * mpc_PopupFilter;
    stw::opensyde_gui::C_CamMosSectionPopup * mpc_PopupLogging;
 
    void m_OnExpandSettings(const bool oq_Expand);
    void m_HidePopupDatabase(void) const;
-   void m_HidePopupDllConfig(void) const;
+   void m_HidePopupBitrate(void) const;
    void m_HidePopupFilter(void) const;
    void m_HidePopupLogging(void) const;
    stw::opensyde_gui_logic::C_UsHandler::E_SettingsSubSection m_GetPopOpenIdentity(void) const;
+   void m_SetBitrateComboBox(const int32_t os32_Bitrate);
 
    //Avoid call
    C_CamMosWidget(const C_CamMosWidget &);
