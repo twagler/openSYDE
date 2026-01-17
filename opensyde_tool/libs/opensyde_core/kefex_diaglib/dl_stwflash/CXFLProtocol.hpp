@@ -15,7 +15,7 @@
 #include "stwtypes.hpp"
 #include "C_CanDispatcher.hpp"
 #include "C_HexFile.hpp"
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 #include "C_SclString.hpp"
 #include "C_SclStringList.hpp"
 #include "DiagLib_config.hpp"
@@ -85,7 +85,7 @@ public:
 //----------------------------------------------------------------------------------------------------------------------
 ///Information about multiple aliased memory ranges
 class C_XFLAliasedRanges :
-   public stw::scl::C_SclDynamicArray<C_XFLAliasedRange>
+   public QList<C_XFLAliasedRange>
 {
 public:
    int32_t GetRangeOccupiedByAddress(const uint32_t ou32_Address, uint8_t & oru8_Range)
@@ -361,7 +361,7 @@ public:
    int32_t GetFlashInformationNumberOfICs(uint8_t & oru8_ICCount);
    int32_t GetFlashInformationTotalMemorySize(const uint8_t ou8_ICIndex, uint32_t & oru32_Size);
    int32_t GetFlashInformationProtectedSectors(
-      stw::scl::C_SclDynamicArray<C_XFLProtectedSectorInfo> & orc_ProtectedSectors);
+      QList<C_XFLProtectedSectorInfo> & orc_ProtectedSectors);
    int32_t GetFlashInformationOffsetSector0(const uint8_t ou8_ICIndex, uint32_t & oru32_Offset);
    int32_t GetFlashInformationNumberRegions(const uint8_t ou8_ICIndex, uint8_t & oru8_RegionCount);
    int32_t GetFlashInformationRegionInformation(const uint8_t ou8_ICIndex, const uint8_t ou8_RegionIndex,
@@ -383,12 +383,12 @@ public:
    int32_t GetFingerPrintChecksum(uint32_t & oru32_CheckSum);
    int32_t GetFingerPrintUserName(stw::scl::C_SclString & orc_UserName);
 
-   int32_t GetDeviceInfoAddresses(stw::scl::C_SclDynamicArray<uint32_t> & orc_Addresses,
+   int32_t GetDeviceInfoAddresses(QList<uint32_t> & orc_Addresses,
                                   const uint16_t ou16_ProtocolVersion);
    int32_t GetDeviceInfoBlock(const uint32_t ou32_Address, C_XFLECUInformation & orc_Data);
 
    int32_t GetBlockAddresses(const uint8_t ou8_BlockNumber, C_XFLChecksumBlock & orc_ChecksumBlock);
-   int32_t GetBlockAddressesAll(stw::scl::C_SclDynamicArray<C_XFLChecksumBlock> & orc_ChecksumBlocks);
+   int32_t GetBlockAddressesAll(QList<C_XFLChecksumBlock> & orc_ChecksumBlocks);
    int32_t GetBlockChecksum(const uint8_t ou8_BlockNumber, const uint8_t ou8_ChecksumType, uint32_t & oru32_Checksum);
    int32_t GetBlockCompareMode(const uint8_t ou8_BlockNumber, bool & orq_CheckAtStartup, bool & orq_CheckAfterFlashing);
 

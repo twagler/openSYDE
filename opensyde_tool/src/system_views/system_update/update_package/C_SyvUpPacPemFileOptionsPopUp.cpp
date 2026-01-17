@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Screen for pem file options
@@ -13,12 +13,12 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SyvUpPacPemFileOptionsPopUp.hpp"
 #include "ui_C_SyvUpPacPemFileOptionsPopUp.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -140,7 +140,7 @@ C_OscViewNodeUpdate::E_StateSecurity C_SyvUpPacPemFileOptionsPopUp::GetComboBoxS
       e_Retval = C_OscViewNodeUpdate::eST_SEC_DEACTIVATE;
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    return e_Retval;
@@ -168,7 +168,7 @@ C_OscViewNodeUpdate::E_StateDebugger C_SyvUpPacPemFileOptionsPopUp::GetComboBoxD
       e_Retval = C_OscViewNodeUpdate::eST_DEB_DEACTIVATE;
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    return e_Retval;

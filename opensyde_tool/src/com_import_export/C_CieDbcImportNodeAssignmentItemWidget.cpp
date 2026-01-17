@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Item for list of DBC nodes, its messages and the selection combobox for corresponding topology node
@@ -15,7 +15,7 @@
 #include "C_CieDbcImportNodeAssignmentItemWidget.hpp"
 #include "ui_C_CieDbcImportNodeAssignmentItemWidget.h"
 
-#include "TglUtils.hpp"
+
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -106,7 +106,7 @@ C_CieDbcOsyNodeAssignment C_CieDbcImportNodeAssignmentItemWidget::GetNodeAssignm
 
    if (s32_CurrentIndex > 0) // index 0 is "ignore"
    {
-      tgl_assert(this->mc_InterfaceIndexes.size() == this->mc_NodeIndexes.size());
+      Q_ASSERT(this->mc_InterfaceIndexes.size() == this->mc_NodeIndexes.size());
 
       // subtract one of current index because of ignore item in combobox
       const uint32_t u32_DataIndex = static_cast<uint32_t>(s32_CurrentIndex - 1);
@@ -157,7 +157,7 @@ void C_CieDbcImportNodeAssignmentItemWidget::UpdateComboboxEntries(const uint32_
 //----------------------------------------------------------------------------------------------------------------------
 void C_CieDbcImportNodeAssignmentItemWidget::m_OnComboboxIndexChanged(const int32_t os32_Index)
 {
-   tgl_assert(os32_Index >= 0);
+   Q_ASSERT(os32_Index >= 0);
 
    // trigger enabling of previous index
    Q_EMIT (this->SigUpdateOtherComboboxes(this->ms32_PreviousCbxIndex, true, this));

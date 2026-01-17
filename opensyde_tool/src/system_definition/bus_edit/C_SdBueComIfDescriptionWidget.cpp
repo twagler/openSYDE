@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing and editing COM interface description
@@ -18,7 +18,7 @@
 #include "ui_C_SdBueComIfDescriptionWidget.h"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_UsHandler.hpp"
 #include "C_SdBueUnoBusProtNodeConnectDisconnectBaseCommand.hpp"
 #include "C_Uti.hpp"
@@ -285,7 +285,7 @@ void C_SdBueComIfDescriptionWidget::SetNodeId(const uint32_t ou32_NodeIndex, con
    // adapt the ui
    this->mpc_Ui->pc_NodeSelectorWidget->setVisible(false);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       uint32_t u32_ItInterface;
@@ -711,7 +711,7 @@ void C_SdBueComIfDescriptionWidget::ImportMessages(void)
       if (s32_Return == C_NO_ERR)
       {
          // connect all nodes that were part of message import
-         tgl_assert(c_NodeIndexes.size() == c_InterfaceIndexes.size());
+         Q_ASSERT(c_NodeIndexes.size() == c_InterfaceIndexes.size());
          if (c_NodeIndexes.size() == c_InterfaceIndexes.size())
          {
             for (uint32_t u32_ItIndex = 0; u32_ItIndex < c_NodeIndexes.size(); u32_ItIndex++)
@@ -724,7 +724,7 @@ void C_SdBueComIfDescriptionWidget::ImportMessages(void)
                   C_PuiSdHandler::h_GetInstance()->GetOscCanDataPools(c_NodeIndexes[u32_ItIndex], e_Protocol).size();
 
                // on import a Datapool was created if necessary - just to make sure
-               tgl_assert(s32_NumComDataPools == s32_NumMessageContainers);
+               Q_ASSERT(s32_NumComDataPools == s32_NumMessageContainers);
                if (s32_NumComDataPools > 0)
                {
                   C_PuiSdHandler::h_GetInstance()->
@@ -1471,7 +1471,7 @@ int32_t C_SdBueComIfDescriptionWidget::h_GetIndexOfProtocol(const C_OscCanProtoc
       s32_Index = 4;
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    return s32_Index;
@@ -2041,7 +2041,7 @@ void C_SdBueComIfDescriptionWidget::m_GetNodeMessageAndSignalCount(const C_OscCa
                                             u32_RxMessageCount,
                                             u32_TxMessageCount, &oru32_SignalCount) != C_NO_ERR)
       {
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
    else if (ou32_InterfaceIndex == this->mu32_CoDeviceIntfIndex)
@@ -2050,7 +2050,7 @@ void C_SdBueComIfDescriptionWidget::m_GetNodeMessageAndSignalCount(const C_OscCa
       const C_OscNode * const pc_Node  = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(
          this->mu32_CoManagerNodeIndexOfCoDevice);
 
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          uint32_t u32_UsedInterfaceIndex = 0U;
@@ -2079,7 +2079,7 @@ void C_SdBueComIfDescriptionWidget::m_GetNodeMessageAndSignalCount(const C_OscCa
                                                u32_RxMessageCount,
                                                u32_TxMessageCount, &oru32_SignalCount) != C_NO_ERR)
          {
-            tgl_assert(false);
+            Q_ASSERT(false);
          }
       }
    }

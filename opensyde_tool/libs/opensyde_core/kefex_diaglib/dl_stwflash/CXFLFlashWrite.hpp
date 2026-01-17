@@ -67,7 +67,7 @@ private:
                             C_XFLFlashInformation & orc_FlashInfo);
 
    void m_FlashMapStructToArray(const C_XFLFlashInformation & orc_FlashMapping,
-                                stw::scl::C_SclDynamicArray<C_XFLFlashSector> & orc_Sectors) const;
+                                QList<C_XFLFlashSector> & orc_Sectors) const;
    int32_t m_WriteFingerPrintCheckSum(const bool oq_FingerPrintAvailable, const uint32_t ou32_Checksum);
 
    void m_InitProtocol(const C_XFLFlashWriteParameters & orc_Params);
@@ -90,7 +90,7 @@ private:
    uint8_t mu8_ActualLocalID;
    bool mq_VerboseMode;
 
-   stw::scl::C_SclDynamicArray<uint8_t> mau8_SectorsToErase;
+   QList<uint8_t> mau8_SectorsToErase;
 
 protected:
    ///inherit from this class and overload the following functions to implement user interaction if required

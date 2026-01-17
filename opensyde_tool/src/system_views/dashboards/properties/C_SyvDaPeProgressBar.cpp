@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for system view dashboard progress bar properties (implementation)
@@ -12,7 +12,7 @@
 
 #include "stwtypes.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SyvDaPeProgressBar.hpp"
 #include "ui_C_SyvDaPeProgressBar.h"
 
@@ -224,7 +224,7 @@ void C_SyvDaPeProgressBar::SetType(const C_PuiSvDbProgressBar::E_Type oe_Type)
       this->mpc_Ui->pc_ComboBoxType->setCurrentIndex(C_SyvDaPeProgressBar::mhs32_INDEX_STYLE_TYPE3);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -254,7 +254,7 @@ void C_SyvDaPeProgressBar::SetAlignment(const C_PuiSvDbProgressBar::E_Alignment 
       this->mpc_Ui->pc_ComboBoxAlignment->setCurrentIndex(C_SyvDaPeProgressBar::mhs32_INDEX_ALIGNMENT_BOTTOM);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }

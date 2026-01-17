@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Tree model for data elements (implementation)
@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "stwerrors.hpp"
 #include "C_PuiSdUtil.hpp"
@@ -26,7 +26,7 @@
 #include "C_TblTreDataElementModel.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -386,7 +386,7 @@ void C_TblTreDataElementModel::InitSv(const uint32_t ou32_ViewIndex, const E_Mod
    case eDATAPOOLS:
    default:
       //NO SV use case
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    this->endResetModel();
@@ -464,7 +464,7 @@ const
          c_Retval = m_GetNvmList(orc_Index);
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -732,7 +732,7 @@ void C_TblTreDataElementModel::m_InitBusSignal(const uint32_t ou32_ViewIndex,  c
                pc_BusItem->c_Icon = QIcon(C_TblTreDataElementModel::mhc_ICON_ETHERNET);
                break;
             default:
-               tgl_assert(false);
+               Q_ASSERT(false);
                break;
             }
             //Protocols
@@ -769,7 +769,7 @@ void C_TblTreDataElementModel::m_InitBusSignal(const uint32_t ou32_ViewIndex,  c
                   break;
                default:
                   e_Type = C_OscCanProtocol::eLAYER2;
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                   break;
                }
                pc_ProtocolItem->c_Name = C_PuiSdUtil::h_ConvertProtocolTypeToString(e_Type);
@@ -849,7 +849,7 @@ void C_TblTreDataElementModel::m_InitDatapoolElements(const uint32_t ou32_ViewIn
 
       //Nodes
       this->mpc_InvisibleRootItem->ReserveChildrenSpace(u32_NodeSize);
-      tgl_assert(c_NodeActiveFlags.size() == u32_NodeSize);
+      Q_ASSERT(c_NodeActiveFlags.size() == u32_NodeSize);
 
       for (uint32_t u32_ItNode = 0; u32_ItNode < u32_NodeSize; ++u32_ItNode)
       {
@@ -1360,7 +1360,7 @@ void C_TblTreDataElementModel::mh_InitDatapoolElementsHalcConfig(C_TblTreItem * 
       pc_ChannelItem->c_Icon = QIcon(C_TblTreDataElementModel::mhc_ICON_HALC_MISC);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    pc_ChannelItem->q_Enabled = true;
@@ -1446,7 +1446,7 @@ void C_TblTreDataElementModel::mh_InitDatapoolElementsHalcConfig(C_TblTreItem * 
       else
       {
          //Unexpected list
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
    //Append
@@ -1820,7 +1820,7 @@ void C_TblTreDataElementModel::mh_InitDatapoolElementsComm(C_TblTreItem * const 
       std::vector<stw::opensyde_core::C_OscCanMessageIdentificationIndices> c_MessageIds;
       C_OscCanProtocol::E_Type e_Protocol = C_OscCanProtocol::eLAYER2;
 
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->GetCanProtocolType(ou32_NodeIndex, ou32_DpIndex,
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetCanProtocolType(ou32_NodeIndex, ou32_DpIndex,
                                                                      e_Protocol) == C_NO_ERR);
 
       // get all message ids
@@ -2098,7 +2098,7 @@ void C_TblTreDataElementModel::m_InitNvmList(const uint32_t ou32_ViewIndex)
 
       //Nodes
       this->mpc_InvisibleRootItem->ReserveChildrenSpace(u32_NodeSize);
-      tgl_assert(c_NodeActiveFlags.size() == u32_NodeSize);
+      Q_ASSERT(c_NodeActiveFlags.size() == u32_NodeSize);
       for (uint32_t u32_ItNode = 0; u32_ItNode < u32_NodeSize; ++u32_ItNode)
       {
          if ((c_NodeActiveFlags[u32_ItNode] == 1U) && (mh_SvCheckNodeDiagnostic(ou32_ViewIndex, u32_ItNode) == true))
@@ -2319,7 +2319,7 @@ const
             if ((pc_ThirdParent != NULL) && (pc_ThirdParent->pc_Parent != NULL))
             {
                //Should not happen
-               tgl_assert(false);
+               Q_ASSERT(false);
             }
             else
             {
@@ -2420,7 +2420,7 @@ const
                if ((pc_FourthParent != NULL) && (pc_FourthParent->pc_Parent != NULL))
                {
                   //Should not happen
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                }
                else
                {
@@ -2449,7 +2449,7 @@ const
                   else
                   {
                      //Should not happen
-                     tgl_assert(false);
+                     Q_ASSERT(false);
                   }
                }
             }

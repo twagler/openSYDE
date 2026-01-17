@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Data pool list elements data set view (implementation)
@@ -18,7 +18,7 @@
 #include <QDrag>
 #include "C_SdNdeDpListDataSetView.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_SdClipBoardHelper.hpp"
 #include "C_Uti.hpp"
@@ -31,7 +31,7 @@
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -208,7 +208,7 @@ void C_SdNdeDpListDataSetView::Copy(void) const
       C_SdUtil::h_SortIndicesAscending(c_SelectedIndices);
       for (uint32_t u32_ItSelectedIndex = 0; u32_ItSelectedIndex < c_SelectedIndices.size(); ++u32_ItSelectedIndex)
       {
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->GetDataPoolListDataSet(this->mu32_NodeIndex,
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetDataPoolListDataSet(this->mu32_NodeIndex,
                                                                             this->mu32_DataPoolIndex,
                                                                             this->mu32_ListIndex,
                                                                             c_SelectedIndices[
@@ -735,7 +735,7 @@ void C_SdNdeDpListDataSetView::m_UpdateModelView(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeDpListDataSetView::m_UpdateCornerButton(void)
 {
-   tgl_assert(this->mpc_LabelCorner != NULL);
+   Q_ASSERT(this->mpc_LabelCorner != NULL);
    if (this->mpc_LabelCorner != NULL)
    {
       this->mpc_LabelCorner->setGeometry(0, 0, this->verticalHeader()->width(), this->horizontalHeader()->height());

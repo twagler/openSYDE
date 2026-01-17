@@ -22,14 +22,14 @@
 #include "DLLocalize.hpp"
 #include "stwcompid.h"
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
+
 
 //----------------------------------------------------------------------------------------------------------------------
 
 using namespace stw::errors;
 using namespace stw::diag_lib;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::can;
 
 /* -- Defines ------------------------------------------------------------------------------------------------------- */
@@ -147,14 +147,14 @@ void C_XFLDivertParameters::LoadFromINI(C_SclIniFile & orc_IniFile, const C_SclS
    u8_DeviceIndex      = orc_IniFile.ReadUint8(orc_Section, "DIVERT_DEVICE_INDEX", 0U);
    u8_SelectedPosition = orc_IniFile.ReadUint8(orc_Section, "DIVERT_SELECTED_POSITION", 0U);
 
-   c_PositionNames.SetLength(orc_IniFile.ReadInteger(orc_Section, "DIVERT_NUM_POSITIONS", 0));
-   for (int32_t s32_NameIndex = 0; s32_NameIndex < c_PositionNames.GetLength(); s32_NameIndex++)
+   c_PositionNames.resize(orc_IniFile.ReadInteger(orc_Section, "DIVERT_NUM_POSITIONS", 0));
+   for (int32_t s32_NameIndex = 0; s32_NameIndex < c_PositionNames.size(); s32_NameIndex++)
    {
       c_PositionNames[s32_NameIndex] =
          orc_IniFile.ReadString(orc_Section, "DIVERT_POSITION_" + C_SclString::IntToStr(s32_NameIndex), "");
    }
-   c_Parameters.SetLength(orc_IniFile.ReadInteger(orc_Section, "DIVERT_NUM_PARAMETERS", 0));
-   for (int32_t s32_ParameterIndex = 0; s32_ParameterIndex < c_Parameters.GetLength(); s32_ParameterIndex++)
+   c_Parameters.resize(orc_IniFile.ReadInteger(orc_Section, "DIVERT_NUM_PARAMETERS", 0));
+   for (int32_t s32_ParameterIndex = 0; s32_ParameterIndex < c_Parameters.size(); s32_ParameterIndex++)
    {
       c_Parameters[s32_ParameterIndex].u8_ParameterIndex  =
          orc_IniFile.ReadUint8(orc_Section, "DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex) + "_INDEX",
@@ -201,15 +201,15 @@ int32_t C_XFLDivertParameters::SaveToINI(C_SclIniFile & orc_IniFile, const C_Scl
       orc_IniFile.WriteInteger(orc_Section, "DIVERT_DEVICE_INDEX", u8_DeviceIndex);
       orc_IniFile.WriteInteger(orc_Section, "DIVERT_SELECTED_POSITION", u8_SelectedPosition);
 
-      orc_IniFile.WriteInteger(orc_Section, "DIVERT_NUM_POSITIONS", c_PositionNames.GetLength());
-      for (int32_t s32_NameIndex = 0; s32_NameIndex < c_PositionNames.GetLength(); s32_NameIndex++)
+      orc_IniFile.WriteInteger(orc_Section, "DIVERT_NUM_POSITIONS", c_PositionNames.size());
+      for (int32_t s32_NameIndex = 0; s32_NameIndex < c_PositionNames.size(); s32_NameIndex++)
       {
          orc_IniFile.WriteString(orc_Section, "DIVERT_POSITION_" + C_SclString::IntToStr(
                                     s32_NameIndex), c_PositionNames[s32_NameIndex]);
       }
 
-      orc_IniFile.WriteInteger(orc_Section, "DIVERT_NUM_PARAMETERS", c_Parameters.GetLength());
-      for (int32_t s32_ParameterIndex = 0; s32_ParameterIndex < c_Parameters.GetLength(); s32_ParameterIndex++)
+      orc_IniFile.WriteInteger(orc_Section, "DIVERT_NUM_PARAMETERS", c_Parameters.size());
+      for (int32_t s32_ParameterIndex = 0; s32_ParameterIndex < c_Parameters.size(); s32_ParameterIndex++)
       {
          orc_IniFile.WriteInteger(orc_Section, "DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex) +
                                   "_INDEX", c_Parameters[s32_ParameterIndex].u8_ParameterIndex);
@@ -240,12 +240,12 @@ C_XFLDivertParametersCAN::C_XFLDivertParametersCAN(const uint8_t ou8_NumPosition
    int32_t s32_Loop;
    C_SclString c_NamePrefix;
 
-   c_PositionNames.SetLength(ou8_NumPositions);
+   c_PositionNames.resize(ou8_NumPositions);
    for (s32_Loop = 0U; s32_Loop < ou8_NumPositions; s32_Loop++)
    {
       c_PositionNames[s32_Loop] = "CAN_BUS_" + C_SclString::IntToStr(s32_Loop + 1);
    }
-   c_Parameters.SetLength(16);
+   c_Parameters.resize(16);
 
    for (s32_Loop = 0; s32_Loop < 2; s32_Loop++)
    {
@@ -404,7 +404,7 @@ bool C_XFLActions::m_AllowSTWCID(const C_XFLCompanyID & orc_ConfiguredCompanyID,
           (orc_ConfiguredCompanyID.au8_Data[1] == 0x2AU))
       {
          C_XFLActions::CompIDStructToString(orc_RespondedCompanyID, c_Text);
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_CORRECT_CID) + c_Text, gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_CORRECT_CID) + c_Text, gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
          return true; //allow flashing with STW-Company ID
       }
    }
@@ -421,11 +421,11 @@ int32_t C_XFLActions::RequestNodeReset(const T_STWCAN_Msg_TX * const opt_ResetMe
    {
       if (oq_SingleNode == true)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_RESETTING), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_RESETTING), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       }
       else
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_RESETTING_S), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_RESETTING_S), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       }
       s32_Return = SendSingleMessage(*opt_ResetMessage);
    }
@@ -433,11 +433,11 @@ int32_t C_XFLActions::RequestNodeReset(const T_STWCAN_Msg_TX * const opt_ResetMe
    {
       if (oq_SingleNode == true)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_TURN_ON), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_TURN_ON), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       }
       else
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_TURN_ON_S), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_TURN_ON_S), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       }
    }
    return s32_Return;
@@ -457,27 +457,27 @@ int32_t C_XFLActions::m_WakeupLocalID(const C_XFLCompanyID & orc_CompanyID, cons
    case C_NO_ERR:
       if ((oq_MultiResponsesOK == false) && (u8_NumFound > 1U)) //more than one node active means trouble ...
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_MULTI_ID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_MULTI_ID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          s32_Return = -1;
       }
       break;
    case C_COM:
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_LOCALID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_LOCALID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       s32_Return = -1;
       break;
    case C_DEFAULT:
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_USER_ABORT), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_USER_ABORT), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       s32_Return = -1;
       break;
    case C_WARN:
       if ((oq_MultiResponsesOK == false) && (u8_NumFound > 1U)) //more than one node active means trouble ...
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_MULTI_ID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_MULTI_ID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          s32_Return = -1;
       }
       else
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_COMPANYID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_COMPANYID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          if (m_AllowSTWCID(orc_CompanyID, c_CompIDOut) == true)
          {
             s32_Return = C_NO_ERR;
@@ -507,14 +507,14 @@ int32_t C_XFLActions::m_WakeupSNR(const C_XFLCompanyID & orc_CompanyID, const ui
    switch (s32_Return)
    {
    case C_NO_ERR:
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_WAKEUP_SNR_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_WAKEUP_SNR_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       break;
    case C_COM:
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_SNR), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_SNR), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       s32_Return = -1;
       break;
    case C_WARN:
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_COMPANYID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_COMPANYID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       if (m_AllowSTWCID(orc_CompanyID, c_CompIDOut) == true)
       {
          s32_Return = C_NO_ERR;
@@ -574,7 +574,7 @@ int32_t C_XFLActions::m_WakeupLocalIDAndSNR(const C_XFLCompanyID & orc_CompanyID
    s32_Return = GetSNRExt(NULL, u8_MAX_NUM_ECUS_PER_LOCAL_ID, u8_NumFound);
    if (s32_Return != C_NO_ERR)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_RD_SNR_CDN_WAKE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_SNR_CDN_WAKE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return s32_Return;
    }
    //SNR(s) was/were read.
@@ -640,20 +640,20 @@ int32_t C_XFLActions::DivertStreamOnOff(const bool oq_On, const C_XFLDivertParam
       }
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_DIVERT_STREAM), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_DIVERT_STREAM), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return s32_Return;
       }
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_DIVERT_STREAM_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_DIVERT_STREAM_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
    }
    else
    {
       //turn divert stream on
       //first send all parameters:
-      for (int32_t s32_Parameter = 0; s32_Parameter < orc_DivertParams.c_Parameters.GetLength(); s32_Parameter++)
+      for (int32_t s32_Parameter = 0; s32_Parameter < orc_DivertParams.c_Parameters.size(); s32_Parameter++)
       {
-         TRG_ReportStatus(TGL_LoadStr(
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(
                              STR_FM_TXT_SET_PARA_PT1) + orc_DivertParams.c_Parameters[s32_Parameter].c_ParameterName +
-                          TGL_LoadStr(STR_FM_TXT_SET_PARA_PT2) +
+                          stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_TXT_SET_PARA_PT2) +
                           C_SclString::IntToStr(orc_DivertParams.c_Parameters[s32_Parameter].u16_ParameterValue),
                           gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
          au8_Params[0] = static_cast<uint8_t>(orc_DivertParams.c_Parameters[s32_Parameter].u16_ParameterValue);
@@ -663,7 +663,7 @@ int32_t C_XFLActions::DivertStreamOnOff(const bool oq_On, const C_XFLDivertParam
                                          orc_DivertParams.c_Parameters[s32_Parameter].u8_ParameterIndex, au8_Params);
          if (s32_Return != C_NO_ERR)
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_SET_DIVERT_STREAM_PARA), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_SET_DIVERT_STREAM_PARA), gu8_DL_REPORT_STATUS_TYPE_ERROR);
             return s32_Return;
          }
       }
@@ -679,10 +679,10 @@ int32_t C_XFLActions::DivertStreamOnOff(const bool oq_On, const C_XFLDivertParam
       }
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_DIVERT_STREAM), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_DIVERT_STREAM), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return s32_Return;
       }
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_DIVERT_STREAM_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_DIVERT_STREAM_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
    }
    return C_NO_ERR;
 }
@@ -700,30 +700,30 @@ int32_t C_XFLActions::DivertStreamOnOffBBB(const bool oq_OnOff, const uint8_t ou
       s32_Return = DivertStream(XFL_DIVERT_TARGET_BABY_B, ou8_TargetPosition, 0U);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_DIVERT_STREAM), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_DIVERT_STREAM), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return s32_Return;
       }
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_DIVERT_STREAM_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_DIVERT_STREAM_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
    }
    else
    {
       //divert stream on
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_WAKEUP_BBB), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_WAKEUP_BBB), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       s32_Return = BBWakeup(ou8_TargetPosition, orau8_UserID);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_WAKEUP_BBB), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_WAKEUP_BBB), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return s32_Return;
       }
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_WAKEUP_BBB_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_DIVERT_STREAM_BBB), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_WAKEUP_BBB_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_DIVERT_STREAM_BBB), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       s32_Return = DivertStream(XFL_DIVERT_TARGET_BABY_B, ou8_TargetPosition, 1U);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_DIVERT_STREAM), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_DIVERT_STREAM), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return s32_Return;
       }
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_DIVERT_STREAM_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_DIVERT_STREAM_OK), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
    }
    return C_NO_ERR;
 }
@@ -754,15 +754,15 @@ int32_t C_XFLActions::ReadFlashInformation(C_XFLFlashInformation & orc_Informati
    s32_Return = GetFlashInformationNumberOfICs(u8_NumICs);
    if (s32_Return != C_NO_ERR)
    {
-      orc_ErrorText = TGL_LoadStr(STR_FM_ERR_RD_NUM_FLASH_IC);
+      orc_ErrorText = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_NUM_FLASH_IC);
       return s32_Return;
    }
-   orc_Information.c_ICs.SetLength(u8_NumICs);
+   orc_Information.c_ICs.resize(u8_NumICs);
 
    s32_Return = GetFlashInformationProtectedSectors(orc_Information.c_ProtectedSectors);
    if (s32_Return != C_NO_ERR)
    {
-      orc_ErrorText = TGL_LoadStr(STR_FM_ERR_RD_PSEC_INFO);
+      orc_ErrorText = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_PSEC_INFO);
       return s32_Return;
    }
 
@@ -774,47 +774,47 @@ int32_t C_XFLActions::ReadFlashInformation(C_XFLFlashInformation & orc_Informati
       s32_Return = GetFlashInformationTotalMemorySize(u8_Index, pt_IC->u32_TotalSize);
       if (s32_Return != C_NO_ERR)
       {
-         orc_ErrorText = TGL_LoadStr(STR_FM_ERR_RD_MEM_SIZE_IC) + C_SclString::IntToStr(u8_Index) + "!";
+         orc_ErrorText = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_MEM_SIZE_IC) + C_SclString::IntToStr(u8_Index) + "!";
          return s32_Return;
       }
 
       s32_Return = GetFlashInformationOffsetSector0(u8_Index, pt_IC->u32_Sector0Offset);
       if (s32_Return != C_NO_ERR)
       {
-         orc_ErrorText = TGL_LoadStr(STR_FM_ERR_RD_SEC_OFFSET_IC) + C_SclString::IntToStr(u8_Index) + "!";
+         orc_ErrorText = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_SEC_OFFSET_IC) + C_SclString::IntToStr(u8_Index) + "!";
          return s32_Return;
       }
 
       s32_Return = GetFlashInformationEraseTime(u8_Index, pt_IC->u32_SectorEraseTime);
       if (s32_Return != C_NO_ERR)
       {
-         orc_ErrorText = TGL_LoadStr(STR_FM_ERR_RD_MAX_ERASE) + C_SclString::IntToStr(u8_Index) + "!";
+         orc_ErrorText = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_MAX_ERASE) + C_SclString::IntToStr(u8_Index) + "!";
          return s32_Return;
       }
 
       s32_Return = GetFlashInformationWriteTime(u8_Index, pt_IC->u32_ProgrammingTime);
       if (s32_Return != C_NO_ERR)
       {
-         orc_ErrorText = TGL_LoadStr(STR_FM_ERR_RD_MAX_PRG_TIME) + C_SclString::IntToStr(u8_Index) + "!";
+         orc_ErrorText = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_MAX_PRG_TIME) + C_SclString::IntToStr(u8_Index) + "!";
          return s32_Return;
       }
 
       s32_Return = GetFlashInformationNumberRegions(u8_Index, u8_NumRegions);
       if (s32_Return != C_NO_ERR)
       {
-         orc_ErrorText = TGL_LoadStr(STR_FM_ERR_RD_NUM_REGIONS) + C_SclString::IntToStr(u8_Index) + "!";
+         orc_ErrorText = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_NUM_REGIONS) + C_SclString::IntToStr(u8_Index) + "!";
          return s32_Return;
       }
 
-      orc_Information.c_ICs[u8_Index].c_Regions.SetLength(u8_NumRegions);
-      for (u8_RegionIndex = 0U; u8_RegionIndex < static_cast<uint8_t>(pt_IC->c_Regions.GetLength()); u8_RegionIndex++)
+      orc_Information.c_ICs[u8_Index].c_Regions.resize(u8_NumRegions);
+      for (u8_RegionIndex = 0U; u8_RegionIndex < static_cast<uint8_t>(pt_IC->c_Regions.size()); u8_RegionIndex++)
       {
          s32_Return = GetFlashInformationRegionInformation(u8_Index, u8_RegionIndex,
                                                            pt_IC->c_Regions[u8_RegionIndex].u32_BlockSize,
                                                            pt_IC->c_Regions[u8_RegionIndex].u16_NumBlocks);
          if (s32_Return != C_NO_ERR)
          {
-            orc_ErrorText = TGL_LoadStr(STR_FM_ERR_RD_REGION_INFO_IC) + C_SclString::IntToStr(u8_Index) + "!";
+            orc_ErrorText = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_REGION_INFO_IC) + C_SclString::IntToStr(u8_Index) + "!";
             return s32_Return;
          }
       }
@@ -825,7 +825,7 @@ int32_t C_XFLActions::ReadFlashInformation(C_XFLFlashInformation & orc_Informati
    if (s32_Return != C_NO_ERR)
    {
       //spec: "The server shall respond with "OUT_OF_RANGE" error if they are not supported."
-      orc_Information.c_Aliases.SetLength(0);
+      orc_Information.c_Aliases.resize(0);
       //no error ...
    }
 
@@ -844,7 +844,7 @@ uint16_t C_XFLFlashICInformation::GetNumberOfSectors(void) const
    int32_t s32_RangeIndex;
    uint16_t u16_NumSectors = 0U;
 
-   for (s32_RangeIndex = 0; s32_RangeIndex < this->c_Regions.GetLength(); s32_RangeIndex++)
+   for (s32_RangeIndex = 0; s32_RangeIndex < this->c_Regions.size(); s32_RangeIndex++)
    {
       u16_NumSectors += this->c_Regions[s32_RangeIndex].u16_NumBlocks;
    }
@@ -874,21 +874,21 @@ void C_XFLFlashInformation::ConvertToFlashSectorTable(C_XFLFlashSectors & orc_Se
 
    uint16_t u16_NumBlocks;
 
-   orc_Sectors.SetLength(0);
+   orc_Sectors.resize(0);
 
    //first go through list to set at_Sectors.Length (faster than dynamically incrementing it all the time)
-   for (s32_ICIndex = 0; s32_ICIndex < this->c_ICs.GetLength(); s32_ICIndex++)
+   for (s32_ICIndex = 0; s32_ICIndex < this->c_ICs.size(); s32_ICIndex++)
    {
-      orc_Sectors.IncLength(this->c_ICs[s32_ICIndex].GetNumberOfSectors());
+      orc_Sectors.resize(orc_Sectors.size() + this->c_ICs[s32_ICIndex].GetNumberOfSectors());
    }
 
    u32_TotalIndex = 0;
-   for (s32_ICIndex = 0; s32_ICIndex < this->c_ICs.GetLength(); s32_ICIndex++)
+   for (s32_ICIndex = 0; s32_ICIndex < this->c_ICs.size(); s32_ICIndex++)
    {
       pt_IC = &this->c_ICs[s32_ICIndex];
 
       u32_CurrentOffset = pt_IC->u32_Sector0Offset;
-      for (s32_RangeIndex = 0; s32_RangeIndex < pt_IC->c_Regions.GetLength(); s32_RangeIndex++)
+      for (s32_RangeIndex = 0; s32_RangeIndex < pt_IC->c_Regions.size(); s32_RangeIndex++)
       {
          u16_NumBlocks = pt_IC->c_Regions[s32_RangeIndex].u16_NumBlocks;
          for (u32_SectorIndex = 0U; u32_SectorIndex < static_cast<uint32_t>(u16_NumBlocks); u32_SectorIndex++)
@@ -899,7 +899,7 @@ void C_XFLFlashInformation::ConvertToFlashSectorTable(C_XFLFlashSectors & orc_Se
             orc_Sectors[u32_TotalIndex].u8_ICIndex = static_cast<uint8_t>(s32_ICIndex);
 
             orc_Sectors[u32_TotalIndex].q_IsProtected = false;
-            for (s32_ProtectedIndex = 0; s32_ProtectedIndex < this->c_ProtectedSectors.GetLength();
+            for (s32_ProtectedIndex = 0; s32_ProtectedIndex < this->c_ProtectedSectors.size();
                  s32_ProtectedIndex++)
             {
                if ((this->c_ProtectedSectors[s32_ProtectedIndex].u16_SectorNumber ==
@@ -947,7 +947,7 @@ int32_t C_XFLFlashSectors::GetSectorOccupiedByAddress(const uint32_t ou32_Addres
    int32_t s32_Return = C_RANGE;
    int32_t s32_Index;
 
-   for (s32_Index = 0; s32_Index < this->GetLength(); s32_Index++)
+   for (s32_Index = 0; s32_Index < this->length(); s32_Index++)
    {
       if (this->operator [](s32_Index).IsAddressWithinSector(ou32_Address) == true)
       {
@@ -974,7 +974,7 @@ uint32_t C_XFLFlashInformation::GetEraseTimeByLinearSectorNumber(const uint16_t 
    uint32_t u32_EraseTime = 0xFFFFFFFFU;
    int32_t s32_ICIndex;
 
-   for (s32_ICIndex = 0; s32_ICIndex < this->c_ICs.GetLength(); s32_ICIndex++)
+   for (s32_ICIndex = 0; s32_ICIndex < this->c_ICs.size(); s32_ICIndex++)
    {
       u16_NumSectors += this->c_ICs[s32_ICIndex].GetNumberOfSectors();
       if (ou16_Sector < u16_NumSectors)
@@ -1000,14 +1000,14 @@ uint32_t C_XFLFlashInformation::GetWriteTimeOfSlowestIC(void) const
    uint32_t u32_WriteTime;
    int32_t s32_ICIndex;
 
-   if (this->c_ICs.GetLength() == 0)
+   if (this->c_ICs.size() == 0)
    {
       u32_WriteTime = 0xFFFFFFFFU;
    }
    else
    {
       u32_WriteTime = 0U;
-      for (s32_ICIndex = 0; s32_ICIndex < this->c_ICs.GetLength(); s32_ICIndex++)
+      for (s32_ICIndex = 0; s32_ICIndex < this->c_ICs.size(); s32_ICIndex++)
       {
          if (this->c_ICs[s32_ICIndex].u32_ProgrammingTime > u32_WriteTime)
          {
@@ -1088,59 +1088,59 @@ C_SclString C_XFLActions::XFLProtocolErrorToText(const int32_t os32_ReturnValue,
       c_Help = "";
       break;
    case C_COM: //no response
-      c_Help = TGL_LoadStr(STR_XFL_ERR_NO_RESPONSE);
+      c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_XFL_ERR_NO_RESPONSE);
       break;
    case C_RANGE: //invalid parameter
-      c_Help = TGL_LoadStr(STR_XFL_ERR_INVALID_PARAMETER);
+      c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_XFL_ERR_INVALID_PARAMETER);
       break;
    case C_NOACT: //error response
       if ((ou8_ErrorCode >= XFL_ERR_APP_DEF_ERR_MIN) && (ou8_ErrorCode <= XFL_ERR_APP_DEF_ERR_MAX))
       {
-         c_Help.PrintFormatted("%s %02x", TGL_LoadStr(STR_FDL_ERR_ERASE_NO_CODE).c_str(), ou8_ErrorCode);
+         c_Help.PrintFormatted("%s %02x", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ERASE_NO_CODE).c_str(), ou8_ErrorCode);
       }
       else
       {
          switch (ou8_ErrorCode)
          {
          case XFL_ERR_CHECKSUM_ERR:
-            c_Help = TGL_LoadStr(STR_FM_ERR_TRANSMISSION_ERR);
+            c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_TRANSMISSION_ERR);
             break;
          case XFL_ERR_FLASH_PROG_ERR:
-            c_Help = TGL_LoadStr(STR_FM_ERR_DURING_FLASH_PROG);
+            c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_DURING_FLASH_PROG);
             break;
          case XFL_ERR_FLASH_ERASE_ERR:
-            c_Help = TGL_LoadStr(STR_FM_ERR_DURING_DEL);
+            c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_DURING_DEL);
             break;
          case XFL_ERR_CAN_BITTIME_ERR:
-            c_Help = TGL_LoadStr(STR_FM_ERR_BITRATE);
+            c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_BITRATE);
             break;
          case XFL_ERR_OUT_OF_RANGE_ERR:
-            c_Help = TGL_LoadStr(STR_FM_ERR_INVALID_PARA);
+            c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_INVALID_PARA);
             break;
          case XFL_ERR_EE_VERIFY_ERR:
-            c_Help = TGL_LoadStr(STR_FM_ERR_EEP_VERIFY);
+            c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_EEP_VERIFY);
             break;
          case XFL_ERR_EE_READ_ERR:
-            c_Help = TGL_LoadStr(STR_FM_ERR_EEP_READ);
+            c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_EEP_READ);
             break;
          case XFL_ERR_EE_WRITE_ERR:
-            c_Help = TGL_LoadStr(STR_XFL_ERR_EEPROM_WRITE);
+            c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_XFL_ERR_EEPROM_WRITE);
             break;
          case XFL_ERR_DIVERT_STREAM_COM_ERR:
-            c_Help = TGL_LoadStr(STR_FM_ERR_DIVERT_STREAM_TRG_GW);
+            c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_DIVERT_STREAM_TRG_GW);
             break;
          case XFL_ERR_WRONG_REC_TYPE:
-            c_Help = TGL_LoadStr(STR_FM_ERR_HEX_CMD_UNK);
+            c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_HEX_CMD_UNK);
             break;
          case XFL_ERR_UNDEFINED_ERROR: //no break;
          default:
-            c_Help.PrintFormatted("%s Code: 0x%02x", TGL_LoadStr(STR_XFL_ERR_UNDEFINED_CODE).c_str(), ou8_ErrorCode);
+            c_Help.PrintFormatted("%s Code: 0x%02x", stw::opensyde_core::C_OscUtils::h_LoadString(STR_XFL_ERR_UNDEFINED_CODE).c_str(), ou8_ErrorCode);
             break;
          }
       }
       break;
    default:
-      c_Help = TGL_LoadStr(STR_XFL_ERR_UNDEFINED_ERR);
+      c_Help = stw::opensyde_core::C_OscUtils::h_LoadString(STR_XFL_ERR_UNDEFINED_ERR);
       break;
    }
    return c_Help;
@@ -1230,7 +1230,7 @@ int32_t C_XFLActions::SNRStringToBytes(const C_SclString & orc_Text, uint8_t (&o
 */
 //----------------------------------------------------------------------------------------------------------------------
 int32_t C_XFLActions::SearchNodes(const C_SclString & orc_CompanyID, const uint32_t ou32_StartTime,
-                                  const uint8_t ou8_FlashInterval, C_SclDynamicArray<C_XFLFoundNode> & orc_FoundNodes)
+                                  const uint8_t ou8_FlashInterval, QList<C_XFLFoundNode> & orc_FoundNodes)
 {
    //maximum allowed: 100 ECU with same ID, really should be enough
    const uint8_t u8_MAX_NUM_ECUS_PER_LOCAL_ID = 100U;
@@ -1251,7 +1251,7 @@ int32_t C_XFLActions::SearchNodes(const C_SclString & orc_CompanyID, const uint3
    s32_Return = C_XFLActions::CompIDStringToStruct(orc_CompanyID, c_CompIDIn);
    if (s32_Return != C_NO_ERR)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_COMP_ID_LENGTH), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_COMP_ID_LENGTH), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return C_RANGE;
    }
 
@@ -1261,14 +1261,14 @@ int32_t C_XFLActions::SearchNodes(const C_SclString & orc_CompanyID, const uint3
       return s32_Return;
    }
 
-   orc_FoundNodes.SetLength(u8_NumFound);
+   orc_FoundNodes.resize(u8_NumFound);
 
-   TRG_ReportStatus(TGL_LoadStr(STR_FM_TXT_NUM_NODES) + C_SclString::IntToStr(u8_NumFound),
+   TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_TXT_NUM_NODES) + C_SclString::IntToStr(u8_NumFound),
                     gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
 
    if (u8_NumFound > 0U)
    {
-      for (int32_t s32_Node = 0; s32_Node < orc_FoundNodes.GetLength(); s32_Node++)
+      for (int32_t s32_Node = 0; s32_Node < orc_FoundNodes.size(); s32_Node++)
       {
          orc_FoundNodes[s32_Node].c_SNR = "?\?\?";
          orc_FoundNodes[s32_Node].c_DeviceId = "?\?\?";
@@ -1301,8 +1301,8 @@ int32_t C_XFLActions::SearchNodes(const C_SclString & orc_CompanyID, const uint3
             // < : if we have more responses now only use a max. of abFound[i]
             if ((s32_Return != C_NO_ERR) || (u8_NumFound < au8_Found[s32_IdIndex]))
             {
-               TRG_ReportStatus(TGL_LoadStr(STR_FM_TXT_NODE_WAKE_PT1) + C_SclString::IntToStr(s32_IdIndex) +
-                                TGL_LoadStr(STR_FM_TXT_NODE_WAKE_PT2),
+               TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_TXT_NODE_WAKE_PT1) + C_SclString::IntToStr(s32_IdIndex) +
+                                stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_TXT_NODE_WAKE_PT2),
                                 gu8_DL_REPORT_STATUS_TYPE_WARNING);
             }
             else
@@ -1311,8 +1311,8 @@ int32_t C_XFLActions::SearchNodes(const C_SclString & orc_CompanyID, const uint3
                s32_Return = GetSNRExt(&aau8_SNRs[0][0], u8_MAX_NUM_ECUS_PER_LOCAL_ID, u8_NumSNRsFound);
                if (s32_Return != C_NO_ERR)
                {
-                  TRG_ReportStatus(TGL_LoadStr(STR_FM_TXT_NODE_SNR_PT1) + C_SclString::IntToStr(s32_IdIndex) +
-                                   TGL_LoadStr(STR_FM_TXT_NODE_SNR_PT2),
+                  TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_TXT_NODE_SNR_PT1) + C_SclString::IntToStr(s32_IdIndex) +
+                                   stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_TXT_NODE_SNR_PT2),
                                    gu8_DL_REPORT_STATUS_TYPE_WARNING);
                }
                else
@@ -1336,8 +1336,8 @@ int32_t C_XFLActions::SearchNodes(const C_SclString & orc_CompanyID, const uint3
 
                      for (s32_j = au8_Found[s32_IdIndex]; s32_j < u8_NumSNRsFound; s32_j++)
                      {
-                        orc_FoundNodes.Insert(static_cast<uint16_t>(s32_IndexInTable), c_Node);
-                        TRG_ReportStatus(TGL_LoadStr(STR_FM_TXT_SURP_NODE_AMBIG_ID) + C_SclString::IntToStr(
+                        orc_FoundNodes.insert(static_cast<uint16_t>(s32_IndexInTable), c_Node);
+                        TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_TXT_SURP_NODE_AMBIG_ID) + C_SclString::IntToStr(
                                             s32_IdIndex),
                                          gu8_DL_REPORT_STATUS_TYPE_WARNING);
                      }
@@ -1398,7 +1398,7 @@ int32_t C_XFLActions::SearchNodes(const C_SclString & orc_CompanyID, const uint3
                                                  orc_FoundNodes[s32_IndexInTable + s32_j].c_DeviceId);
                         if (s32_Return != C_NO_ERR)
                         {
-                           TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_DEV_ID_TYPE),
+                           TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_DEV_ID_TYPE),
                                             gu8_DL_REPORT_STATUS_TYPE_WARNING);
                         }
 
@@ -1410,9 +1410,9 @@ int32_t C_XFLActions::SearchNodes(const C_SclString & orc_CompanyID, const uint3
                      }
                      else
                      {
-                        TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_WAKE_SNR_PT1) + C_SclString::IntToStr(s32_IdIndex) +
-                                         TGL_LoadStr(STR_FM_ERR_WAKE_SNR_PT2) +
-                                         TGL_LoadStr(STR_FM_ERR_WAKE_SNR_PT3), gu8_DL_REPORT_STATUS_TYPE_WARNING);
+                        TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_WAKE_SNR_PT1) + C_SclString::IntToStr(s32_IdIndex) +
+                                         stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_WAKE_SNR_PT2) +
+                                         stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_WAKE_SNR_PT3), gu8_DL_REPORT_STATUS_TYPE_WARNING);
                      }
                   }
                }
@@ -1441,7 +1441,7 @@ void C_XFLActions::m_ReadFingerPrintInformation(C_XFLInformationFromServer & orc
       s32_Return = GetFingerPrintSupportedIndexes(orc_Information.c_FingerPrintData.c_SupportedIndexes);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + TGL_LoadStr(STR_FM_ERR_RE_LOI),
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RE_LOI),
                           gu8_DL_REPORT_STATUS_TYPE_WARNING);
       }
       else
@@ -1455,7 +1455,7 @@ void C_XFLActions::m_ReadFingerPrintInformation(C_XFLInformationFromServer & orc
                                                     orc_Information.c_FingerPrintData.u8_ProgrammingDateDay);
          if (s32_Return != C_NO_ERR)
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + TGL_LoadStr(STR_FM_ERR_RE_PROG_DATE),
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RE_PROG_DATE),
                              gu8_DL_REPORT_STATUS_TYPE_WARNING);
          }
          else
@@ -1471,7 +1471,7 @@ void C_XFLActions::m_ReadFingerPrintInformation(C_XFLInformationFromServer & orc
                                                     orc_Information.c_FingerPrintData.u8_ProgrammingTimeSecond);
          if (s32_Return != C_NO_ERR)
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + TGL_LoadStr(STR_FM_ERR_RE_PROG_TIME),
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RE_PROG_TIME),
                              gu8_DL_REPORT_STATUS_TYPE_WARNING);
          }
          else
@@ -1485,7 +1485,7 @@ void C_XFLActions::m_ReadFingerPrintInformation(C_XFLInformationFromServer & orc
          s32_Return = GetFingerPrintUserName(orc_Information.c_FingerPrintData.c_UserName);
          if (s32_Return != C_NO_ERR)
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + TGL_LoadStr(STR_FM_ERR_RE_USER_NAME),
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RE_USER_NAME),
                              gu8_DL_REPORT_STATUS_TYPE_WARNING);
          }
          else
@@ -1499,7 +1499,7 @@ void C_XFLActions::m_ReadFingerPrintInformation(C_XFLInformationFromServer & orc
          s32_Return = GetFingerPrintChecksum(orc_Information.c_FingerPrintData.u32_Checksum);
          if (s32_Return != C_NO_ERR)
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + TGL_LoadStr(STR_FM_ERR_RE_CHECKSUM),
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RE_CHECKSUM),
                              gu8_DL_REPORT_STATUS_TYPE_WARNING);
          }
          else
@@ -1529,17 +1529,17 @@ void C_XFLActions::m_ReadDeviceInfo(C_XFLInformationFromServer & orc_Information
       s32_Return = GetDeviceInfoAddresses(orc_Information.c_DeviceInfoAddresses, orc_Information.u16_ProtocolVersion);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + TGL_LoadStr(STR_FM_ERR_RE_DEV_INFO_ADDR),
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RE_DEV_INFO_ADDR),
                           gu8_DL_REPORT_STATUS_TYPE_WARNING);
          return;
       }
       orc_Information.q_DeviceInfoAddressesValid = true;
    }
 
-   orc_Information.c_DeviceInfoBlocks.SetLength(orc_Information.c_DeviceInfoAddresses.GetLength());
-   orc_Information.c_DeviceInfoBlocksValid.SetLength(orc_Information.c_DeviceInfoAddresses.GetLength());
+   orc_Information.c_DeviceInfoBlocks.resize(orc_Information.c_DeviceInfoAddresses.size());
+   orc_Information.c_DeviceInfoBlocksValid.resize(orc_Information.c_DeviceInfoAddresses.size());
 
-   for (u8_Block = 0U; u8_Block < orc_Information.c_DeviceInfoBlocks.GetLength(); u8_Block++)
+   for (u8_Block = 0U; u8_Block < orc_Information.c_DeviceInfoBlocks.size(); u8_Block++)
    {
       //read data block from this address
       s32_Return = GetDeviceInfoBlock(orc_Information.c_DeviceInfoAddresses[u8_Block],
@@ -1731,7 +1731,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
    }
    else
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + ": " + TGL_LoadStr(STR_FW_ERR_READ_DEV_ID),
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_READ_DEV_ID),
                        gu8_DL_REPORT_STATUS_TYPE_WARNING);
    }
 
@@ -1764,7 +1764,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
             s32_Return = GetImplementationInformationServices(*pt_Services);
             if (s32_Return != C_NO_ERR)
             {
-               TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + TGL_LoadStr(STR_FM_ERR_IMPL_SERVICES),
+               TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_IMPL_SERVICES),
                                 gu8_DL_REPORT_STATUS_TYPE_WARNING);
             }
             else
@@ -1801,7 +1801,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
    }
    else
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + ": " + TGL_LoadStr(STR_FW_ERR_READ_XFL_VER),
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_READ_XFL_VER),
                        gu8_DL_REPORT_STATUS_TYPE_WARNING);
    }
 
@@ -1813,7 +1813,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
    }
    else
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + ": " + TGL_LoadStr(STR_FW_ERR_READ_SEC_COUNT),
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_READ_SEC_COUNT),
                        gu8_DL_REPORT_STATUS_TYPE_WARNING);
    }
 
@@ -1837,7 +1837,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
       s32_Return = GetTimeoutFactor(0U, orc_Info.u8_SMMEraseTimeoutFactor);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + ": " + TGL_LoadStr(STR_FW_ERR_READ_ERASE_TO),
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_READ_ERASE_TO),
                           gu8_DL_REPORT_STATUS_TYPE_WARNING);
       }
       else
@@ -1848,7 +1848,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
       s32_Return = GetTimeoutFactor(1, orc_Info.u8_SMMWriteTimeoutFactor);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + ": " + TGL_LoadStr(STR_FW_ERR_READ_WRITE_TO),
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_READ_WRITE_TO),
                           gu8_DL_REPORT_STATUS_TYPE_WARNING);
       }
       else
@@ -1867,7 +1867,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
       }
       else
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + ": " + TGL_LoadStr(STR_FW_ERR_READ_DL_COUNT),
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_READ_DL_COUNT),
                           gu8_DL_REPORT_STATUS_TYPE_WARNING);
       }
    }
@@ -1889,7 +1889,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
       }
       else
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + TGL_LoadStr(STR_FM_ERR_RD_HEX_REC_SUP_INF),
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_HEX_REC_SUP_INF),
                           gu8_DL_REPORT_STATUS_TYPE_WARNING);
       }
    }
@@ -1900,7 +1900,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
       s32_Return = this->ReadFlashInformation(orc_Info.c_FlashMappingInformation, c_ErrorText);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + ": " + c_ErrorText, gu8_DL_REPORT_STATUS_TYPE_WARNING);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + ": " + c_ErrorText, gu8_DL_REPORT_STATUS_TYPE_WARNING);
       }
       else
       {
@@ -1916,7 +1916,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
    }
    else
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + ": " + TGL_LoadStr(
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(
                           STR_FW_ERR_READ_LID), gu8_DL_REPORT_STATUS_TYPE_WARNING);
    }
 
@@ -1929,7 +1929,7 @@ int32_t C_XFLActions::ReadServerInformation(C_XFLInformationFromServer & orc_Inf
    }
    else
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + ": " + TGL_LoadStr(
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(
                           STR_FW_ERR_READ_SNR), gu8_DL_REPORT_STATUS_TYPE_WARNING);
    }
    return C_NO_ERR;
@@ -1959,22 +1959,22 @@ int32_t C_XFLActions::ReadServerBlockChecksumInformation(C_XFLChecksumAreas & or
    uint32_t u32_CheckSumEEPROM;
    uint32_t u32_CheckSumCalc;
 
-   orc_ChecksumInformation.c_Areas.SetLength(0);
+   orc_ChecksumInformation.c_Areas.resize(0);
    orc_ChecksumInformation.q_IsBlockBased = true;
 
    s32_Return = GetBlockAddressesAll(orc_ChecksumInformation.c_BlockConfig);
    if (s32_Return != C_NO_ERR)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_ERROR) + ": " + TGL_LoadStr(STR_FW_ERR_READ_CRC),
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_ERROR) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_READ_CRC),
                        gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return s32_Return;
    }
 
-   orc_ChecksumInformation.c_Areas.SetLength(orc_ChecksumInformation.c_BlockConfig.GetLength());
+   orc_ChecksumInformation.c_Areas.resize(orc_ChecksumInformation.c_BlockConfig.size());
 
-   tgl_assert(orc_ChecksumInformation.c_BlockConfig.GetLength() < 0xFF);
+   Q_ASSERT(orc_ChecksumInformation.c_BlockConfig.size() < 0xFF);
 
-   for (int32_t s32_Block = 0; s32_Block < static_cast<int32_t>(orc_ChecksumInformation.c_BlockConfig.GetLength());
+   for (int32_t s32_Block = 0; s32_Block < static_cast<int32_t>(orc_ChecksumInformation.c_BlockConfig.size());
         s32_Block++)
    {
       q_CheckStartup = false;
@@ -1989,7 +1989,7 @@ int32_t C_XFLActions::ReadServerBlockChecksumInformation(C_XFLChecksumAreas & or
          s32_Return = GetBlockChecksum(static_cast<uint8_t>(s32_Block), 0U, u32_CheckSumEEPROM);
          if (s32_Return != C_NO_ERR)
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_ERROR) + ": " + TGL_LoadStr(STR_FW_ERR_READ_CRC),
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_ERROR) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_READ_CRC),
                              gu8_DL_REPORT_STATUS_TYPE_ERROR);
             return s32_Return;
          }
@@ -1998,7 +1998,7 @@ int32_t C_XFLActions::ReadServerBlockChecksumInformation(C_XFLChecksumAreas & or
          if (s32_Return != C_NO_ERR)
          {
             //just produce a warning: maybe the configured range is invalid ...
-            TRG_ReportStatus(TGL_LoadStr(STR_WARNING) + TGL_LoadStr(STR_FM_ERR_RD_CALC_CHKSM_BLK) +
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_WARNING) + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_CALC_CHKSM_BLK) +
                              C_SclString::IntToStr(s32_Block), gu8_DL_REPORT_STATUS_TYPE_WARNING);
             u32_CheckSumCalc = 0U;
          }
@@ -2046,26 +2046,26 @@ int32_t C_XFLActions::ReadServerSectorChecksumInformation(const uint16_t ou16_Se
    uint16_t u16_Crc;
    uint16_t u16_CRCEE;
 
-   orc_ChecksumInformation.c_Areas.SetLength(0);
+   orc_ChecksumInformation.c_Areas.resize(0);
    orc_ChecksumInformation.q_IsBlockBased = false;
 
    //sector based checksums
    uint8_t u8_ModeCompare;
    if (ou16_SectorCount == 0U)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_ERROR) + ": " + TGL_LoadStr(STR_FW_ERR_SEC_COUNT_IVALID),
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_ERROR) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_SEC_COUNT_IVALID),
                        gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return C_RANGE;
    }
 
-   orc_ChecksumInformation.c_Areas.SetLength(ou16_SectorCount);
+   orc_ChecksumInformation.c_Areas.resize(ou16_SectorCount);
 
    for (uint16_t u16_Sector = 0; u16_Sector < ou16_SectorCount; u16_Sector++)
    {
       s32_Return = GetSecCRC(static_cast<uint16_t>(u16_Sector), u16_Crc, u16_CRCEE);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_ERROR) + ": " + TGL_LoadStr(STR_FW_ERR_READ_CRC),
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_ERROR) + ": " + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_READ_CRC),
                           gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return s32_Return;
       }
@@ -2073,13 +2073,13 @@ int32_t C_XFLActions::ReadServerSectorChecksumInformation(const uint16_t ou16_Se
       s32_Return = GetModeCompare(u16_Sector, u8_ModeCompare);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_ERROR) + ": " +
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_ERROR) + ": " +
                           C_XFLActions::XFLProtocolErrorToText(s32_Return, GetLastXFLError()),
                           gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return s32_Return;
       }
 
-      orc_ChecksumInformation.c_BlockConfig.SetLength(orc_ChecksumInformation.c_Areas.GetLength());
+      orc_ChecksumInformation.c_BlockConfig.resize(orc_ChecksumInformation.c_Areas.size());
       orc_ChecksumInformation.c_BlockConfig[u16_Sector].u32_StartAddress = 0U; //can not be determined for sector based
                                                                                // ...
       orc_ChecksumInformation.c_BlockConfig[u16_Sector].u32_EndAddress = 0U;   // ... checksums :-(
@@ -2123,7 +2123,7 @@ int32_t C_XFLActions::PerformWakeup(const C_XFLWakeupParameters & orc_Parameters
    s32_Return = C_XFLActions::CompIDStringToStruct(orc_Parameters.c_CompanyID, c_CompID);
    if (s32_Return != C_NO_ERR)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_COMP_ID_LENGTH), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_COMP_ID_LENGTH), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return -1;
    }
 
@@ -2133,14 +2133,14 @@ int32_t C_XFLActions::PerformWakeup(const C_XFLWakeupParameters & orc_Parameters
       s32_Return = RequestNodeReset((orc_Parameters.q_SendResetRQ == true) ? &orc_Parameters.t_ResetMsg : NULL);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_WR_RESET_RQ), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_WR_RESET_RQ), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
 
       s32_Return = SendFLASH(orc_Parameters.u32_StartTimeMs, orc_Parameters.u8_FLASHIntervalMs);
       if (s32_Return == C_DEFAULT)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_USER_ABORT), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_USER_ABORT), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
    }

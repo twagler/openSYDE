@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for editing bus properties
@@ -19,7 +19,7 @@
 #include "C_OscUtils.hpp"
 #include "C_SdUtil.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "ui_C_SdBueBusEditPropertiesWidget.h"
 #include "constants.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -33,7 +33,7 @@ using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -199,7 +199,7 @@ void C_SdBueBusEditPropertiesWidget::m_LoadFromData(void)
 {
    const C_OscSystemBus * const pc_Bus = C_PuiSdHandler::h_GetInstance()->GetOscBus(this->mu32_BusIndex);
 
-   tgl_assert(pc_Bus != NULL);
+   Q_ASSERT(pc_Bus != NULL);
 
    if (pc_Bus != NULL)
    {
@@ -598,7 +598,7 @@ void C_SdBueBusEditPropertiesWidget::SaveToData(void) const
 {
    const C_OscSystemBus * const pc_Bus = C_PuiSdHandler::h_GetInstance()->GetOscBus(this->mu32_BusIndex);
 
-   tgl_assert(pc_Bus != NULL);
+   Q_ASSERT(pc_Bus != NULL);
    if (pc_Bus != NULL)
    {
       //copy current bus
@@ -729,7 +729,7 @@ void C_SdBueBusEditPropertiesWidget::m_CheckBusId(void) const
    bool q_IdIsValid;
 
    //check
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->GetOscSystemDefinitionConst().CheckErrorBus(this->mu32_BusIndex,
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetOscSystemDefinitionConst().CheckErrorBus(this->mu32_BusIndex,
                                                                                            NULL,
                                                                                            NULL, &q_IdIsValid,
                                                                                            NULL) == C_NO_ERR);

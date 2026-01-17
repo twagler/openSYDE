@@ -21,8 +21,8 @@
 
 #include "C_OscCanDispatcherOsyRouter.hpp"
 
-#include "TglTime.hpp"
-#include "TglUtils.hpp"
+#include <chrono>
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
@@ -229,7 +229,9 @@ int32_t C_OscCanDispatcherOsyRouter::CAN_Send_Msg(const stw::can::T_STWCAN_Msg_T
 //lint -e{8001}  //name of function dictated by base class
 int32_t C_OscCanDispatcherOsyRouter::CAN_Get_System_Time(uint64_t & oru64_SystemTimeUs) const
 {
-   oru64_SystemTimeUs = stw::tgl::TglGetTickCountUs();
+   auto now = std::chrono::steady_clock::now();
+   auto duration = now.time_since_epoch();
+   oru64_SystemTimeUs = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::microseconds>(duration).count());
 
    return C_NO_ERR;
 }
@@ -284,7 +286,7 @@ void C_OscCanDispatcherOsyRouter::mh_OsyTunnelCanMessageReceived(void * const op
    C_OscCanDispatcherOsyRouter * const pc_Dispatcher =
       reinterpret_cast<C_OscCanDispatcherOsyRouter *>(opv_Instance);
 
-   tgl_assert(pc_Dispatcher != NULL);
+   Q_ASSERT(pc_Dispatcher != NULL);
    if (pc_Dispatcher != NULL)
    {
       pc_Dispatcher->m_OsyTunnelCanMessageReceived(ou8_Channel, orc_CanMessage);

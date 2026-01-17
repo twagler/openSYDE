@@ -16,7 +16,7 @@
 
 #include "C_OscComSequencesBase.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_OscRoutingRoute.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -456,7 +456,7 @@ bool C_OscComSequencesBase::m_IsAtLeastOneStwFlashloaderNodeOnLocalBusActive(
                   if ((rc_ComIntf.u32_BusIndex == this->mu32_ActiveBusIndex) &&
                       (rc_ComIntf.GetBusConnected() == true))
                   {
-                     tgl_assert(this->mu32_ActiveBusIndex < this->mpc_SystemDefinition->c_Buses.size());
+                     Q_ASSERT(this->mu32_ActiveBusIndex < this->mpc_SystemDefinition->c_Buses.size());
 
                      // Save the node identifier for a local STW flashloader device to get easy access
                      // to the protocol for the local bus and not server specific services

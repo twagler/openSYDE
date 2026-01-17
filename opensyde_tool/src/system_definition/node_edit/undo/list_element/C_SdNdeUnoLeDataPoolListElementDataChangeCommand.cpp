@@ -18,11 +18,11 @@
 #include "stwerrors.hpp"
 #include "C_SdNdeUnoLeDataPoolListElementDataChangeCommand.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeDpContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -448,7 +448,7 @@ void C_SdNdeUnoLeDataPoolListElementDataChangeCommand::m_ApplyAutoMin(void)
                                                                  this->mu32_DataPoolListIndex,
                                                                  this->mu32_DataPoolListElementIndex);
 
-   tgl_assert(pc_OscElement != NULL);
+   Q_ASSERT(pc_OscElement != NULL);
    if (pc_OscElement != NULL)
    {
       QVariant c_Data;
@@ -493,7 +493,7 @@ void C_SdNdeUnoLeDataPoolListElementDataChangeCommand::m_ApplyAutoMax(void)
                                                                  this->mu32_DataPoolListIndex,
                                                                  this->mu32_DataPoolListElementIndex);
 
-   tgl_assert(pc_OscElement != NULL);
+   Q_ASSERT(pc_OscElement != NULL);
    if (pc_OscElement != NULL)
    {
       QVariant c_Data;

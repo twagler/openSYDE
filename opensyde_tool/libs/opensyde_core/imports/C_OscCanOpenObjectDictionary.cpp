@@ -11,6 +11,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp" //pre-compiled headers
+#include <QFileInfo>
 
 #include <sstream>   //for std::istringstream
 #include <algorithm> //for std::sort
@@ -20,12 +21,9 @@
 #include "C_OscCanOpenObjectDictionary.hpp"
 #include "C_SclString.hpp"
 #include "C_SclIniFile.hpp"
-#include "TglFile.hpp"
-
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -55,7 +53,7 @@ public:
    {
    }
 
-   C_SclDynamicArray<C_SclIniSection> & GetIniSections()
+   QList<C_SclIniSection> & GetIniSections()
    {
       //lint -e{1536}  //provide direct access to sections; alternative would require some refactoring
       // and break the existing API
@@ -168,7 +166,7 @@ void C_OscCanOpenObjectDictionary::m_RememberFileHash()
 {
    this->mu32_OriginalFileHash = 0xFFFFFFFFU;
 
-   for (int32_t s32_Line = 0; s32_Line < this->c_TextFileContent.Strings.GetLength(); s32_Line++)
+   for (int32_t s32_Line = 0; s32_Line < this->c_TextFileContent.Strings.size(); s32_Line++)
    {
       stw::scl::C_SclChecksums::CalcCRC32(this->c_TextFileContent.Strings[s32_Line].c_str(),
                                           this->c_TextFileContent.Strings[s32_Line].Length(),
@@ -203,7 +201,7 @@ int32_t C_OscCanOpenObjectDictionary::LoadFromFile(const C_SclString & orc_File)
    mc_LastError = "";
    c_OdObjects.clear();
 
-   if (TglFileExists(orc_File) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_File.AsStdString())).isFile()) == false)
    {
       s32_Return = C_RANGE;
    }
@@ -212,9 +210,9 @@ int32_t C_OscCanOpenObjectDictionary::LoadFromFile(const C_SclString & orc_File)
       C_EdsFile c_IniFile(orc_File);
 
       //go through all sections and set up c_Objects
-      C_SclDynamicArray<C_SclIniSection> & rc_Sections = c_IniFile.GetIniSections();
+      QList<C_SclIniSection> & rc_Sections = c_IniFile.GetIniSections();
 
-      for (int32_t s32_Section = 0U; s32_Section < rc_Sections.GetLength(); s32_Section++)
+      for (int32_t s32_Section = 0U; s32_Section < rc_Sections.size(); s32_Section++)
       {
          //We are only interested in the sections describing objects or objects with subobjects.
          //All other sections will be ignored.
@@ -435,8 +433,8 @@ int32_t C_OscCanOpenObjectDictionary::m_GetObjectDescription(const uint16_t ou16
    orc_Object.u8_DataType = C_OscCanOpenObjectData::hu8_DATA_TYPE_DOMAIN; //optional for "DOMAIN" objects
    orc_Object.q_IsMappableIntoPdo = false;
 
-   C_SclDynamicArray<C_SclIniKey> & rc_Keys = orc_Section.c_Keys;
-   for (int32_t s32_Key = 0; s32_Key < rc_Keys.GetLength(); s32_Key++)
+   QList<C_SclIniKey> & rc_Keys = orc_Section.c_Keys;
+   for (int32_t s32_Key = 0; s32_Key < rc_Keys.size(); s32_Key++)
    {
       const C_SclString c_KeyUpperCase = rc_Keys[s32_Key].c_Key.UpperCase();
 

@@ -16,11 +16,11 @@
 #include <QProcess>
 #include <QKeyEvent>
 #include "C_HeHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_Uti.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -71,7 +71,7 @@ void C_HeHandler::CallSpecificHelpPage(const QString & orc_ClassName)
    }
 
    //Html help
-   tgl_assert(this->mpr_HtmlHelp != NULL);
+   Q_ASSERT(this->mpr_HtmlHelp != NULL);
    if (this->mpr_HtmlHelp != NULL)
    {
       if (c_PageSearchName.compare("") == 0)

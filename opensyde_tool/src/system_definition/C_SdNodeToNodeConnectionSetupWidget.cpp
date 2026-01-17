@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Node to Node connection setup pop up dialog
@@ -16,7 +16,7 @@
 #include "C_OscUtils.hpp"
 #include "stwerrors.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "C_PuiSdUtil.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -29,7 +29,7 @@ using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -187,7 +187,7 @@ C_OscSystemBus::E_Type C_SdNodeToNodeConnectionSetupWidget::GetBusType(void) con
    else
    {
       const C_OscSystemBus * const pc_Bus = C_PuiSdHandler::h_GetInstance()->GetOscBus(this->GetBusIndex());
-      tgl_assert(pc_Bus != NULL);
+      Q_ASSERT(pc_Bus != NULL);
       if (pc_Bus != NULL)
       {
          e_Retval = pc_Bus->e_Type;

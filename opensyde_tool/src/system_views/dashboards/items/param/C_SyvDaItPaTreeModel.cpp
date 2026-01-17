@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Parameter tree model (implementation)
@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include <cmath>
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_OscUtils.hpp"
@@ -488,7 +488,7 @@ void C_SyvDaItPaTreeModel::PrepareChangedValues(const std::vector<C_OscNodeDataP
                               rc_Config.c_ElementId.u32_ElementIndex);
                         if (pc_OscElement != NULL)
                         {
-                           tgl_assert(C_PuiSdHandler::h_GetInstance()->SetDataPoolListElementNvmValue(
+                           Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetDataPoolListElementNvmValue(
                                          rc_Config.c_ElementId.u32_NodeIndex,
                                          rc_Config.c_ElementId.u32_DataPoolIndex,
                                          rc_Config.c_ElementId.u32_ListIndex,
@@ -548,7 +548,7 @@ const
                         rc_Config.c_ElementId.u32_ElementIndex);
                   if (pc_OscElement != NULL)
                   {
-                     tgl_assert(C_PuiSdHandler::h_GetInstance()->SetDataPoolListElementNvmValueChanged(
+                     Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetDataPoolListElementNvmValueChanged(
                                    rc_Config.c_ElementId.u32_NodeIndex,
                                    rc_Config.c_ElementId.u32_DataPoolIndex,
                                    rc_Config.c_ElementId.u32_ListIndex,
@@ -1075,7 +1075,7 @@ void C_SyvDaItPaTreeModel::GetListSetValues(const C_OscNodeDataPoolListElementId
                   if (pc_Value != NULL)
                   {
                      //Check if the order is as expected
-                     tgl_assert(orc_ListValues.size() == rc_Config.c_ElementId.u32_ElementIndex);
+                     Q_ASSERT(orc_ListValues.size() == rc_Config.c_ElementId.u32_ElementIndex);
                      orc_ListValues.push_back(*pc_Value);
                   }
                }
@@ -2163,7 +2163,7 @@ bool C_SyvDaItPaTreeModel::setData(const QModelIndex & orc_Index, const QVariant
                            //Array edit should handle this use-case except string
                            C_SdNdeDpContentUtil::h_SetString(orc_Value.toString(), rc_Content);
                         }
-                        tgl_assert(pc_ParamWidget->SetParamItem(c_Copy) == C_NO_ERR);
+                        Q_ASSERT(pc_ParamWidget->SetParamItem(c_Copy) == C_NO_ERR);
                      }
                   }
                }
@@ -2587,7 +2587,7 @@ void C_SyvDaItPaTreeModel::h_DecodeIndex(const QModelIndex & orc_Index, C_OscNod
                      if ((pc_FifthParent != NULL) && (pc_FifthParent->pc_Parent != NULL))
                      {
                         //Should not happen
-                        tgl_assert(false);
+                        Q_ASSERT(false);
                      }
                      else
                      {
@@ -3041,7 +3041,7 @@ void C_SyvDaItPaTreeModel::mh_InitNode(C_TblTreItem * const opc_TreeNode, const 
 
       //Index
       opc_TreeNode->u32_Index = ou32_NodeIndex;
-      tgl_assert(pc_NodeData != NULL);
+      Q_ASSERT(pc_NodeData != NULL);
       if (pc_NodeData != NULL)
       {
          std::vector<uint8_t> c_NodeActiveFlags;
@@ -3067,7 +3067,7 @@ void C_SyvDaItPaTreeModel::mh_InitNode(C_TblTreItem * const opc_TreeNode, const 
             {
                // Check a further reason for deactivation
                bool q_Error;
-               tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckViewNodeDashboardRoutingError(
+               Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckViewNodeDashboardRoutingError(
                              ou32_ViewIndex,
                              ou32_NodeIndex,
                              q_Error) == C_NO_ERR);
@@ -3103,7 +3103,7 @@ void C_SyvDaItPaTreeModel::mh_InitDataPool(C_TblTreItem * const opc_TreeNode, co
 
       //Index
       opc_TreeNode->u32_Index = ou32_DataPoolIndex;
-      tgl_assert(pc_NodeDataPoolData != NULL);
+      Q_ASSERT(pc_NodeDataPoolData != NULL);
       if (pc_NodeDataPoolData != NULL)
       {
          //Name
@@ -3140,7 +3140,7 @@ void C_SyvDaItPaTreeModel::mh_InitList(C_TblTreItem * const opc_TreeNode, const 
 
       //Index
       opc_TreeNode->u32_Index = ou32_ListIndex;
-      tgl_assert(pc_ListData != NULL);
+      Q_ASSERT(pc_ListData != NULL);
       if (pc_ListData != NULL)
       {
          //Name
@@ -3180,7 +3180,7 @@ void C_SyvDaItPaTreeModel::mh_InitElement(C_TblTreItem * const opc_TreeNode, con
 
       //Index
       opc_TreeNode->u32_Index = ou32_ElementIndex;
-      tgl_assert(pc_ElementData != NULL);
+      Q_ASSERT(pc_ElementData != NULL);
       if (pc_ElementData != NULL)
       {
          //Name

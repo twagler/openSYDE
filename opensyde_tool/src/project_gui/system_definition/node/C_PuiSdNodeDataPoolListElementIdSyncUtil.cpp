@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_SclChecksums.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -20,7 +20,7 @@
 #include "C_PuiSdNodeDataPoolListElementIdSyncUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -456,7 +456,7 @@ void C_PuiSdNodeDataPoolListElementIdSyncUtil::h_OnSyncNodeDataPoolListElementRa
        C_OscNodeDataPoolListElementId(ou32_NodeIndex, ou32_DataPoolIndex, ou32_ListIndex, ou32_ElementIndex))
    {
       C_OscNodeDataPoolContentUtil::E_ValueChangedTo e_Unused;
-      tgl_assert(C_OscNodeDataPoolContentUtil::h_SetValueInMinMaxRange(orc_MinElement,
+      Q_ASSERT(C_OscNodeDataPoolContentUtil::h_SetValueInMinMaxRange(orc_MinElement,
                                                                        orc_MaxElement,
                                                                        orc_Value, e_Unused,
                                                                        C_OscNodeDataPoolContentUtil::eLEAVE_VALUE) ==

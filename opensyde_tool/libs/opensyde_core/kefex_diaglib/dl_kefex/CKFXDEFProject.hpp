@@ -45,12 +45,12 @@ class C_KFXDEFProject
 private:
    static int32_t m_LoadRAMListFromFile(const stw::scl::C_SclString & orc_FilePath, C_KFXVariableListBase & orc_List,
                                         stw::scl::C_SclString & orc_ErrorText);
-   static int32_t m_SortRAMLists(stw::scl::C_SclDynamicArray<C_KFXRAMNameIndex> & orc_Files,
+   static int32_t m_SortRAMLists(QList<C_KFXRAMNameIndex> & orc_Files,
                                  stw::scl::C_SclString & orc_ErrorText);
    static int32_t m_FindRelatedFiles(const stw::scl::C_SclString & orc_Directory,
                                      const stw::scl::C_SclString & orc_DeviceName,
-                                     stw::scl::C_SclDynamicArray<C_KFXRAMNameIndex> & orc_Files,
-                                     stw::scl::C_SclDynamicArray<stw::scl::C_SclString> & orc_Warnings);
+                                     QList<C_KFXRAMNameIndex> & orc_Files,
+                                     QList<stw::scl::C_SclString> & orc_Warnings);
 
    static void m_VarStringsToMinMax(const stw::scl::C_SclString & orc_Min, const stw::scl::C_SclString & orc_Max,
                                     C_KFXVariableBase & orc_Variable);
@@ -60,7 +60,7 @@ public:
    static int32_t LoadRAMFiles(const stw::scl::C_SclString & orc_Directory,
                                const stw::scl::C_SclString & orc_DeviceName, C_KFXVariableLists & orc_Lists,
                                stw::scl::C_SclString & orc_ErrorText,
-                               stw::scl::C_SclDynamicArray<stw::scl::C_SclString> & orc_Warnings);
+                               QList<stw::scl::C_SclString> & orc_Warnings);
 
    static int32_t LoadComments(const stw::scl::C_SclString & orc_FileName, const stw::scl::C_SclString & orc_DeviceName,
                                C_KFXVariableLists & orc_VariableLists,

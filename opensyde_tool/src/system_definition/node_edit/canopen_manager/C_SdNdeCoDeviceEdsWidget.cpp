@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for handling the EDS file of a specific device on a specific interface of the CANopen Manager
@@ -134,10 +134,10 @@ void C_SdNdeCoDeviceEdsWidget::m_OnUpdateClicked(void)
          const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(
             this->mc_DeviceInterfaceId.u32_NodeIndex);
 
-         tgl_assert(pc_Node != NULL);
+         Q_ASSERT(pc_Node != NULL);
          if (pc_Node != NULL)
          {
-            tgl_assert(u32_DeviceInterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
+            Q_ASSERT(u32_DeviceInterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
             if (u32_DeviceInterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size())
             {
                QString c_ParsingError;

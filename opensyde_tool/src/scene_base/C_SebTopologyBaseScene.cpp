@@ -13,7 +13,7 @@
 #include <QApplication>
 
 #include "gitypes.hpp"
-#include "TglUtils.hpp"
+
 
 #include "C_SebTopologyBaseScene.hpp"
 
@@ -36,7 +36,7 @@
 #include "C_GiSdImageGroup.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;

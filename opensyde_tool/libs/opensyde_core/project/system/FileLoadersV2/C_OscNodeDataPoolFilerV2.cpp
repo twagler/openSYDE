@@ -16,7 +16,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscNodeDataPoolFilerV2.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -24,7 +24,7 @@
 using namespace stw::opensyde_core;
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -88,7 +88,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPool(const uint16_t ou16_XmlFormatVe
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool");
       }
    }
    else
@@ -100,7 +100,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPool(const uint16_t ou16_XmlFormatVe
    {
       orc_NodeDataPool.c_Name = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool");
    }
    else
    {
@@ -113,7 +113,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPool(const uint16_t ou16_XmlFormatVe
       orc_NodeDataPool.au8_Version[1] = static_cast<uint8_t>(orc_XmlParser.GetAttributeUint32("minor"));
       orc_NodeDataPool.au8_Version[2] = static_cast<uint8_t>(orc_XmlParser.GetAttributeUint32("release"));
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool");
    }
    else
    {
@@ -124,7 +124,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPool(const uint16_t ou16_XmlFormatVe
    {
       orc_NodeDataPool.c_Comment = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool");
    }
    else
    {
@@ -138,7 +138,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPool(const uint16_t ou16_XmlFormatVe
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool");
       }
    }
    else
@@ -175,14 +175,14 @@ void C_OscNodeDataPoolFilerV2::h_SaveDataPool(const C_OscNodeDataPool & orc_Node
    orc_XmlParser.SetAttributeUint32("minor", orc_NodeDataPool.au8_Version[1]);
    orc_XmlParser.SetAttributeUint32("release", orc_NodeDataPool.au8_Version[2]);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool");
 
    orc_XmlParser.CreateNodeChild("comment", orc_NodeDataPool.c_Comment);
    //Lists
    orc_XmlParser.CreateAndSelectNodeChild("lists");
    h_SaveDataPoolLists(orc_NodeDataPool.c_Lists, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool");
    orc_XmlParser.CreateNodeChild("export-settings", "");
 }
 
@@ -216,7 +216,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolList(const uint16_t ou16_XmlForm
    {
       orc_NodeDataPoolList.c_Name = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
    }
    else
    {
@@ -227,7 +227,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolList(const uint16_t ou16_XmlForm
    {
       orc_NodeDataPoolList.c_Comment = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
    }
    else
    {
@@ -243,7 +243,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolList(const uint16_t ou16_XmlForm
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
          }
       }
       else
@@ -259,7 +259,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolList(const uint16_t ou16_XmlForm
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
       }
    }
    else
@@ -294,12 +294,12 @@ void C_OscNodeDataPoolFilerV2::h_SaveDataPoolList(const C_OscNodeDataPoolList & 
    orc_XmlParser.CreateAndSelectNodeChild("data-elements");
    h_SaveDataPoolListElements(orc_NodeDataPoolList.c_Elements, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
    //Data sets
    orc_XmlParser.CreateAndSelectNodeChild("data-sets");
    h_SaveDataPoolListDataSets(orc_NodeDataPoolList.c_DataSets, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -332,7 +332,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
    {
       orc_NodeDataPoolListElement.c_Name = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
    }
    else
    {
@@ -351,7 +351,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
             orc_NodeDataPoolListElement.c_NvmValue = orc_NodeDataPoolListElement.c_MinValue;
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
       }
       else
       {
@@ -364,7 +364,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
             s32_Retval = h_LoadDataPoolContentV1(orc_NodeDataPoolListElement.c_MaxValue, orc_XmlParser);
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
       }
       else
       {
@@ -377,7 +377,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
             s32_Retval = h_LoadDataPoolContentV1(orc_NodeDataPoolListElement.c_Value, orc_XmlParser);
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
       }
       else
       {
@@ -402,7 +402,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
             orc_NodeDataPoolListElement.c_NvmValue = orc_NodeDataPoolListElement.c_MinValue;
             orc_NodeDataPoolListElement.c_Value = orc_NodeDataPoolListElement.c_MinValue;
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
          }
          else
          {
@@ -420,7 +420,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
 
             s32_Retval = h_LoadDataPoolElementValue(orc_NodeDataPoolListElement.c_MaxValue, orc_XmlParser);
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
          }
          else
          {
@@ -431,7 +431,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
    }
    else
    {
-      tgl_assert(false); ///< undefined version
+      Q_ASSERT(false); ///< undefined version
    }
 
    if (s32_Retval == C_NO_ERR)
@@ -440,7 +440,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
       {
          orc_NodeDataPoolListElement.c_Comment = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
       }
       else
       {
@@ -455,7 +455,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
       {
          orc_NodeDataPoolListElement.c_Unit = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
       }
       else
       {
@@ -471,7 +471,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
          s32_Retval =
             mh_StringToNodeDataPoolElementAccess(orc_XmlParser.GetNodeContent(), orc_NodeDataPoolListElement.e_Access);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
       }
       else
       {
@@ -489,7 +489,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolElement(const uint16_t ou16_XmlF
                                                              orc_NodeDataPoolListElement.c_DataSetValues,
                                                              orc_XmlParser);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
       }
       else
       {
@@ -529,7 +529,7 @@ void C_OscNodeDataPoolFilerV2::h_SaveDataPoolElement(const C_OscNodeDataPoolList
    orc_XmlParser.CreateAndSelectNodeChild("data-set-values");
    h_SaveDataPoolListElementDataSetValues(orc_NodeDataPoolListElement.c_DataSetValues, orc_XmlParser);
    //Return to parent
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "data-element");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-element");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -588,7 +588,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolLists(const uint16_t ou16_XmlFor
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "lists");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "lists");
       }
    }
    //Compare length
@@ -625,7 +625,7 @@ void C_OscNodeDataPoolFilerV2::h_SaveDataPoolLists(const std::vector<C_OscNodeDa
       orc_XmlParser.CreateAndSelectNodeChild("list");
       h_SaveDataPoolList(orc_NodeDataPoolLists[u32_ItList], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "lists");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "lists");
    }
 }
 
@@ -684,7 +684,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolListElements(const uint16_t ou16
       }
       while (c_CurNodeDataElement == "data-element");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-elements");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-elements");
    }
    //Compare length
    if ((s32_Retval == C_NO_ERR) && (q_ExpectedSizeHere == true))
@@ -721,7 +721,7 @@ void C_OscNodeDataPoolFilerV2::h_SaveDataPoolListElements(
       orc_XmlParser.CreateAndSelectNodeChild("data-element");
       h_SaveDataPoolElement(orc_NodeDataPoolListElements[u32_ItDataElement], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-elements");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-elements");
    }
 }
 
@@ -770,7 +770,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolListElementDataSetValues(const u
             }
             else
             {
-               tgl_assert(false); //undefined version
+               Q_ASSERT(false); //undefined version
             }
          }
 
@@ -782,7 +782,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolListElementDataSetValues(const u
       }
       while (c_CurNodeDataSetValue == "data-set-value");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-set-values");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-set-values");
    }
    return s32_Retval;
 }
@@ -843,7 +843,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolListDataSets(
          {
             c_CurDataSet.c_Name = orc_XmlParser.GetNodeContent();
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "data-set");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-set");
          }
          else
          {
@@ -854,7 +854,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolListDataSets(
          {
             c_CurDataSet.c_Comment = orc_XmlParser.GetNodeContent();
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "data-set");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-set");
          }
          else
          {
@@ -869,7 +869,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolListDataSets(
       }
       while (c_CurNodeDataSet == "data-set");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-sets");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-sets");
    }
    return s32_Retval;
 }
@@ -896,7 +896,7 @@ void C_OscNodeDataPoolFilerV2::h_SaveDataPoolListDataSets(
       orc_XmlParser.CreateNodeChild("name", rc_DataSet.c_Name);
       orc_XmlParser.CreateNodeChild("comment", rc_DataSet.c_Comment);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-sets");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-sets");
    }
 }
 
@@ -1281,7 +1281,7 @@ void C_OscNodeDataPoolFilerV2::h_SaveDataPoolElementValue(const stw::scl::C_SclS
             break;
          }
          //Return to parent
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_NodeName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_NodeName);
       }
    }
    //Return to parent
@@ -1399,7 +1399,7 @@ void C_OscNodeDataPoolFilerV2::h_SaveDataPoolContentV1(const C_OscNodeDataPoolCo
             break;
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "array");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "array");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -1509,7 +1509,7 @@ int32_t C_OscNodeDataPoolFilerV2::h_LoadDataPoolContentV1(C_OscNodeDataPoolConte
             }
             while (c_CurNode == "element");
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "array");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "array");
          }
          //Return
          orc_XmlParser.SelectNodeParent();

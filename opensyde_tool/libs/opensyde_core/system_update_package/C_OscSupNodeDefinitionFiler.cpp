@@ -11,16 +11,16 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscSupSignatureFiler.hpp"
 #include "C_OscSupNodeDefinitionFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -121,7 +121,7 @@ int32_t C_OscSupNodeDefinitionFiler::h_LoadNodes(const std::vector<stw::scl::C_S
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert((orc_Files.size() == orc_NodeFoldersAbs.size()) &&
+   Q_ASSERT((orc_Files.size() == orc_NodeFoldersAbs.size()) &&
               ((orc_Files.size() == orc_ActiveNodes.size()) && (orc_Files.size() == orc_UpdatePosition.size())));
    if ((orc_Files.size() == orc_NodeFoldersAbs.size()) &&
        ((orc_Files.size() == orc_ActiveNodes.size()) && (orc_Files.size() == orc_UpdatePosition.size())))
@@ -140,7 +140,7 @@ int32_t C_OscSupNodeDefinitionFiler::h_LoadNodes(const std::vector<stw::scl::C_S
             {
                // get update position
                const uint32_t u32_UpdatePosition = orc_UpdatePosition[u32_NodeCounter];
-               tgl_assert(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and
+               Q_ASSERT(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and
                // compatible update package
                C_OscSupNodeDefinitionFiler::mh_LoadFilesSection(c_DoFlash.c_FilesToFlash, u32_NodeCounter,
                                                                 u32_UpdatePosition, orc_UpdateOrderByNodes,
@@ -191,9 +191,9 @@ int32_t C_OscSupNodeDefinitionFiler::mh_SaveNode(const stw::scl::C_SclString & o
    //Root Node
    c_XmlParser.CreateAndSelectNodeChild(mc_ROOT_NAME);
    //File version
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
    c_XmlParser.SetNodeContent(stw::scl::C_SclString::IntToStr(mu16_FILE_VERSION));
-   tgl_assert(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
 
    mh_SaveFiles(orc_Node.c_ApplicationFileNames, c_XmlParser, mc_FILES, mc_FILE);
    mh_SaveFiles(orc_Node.c_NvmFileNames, c_XmlParser, mc_PARAM_FILES, mc_PARAM_FILE);
@@ -236,21 +236,21 @@ void C_OscSupNodeDefinitionFiler::mh_LoadFilesSection(std::vector<stw::scl::C_Sc
       // node has applications to update
       orc_PositionMap.insert(std::pair<uint32_t, uint32_t>(ou32_NodeCounter, ou32_UpdatePos));
       // get update application paths
-      tgl_assert(orc_XmlParser.SelectNodeChild(orc_ElementNodeName) == orc_ElementNodeName);
+      Q_ASSERT(orc_XmlParser.SelectNodeChild(orc_ElementNodeName) == orc_ElementNodeName);
 
       // go through all files
       do
       {
          // we have to take care of OS dependent path delimiters for windows '\\'
          const stw::scl::C_SclString c_XmlAttr = orc_XmlParser.GetAttributeString(mc_FILE_NAME_ATTR);
-         const stw::scl::C_SclString c_FilePath = TglFileIncludeTrailingDelimiter(
+         const stw::scl::C_SclString c_FilePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(
             orc_NodeFolderAbs) + c_XmlAttr;
          orc_Files.push_back(c_FilePath);
          c_SelectedNode = orc_XmlParser.SelectNodeNext(orc_ElementNodeName);
       }
       while (c_SelectedNode == orc_ElementNodeName);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == orc_BaseNodeName);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_BaseNodeName);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
    }
 }
 
@@ -274,13 +274,13 @@ void C_OscSupNodeDefinitionFiler::mh_LoadPemConfigSection(C_OscSuSequences::C_Do
    if (orc_XmlParser.SelectNodeChild(mc_PEM_FILE_CONFIG) == mc_PEM_FILE_CONFIG)
    {
       // get PEM file path
-      tgl_assert(orc_XmlParser.SelectNodeChild(mc_PEM_FILE) == mc_PEM_FILE);
+      Q_ASSERT(orc_XmlParser.SelectNodeChild(mc_PEM_FILE) == mc_PEM_FILE);
 
       // we have to take care of OS dependent path delimiters for windows '\\'
       const stw::scl::C_SclString c_XmlAttr = orc_XmlParser.GetAttributeString(mc_FILE_NAME_ATTR);
       if (c_XmlAttr != "")
       {
-         const stw::scl::C_SclString c_FilePath = TglFileIncludeTrailingDelimiter(
+         const stw::scl::C_SclString c_FilePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(
             orc_NodeFolderAbs) + c_XmlAttr;
          orc_DoFlash.c_PemFile = c_FilePath;
 
@@ -288,7 +288,7 @@ void C_OscSupNodeDefinitionFiler::mh_LoadPemConfigSection(C_OscSuSequences::C_Do
          orc_PositionMap.insert(std::pair<uint32_t, uint32_t>(ou32_NodeCounter, ou32_UpdatePos));
       }
 
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_PEM_FILE_CONFIG);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_PEM_FILE_CONFIG);
 
       if (orc_DoFlash.c_PemFile != "")
       {
@@ -302,7 +302,7 @@ void C_OscSupNodeDefinitionFiler::mh_LoadPemConfigSection(C_OscSuSequences::C_Do
          orc_DoFlash.q_DebuggerEnabled = orc_XmlParser.GetAttributeBool(mc_PEM_FILE_CONFIG_DEB_ENAB_ATTR, false);
       }
 
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
    }
 }
 
@@ -323,17 +323,17 @@ void C_OscSupNodeDefinitionFiler::mh_SaveFiles(const std::vector<stw::scl::C_Scl
    if (orc_Files.size() > 0)
    {
       //Files
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(orc_BaseNodeName) == orc_BaseNodeName);
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(orc_BaseNodeName) == orc_BaseNodeName);
       for (uint32_t u32_PosFile = 0; u32_PosFile < orc_Files.size(); u32_PosFile++)
       {
          //File
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(orc_ElementNodeName) == orc_ElementNodeName);
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(orc_ElementNodeName) == orc_ElementNodeName);
          orc_XmlParser.SetAttributeString(mc_FILE_NAME_ATTR, orc_Files[u32_PosFile]);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_BaseNodeName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_BaseNodeName);
       }
       //Return for next node
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
    }
 }
 
@@ -350,20 +350,20 @@ void C_OscSupNodeDefinitionFiler::mh_SavePemConfig(const C_OscSupNodeDefinition 
    if (orc_CurrentNode.c_PemFile != "")
    {
       //Files
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(mc_PEM_FILE_CONFIG) == mc_PEM_FILE_CONFIG);
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(mc_PEM_FILE_CONFIG) == mc_PEM_FILE_CONFIG);
       orc_XmlParser.SetAttributeBool(mc_PEM_FILE_CONFIG_SEC_SEND_ATTR, orc_CurrentNode.q_SendSecurityEnabledState);
       orc_XmlParser.SetAttributeBool(mc_PEM_FILE_CONFIG_SEC_ENAB_ATTR, orc_CurrentNode.q_SecurityEnabled);
       orc_XmlParser.SetAttributeBool(mc_PEM_FILE_CONFIG_DEB_SEND_ATTR, orc_CurrentNode.q_SendDebuggerEnabledState);
       orc_XmlParser.SetAttributeBool(mc_PEM_FILE_CONFIG_DEB_ENAB_ATTR, orc_CurrentNode.q_DebuggerEnabled);
 
       //File
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(mc_PEM_FILE) == mc_PEM_FILE);
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(mc_PEM_FILE) == mc_PEM_FILE);
       orc_XmlParser.SetAttributeString(mc_FILE_NAME_ATTR, orc_CurrentNode.c_PemFile);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_PEM_FILE_CONFIG);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_PEM_FILE_CONFIG);
 
       //Return for next node
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
    }
 }
 
@@ -380,10 +380,10 @@ void C_OscSupNodeDefinitionFiler::mh_SaveSignatureFile(const C_OscSupNodeDefinit
    if (orc_Node.u8_SignaturePresent == hu8_ACTIVE_NODE)
    {
       //File
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(mc_SIG_FILE) == mc_SIG_FILE);
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(mc_SIG_FILE) == mc_SIG_FILE);
       orc_XmlParser.SetAttributeString(mc_SIG_FILE_ATTR, orc_Node.c_SignatureFile);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
    }
 }
 
@@ -410,11 +410,11 @@ int32_t C_OscSupNodeDefinitionFiler::mh_LoadSignatureFile(const stw::scl::C_SclS
    if (orc_XmlParser.SelectNodeChild(mc_SIG_FILE) == mc_SIG_FILE)
    {
       const stw::scl::C_SclString c_XmlAttr = orc_XmlParser.GetAttributeString(mc_SIG_FILE_ATTR);
-      const stw::scl::C_SclString c_PackagePathTmp = TglFileIncludeTrailingDelimiter(orc_NodeFolderAbs) +
-                                                     TglExtractFileName(c_XmlAttr);
+      const stw::scl::C_SclString c_PackagePathTmp = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_NodeFolderAbs) +
+                                                     QFileInfo(QString::fromStdString(*c_XmlAttr.AsStdString())).fileName().toStdString();
       s32_Retval = C_OscSupSignatureFiler::h_LoadSignatureFile(c_PackagePathTmp, orc_Signature);
 
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
    }
    return s32_Retval;
 }

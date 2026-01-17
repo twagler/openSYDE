@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for handling the process of recording an NVM image to a file.
@@ -481,7 +481,7 @@ void C_SyvDaItPaImageRecordWidget::m_StartReadElementsOfNode(void)
    // Prepare all data dealer (Step 1)
    for (uint32_t u32_ItNode = 0U; u32_ItNode < this->mc_AllNodeIndexes.size(); ++u32_ItNode)
    {
-      tgl_assert(this->mrc_ComDriver.NvmSafeClearInternalContent(this->mc_AllNodeIndexes[u32_ItNode]) == C_NO_ERR);
+      Q_ASSERT(this->mrc_ComDriver.NvmSafeClearInternalContent(this->mc_AllNodeIndexes[u32_ItNode]) == C_NO_ERR);
    }
 
    //Create file
@@ -1179,7 +1179,7 @@ void C_SyvDaItPaImageRecordWidget::m_ReportErrorNvmSafeReadParameterValues(const
    C_OgeWiCustomMessage c_Message(this);
    const int32_t s32_Return = this->mrc_ComDriver.GetPollResultNrc(u8_Nrc);
 
-   tgl_assert(s32_Return == C_NO_ERR);
+   Q_ASSERT(s32_Return == C_NO_ERR);
 
    switch (os32_ErrorCode)
    {

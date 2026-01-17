@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Add undo command (implementation)
@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "gitypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwtypes.hpp"
 #include "constants.hpp"
 #include "stwerrors.hpp"
@@ -21,7 +21,7 @@
 #include "C_SyvDaUnoAddCommand.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
@@ -113,7 +113,7 @@ void C_SyvDaUnoAddCommand::m_AddNew(void)
             c_LabelData.c_UiPosition = mc_NewPos;
             c_LabelData.f64_Height = 84.0;
             c_LabelData.f64_Width = 150.0;
-            tgl_assert(c_InitialData.AddWidget(&c_LabelData, this->me_Type) == C_NO_ERR);
+            Q_ASSERT(c_InitialData.AddWidget(&c_LabelData, this->me_Type) == C_NO_ERR);
             break;
          case C_PuiSvDbDataElement::ePARAM:
             //Theme
@@ -124,7 +124,7 @@ void C_SyvDaUnoAddCommand::m_AddNew(void)
             c_ParamWidgetData.c_UiPosition = mc_NewPos;
             c_ParamWidgetData.f64_Height = 246.0;
             c_ParamWidgetData.f64_Width = 981.0;
-            tgl_assert(c_InitialData.AddWidget(&c_ParamWidgetData, this->me_Type) == C_NO_ERR);
+            Q_ASSERT(c_InitialData.AddWidget(&c_ParamWidgetData, this->me_Type) == C_NO_ERR);
             break;
          case C_PuiSvDbDataElement::ePIE_CHART:
             //Theme
@@ -134,7 +134,7 @@ void C_SyvDaUnoAddCommand::m_AddNew(void)
             c_PieChartData.c_UiPosition = mc_NewPos;
             c_PieChartData.f64_Height = 150.0;
             c_PieChartData.f64_Width = 150.0;
-            tgl_assert(c_InitialData.AddWidget(&c_PieChartData, this->me_Type) == C_NO_ERR);
+            Q_ASSERT(c_InitialData.AddWidget(&c_PieChartData, this->me_Type) == C_NO_ERR);
             break;
          case C_PuiSvDbDataElement::eSPIN_BOX:
             //Theme
@@ -267,6 +267,6 @@ void C_SyvDaUnoAddCommand::mh_DecodeTheme(C_PuiSvDbWidgetBase & orc_Base, const 
    }
    else
    {
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 }

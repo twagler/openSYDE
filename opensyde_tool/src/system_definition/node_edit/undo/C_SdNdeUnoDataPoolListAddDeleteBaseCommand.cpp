@@ -17,12 +17,12 @@
 #include "C_OscLoggingHandler.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdUtil.hpp"
-#include "TglUtils.hpp"
+
 
 #include "C_SdNdeUnoDataPoolListAddDeleteBaseCommand.hpp"
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -73,7 +73,7 @@ void C_SdNdeUnoDataPoolListAddDeleteBaseCommand::m_Add(void)
    for (uint32_t u32_Index = 0; u32_Index < this->mc_Indices.size(); ++u32_Index)
    {
       this->mpc_DataPoolListsTreeWidget->InsertRowWithoutData(this->mc_Indices[u32_Index]);
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->InsertDataPoolList(this->mu32_NodeIndex, this->mu32_DataPoolIndex,
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->InsertDataPoolList(this->mu32_NodeIndex, this->mu32_DataPoolIndex,
                                                                      this->mc_Indices[u32_Index],
                                                                      this->mc_OscContent[u32_Index],
                                                                      this->mc_UiContent[u32_Index]) == C_NO_ERR);
@@ -88,7 +88,7 @@ void C_SdNdeUnoDataPoolListAddDeleteBaseCommand::m_Add(void)
    for (uint32_t u32_Index = 0; u32_Index < this->mc_Indices.size(); ++u32_Index)
    {
       QTreeWidgetItem * const pc_Item = this->mpc_DataPoolListsTreeWidget->topLevelItem(this->mc_Indices[u32_Index]);
-      tgl_assert(pc_Item != NULL);
+      Q_ASSERT(pc_Item != NULL);
       if (pc_Item != NULL)
       {
          pc_Item->setSelected(true);
@@ -117,11 +117,11 @@ void C_SdNdeUnoDataPoolListAddDeleteBaseCommand::m_Delete(void)
    //Clear selection
    for (uint32_t u32_Index = 0; u32_Index < this->mc_Indices.size(); ++u32_Index)
    {
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->GetDataPoolList(this->mu32_NodeIndex, this->mu32_DataPoolIndex,
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetDataPoolList(this->mu32_NodeIndex, this->mu32_DataPoolIndex,
                                                                   this->mc_Indices[u32_Index],
                                                                   this->mc_OscContent[u32_Index],
                                                                   this->mc_UiContent[u32_Index]) == C_NO_ERR);
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->RemoveDataPoolList(this->mu32_NodeIndex, this->mu32_DataPoolIndex,
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->RemoveDataPoolList(this->mu32_NodeIndex, this->mu32_DataPoolIndex,
                                                                      this->mc_Indices[u32_Index]) == C_NO_ERR);
       this->mpc_DataPoolListsTreeWidget->takeTopLevelItem(this->mc_Indices[u32_Index]);
    }

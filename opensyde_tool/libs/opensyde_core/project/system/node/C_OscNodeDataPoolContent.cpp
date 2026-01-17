@@ -19,6 +19,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QMutexLocker>
 
 #include <cstring>
 #include <sstream>
@@ -29,12 +30,12 @@
 #include "C_OscNodeDataPoolContent.hpp"
 #include "C_SclChecksums.hpp"
 #include "C_OscUtils.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::scl;
 using namespace stw::opensyde_core;
 
@@ -226,10 +227,9 @@ template <typename T> void C_OscNodeDataPoolContent::m_SetValue(const T & orc_Va
    {
       if (this->me_Type == oe_Type)
       {
-         this->mc_CriticalSection.Acquire();
+         QMutexLocker c_Lock(&mc_CriticalSection);
          //lint -e{9110} //we do not really use the bit representation; mc_Data is just our "BLOB" storage
          (void)std::memcpy(&this->mc_Data[0], &orc_Value, sizeof(orc_Value));
-         this->mc_CriticalSection.Release();
       }
       else
       {
@@ -259,10 +259,9 @@ template <typename T> void C_OscNodeDataPoolContent::m_GetValue(const E_Type oe_
    {
       if (this->me_Type == oe_Type)
       {
-         this->mc_CriticalSection.Acquire();
+         QMutexLocker c_Lock(&mc_CriticalSection);
          //lint -e{9110} //we do not really use the bit representation; mc_Data is just our "BLOB" storage
          (void)std::memcpy(&orc_Value, &this->mc_Data[0], sizeof(orc_Value));
-         this->mc_CriticalSection.Release();
       }
       else
       {
@@ -767,11 +766,10 @@ template <typename T> void C_OscNodeDataPoolContent::m_SetValueArray(const T & o
    {
       if (this->me_Type == oe_Type)
       {
-         this->mc_CriticalSection.Acquire();
+         QMutexLocker c_Lock(&mc_CriticalSection);
          mc_Data.resize(orc_Value.size() * sizeof(orc_Value[0]));
          //lint -e{9110} //we do not really use the bit representation; mc_Data is just our "BLOB" storage
          (void)std::memcpy(&this->mc_Data[0], &orc_Value[0], this->mc_Data.size());
-         this->mc_CriticalSection.Release();
       }
       else
       {
@@ -808,11 +806,10 @@ template <typename T> void C_OscNodeDataPoolContent::m_SetValueArrayElement(cons
       {
          if (this->GetArraySize() > ou32_Index)
          {
-            this->mc_CriticalSection.Acquire();
+            QMutexLocker c_Lock(&mc_CriticalSection);
             //lint -e{9110} //we do not really use the bit representation; mc_Data is just our "BLOB" storage
             //lint -e{9114} //range of parameter is safe for sizeof result to fit in
             (void)std::memcpy(&this->mc_Data[ou32_Index * (sizeof(orc_Value))], &orc_Value, sizeof(orc_Value));
-            this->mc_CriticalSection.Release();
          }
          else
          {
@@ -846,11 +843,10 @@ template <typename T> void C_OscNodeDataPoolContent::m_GetValueArray(const E_Typ
    {
       if (this->me_Type == oe_Type)
       {
-         this->mc_CriticalSection.Acquire();
+         QMutexLocker c_Lock(&mc_CriticalSection);
          orc_Result.resize(this->mc_Data.size() / sizeof(orc_Result[0]));
          //lint -e{9110} //we do not really use the bit representation; mc_Data is just our "BLOB" storage
          (void)std::memcpy(&orc_Result[0], &this->mc_Data[0], this->mc_Data.size());
-         this->mc_CriticalSection.Release();
       }
       else
       {
@@ -887,11 +883,10 @@ template <typename T> void C_OscNodeDataPoolContent::m_GetValueArrayElement(cons
       {
          if (this->GetArraySize() > ou32_Index)
          {
-            this->mc_CriticalSection.Acquire();
+            QMutexLocker c_Lock(&mc_CriticalSection);
             //lint -e{9110} //we do not really use the bit representation; mc_Data is just our "BLOB" storage
             //lint -e{9114} //range of parameter is safe for sizeof result to fit in
             (void)std::memcpy(&orc_Result, &this->mc_Data[ou32_Index * sizeof(orc_Result)], sizeof(orc_Result));
-            this->mc_CriticalSection.Release();
          }
          else
          {
@@ -3095,7 +3090,7 @@ void C_OscNodeDataPoolContent::GetAnyValueAsFloat64(float64_t & orf64_Output, co
 */
 //----------------------------------------------------------------------------------------------------------------------
 const std::vector<uint8_t> * stw::opensyde_core::C_OscNodeDataPoolContent::GetDataAccessConst(
-   stw::tgl::C_TglCriticalSection ** const oppc_CriticalSection) const
+   QRecursiveMutex ** const oppc_CriticalSection) const
 {
    if (oppc_CriticalSection != NULL)
    {
@@ -3117,7 +3112,7 @@ const std::vector<uint8_t> * stw::opensyde_core::C_OscNodeDataPoolContent::GetDa
 */
 //----------------------------------------------------------------------------------------------------------------------
 std::vector<uint8_t> * stw::opensyde_core::C_OscNodeDataPoolContent::GetDataAccess(
-   stw::tgl::C_TglCriticalSection ** const oppc_CriticalSection)
+   QRecursiveMutex ** const oppc_CriticalSection)
 {
    if (oppc_CriticalSection != NULL)
    {

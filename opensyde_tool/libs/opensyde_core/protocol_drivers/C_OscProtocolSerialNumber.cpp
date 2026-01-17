@@ -16,7 +16,7 @@
 
 #include <cstring>
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OscProtocolSerialNumber.hpp"
@@ -286,14 +286,14 @@ std::vector<uint8_t> C_OscProtocolSerialNumber::GetSerialNumberAsRawData(void) c
       c_SerialNumber.resize(this->c_SerialNumberExt.Length());
       // Use the FSN string serial number
       memcpy(&c_SerialNumber[0], &this->c_SerialNumberExt.c_str()[0], this->c_SerialNumberExt.Length());
-      tgl_assert(this->c_SerialNumberExt.Length() == this->u8_SerialNumberByteLength);
+      Q_ASSERT(this->c_SerialNumberExt.Length() == this->u8_SerialNumberByteLength);
    }
    else
    {
       c_SerialNumber.resize(6);
       // Use the POS serial number
       memcpy(&c_SerialNumber[0], &this->au8_SerialNumber[0], 6);
-      tgl_assert(this->u8_SerialNumberByteLength == 6U);
+      Q_ASSERT(this->u8_SerialNumberByteLength == 6U);
    }
 
    return c_SerialNumber;
@@ -374,13 +374,13 @@ bool C_OscProtocolSerialNumber::h_SerialNumberFromStringToArray(const C_SclStrin
    //format up to and including 2019. E.g: 05.123456.1001
    if (orc_SerialNumber.Length() == 14)
    {
-      C_SclDynamicArray<C_SclString> c_Tokens;
+      QList<C_SclString> c_Tokens;
       //Get all numbers
       orc_SerialNumber.Tokenize(".", c_Tokens);
-      if (c_Tokens.GetLength() == 3)
+      if (c_Tokens.size() == 3)
       {
          //Combine all numbers
-         for (uint32_t u32_ItCounter = 0U; u32_ItCounter < static_cast<uint32_t>(c_Tokens.GetLength()); ++u32_ItCounter)
+         for (uint32_t u32_ItCounter = 0U; u32_ItCounter < static_cast<uint32_t>(c_Tokens.size()); ++u32_ItCounter)
          {
             c_CompleteString += c_Tokens[u32_ItCounter];
          }

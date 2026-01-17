@@ -10,14 +10,14 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscHalcMagicianUtil.hpp"
 #include "C_OscHalcMagicianGenerator.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -186,7 +186,7 @@ const
          {
             const C_OscHalcConfigDomain * const pc_Config =
                this->mpc_Node->c_HalcConfig.GetDomainConfigDataConst(u32_It);
-            tgl_assert(pc_Config != NULL);
+            Q_ASSERT(pc_Config != NULL);
             if (pc_Config != NULL)
             {
                if (q_NonSafeDpNecessary)
@@ -276,7 +276,7 @@ int32_t C_OscHalcMagicianGenerator::m_FillHalcDatapools(std::vector<C_OscNodeDat
                {
                   const C_OscHalcConfigDomain * const pc_Config =
                      this->mpc_Node->c_HalcConfig.GetDomainConfigDataConst(u32_ItDomain);
-                  tgl_assert(pc_Config != NULL);
+                  Q_ASSERT(pc_Config != NULL);
                   if (pc_Config != NULL)
                   {
                      C_OscHalcMagicianGenerator::mh_FillHalcDatapoolsDomain(rc_ListNonSafe, *pc_Config, c_Handler,
@@ -315,7 +315,7 @@ int32_t C_OscHalcMagicianGenerator::m_FillHalcDatapools(std::vector<C_OscNodeDat
                {
                   const C_OscHalcConfigDomain * const pc_Config =
                      this->mpc_Node->c_HalcConfig.GetDomainConfigDataConst(u32_ItDomain);
-                  tgl_assert(pc_Config != NULL);
+                  Q_ASSERT(pc_Config != NULL);
                   if (pc_Config != NULL)
                   {
                      C_OscHalcMagicianGenerator::mh_FillHalcDatapoolsDomain(rc_List, *pc_Config, c_Handler,
@@ -397,8 +397,8 @@ int32_t C_OscHalcMagicianGenerator::mh_FillHalcDatapoolsDomain(C_OscNodeDataPool
                }
             }
             //Check assumptions, assert if not filled but required/generated
-            tgl_assert(orc_Handler.CheckChanNumVariableNecessary(orc_Domain) == false);
-            tgl_assert(orc_Handler.CheckUseCaseVariableNecessary(orc_Domain) == false);
+            Q_ASSERT(orc_Handler.CheckChanNumVariableNecessary(orc_Domain) == false);
+            Q_ASSERT(orc_Handler.CheckUseCaseVariableNecessary(orc_Domain) == false);
          }
       }
 
@@ -432,13 +432,13 @@ int32_t C_OscHalcMagicianGenerator::mh_FillHalcDatapoolsDomain(C_OscNodeDataPool
                {
                   //Get use-case value from index:
                   //use case index out of range of known use cases would mean we'd have a configuration error
-                  tgl_assert(rc_Channel.u32_UseCaseIndex < orc_Domain.c_ChannelUseCases.size());
+                  Q_ASSERT(rc_Channel.u32_UseCaseIndex < orc_Domain.c_ChannelUseCases.size());
 
                   const C_OscNodeDataPoolContent & rc_UseCaseContent =
                      orc_Domain.c_ChannelUseCases[rc_Channel.u32_UseCaseIndex].c_Value;
 
                   //definition: only uint8 supported for use case
-                  tgl_assert(rc_UseCaseContent.GetType() == C_OscNodeDataPoolContent::eUINT8);
+                  Q_ASSERT(rc_UseCaseContent.GetType() == C_OscNodeDataPoolContent::eUINT8);
 
                   //Fill Use-case
                   s32_Retval = C_OscHalcMagicianGenerator::mh_FillHalcDatapoolsUseCase(
@@ -499,7 +499,7 @@ int32_t C_OscHalcMagicianGenerator::mh_FillHalcDatapoolsChanNum(C_OscNodeDataPoo
       if (pc_ChanNumElement->c_DataSetValues.size() > 0UL)
       {
          C_OscNodeDataPoolContent & rc_Content = pc_ChanNumElement->c_DataSetValues[0UL];
-         tgl_assert(rc_Content.GetType() == C_OscNodeDataPoolContent::eUINT16);
+         Q_ASSERT(rc_Content.GetType() == C_OscNodeDataPoolContent::eUINT16);
          if (pc_ChanNumElement->GetArray())
          {
             rc_Content.SetValueArrU16Element(static_cast<uint16_t>(ou32_ChanNum),
@@ -553,7 +553,7 @@ int32_t C_OscHalcMagicianGenerator::mh_FillHalcDatapoolsSafetyFlag(C_OscNodeData
       {
          const uint8_t u8_SafetyVal = oq_IsSafetyRelevant ? 1U : 0U;
          C_OscNodeDataPoolContent & rc_Content = pc_ChanNumElement->c_DataSetValues[0UL];
-         tgl_assert(rc_Content.GetType() == C_OscNodeDataPoolContent::eUINT8);
+         Q_ASSERT(rc_Content.GetType() == C_OscNodeDataPoolContent::eUINT8);
          if (pc_ChanNumElement->GetArray())
          {
             rc_Content.SetValueArrU8Element(u8_SafetyVal,
@@ -604,7 +604,7 @@ int32_t C_OscHalcMagicianGenerator::mh_FillHalcDatapoolsUseCase(C_OscNodeDataPoo
       if (pc_UseCaseElement->c_DataSetValues.size() > 0UL)
       {
          C_OscNodeDataPoolContent & rc_Content = pc_UseCaseElement->c_DataSetValues[0UL];
-         tgl_assert(rc_Content.GetType() == C_OscNodeDataPoolContent::eUINT8);
+         Q_ASSERT(rc_Content.GetType() == C_OscNodeDataPoolContent::eUINT8);
 
          if (pc_UseCaseElement->GetArray())
          {
@@ -653,7 +653,7 @@ int32_t C_OscHalcMagicianGenerator::mh_FillHalcDatapoolsChannel(C_OscNodeDataPoo
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(orc_DefParam.size() == orc_Channel.c_Parameters.size());
+   Q_ASSERT(orc_DefParam.size() == orc_Channel.c_Parameters.size());
    if (orc_DefParam.size() == orc_Channel.c_Parameters.size())
    {
       for (uint32_t u32_ItParam = 0UL;
@@ -672,7 +672,7 @@ int32_t C_OscHalcMagicianGenerator::mh_FillHalcDatapoolsChannel(C_OscNodeDataPoo
             }
          }
          //Fill
-         tgl_assert(rc_ParamDef.c_StructElements.size() == rc_Param.c_ParameterElements.size());
+         Q_ASSERT(rc_ParamDef.c_StructElements.size() == rc_Param.c_ParameterElements.size());
          if (rc_Param.c_ParameterElements.size() > 0UL)
          {
             for (uint32_t u32_ItElem = 0UL;
@@ -1033,7 +1033,7 @@ int32_t C_OscHalcMagicianGenerator::mh_AddVariableToList(const C_OscHalcDefEleme
          c_Element.q_InterpretAsString = true;
          for (uint32_t u32_ItEl = 0UL; u32_ItEl < orc_RelevantChannels.size(); ++u32_ItEl)
          {
-            tgl_assert(C_OscHalcMagicianUtil::h_GetVariableName(orc_DefinitionArray, ou32_ParameterIndexStruct,
+            Q_ASSERT(C_OscHalcMagicianUtil::h_GetVariableName(orc_DefinitionArray, ou32_ParameterIndexStruct,
                                                                 ou32_ParameterIndexElement, orc_DomainSingularName,
                                                                 c_Element.c_Name,
                                                                 orc_RelevantChannels[u32_ItEl]) == C_NO_ERR);
@@ -1042,7 +1042,7 @@ int32_t C_OscHalcMagicianGenerator::mh_AddVariableToList(const C_OscHalcDefEleme
       }
       else
       {
-         tgl_assert(C_OscHalcMagicianUtil::h_GetVariableName(orc_DefinitionArray, ou32_ParameterIndexStruct,
+         Q_ASSERT(C_OscHalcMagicianUtil::h_GetVariableName(orc_DefinitionArray, ou32_ParameterIndexStruct,
                                                              ou32_ParameterIndexElement, orc_DomainSingularName,
                                                              c_Element.c_Name, 0UL) == C_NO_ERR);
          orc_List.c_Elements.push_back(c_Element);
@@ -1121,8 +1121,8 @@ int32_t C_OscHalcMagicianGenerator::mh_ConvertToDatapoolAndAssign(const C_OscHal
          {
             if (ou32_Index < orc_DpContent.GetArraySize())
             {
-               tgl_assert(c_ApplyValue.GetArray() == false);
-               tgl_assert(c_ApplyValue.GetType() == orc_DpContent.GetType());
+               Q_ASSERT(c_ApplyValue.GetArray() == false);
+               Q_ASSERT(c_ApplyValue.GetType() == orc_DpContent.GetType());
                switch (orc_DpContent.GetType())
                {
                case C_OscNodeDataPoolContent::eUINT8:
@@ -1217,7 +1217,7 @@ int32_t C_OscHalcMagicianGenerator::mh_ConvertToDatapoolAndResize(const C_OscHal
                orc_DpContent.SetArraySize(ou32_NumChannels);
                for (uint32_t u32_It = 0UL; u32_It < ou32_NumChannels; ++u32_It)
                {
-                  tgl_assert(orc_HalcContent.GetArray() == false);
+                  Q_ASSERT(orc_HalcContent.GetArray() == false);
                   switch (orc_HalcContent.GetType())
                   {
                   case C_OscNodeDataPoolContent::eUINT8:
@@ -1265,7 +1265,7 @@ int32_t C_OscHalcMagicianGenerator::mh_ConvertToDatapoolAndResize(const C_OscHal
                orc_DpContent.SetArraySize(ou32_NumChannels);
                for (uint32_t u32_It = 0UL; u32_It < ou32_NumChannels; ++u32_It)
                {
-                  tgl_assert(c_ApplyValue.GetArray() == false);
+                  Q_ASSERT(c_ApplyValue.GetArray() == false);
                   switch (c_ApplyValue.GetType())
                   {
                   case C_OscNodeDataPoolContent::eUINT8:
@@ -1385,7 +1385,7 @@ void C_OscHalcMagicianGenerator::mh_CleanUpHalcDatapools(std::vector<C_OscNodeDa
 //----------------------------------------------------------------------------------------------------------------------
 void C_OscHalcMagicianGenerator::m_FillEmptySpaceHalcDatapools(std::vector<C_OscNodeDataPool> & orc_Datapools) const
 {
-   tgl_assert(this->mpc_Node != NULL);
+   Q_ASSERT(this->mpc_Node != NULL);
 
    if ((this->mpc_Node != NULL) && (this->mpc_Node->c_HalcConfig.q_NvmBasedConfig))
    {

@@ -15,7 +15,7 @@
 #include "stwtypes.hpp"
 #include "stw_can.hpp"
 
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 
 namespace stw
 {

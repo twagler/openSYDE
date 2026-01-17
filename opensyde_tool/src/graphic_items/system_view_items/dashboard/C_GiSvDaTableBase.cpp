@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Class for system view dashboard table item (implementation)
@@ -17,7 +17,7 @@
 
 #include "gitypes.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_PuiSdUtil.hpp"
 #include "C_SyvDaPeBase.hpp"
@@ -30,7 +30,7 @@
 #include "C_SyvDaPeUpdateModeConfiguration.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -121,7 +121,7 @@ int32_t C_GiSvDaTableBase::type(void) const
 void C_GiSvDaTableBase::SetDisplayStyle(const C_PuiSvDbWidgetBase::E_Style oe_Style, const bool oq_DarkMode)
 {
    C_GiSvDaRectBaseGroup::SetDisplayStyle(oe_Style, oq_DarkMode);
-   tgl_assert(this->mpc_TableWidget != NULL);
+   Q_ASSERT(this->mpc_TableWidget != NULL);
    if (this->mpc_TableWidget != NULL)
    {
       this->mpc_TableWidget->SetDisplayStyle(oe_Style, oq_DarkMode);
@@ -144,20 +144,20 @@ void C_GiSvDaTableBase::ReInitializeSize(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvDaTableBase::LoadData(void)
 {
-   tgl_assert(this->ms32_Index >= 0);
+   Q_ASSERT(this->ms32_Index >= 0);
    if (this->ms32_Index >= 0)
    {
       const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
-      tgl_assert(pc_View != NULL);
+      Q_ASSERT(pc_View != NULL);
       if (pc_View != NULL)
       {
          const C_PuiSvDashboard * const pc_Dashboard = pc_View->GetDashboard(this->mu32_DashboardIndex);
-         tgl_assert(pc_Dashboard != NULL);
+         Q_ASSERT(pc_Dashboard != NULL);
          if (pc_Dashboard != NULL)
          {
             const C_PuiSvDbTable * const pc_Box = pc_Dashboard->GetTable(static_cast<uint32_t>(this->ms32_Index));
-            tgl_assert(pc_Box != NULL);
+            Q_ASSERT(pc_Box != NULL);
             if (pc_Box != NULL)
             {
                this->LoadSvBasicData(*pc_Box);
@@ -178,20 +178,20 @@ void C_GiSvDaTableBase::LoadData(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvDaTableBase::UpdateData(void)
 {
-   tgl_assert(this->ms32_Index >= 0);
+   Q_ASSERT(this->ms32_Index >= 0);
    if (this->ms32_Index >= 0)
    {
       const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
-      tgl_assert(pc_View != NULL);
+      Q_ASSERT(pc_View != NULL);
       if (pc_View != NULL)
       {
          const C_PuiSvDashboard * const pc_Dashboard = pc_View->GetDashboard(this->mu32_DashboardIndex);
-         tgl_assert(pc_Dashboard != NULL);
+         Q_ASSERT(pc_Dashboard != NULL);
          if (pc_Dashboard != NULL)
          {
             const C_PuiSvDbTable * const pc_Box = pc_Dashboard->GetTable(static_cast<uint32_t>(this->ms32_Index));
-            tgl_assert(pc_Box != NULL);
+            Q_ASSERT(pc_Box != NULL);
             if (pc_Box != NULL)
             {
                C_PuiSvDbTable c_Box = *pc_Box;
@@ -201,7 +201,7 @@ void C_GiSvDaTableBase::UpdateData(void)
                {
                   c_Box.c_ColumnWidth = this->mpc_TableWidget->GetCurrentColumnWidths();
                }
-               tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+               Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                               this->mu32_DashboardIndex,
                                                                               static_cast<uint32_t>(this->ms32_Index),
                                                                               &c_Box, this->me_Type) == C_NO_ERR);
@@ -217,7 +217,7 @@ void C_GiSvDaTableBase::UpdateData(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvDaTableBase::UpdateShowValue(void)
 {
-   tgl_assert(this->mpc_TableWidget != NULL);
+   Q_ASSERT(this->mpc_TableWidget != NULL);
    if (this->mpc_TableWidget != NULL)
    {
       this->mpc_TableWidget->UpdateValue();
@@ -235,7 +235,7 @@ void C_GiSvDaTableBase::UpdateShowValue(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvDaTableBase::UpdateTransparency(const uint32_t ou32_DataElementIndex, const int32_t os32_Value)
 {
-   tgl_assert(this->mpc_TableWidget != NULL);
+   Q_ASSERT(this->mpc_TableWidget != NULL);
    if (this->mpc_TableWidget != NULL)
    {
       this->mpc_TableWidget->UpdateTransparency(ou32_DataElementIndex, os32_Value);
@@ -252,7 +252,7 @@ void C_GiSvDaTableBase::ConnectionActiveChanged(const bool oq_Active)
 {
    if (oq_Active == true)
    {
-      tgl_assert(this->mpc_TableWidget != NULL);
+      Q_ASSERT(this->mpc_TableWidget != NULL);
       if (this->mpc_TableWidget != NULL)
       {
          this->mpc_TableWidget->UpdateStaticValues();
@@ -268,7 +268,7 @@ void C_GiSvDaTableBase::ConnectionActiveChanged(const bool oq_Active)
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvDaTableBase::EditElementProperties(void)
 {
-   tgl_assert(this->mpc_TableWidget != NULL);
+   Q_ASSERT(this->mpc_TableWidget != NULL);
    if ((this->mpc_TableWidget != NULL) &&
        (this->mq_EditContentModeEnabled == true))
    {
@@ -281,7 +281,7 @@ void C_GiSvDaTableBase::EditElementProperties(void)
          if (pc_Dashboard != NULL)
          {
             const C_PuiSvDbTable * const pc_Box = pc_Dashboard->GetTable(static_cast<uint32_t>(this->ms32_Index));
-            tgl_assert(pc_Box != NULL);
+            Q_ASSERT(pc_Box != NULL);
             if ((pc_Box != NULL) && (pc_Box->c_DataPoolElementsConfig.size() > c_Indices[0]))
             {
                C_PuiSvDbNodeDataPoolListElementId c_ElementId;
@@ -310,7 +310,7 @@ void C_GiSvDaTableBase::EditElementProperties(void)
                   C_PuiSvDbNodeDataElementConfig c_Tmp;
 
                   c_Tmp.c_ElementId = c_ElementId;
-                  tgl_assert(c_ElementId == pc_Dialog->GetDataElementId());
+                  Q_ASSERT(c_ElementId == pc_Dialog->GetDataElementId());
                   c_Tmp.c_ElementScaling = pc_Dialog->GetScalingInformation();
                   c_Tmp.c_DisplayFormatter = pc_Dialog->GetFormatterInformation();
                   c_Tmp.c_DisplayName = pc_Dialog->GetDisplayName();
@@ -320,7 +320,7 @@ void C_GiSvDaTableBase::EditElementProperties(void)
                   this->RemoveDataPoolElement(c_ElementId);
                   this->RegisterDataPoolElement(c_Tmp.c_ElementId, c_Tmp.c_ElementScaling, c_Tmp.c_DisplayFormatter);
 
-                  tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+                  Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                                  this->mu32_DashboardIndex,
                                                                                  static_cast<uint32_t>(this->ms32_Index),
                                                                                  &c_Box, this->me_Type) == C_NO_ERR);
@@ -348,7 +348,7 @@ void C_GiSvDaTableBase::EditModeActiveChanged(const bool oq_Active)
 {
    C_GiSvDaRectBaseGroup::EditModeActiveChanged(oq_Active);
 
-   tgl_assert(this->mpc_TableWidget != NULL);
+   Q_ASSERT(this->mpc_TableWidget != NULL);
    if (this->mpc_TableWidget != NULL)
    {
       if (oq_Active == false)
@@ -380,7 +380,7 @@ bool C_GiSvDaTableBase::EnableEditContent(void)
 {
    const bool q_Return = C_GiSvDaRectBaseGroup::EnableEditContent();
 
-   tgl_assert(this->mpc_TableWidget != NULL);
+   Q_ASSERT(this->mpc_TableWidget != NULL);
    if (this->mpc_TableWidget != NULL)
    {
       if (q_Return == true)
@@ -401,7 +401,7 @@ void C_GiSvDaTableBase::DisableEditContent(void)
 {
    C_GiSvDaRectBaseGroup::DisableEditContent();
 
-   tgl_assert(this->mpc_TableWidget != NULL);
+   Q_ASSERT(this->mpc_TableWidget != NULL);
    if (this->mpc_TableWidget != NULL)
    {
       this->mpc_TableWidget->SetSelectionAvailable(false, false);
@@ -439,7 +439,7 @@ void C_GiSvDaTableBase::ConfigureContextMenu(C_SyvDaContextMenuManager * const o
       // In content edit mode only widget specific functions are relevant
       opc_ContextMenuManager->SetSpecificActionsAvailable(false, true);
 
-      tgl_assert(this->mpc_TableWidget != NULL);
+      Q_ASSERT(this->mpc_TableWidget != NULL);
       if ((oq_Active == true) && (this->mpc_TableWidget != NULL))
       {
          const std::vector<uint32_t> c_SelectedRows = this->mpc_TableWidget->GetUniqueSelectedRows();
@@ -873,7 +873,7 @@ void C_GiSvDaTableBase::m_AddNewDataElement(void)
 {
    //Trigger refresh of data because of fix for 73815
    this->UpdateData();
-   tgl_assert(this->mpc_TableWidget != NULL);
+   Q_ASSERT(this->mpc_TableWidget != NULL);
    if (this->mpc_TableWidget != NULL)
    {
       QGraphicsView * const pc_View = this->scene()->views().at(0);
@@ -903,7 +903,7 @@ void C_GiSvDaTableBase::m_AddNewDataElement(void)
                const C_PuiSvDbNodeDataPoolListElementId & rc_DataElement = c_DataElements[u32_Counter];
                if (rc_DataElement.GetIsValid() == true)
                {
-                  tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(rc_DataElement) == C_NO_ERR);
+                  Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(rc_DataElement) == C_NO_ERR);
                   this->m_RegisterDataElementRail(rc_DataElement);
                   this->mpc_TableWidget->AddItem(rc_DataElement);
                }
@@ -965,7 +965,7 @@ void C_GiSvDaTableBase::m_RemoveDataElement(void)
 {
    if (this->mq_EditContentModeEnabled)
    {
-      tgl_assert(this->mpc_TableWidget != NULL);
+      Q_ASSERT(this->mpc_TableWidget != NULL);
       if (this->mpc_TableWidget != NULL)
       {
          const C_PuiSvData * pc_View;
@@ -1040,7 +1040,7 @@ const
             c_Config.e_TransmissionMode = C_PuiSvReadDataConfiguration::eTM_ON_TRIGGER;
          }
          c_Config.InitDefaultThreshold(pc_Element->c_MinValue, pc_Element->c_MaxValue);
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->AddViewReadRailItem(this->mu32_ViewIndex, orc_DataPoolElementId,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddViewReadRailItem(this->mu32_ViewIndex, orc_DataPoolElementId,
                                                                          c_Config) != C_RANGE);
       }
    }

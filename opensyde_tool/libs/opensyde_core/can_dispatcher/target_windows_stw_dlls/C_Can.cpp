@@ -18,16 +18,17 @@
 #include "stwerrors.hpp"
 #include "C_Can.hpp"
 #include "C_SclString.hpp"
-#include "C_SclDynamicArray.hpp"
-#include "TglTime.hpp"
-#include "TglUtils.hpp"
+#include <QList>
+#include <QElapsedTimer>
+#include <chrono>
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
 using namespace stw::errors;
 using namespace stw::can;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -419,7 +420,9 @@ int32_t C_Can::m_ReadMsgFromDLL(T_STWCAN_Msg_RX & orc_Message) const
       if (orc_Message.u64_TimeStamp == 0U)
       {
          //give it the best timestamp we have:
-         orc_Message.u64_TimeStamp = TglGetTickCountUs();
+         auto now = std::chrono::steady_clock::now();
+         auto duration = now.time_since_epoch();
+         orc_Message.u64_TimeStamp = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
       }
    }
 
@@ -488,7 +491,7 @@ int32_t C_Can::m_CAN_Read_Msg(T_STWCAN_Msg_RX & orc_Message)
 int32_t C_Can::CAN_Read_Msg_Timeout(const uint32_t ou32_MaxWaitTimeMs, T_STWCAN_Msg_RX & orc_Message) const
 {
    int32_t s32_Return;
-   uint32_t u32_StartTime;
+   QElapsedTimer c_Timer;
 
    if ((mq_DLLOpened == false) || (mpc_Can == NULL))
    {
@@ -500,12 +503,12 @@ int32_t C_Can::CAN_Read_Msg_Timeout(const uint32_t ou32_MaxWaitTimeMs, T_STWCAN_
    }
 
    // We have to poll actively ...
-   u32_StartTime = TglGetTickCount();
+   c_Timer.start();
    do
    {
       s32_Return = this->m_ReadMsgFromDLL(orc_Message);
    }
-   while ((s32_Return != C_NO_ERR) && ((TglGetTickCount() - u32_StartTime) < ou32_MaxWaitTimeMs));
+   while ((s32_Return != C_NO_ERR) && (c_Timer.hasExpired(ou32_MaxWaitTimeMs) == false));
 
    return s32_Return;
 }
@@ -537,14 +540,16 @@ int32_t C_Can::CAN_Get_System_Time(uint64_t & oru64_SystemTimeUs) const
    {
       return mpc_Can->CANext_Get_System_Time(oru64_SystemTimeUs);
    }
-   oru64_SystemTimeUs = TglGetTickCountUs(); //best we can do: we provide the timestamps ourself anyway
+   auto now = std::chrono::steady_clock::now();
+   auto duration = now.time_since_epoch();
+   oru64_SystemTimeUs = std::chrono::duration_cast<std::chrono::microseconds>(duration).count(); //best we can do: we provide the timestamps ourself anyway
                                              // as long as there are no "ext" functions
    return C_NO_ERR;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 
-int32_t C_Can::CAN_Get_Supported_Bitrates(C_SclString & orc_Unit, C_SclDynamicArray<uint32_t> & orc_Bitrates,
+int32_t C_Can::CAN_Get_Supported_Bitrates(C_SclString & orc_Unit, QList<uint32_t> & orc_Bitrates,
                                           uint32_t & oru32_MultiplicationFactor) const
 {
    int32_t s32_Return;
@@ -584,9 +589,9 @@ int32_t C_Can::CAN_Get_Supported_Bitrates(C_SclString & orc_Unit, C_SclDynamicAr
    }
 
    s32_NumBitrates = s32_Return;
-   tgl_assert(s32_NumBitrates < 0xFFFF);
+   Q_ASSERT(s32_NumBitrates < 0xFFFF);
 
-   orc_Bitrates.SetLength(s32_NumBitrates);
+   orc_Bitrates.resize(s32_NumBitrates);
 
    for (s32_Loop = 0; s32_Loop < s32_NumBitrates; s32_Loop++)
    {

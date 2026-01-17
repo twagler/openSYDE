@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Short description
@@ -17,7 +17,7 @@
 #include "precomp_headers.hpp"
 #include "stwerrors.hpp"
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 
 #include "C_SdBueJ1939AddMessagesFromCatalogTreeModel.hpp"
 #include "C_OscCanUtil.hpp"
@@ -295,7 +295,7 @@ void C_SdBueJ1939AddMessagesFromCatalogTreeModel::m_DecodeIndex(const QModelInde
    {
       //lint -e{9079} Result of Qt interface restrictions, set by index function
       const C_TblTreItem * const pc_TreeItem = static_cast<const C_TblTreItem *>(orc_ModelIndex.internalPointer());
-      tgl_assert(pc_TreeItem != NULL);
+      Q_ASSERT(pc_TreeItem != NULL);
       if (pc_TreeItem != NULL)
       {
          const QModelIndex c_ParentModelIndex = orc_ModelIndex.parent();
@@ -305,7 +305,7 @@ void C_SdBueJ1939AddMessagesFromCatalogTreeModel::m_DecodeIndex(const QModelInde
             //lint -e{9079} Result of Qt interface restrictions, set by index function
             const C_TblTreItem * const pc_ParentTreeItem =
                static_cast<const C_TblTreItem *>(c_ParentModelIndex.internalPointer());
-            tgl_assert(pc_ParentTreeItem != NULL);
+            Q_ASSERT(pc_ParentTreeItem != NULL);
 
             // the tree item field ("u32_Index") contains the vector index (vector that stores all messages and
             // signals)

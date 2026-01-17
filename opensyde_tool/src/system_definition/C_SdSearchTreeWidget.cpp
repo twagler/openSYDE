@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Tree widget for searching in the system definition (implementation)
@@ -19,7 +19,7 @@
 #include "C_PuiSdHandler.hpp"
 #include "C_OgeTreeWidgetToolBarSearchItemDelegate.hpp"
 #include "C_PuiSdUtil.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
@@ -425,7 +425,7 @@ void C_SdSearchTreeWidget::m_SearchDataPoolContent(const C_OscNodeDataPool & orc
                u8_Type = mhu8_DATAELEMENT_TYPE_HALC;
                break;
             default:
-               tgl_assert(false);
+               Q_ASSERT(false);
                break;
             }
 
@@ -534,7 +534,7 @@ void C_SdSearchTreeWidget::m_SearchHalcConfigurationContent(const stw::opensyde_
             if (pc_HalcConf != NULL)
             {
                uint32_t u32_ChannelCounter;
-               tgl_assert(pc_HalcDef->c_Channels.size() == pc_HalcConf->c_ChannelConfigs.size());
+               Q_ASSERT(pc_HalcDef->c_Channels.size() == pc_HalcConf->c_ChannelConfigs.size());
 
                for (u32_ChannelCounter = 0U; u32_ChannelCounter < pc_HalcDef->c_Channels.size(); ++u32_ChannelCounter)
                {

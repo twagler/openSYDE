@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing a specific file associated to concrete datablock as part of a node
@@ -16,7 +16,7 @@
 #include "stwerrors.hpp"
 
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSdHandler.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_OgePopUpDialog.hpp"
@@ -340,7 +340,7 @@ void C_SyvUpPacListNodeItemDatablockWidget::m_LoadFileInformation(bool & orq_Fil
          }
 
          // Path changed, update the view
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPath(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPath(this->mu32_ViewIndex,
                                                                                   this->mu32_NodeIndex,
                                                                                   this->mu32_Number,
                                                                                   this->mc_FilePath,

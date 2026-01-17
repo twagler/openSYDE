@@ -17,7 +17,7 @@
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscDiagProtocolKfx.hpp"
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
@@ -72,7 +72,7 @@ void C_OscDiagProtocolKfx::mh_CyclicResponseReceived(void * const opv_Instance, 
    //lint -e{9079}  We know that we registered; this cannot fail
    C_OscDiagProtocolKfx * const pc_This = reinterpret_cast<C_OscDiagProtocolKfx *>(opv_Instance);
 
-   tgl_assert(pc_This != NULL);
+   Q_ASSERT(pc_This != NULL);
    if (pc_This != NULL)
    {
       pc_This->m_CyclicResponseReceived(ou32_Index, os64_Value, ou32_TimeStamp, oq_IsTimeStamped, oq_Error);
@@ -104,7 +104,7 @@ void C_OscDiagProtocolKfx::m_CyclicResponseReceived(const uint32_t ou32_Index, c
    (void)oq_IsTimeStamped;
    (void)ou32_TimeStamp;
 
-   tgl_assert(ou32_Index <= 0xFFFF); //this should be true for any KEFEX transmission
+   Q_ASSERT(ou32_Index <= 0xFFFF); //this should be true for any KEFEX transmission
 
    mh_UnpackDataPoolIndex(static_cast<uint16_t>(ou32_Index), u16_List, u16_Variable);
 

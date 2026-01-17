@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       System view dashboard (implementation)
@@ -14,7 +14,7 @@
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_CieUtil.hpp"
 #include "C_SclChecksums.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -24,7 +24,7 @@
 #include "C_PuiSdNodeDataPoolListElementIdSyncUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -1401,7 +1401,7 @@ void C_PuiSvDashboard::OnSyncNodeDataPoolListDataSetAdded(const uint32_t ou32_No
              (rc_DataElementConfig.c_ElementId.u32_ListIndex == ou32_ListIndex))
          {
             //Should be synchronized
-            tgl_assert(u32_ItElement < rc_ParamWidget.c_DataSetSelectionIndices.size());
+            Q_ASSERT(u32_ItElement < rc_ParamWidget.c_DataSetSelectionIndices.size());
             if (u32_ItElement < rc_ParamWidget.c_DataSetSelectionIndices.size())
             {
                int32_t & rs32_DataSetIndex = rc_ParamWidget.c_DataSetSelectionIndices[u32_ItElement];
@@ -1448,7 +1448,7 @@ void C_PuiSvDashboard::OnSyncNodeDataPoolListDataSetMoved(const uint32_t ou32_No
              (rc_DataElementConfig.c_ElementId.u32_ListIndex == ou32_ListIndex))
          {
             //Should be synchronized
-            tgl_assert(u32_ItElement < rc_ParamWidget.c_DataSetSelectionIndices.size());
+            Q_ASSERT(u32_ItElement < rc_ParamWidget.c_DataSetSelectionIndices.size());
             if (u32_ItElement < rc_ParamWidget.c_DataSetSelectionIndices.size())
             {
                int32_t & rs32_DataSetIndex = rc_ParamWidget.c_DataSetSelectionIndices[u32_ItElement];
@@ -1516,7 +1516,7 @@ void C_PuiSvDashboard::OnSyncNodeDataPoolListDataSetAboutToBeDeleted(const uint3
              (rc_DataElementConfig.c_ElementId.u32_ListIndex == ou32_ListIndex))
          {
             //Should be synchronized
-            tgl_assert(u32_ItElement < rc_ParamWidget.c_DataSetSelectionIndices.size());
+            Q_ASSERT(u32_ItElement < rc_ParamWidget.c_DataSetSelectionIndices.size());
             if (u32_ItElement < rc_ParamWidget.c_DataSetSelectionIndices.size())
             {
                int32_t & rs32_DataSetIndex = rc_ParamWidget.c_DataSetSelectionIndices[u32_ItElement];
@@ -2588,7 +2588,7 @@ int32_t C_PuiSvDashboard::AddParamNewDataPoolElement(const uint32_t ou32_ParamWi
             C_OscNodeDataPoolContent c_Content;
             //Init content
             c_Content = pc_Element->c_MinValue;
-            tgl_assert(C_OscNodeDataPoolContentUtil::h_SetValueInMinMaxRange(
+            Q_ASSERT(C_OscNodeDataPoolContentUtil::h_SetValueInMinMaxRange(
                           pc_Element->c_MinValue, pc_Element->c_MaxValue, c_Content, e_Tmp,
                           C_OscNodeDataPoolContentUtil::eTO_ZERO) == C_NO_ERR);
             rc_ParamWidget.c_ListValues.insert(rc_ParamWidget.c_ListValues.begin() + u32_NewIndex, c_Content);
@@ -2929,7 +2929,7 @@ bool C_PuiSvDashboard::DiscardInvalidIndices(void)
             if (q_KickIt)
             {
                //Allow the widget to clean up all synchronized vectors
-               tgl_assert(pc_Widget->RemoveElement(u32_ItElement) == C_NO_ERR);
+               Q_ASSERT(pc_Widget->RemoveElement(u32_ItElement) == C_NO_ERR);
                //Signal change
                q_Retval = true;
                //New element at current index (no iteration necessary)
@@ -2992,9 +2992,9 @@ void C_PuiSvDashboard::HandleCompatibilityChart(std::vector<C_PuiSvDashboard> & 
    for (uint32_t u32_It = this->GetCharts().size(); u32_It > 0UL; --u32_It)
    {
       Q_UNUSED(u32_It)
-      tgl_assert(this->DeleteWidget(0UL, C_PuiSvDbDataElement::eCHART) == C_NO_ERR);
+      Q_ASSERT(this->DeleteWidget(0UL, C_PuiSvDbDataElement::eCHART) == C_NO_ERR);
    }
-   tgl_assert(this->GetCharts().size() == 0UL);
+   Q_ASSERT(this->GetCharts().size() == 0UL);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -3082,7 +3082,7 @@ C_PuiSvDbDataElement::E_Type C_PuiSvDashboard::h_GetWidgetType(const C_PuiSvDbWi
       {
          e_Retval = C_PuiSvDbDataElement::eTAB_CHART;
       }
-      tgl_assert(e_Retval != C_PuiSvDbDataElement::eUNKNOWN);
+      Q_ASSERT(e_Retval != C_PuiSvDbDataElement::eUNKNOWN);
    }
    return e_Retval;
 }
@@ -3260,8 +3260,8 @@ void C_PuiSvDashboard::m_SyncCleanUpParams(void)
    {
       C_PuiSvDbParam & rc_Param = this->mc_ParamWidgets[u32_ItParam];
       //For each list and value item
-      tgl_assert(rc_Param.c_ListValues.size() == rc_Param.c_DataPoolElementsConfig.size());
-      tgl_assert(rc_Param.c_DataSetSelectionIndices.size() == rc_Param.c_DataPoolElementsConfig.size());
+      Q_ASSERT(rc_Param.c_ListValues.size() == rc_Param.c_DataPoolElementsConfig.size());
+      Q_ASSERT(rc_Param.c_DataSetSelectionIndices.size() == rc_Param.c_DataPoolElementsConfig.size());
       for (uint32_t u32_ItElement = 0; u32_ItElement < rc_Param.c_DataPoolElementsConfig.size();)
       {
          const C_PuiSvDbNodeDataElementConfig & rc_Config = rc_Param.c_DataPoolElementsConfig[u32_ItElement];
@@ -3269,7 +3269,7 @@ void C_PuiSvDashboard::m_SyncCleanUpParams(void)
          if (rc_Config.c_ElementId.GetIsValid() == false)
          {
             //Erase current element
-            tgl_assert(rc_Param.RemoveElement(u32_ItElement) == C_NO_ERR);
+            Q_ASSERT(rc_Param.RemoveElement(u32_ItElement) == C_NO_ERR);
             //New element at current position (no iteration step necessary
          }
          else
@@ -3309,12 +3309,12 @@ void C_PuiSvDashboard::mh_FixDashboardWriteContentType(C_PuiSvDbWriteWidgetBase 
    {
       const C_PuiSvDbNodeDataElementConfig & rc_CurElement = orc_Element.c_DataPoolElementsConfig[0UL];
       //Assuming only one element selectable
-      tgl_assert(orc_Element.c_DataPoolElementsConfig.size() == 1UL);
+      Q_ASSERT(orc_Element.c_DataPoolElementsConfig.size() == 1UL);
       if (rc_CurElement.c_ElementId.GetIsValid())
       {
          const C_OscNodeDataPoolListElement * const pc_DpElement =
             C_PuiSdHandler::h_GetInstance()->GetOscDataPoolListElement(rc_CurElement.c_ElementId);
-         tgl_assert(pc_DpElement != NULL);
+         Q_ASSERT(pc_DpElement != NULL);
          if (pc_DpElement != NULL)
          {
             //Only overwrite if mismatch!
@@ -3323,7 +3323,7 @@ void C_PuiSvDashboard::mh_FixDashboardWriteContentType(C_PuiSvDbWriteWidgetBase 
             {
                C_OscNodeDataPoolContentUtil::E_ValueChangedTo e_Unused;
                orc_Element.c_InitialValue = pc_DpElement->c_MinValue;
-               tgl_assert(C_OscNodeDataPoolContentUtil::h_SetValueInMinMaxRange(pc_DpElement->c_MinValue,
+               Q_ASSERT(C_OscNodeDataPoolContentUtil::h_SetValueInMinMaxRange(pc_DpElement->c_MinValue,
                                                                                 pc_DpElement->c_MaxValue,
                                                                                 orc_Element.c_InitialValue, e_Unused,
                                                                                 C_OscNodeDataPoolContentUtil::eTO_ZERO) ==
@@ -3387,7 +3387,7 @@ void C_PuiSvDashboard::mh_SyncContentTypeToTypeChanged(const uint32_t ou32_NodeI
    {
       const C_PuiSvDbNodeDataElementConfig & rc_CurElement = orc_Element.c_DataPoolElementsConfig[0UL];
       //Assuming only one element selectable
-      tgl_assert(orc_Element.c_DataPoolElementsConfig.size() == 1UL);
+      Q_ASSERT(orc_Element.c_DataPoolElementsConfig.size() == 1UL);
       if (rc_CurElement.c_ElementId.GetIsValid())
       {
          if (rc_CurElement.c_ElementId.CheckSameDataElement(C_OscNodeDataPoolListElementId(ou32_NodeIndex,
@@ -3423,7 +3423,7 @@ void C_PuiSvDashboard::mh_SyncContentToRangeChanged(const uint32_t ou32_NodeInde
    {
       const C_PuiSvDbNodeDataElementConfig & rc_CurElement = orc_Element.c_DataPoolElementsConfig[0UL];
       //Assuming only one element selectable
-      tgl_assert(orc_Element.c_DataPoolElementsConfig.size() == 1UL);
+      Q_ASSERT(orc_Element.c_DataPoolElementsConfig.size() == 1UL);
       if (rc_CurElement.c_ElementId.GetIsValid())
       {
          C_PuiSdNodeDataPoolListElementIdSyncUtil::h_OnSyncNodeDataPoolListElementRangeChanged(ou32_NodeIndex,

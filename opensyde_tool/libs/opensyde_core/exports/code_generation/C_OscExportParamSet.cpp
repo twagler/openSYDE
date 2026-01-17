@@ -11,14 +11,15 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscExportParamSet.hpp"
 
 #include "C_SclChecksums.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
+#include <QDateTime>
 #include "C_OscExportUti.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscParamSetHandler.hpp"
@@ -27,7 +28,7 @@
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -56,23 +57,23 @@ C_SclString C_OscExportParamSet::h_GetFileName(const C_OscNodeApplication & orc_
 {
    C_SclString c_Retval;
 
-   tgl_assert(orc_DataBlock.c_ResultPaths.size() > 0);
+   Q_ASSERT(orc_DataBlock.c_ResultPaths.size() > 0);
 
    if (oq_IsSafe == true)
    {
       // first result path is always safe file
-      c_Retval = TglExtractFileName(orc_DataBlock.c_ResultPaths[0]);
+      c_Retval = QFileInfo(QString::fromStdString(*orc_DataBlock.c_ResultPaths[0].AsStdString())).fileName().toStdString();
    }
    else
    {
       // if there are two Data Blocks, the first result path is the safe file and the second is the non-safe file
       if (orc_DataBlock.c_ResultPaths.size() > 1)
       {
-         c_Retval = TglExtractFileName(orc_DataBlock.c_ResultPaths[1]);
+         c_Retval = QFileInfo(QString::fromStdString(*orc_DataBlock.c_ResultPaths[1].AsStdString())).fileName().toStdString();
       }
       else
       {
-         c_Retval = TglExtractFileName(orc_DataBlock.c_ResultPaths[0]);
+         c_Retval = QFileInfo(QString::fromStdString(*orc_DataBlock.c_ResultPaths[0].AsStdString())).fileName().toStdString();
       }
    }
 
@@ -373,11 +374,10 @@ C_OscParamSetInterpretedFileInfoData C_OscExportParamSet::mh_GetFileInfo(const C
    C_OscParamSetInterpretedFileInfoData c_Info;
 
    C_SclString c_Tmp;
-   C_TglDateTime c_DateTime;
 
-   TglGetDateTimeNow(c_DateTime);
+   QDateTime c_DateTime = QDateTime::currentDateTime();
    c_Info.c_DateTime = C_OscLoggingHandler::h_UtilConvertDateTimeToString(c_DateTime);
-   TglGetSystemUserName(c_Tmp);
+   stw::opensyde_core::C_OscUtils::h_GetSystemUserName(c_Tmp);
    c_Info.c_Creator = c_Tmp;
    c_Info.c_ToolName = orc_ExportToolName;
    c_Info.c_ToolVersion = orc_ExportToolVersion;
@@ -416,7 +416,7 @@ int32_t C_OscExportParamSet::mh_WriteParameterSetImage(const C_OscParamSetRawNod
 {
    int32_t s32_Retval;
 
-   const C_SclString c_Path = TglFileIncludeTrailingDelimiter(orc_Path) +
+   const C_SclString c_Path = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_Path) +
                               h_GetFileName(orc_DataBlock, oq_IsSafe);
    const C_OscParamSetInterpretedFileInfoData c_FileInfo = mh_GetFileInfo(orc_ExportToolName, orc_ExportToolVersion);
 
@@ -439,7 +439,7 @@ int32_t C_OscExportParamSet::mh_WriteParameterSetImage(const C_OscParamSetRawNod
    else
    {
       // Remove pre-existing files because PSI writing will else result in an error
-      if (TglFileExists(c_Path) == true)
+      if ((QFileInfo(QString::fromStdString(*c_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_Path.AsStdString())).isFile()) == true)
       {
          int x_Return; //lint !e970 !e8080  //using type to match library interface
          x_Return = std::remove(c_Path.c_str());

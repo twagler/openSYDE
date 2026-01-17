@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for editing signal properties
@@ -18,7 +18,7 @@
 #include <QSpinBox>
 #include <QAbstractItemView>
 
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "stwerrors.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -33,7 +33,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -422,7 +422,7 @@ void C_SdBueSignalPropertiesWidget::m_LoadFromData(void)
    if ((((pc_OscSignalCommon != NULL) && (pc_UiSignalCommon != NULL)) && (pc_OscMessage != NULL)) &&
        (pc_UiSignal != NULL))
    {
-      tgl_assert(this->mu32_SignalIndex < pc_OscMessage->c_Signals.size());
+      Q_ASSERT(this->mu32_SignalIndex < pc_OscMessage->c_Signals.size());
       if (this->mu32_SignalIndex < pc_OscMessage->c_Signals.size())
       {
          const C_OscCanSignal & rc_OscSignal = pc_OscMessage->c_Signals[this->mu32_SignalIndex];
@@ -489,7 +489,7 @@ void C_SdBueSignalPropertiesWidget::m_CoLoadEdsRestricitions(void)
       const C_OscCanOpenManagerDeviceInfo * const pc_Manager =
          C_PuiSdHandler::h_GetInstance()->GetCanOpenManagerDevice(this->mc_MessageId);
 
-      tgl_assert(pc_Manager != NULL);
+      Q_ASSERT(pc_Manager != NULL);
       if (pc_Manager != NULL)
       {
          const C_OscCanMessage * const pc_Message = C_PuiSdHandler::h_GetInstance()->GetCanMessage(this->mc_MessageId);
@@ -1063,7 +1063,7 @@ void C_SdBueSignalPropertiesWidget::m_SaveToData(const E_Change oe_Change)
       //Add critical message check (after change of data)
       if (this->mpc_MessageSyncManager->RecheckCriticalMessage(this->mc_MessageId, c_NewMessageId) == true)
       {
-         tgl_assert(false);
+         Q_ASSERT(false);
          //Not possible here but should also not happen
          //this->mc_MessageId = c_NewMessageId;
       }
@@ -1251,7 +1251,7 @@ void C_SdBueSignalPropertiesWidget::m_ApplyNewValueFromUi(const C_SdBueSignalPro
       this->mc_DataOscSignalCommon.c_MinValue.SetArray(false);
       this->mc_DataOscSignalCommon.c_MinValue.SetType(this->m_GetCurrentType());
       //Get change from UI should only happen if user can interact
-      tgl_assert(this->mc_DataUiSignalCommon.q_AutoMinMaxActive == false);
+      Q_ASSERT(this->mc_DataUiSignalCommon.q_AutoMinMaxActive == false);
       m_SaveGeneric(this->mpc_Ui->pc_WidgetMin, this->mc_DataOscSignalCommon.c_MinValue,
                     this->mc_DataOscSignalCommon.f64_Factor,
                     this->mc_DataOscSignalCommon.f64_Offset);
@@ -1260,7 +1260,7 @@ void C_SdBueSignalPropertiesWidget::m_ApplyNewValueFromUi(const C_SdBueSignalPro
       this->mc_DataOscSignalCommon.c_MaxValue.SetArray(false);
       this->mc_DataOscSignalCommon.c_MaxValue.SetType(this->m_GetCurrentType());
       //Get change from UI should only happen if user can interact
-      tgl_assert(this->mc_DataUiSignalCommon.q_AutoMinMaxActive == false);
+      Q_ASSERT(this->mc_DataUiSignalCommon.q_AutoMinMaxActive == false);
       m_SaveGeneric(this->mpc_Ui->pc_WidgetMax, this->mc_DataOscSignalCommon.c_MaxValue,
                     this->mc_DataOscSignalCommon.f64_Factor,
                     this->mc_DataOscSignalCommon.f64_Offset);
@@ -1828,7 +1828,7 @@ void C_SdBueSignalPropertiesWidget::m_UpdateUiForChange(const E_Change oe_Change
          this->mpc_Ui->pc_WidgetInit->setEnabled(true);
       }
       //Value
-      tgl_assert(m_LoadGeneric(this->mpc_Ui->pc_WidgetInit, this->mc_DataOscSignalCommon.c_DataSetValues[0],
+      Q_ASSERT(m_LoadGeneric(this->mpc_Ui->pc_WidgetInit, this->mc_DataOscSignalCommon.c_DataSetValues[0],
                                this->mc_DataOscSignalCommon.f64_Factor, this->mc_DataOscSignalCommon.f64_Offset,
                                this->mc_DataOscSignal.u16_ComBitLength,
                                &this->mc_DataOscSignalCommon.c_MinValue,
@@ -1903,7 +1903,7 @@ void C_SdBueSignalPropertiesWidget::m_UpdateUiForChange(const E_Change oe_Change
          this->mpc_Ui->pc_WidgetMin->setEnabled(true);
       }
       //Value
-      tgl_assert(m_LoadGeneric(this->mpc_Ui->pc_WidgetMin, this->mc_DataOscSignalCommon.c_MinValue,
+      Q_ASSERT(m_LoadGeneric(this->mpc_Ui->pc_WidgetMin, this->mc_DataOscSignalCommon.c_MinValue,
                                this->mc_DataOscSignalCommon.f64_Factor, this->mc_DataOscSignalCommon.f64_Offset,
                                this->mc_DataOscSignal.u16_ComBitLength, NULL,
                                &this->mc_DataOscSignalCommon.c_MaxValue) == C_NO_ERR);
@@ -1919,7 +1919,7 @@ void C_SdBueSignalPropertiesWidget::m_UpdateUiForChange(const E_Change oe_Change
          this->mpc_Ui->pc_WidgetMax->setEnabled(true);
       }
       //Value
-      tgl_assert(m_LoadGeneric(this->mpc_Ui->pc_WidgetMax, this->mc_DataOscSignalCommon.c_MaxValue,
+      Q_ASSERT(m_LoadGeneric(this->mpc_Ui->pc_WidgetMax, this->mc_DataOscSignalCommon.c_MaxValue,
                                this->mc_DataOscSignalCommon.f64_Factor, this->mc_DataOscSignalCommon.f64_Offset,
                                this->mc_DataOscSignal.u16_ComBitLength, &this->mc_DataOscSignalCommon.c_MinValue,
                                NULL) == C_NO_ERR);

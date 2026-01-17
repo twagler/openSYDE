@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for toolbox of system definition
@@ -17,7 +17,6 @@
 #include <QBoxLayout>
 #include <QDebug>
 
-#include "TglFile.hpp"
 #include "constants.hpp"
 #include "C_SclIniFile.hpp"
 #include "C_SdTopologyToolbox.hpp"
@@ -41,7 +40,7 @@
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_core;
-using namespace stw::tgl;
+
 using namespace stw::scl;
 using namespace stw::errors;
 using namespace stw::opensyde_gui_logic;

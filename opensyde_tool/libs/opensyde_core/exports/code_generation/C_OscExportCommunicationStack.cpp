@@ -114,7 +114,7 @@ uint16_t C_OscExportCommunicationStack::h_ConvertOverallCodeVersion(const uint16
       break;
    default:
       // should never occur...
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -1321,7 +1321,7 @@ C_SclString C_OscExportCommunicationStack::mh_GetProtocolNameByType(const C_OscC
       c_Name = "j1939";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -1351,7 +1351,7 @@ C_SclString C_OscExportCommunicationStack::mh_GetByteOrderNameByType(
       c_Name = "OSY_COM_BYTE_ORDER_BIG";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -1389,7 +1389,7 @@ C_SclString C_OscExportCommunicationStack::mh_GetTransmissionTriggerNameByType(
    case C_OscCanMessage::eTX_METHOD_CAN_OPEN_TYPE_255:
    default:
       //not supported for COMM
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -1497,11 +1497,11 @@ void C_OscExportCommunicationStack::mh_GroupSignalsByMuxValue(const C_OscCanMess
             break;
          case C_OscCanSignal::eMUX_MULTIPLEXED_SIGNAL:
             // if key does not already exist something went really wrong
-            tgl_assert(orc_MuxedSignalsPerValue.count(rc_Signal.u16_MultiplexValue) == 1);
+            Q_ASSERT(orc_MuxedSignalsPerValue.count(rc_Signal.u16_MultiplexValue) == 1);
             orc_MuxedSignalsPerValue[rc_Signal.u16_MultiplexValue].push_back(rc_Signal);
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }

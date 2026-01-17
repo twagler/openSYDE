@@ -368,7 +368,7 @@ void C_FlaSenDcBasicSequences::mh_ThreadFunc(void * const opv_Instance)
    //lint -e{9079}  This class is the only one which registers itself at the caller of this function. It must match.
    C_FlaSenDcBasicSequences * const pc_Sequences = reinterpret_cast<C_FlaSenDcBasicSequences *>(opv_Instance);
 
-   tgl_assert(pc_Sequences != NULL);
+   Q_ASSERT(pc_Sequences != NULL);
    if (pc_Sequences != NULL)
    {
       pc_Sequences->m_ThreadFunc();
@@ -401,7 +401,7 @@ void C_FlaSenDcBasicSequences::m_ThreadFunc(void)
       this->ms32_Result = this->ConfigureDevice(mu8_CurrentNodeId, mu8_NewNodeId, mu32_CanBitrate, mu8_InterfaceIndex);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 

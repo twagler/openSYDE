@@ -22,7 +22,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscComDriverProtocol.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscDiagProtocolOsy.hpp"
@@ -30,13 +30,13 @@
 #include "C_OscProtocolDriverOsyTpIp.hpp"
 #include "C_OscRoutingCalculation.hpp"
 #include "C_OscSecurityRsa.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
+
+#include <QThread>
+#include <QElapsedTimer>
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::can;
 using namespace stw::scl;
-using namespace stw::tgl;
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -71,7 +71,7 @@ C_OscComDriverProtocol::C_OscComDriverProtocol(void) :
    mpc_SecurityPemDb(NULL)
 {
    //Check if client and server use same float standard, see #84517 for more details
-   tgl_assert(std::numeric_limits<float32_t>::is_iec559);
+   Q_ASSERT(std::numeric_limits<float32_t>::is_iec559);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -395,7 +395,7 @@ int32_t C_OscComDriverProtocol::StartRouting(const uint32_t ou32_NodeIndex, uint
           (s32_Return != C_NO_ERR))
       {
          // Convert active node index to node index
-         tgl_assert(*opu32_ErrorNodeIndex < this->mc_ActiveNodesIndexes.size());
+         Q_ASSERT(*opu32_ErrorNodeIndex < this->mc_ActiveNodesIndexes.size());
          if (*opu32_ErrorNodeIndex < this->mc_ActiveNodesIndexes.size())
          {
             *opu32_ErrorNodeIndex = this->mc_ActiveNodesIndexes[*opu32_ErrorNodeIndex];
@@ -754,7 +754,7 @@ bool C_OscComDriverProtocol::GetNodeIndex(const C_OscProtocolDriverOsyNode & orc
    uint32_t u32_Counter;
    bool q_Found = false;
 
-   tgl_assert(this->mc_ServerIds.size() == this->mc_ActiveNodesIndexes.size());
+   Q_ASSERT(this->mc_ServerIds.size() == this->mc_ActiveNodesIndexes.size());
 
    for (u32_Counter = 0U; u32_Counter < this->mc_ServerIds.size(); ++u32_Counter)
    {
@@ -1006,7 +1006,7 @@ uint32_t C_OscComDriverProtocol::m_GetActiveIndex(const uint32_t ou32_NodeIndex,
    }
    else
    {
-      tgl_assert(q_Found == true);
+      Q_ASSERT(q_Found == true);
    }
 
    return u32_Index;
@@ -1494,7 +1494,7 @@ int32_t C_OscComDriverProtocol::m_SetNodeSecurityAccess(C_OscProtocolDriverOsy *
             osc_write_log_warning("Security Access", "The node was not ready for the Security Access request. Trying"
                                   " after waiting for another second again.");
 
-            stw::tgl::TglSleep(1000);
+            QThread::msleep(1000U);
 
             s32_Return = opc_ExistingProtocol->OsySecurityAccessRequestSeed(ou8_SecurityLevel, q_SecureMode, u64_Seed,
                                                                             ou8_SecurityAlgorithm, opu8_NrCode);
@@ -1925,7 +1925,8 @@ int32_t C_OscComDriverProtocol::m_StartRoutingIp2Ip(const uint32_t ou32_ActiveNo
                   // Poll for success
                   if (s32_Return == C_NO_ERR)
                   {
-                     const uint32_t u32_StartTime = TglGetTickCount();
+                     QElapsedTimer c_Timer;
+                     c_Timer.start();
 
                      do
                      {
@@ -1961,11 +1962,11 @@ int32_t C_OscComDriverProtocol::m_StartRoutingIp2Ip(const uint32_t ou32_ActiveNo
                            // the target of the next point is not reachable
                            q_NextOneError = true;
                            // Let the node do its work
-                           TglSleep(20);
+                           QThread::msleep(20U);
                         }
                      }
                      // TODO BAY: Timeout time!
-                     while (TglGetTickCount() < (u32_StartTime + 1000U));
+                      while (c_Timer.hasExpired(1000U) == false);
                   }
 
                   if ((s32_Return != C_NO_ERR) && (opu32_ErrorActiveNodeIndex != NULL))
@@ -3038,7 +3039,7 @@ int32_t C_OscComDriverProtocol::m_InitForEthernet(void)
          // But for each routing must exist an own connection in case of IP to IP routing, but
          // not in case of IP to CAN routing.
 
-         tgl_assert(this->mc_Routes.size() == this->mu32_ActiveNodeCount);
+         Q_ASSERT(this->mc_Routes.size() == this->mu32_ActiveNodeCount);
 
          // Initialize all Ethernet connections without routing
          for (u32_ItActiveNode = 0; u32_ItActiveNode < this->mu32_ActiveNodeCount; ++u32_ItActiveNode)
@@ -3091,7 +3092,7 @@ int32_t C_OscComDriverProtocol::m_InitForEthernet(void)
                         uint32_t u32_Handle;
 
                         // Reuse the dispatcher handle of the same router
-                        tgl_assert(c_IterUniqueIp2IpRouters->second < c_IpDispatcherHandles.size());
+                        Q_ASSERT(c_IterUniqueIp2IpRouters->second < c_IpDispatcherHandles.size());
 
                         u32_Handle = c_IpDispatcherHandles[c_IterUniqueIp2IpRouters->second];
                         c_IpDispatcherHandles[u32_ItActiveNode] = u32_Handle;
@@ -3113,7 +3114,7 @@ int32_t C_OscComDriverProtocol::m_InitForEthernet(void)
                         uint32_t u32_Handle;
 
                         // Reuse the dispatcher handle of the same router
-                        tgl_assert(u32_Ip2CanRouterActiveNode < c_IpDispatcherHandles.size());
+                        Q_ASSERT(u32_Ip2CanRouterActiveNode < c_IpDispatcherHandles.size());
 
                         // IP to CAN routing has only one dispatcher and must be reused
                         u32_Handle = c_IpDispatcherHandles[u32_Ip2CanRouterActiveNode];

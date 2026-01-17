@@ -19,11 +19,13 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QMutexLocker>
+#include <QThread>
 
 #include "stwerrors.hpp"
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
+
+
 #include "C_Uti.hpp"
 #include "C_SyvDcSequences.hpp"
 #include "C_OscProtocolDriverOsyTpCan.hpp"
@@ -319,7 +321,7 @@ int32_t C_SyvDcSequences::FillDeviceConfig(C_SyvDcDeviceConfiguation & orc_Confi
             else
             {
                //Flashloader type "none" is supported by the device structure, but not the UI
-               tgl_assert(ore_Flashloader == C_OscNodeProperties::eFL_STW);
+               Q_ASSERT(ore_Flashloader == C_OscNodeProperties::eFL_STW);
 
                if (pc_UsedBus->e_Type == C_OscSystemBus::eCAN)
                {
@@ -420,9 +422,8 @@ int32_t C_SyvDcSequences::ScanCanSendFlashloaderRequest(const uint32_t ou32_Scan
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDcSequences::StopScanCanSendFlashloaderRequest(void)
 {
-   this->mc_CriticalSectionRequestEndless.Acquire();
+   QMutexLocker c_Locker(&this->mc_CriticalSectionRequestEndless);
    this->mq_RunScanSendFlashloaderRequestEndless = false;
-   this->mc_CriticalSectionRequestEndless.Release();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -946,9 +947,8 @@ bool C_SyvDcSequences::GetCanInitializationResult(void) const
 {
    bool q_Return;
 
-   this->mc_CriticalSectionCanInitialization.Acquire();
+   QMutexLocker c_Locker(&this->mc_CriticalSectionCanInitialization);
    q_Return = this->mq_CanInitialized;
-   this->mc_CriticalSectionCanInitialization.Release();
 
    return q_Return;
 }
@@ -1108,7 +1108,7 @@ void C_SyvDcSequences::mh_ThreadFunc(void * const opv_Instance)
    //lint -e{9079}  This class is the only one which registers itself at the caller of this function. It must match.
    C_SyvDcSequences * const pc_Sequences = reinterpret_cast<C_SyvDcSequences *>(opv_Instance);
 
-   tgl_assert(pc_Sequences != NULL);
+   Q_ASSERT(pc_Sequences != NULL);
    if (pc_Sequences != NULL)
    {
       pc_Sequences->m_ThreadFunc();
@@ -1153,7 +1153,7 @@ void C_SyvDcSequences::m_ThreadFunc(void)
          this->ms32_Result = this->m_ReadBackEth();
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -1212,9 +1212,9 @@ int32_t C_SyvDcSequences::m_RunScanCanEnterFlashloader(const uint32_t ou32_CanBi
       {
          bool q_RequestNotAccepted = false;
 
-         this->mc_CriticalSectionCanInitialization.Acquire();
+         this->mc_CriticalSectionCanInitialization.lock();
          this->mq_CanInitialized = true;
-         this->mc_CriticalSectionCanInitialization.Release();
+         this->mc_CriticalSectionCanInitialization.unlock();
 
          if (this->mq_OpenSydeDevicesActive == true)
          {
@@ -1317,7 +1317,7 @@ int32_t C_SyvDcSequences::m_RunScanCanEnterFlashloader(const uint32_t ou32_CanBi
 int32_t C_SyvDcSequences::m_RunScanCanSendFlashloaderRequest(const uint32_t ou32_ScanTime)
 {
    int32_t s32_Return = C_NO_ERR;
-   const uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
+   const uint32_t u32_StartTime = QDateTime::currentMSecsSinceEpoch();
    uint32_t u32_CurTime;
    bool q_RunEndless;
 
@@ -1343,14 +1343,14 @@ int32_t C_SyvDcSequences::m_RunScanCanSendFlashloaderRequest(const uint32_t ou32
                              "STW send flash failed with error: " + C_SclString::IntToStr(s32_Return));
       }
 
-      stw::tgl::TglSleep(5);
+      QThread::msleep(5);
 
       // Possible answers are not necessary and can disturb next services
       this->mpc_ComDriver->ClearDispatcherQueue();
 
       if (s32_Return == C_NO_ERR)
       {
-         u32_CurTime = stw::tgl::TglGetTickCount();
+         u32_CurTime = QDateTime::currentMSecsSinceEpoch();
       }
       else
       {
@@ -1360,10 +1360,10 @@ int32_t C_SyvDcSequences::m_RunScanCanSendFlashloaderRequest(const uint32_t ou32
          break;
       }
 
-      this->mc_CriticalSectionRequestEndless.Acquire();
+      this->mc_CriticalSectionRequestEndless.lock();
       // Check flag, which can be set by other thread at any time
       q_RunEndless = this->mq_RunScanSendFlashloaderRequestEndless;
-      this->mc_CriticalSectionRequestEndless.Release();
+      this->mc_CriticalSectionRequestEndless.unlock();
    }
    while ((q_RunEndless == true) ||
           (u32_CurTime < (ou32_ScanTime + u32_StartTime)));
@@ -1661,7 +1661,7 @@ int32_t C_SyvDcSequences::m_RunScanCanGetInfoFromOpenSydeDevices(void)
             }
          }
 
-         tgl_assert((c_ReadSnResult.size() + c_ReadSnResultExt.size()) == mc_DeviceInfoResult.size());
+         Q_ASSERT((c_ReadSnResult.size() + c_ReadSnResultExt.size()) == mc_DeviceInfoResult.size());
 
          // Get the device names for all devices with unique ids
          for (u32_UniqueIdIndicesCounter = 0U;
@@ -1683,7 +1683,7 @@ int32_t C_SyvDcSequences::m_RunScanCanGetInfoFromOpenSydeDevices(void)
             {
                const uint32_t u32_ReadSnrResultExtIndex = u32_DeviceInfoIndex - c_ReadSnResult.size();
                // all above must be the extended SNR results
-               tgl_assert(u32_ReadSnrResultExtIndex < c_ReadSnResultExt.size());
+               Q_ASSERT(u32_ReadSnrResultExtIndex < c_ReadSnResultExt.size());
                c_CurSenderId = c_ReadSnResultExt[u32_ReadSnrResultExtIndex].c_SenderId;
             }
 
@@ -1778,7 +1778,7 @@ int32_t C_SyvDcSequences::m_RunScanEthGetInfoFromOpenSydeDevices(void)
          c_ReadDeviceInfoExtendedResults;
 
          //wait the minimum wait time (all nodes should now be in the default session of the flashloader)
-         stw::tgl::TglSleep(this->GetMinimumFlashloaderResetWaitTime(C_OscComDriverFlash::eNO_CHANGES_ETHERNET));
+         QThread::msleep(this->GetMinimumFlashloaderResetWaitTime(C_OscComDriverFlash::eNO_CHANGES_ETHERNET));
 
          //broadcast: "get device info" (returns serial number and device name)
          s32_Return = this->mpc_ComDriver->SendOsyEthBroadcastGetDeviceInformation(c_ReadDeviceInfoResults,
@@ -2360,7 +2360,7 @@ int32_t C_SyvDcSequences::m_ConfigureNodes(const bool oq_ViaCan,
       this->m_RunConfEthOpenSydeDevicesProgress(30U);
    }
 
-   tgl_assert(this->mc_DeviceConfiguration.size() == orc_UsedServerIds.size());
+   Q_ASSERT(this->mc_DeviceConfiguration.size() == orc_UsedServerIds.size());
 
    s32_Return = this->mpc_ComDriver->SendOsyBroadcastRequestProgramming(q_RequestNotAccepted);
    if (s32_Return == C_NO_ERR)
@@ -2411,14 +2411,14 @@ int32_t C_SyvDcSequences::m_ConfigureNodes(const bool oq_ViaCan,
       {
          // The CAN broadcast does not change the CAN bitrate and so no fundamental changes were made
          // when using CAN
-         stw::tgl::TglSleep(this->GetMinimumFlashloaderResetWaitTime(C_OscComDriverFlash::
+         QThread::msleep(this->GetMinimumFlashloaderResetWaitTime(C_OscComDriverFlash::
                                                                      eNO_FUNDAMENTAL_COM_CHANGES_CAN));
       }
       else
       {
          // The Ethernet broadcast does change the IP address and so fundamental changes were made
          // when using Ethernet
-         stw::tgl::TglSleep(this->GetMinimumFlashloaderResetWaitTime(C_OscComDriverFlash::
+         QThread::msleep(this->GetMinimumFlashloaderResetWaitTime(C_OscComDriverFlash::
                                                                      eFUNDAMENTAL_COM_CHANGES_ETHERNET));
       }
 
@@ -2630,11 +2630,11 @@ int32_t C_SyvDcSequences::m_RunConfCanStwFlashloaderDevices(void)
          this->m_RunConfCanStwFlashloaderDevicesProgress(
             (u32_DeviceCounter * 50U) / this->mc_DeviceConfiguration.size());
 
-         tgl_assert(rc_CurConfig.c_NodeIds.size() == rc_CurConfig.c_BusIds.size());
-         tgl_assert(rc_CurConfig.c_NodeIds.size() == rc_CurConfig.c_CanBitrates.size());
+         Q_ASSERT(rc_CurConfig.c_NodeIds.size() == rc_CurConfig.c_BusIds.size());
+         Q_ASSERT(rc_CurConfig.c_NodeIds.size() == rc_CurConfig.c_CanBitrates.size());
          // No bus-id in STW flashloader protocol.
          // We can change only the connected bus interface with the STW flashloader
-         tgl_assert(rc_CurConfig.c_BusIds.size() == 1);
+         Q_ASSERT(rc_CurConfig.c_BusIds.size() == 1);
 
          if ((rc_CurConfig.c_SerialNumber.q_ExtFormatUsed == false) && // STW Flashloader must be standard format
              (rc_CurConfig.c_NodeIds.size() == rc_CurConfig.c_BusIds.size()) &&
@@ -3152,7 +3152,7 @@ int32_t C_SyvDcSequences::m_CheckConfOpenSydeDevices(
       {
          const C_SyvDcDeviceConfiguation & rc_CurConfig = orc_DeviceConfiguration[u32_DeviceCounter];
 
-         tgl_assert(rc_CurConfig.c_NodeIds.size() == rc_CurConfig.c_BusIds.size());
+         Q_ASSERT(rc_CurConfig.c_NodeIds.size() == rc_CurConfig.c_BusIds.size());
 
          // Default error for this check
          s32_Return = C_RANGE;
@@ -3810,7 +3810,7 @@ int32_t C_SyvDcSequences::m_ReadBack(void)
 
       s32_Return = C_NO_ERR;
 
-      tgl_assert(this->mc_OpenSydeIds.size() == this->mc_OpenSydeSnrExtFormat.size());
+      Q_ASSERT(this->mc_OpenSydeIds.size() == this->mc_OpenSydeSnrExtFormat.size());
 
       // * for all openSYDE nodes:
       for (u32_DeviceCounter = 0U; u32_DeviceCounter < this->mc_OpenSydeIds.size(); ++u32_DeviceCounter)

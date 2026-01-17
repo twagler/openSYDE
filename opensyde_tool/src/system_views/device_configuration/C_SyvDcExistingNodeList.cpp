@@ -16,7 +16,7 @@
 
 #include "stwerrors.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -24,7 +24,7 @@
 #include "C_SyvDcExistingNodeList.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -202,7 +202,7 @@ std::vector<C_SyvDcDeviceConfiguation> C_SyvDcExistingNodeList::GetConfigs(void)
          dynamic_cast<const C_SyvDcExistingNodeWidget * const>(this->itemWidget(this->item(s32_It)));
       if (pc_Widget != NULL)
       {
-         tgl_assert(pc_Widget->IsAssigned() == true);
+         Q_ASSERT(pc_Widget->IsAssigned() == true);
          pc_Widget->AppendDeviceConfig(c_Retval);
       }
    }
@@ -284,7 +284,7 @@ int32_t C_SyvDcExistingNodeList::m_Init(void)
             if (C_PuiSdHandler::h_GetInstance()->GetNodeSquadIndexWithNodeIndex(u32_ItNode, u32_SquadIndex) == C_NO_ERR)
             {
                pc_Squad = C_PuiSdHandler::h_GetInstance()->GetOscNodeSquadConst(u32_SquadIndex);
-               tgl_assert(pc_Squad != NULL);
+               Q_ASSERT(pc_Squad != NULL);
                if (pc_Squad != NULL)
                {
                   c_RelevantNodeIndexes = pc_Squad->c_SubNodeIndexes;
@@ -296,7 +296,7 @@ int32_t C_SyvDcExistingNodeList::m_Init(void)
                c_RelevantNodeIndexes.push_back(u32_ItNode);
             }
 
-            tgl_assert(c_RelevantNodeIndexes.size() > 0);
+            Q_ASSERT(c_RelevantNodeIndexes.size() > 0);
 
             for (u32_SubNodeCounter = 0U; u32_SubNodeCounter < c_RelevantNodeIndexes.size(); ++u32_SubNodeCounter)
             {
@@ -306,8 +306,8 @@ int32_t C_SyvDcExistingNodeList::m_Init(void)
 
                if (pc_Node != NULL)
                {
-                  tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
-                  tgl_assert(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
+                  Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
+                  Q_ASSERT(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
                   for (uint32_t u32_ItInterface = 0; u32_ItInterface < pc_Node->c_Properties.c_ComInterfaces.size();
                        ++u32_ItInterface)
                   {

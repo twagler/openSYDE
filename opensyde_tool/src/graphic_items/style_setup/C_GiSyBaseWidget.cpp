@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Base widget for style setup to customize graphic elements
@@ -12,13 +12,13 @@
 
 #include <QVBoxLayout>
 
-#include "TglUtils.hpp"
+
 #include "C_GiSyBaseWidget.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "ui_C_GiSyBaseWidget.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_gui_logic;
@@ -198,7 +198,7 @@ void C_GiSyBaseWidget::keyPressEvent(QKeyEvent * const opc_KeyEvent)
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSyBaseWidget::m_OkClicked(void)
 {
-   tgl_assert(this->mpc_ParentDialog != NULL);
+   Q_ASSERT(this->mpc_ParentDialog != NULL);
    if (this->mpc_ParentDialog != NULL)
    {
       this->mpc_ParentDialog->accept();
@@ -211,7 +211,7 @@ void C_GiSyBaseWidget::m_OkClicked(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSyBaseWidget::m_CancelClicked(void)
 {
-   tgl_assert(this->mpc_ParentDialog != NULL);
+   Q_ASSERT(this->mpc_ParentDialog != NULL);
    if (this->mpc_ParentDialog != NULL)
    {
       this->mpc_ParentDialog->reject();

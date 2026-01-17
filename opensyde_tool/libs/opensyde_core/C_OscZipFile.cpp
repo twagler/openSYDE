@@ -11,10 +11,11 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
+#include <QDir>
 
 #include <fstream>
 
-#include "TglFile.hpp"
 #define MINIZ_NO_ZLIB_COMPATIBLE_NAMES //prevent namespace pollution
 #include "miniz.h"
 #include "stwtypes.hpp"
@@ -27,7 +28,7 @@
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 using namespace std;
 
@@ -89,7 +90,7 @@ int32_t C_OscZipFile::h_CreateZipFile(const C_SclString & orc_SourcePath, const 
    for (c_Iter = orc_SupFiles.begin(); c_Iter != orc_SupFiles.end(); ++c_Iter)
    {
       const C_SclString c_AbsPath = orc_SourcePath + (*c_Iter);
-      if ((TglFileExists(c_AbsPath) == false) && (TglDirectoryExists(c_AbsPath) == false))
+      if (((QFileInfo(QString::fromStdString(*c_AbsPath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_AbsPath.AsStdString())).isFile()) == false) && (QFileInfo(QString::fromStdString(*c_AbsPath.AsStdString())).isDir() == false))
       {
          if (opc_ErrorText != NULL)
          {
@@ -104,7 +105,7 @@ int32_t C_OscZipFile::h_CreateZipFile(const C_SclString & orc_SourcePath, const 
    for (c_Iter = orc_SupFiles.begin(); (c_Iter != orc_SupFiles.end()) && (s32_Return == C_NO_ERR); ++c_Iter)
    {
       const C_SclString c_FileName = *c_Iter;
-      if (TglFileExists(orc_SourcePath + c_FileName))
+      if ((QFileInfo(QString::fromStdString(*orc_SourcePath + c_FileName.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_SourcePath + c_FileName.AsStdString())).isFile()))
       {
          const C_SclString c_AbsPath = orc_SourcePath + c_FileName;                  // absolute path
          ifstream c_FileStream(c_AbsPath.c_str(), ifstream::binary | ifstream::ate); // open file and set pos
@@ -230,12 +231,11 @@ int32_t C_OscZipFile::h_UnpackZipFile(const C_SclString & orc_SourcePath, const 
          if (pv_Data != NULL)
          {
             // get complete file path of current file
-            const C_SclString c_CompleteFilePath = TglFileIncludeTrailingDelimiter(orc_TargetUnzipPath) +
-                                                   c_Iter->m_filename;
+            const C_SclString c_CompleteFilePath = QDir(QString(orc_TargetUnzipPath.c_str())).filePath(QString::fromUtf8(c_Iter->m_filename)).toStdString().c_str();
 
             // check if we have to create a subfolder
-            const C_SclString c_Path = TglExtractFilePath(c_CompleteFilePath);
-            if (TglDirectoryExists(c_Path) == false)
+            const C_SclString c_Path = (QFileInfo(QString::fromStdString(*c_CompleteFilePath.AsStdString())).absolutePath() + "/").toStdString();
+            if (QFileInfo(QString::fromStdString(*c_Path.AsStdString())).isDir() == false)
             {
                // create subfolder
                s32_Return = C_OscUtils::h_CreateFolderRecursively(c_Path);
@@ -345,7 +345,7 @@ int32_t C_OscZipFile::h_IsZipFile(const C_SclString & orc_FilePath)
 {
    int32_t s32_Return;
 
-   if (TglFileExists(orc_FilePath) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).isFile()) == false)
    {
       s32_Return = C_CONFIG;
    }

@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for listing and handling any files
@@ -15,7 +15,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 #include "C_ImpUtil.hpp"
 #include "C_OscLoggingHandler.hpp"
 
@@ -105,7 +105,7 @@ void C_SyvUpPacSectionNodeFilesWidget::AddFile(const QString & orc_File)
                                                            pc_FileWidget);
 
          // Save the new file as application path
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->AddNodeUpdateInformationPath(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddNodeUpdateInformationPath(
                        this->mu32_ViewIndex, this->mu32_NodeIndex, orc_File,
                        C_OscViewNodeUpdate::eFTP_FILE_BASED) == C_NO_ERR);
 
@@ -115,7 +115,7 @@ void C_SyvUpPacSectionNodeFilesWidget::AddFile(const QString & orc_File)
    }
    else if (q_PemFile == true)
    {
-      tgl_assert(q_ParamSet == false);
+      Q_ASSERT(q_ParamSet == false);
       if (this->mu32_PemFileCount == 0)
       {
          C_SyvUpPacListNodeItemPemFileWidget * const pc_PemWidget =
@@ -135,10 +135,10 @@ void C_SyvUpPacSectionNodeFilesWidget::AddFile(const QString & orc_File)
                                                            pc_PemWidget);
 
          // Save the new file as application path
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPemFilePath(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPemFilePath(
                        this->mu32_ViewIndex, this->mu32_NodeIndex, orc_File) == C_NO_ERR);
          // Set the new default states as well
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationStates(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationStates(
                        this->mu32_ViewIndex, this->mu32_NodeIndex,
                        e_STATE_SECURITY, e_STATE_DEBUGGER) == C_NO_ERR);
 
@@ -185,7 +185,7 @@ void C_SyvUpPacSectionNodeFilesWidget::AddFile(const QString & orc_File)
                                                            pc_ParamWidget);
 
          // Save the new file as parameter path
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->AddNodeUpdateInformationParamInfo(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddNodeUpdateInformationParamInfo(
                        this->mu32_ViewIndex,
                        this->mu32_NodeIndex,
                        c_ParamFileInfo) == C_NO_ERR);
@@ -225,14 +225,14 @@ void C_SyvUpPacSectionNodeFilesWidget::AdaptFile(const QString & orc_File, C_Syv
              (q_NewFilePem == false))
          {
             C_SyvUpPacSectionNodeWidget::AdaptFile(orc_File, opc_App);
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPath(
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPath(
                           this->mu32_ViewIndex, this->mu32_NodeIndex, opc_App->GetAppNumber(), orc_File,
                           C_OscViewNodeUpdate::eFTP_FILE_BASED) == C_NO_ERR);
          }
          else if (q_NewFilePem == true)
          {
             C_SyvUpPacSectionNodeWidget::AdaptFile(orc_File, opc_App);
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPemFilePath(
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPemFilePath(
                           this->mu32_ViewIndex, this->mu32_NodeIndex, orc_File) == C_NO_ERR);
          }
          else
@@ -281,7 +281,7 @@ void C_SyvUpPacSectionNodeFilesWidget::SetSkipOfUpdateFile(const bool oq_Skip,
 
       if (opc_App->GetType() == mu32_UPDATE_PACKAGE_NODE_SECTION_TYPE_FILE)
       {
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationSkipUpdateOfPath(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationSkipUpdateOfPath(
                        this->mu32_ViewIndex,
                        this->mu32_NodeIndex,
                        opc_App->GetAppNumber(), oq_Skip,
@@ -289,14 +289,14 @@ void C_SyvUpPacSectionNodeFilesWidget::SetSkipOfUpdateFile(const bool oq_Skip,
       }
       else if (opc_App->GetType() == mu32_UPDATE_PACKAGE_NODE_SECTION_TYPE_PEM)
       {
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationSkipUpdateOfPemFile(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationSkipUpdateOfPemFile(
                        this->mu32_ViewIndex,
                        this->mu32_NodeIndex,
                        oq_Skip) == C_NO_ERR);
       }
       else
       {
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationSkipUpdateOfParamInfo(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationSkipUpdateOfParamInfo(
                        this->mu32_ViewIndex,
                        this->mu32_NodeIndex,
                        opc_App->GetAppNumber(), oq_Skip) == C_NO_ERR);
@@ -318,7 +318,7 @@ void C_SyvUpPacSectionNodeFilesWidget::RemoveFile(C_SyvUpPacListNodeItemWidget *
       if (opc_App->GetType() == mu32_UPDATE_PACKAGE_NODE_SECTION_TYPE_FILE)
       {
          // Remove the application file path
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->RemoveNodeUpdateInformationPath(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->RemoveNodeUpdateInformationPath(this->mu32_ViewIndex,
                                                                                      this->mu32_NodeIndex,
                                                                                      u32_Number,
                                                                                      C_OscViewNodeUpdate::
@@ -326,13 +326,13 @@ void C_SyvUpPacSectionNodeFilesWidget::RemoveFile(C_SyvUpPacListNodeItemWidget *
       }
       else if (opc_App->GetType() == mu32_UPDATE_PACKAGE_NODE_SECTION_TYPE_PEM)
       {
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->RemoveNodeUpdateInformationPemFilePath(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->RemoveNodeUpdateInformationPemFilePath(
                        this->mu32_ViewIndex,
                        this->mu32_NodeIndex) == C_NO_ERR);
       }
       else
       {
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->RemoveNodeUpdateInformationParamInfo(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->RemoveNodeUpdateInformationParamInfo(this->mu32_ViewIndex,
                                                                                           this->mu32_NodeIndex,
                                                                                           u32_Number) == C_NO_ERR);
       }
@@ -384,7 +384,7 @@ void C_SyvUpPacSectionNodeFilesWidget::OpenPemFileSettings(C_SyvUpPacListNodeIte
       } //lint !e429  //no memory leak because of the parent of pc_InfoDialog and the Qt memory management
 
       pc_PemApp->SetPemStates(e_StateSecurity, e_StateDebugger);
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationStates(this->mu32_ViewIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationStates(this->mu32_ViewIndex,
                                                                                  this->mu32_NodeIndex,
                                                                                  e_StateSecurity,
                                                                                  e_StateDebugger) == C_NO_ERR);

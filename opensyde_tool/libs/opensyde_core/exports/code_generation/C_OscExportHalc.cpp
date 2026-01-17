@@ -14,7 +14,7 @@
 #include "stwerrors.hpp"
 #include "C_OscExportHalc.hpp"
 #include "C_SclStringList.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 
 #include "C_OscExportUti.hpp"
@@ -24,7 +24,7 @@
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -75,7 +75,7 @@ uint16_t C_OscExportHalc::h_ConvertOverallCodeVersion(const uint16_t ou16_GenCod
    else
    {
       // should never occur...
-      tgl_assert(false);
+      Q_ASSERT(false);
       u16_Return = 0U;
    }
 
@@ -759,7 +759,7 @@ C_SclString C_OscExportHalc::mh_GetDpListElementReference(const std::vector<C_Os
 {
    C_SclString c_Return;
 
-   tgl_assert(C_OscHalcMagicianUtil::h_GetVariableName(orc_DefinitionArray, ou32_StructIndex,
+   Q_ASSERT(C_OscHalcMagicianUtil::h_GetVariableName(orc_DefinitionArray, ou32_StructIndex,
                                                        ou32_ElementIndex, orc_DomainSingularName,
                                                        c_Return) == C_NO_ERR);
    c_Return = C_OscExportUti::h_GetElementCeName(c_Return, oq_IsArray, orc_Element.GetType());

@@ -16,7 +16,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscDataDealer.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -544,7 +544,7 @@ void C_OscDataDealer::mh_ReadDataPoolDataEventReceived(void * const opv_Instance
    //lint -e{9079}  This class is the only one which registers itself at the caller of this function. It must match.
    C_OscDataDealer * const pc_Dealer = reinterpret_cast<C_OscDataDealer *>(opv_Instance);
 
-   tgl_assert(pc_Dealer != NULL);
+   Q_ASSERT(pc_Dealer != NULL);
    if (pc_Dealer != NULL)
    {
       pc_Dealer->m_ReadDataPoolDataEventReceived(ou8_DataPoolIndex, ou16_ListIndex, ou16_ElementIndex, orc_Value);
@@ -653,7 +653,7 @@ void C_OscDataDealer::mh_ReadDataPoolDataEventErrorReceived(void * const opv_Ins
    //lint -e{9079}  This class is the only one which registers itself at the caller of this function. It must match.
    C_OscDataDealer * const pc_Dealer = reinterpret_cast<C_OscDataDealer *>(opv_Instance);
 
-   tgl_assert(pc_Dealer != NULL);
+   Q_ASSERT(pc_Dealer != NULL);
    if (pc_Dealer != NULL)
    {
       pc_Dealer->m_ReadDataPoolDataEventErrorReceived(ou8_DataPoolIndex, ou16_ListIndex, ou16_ElementIndex, ou8_NrCode);

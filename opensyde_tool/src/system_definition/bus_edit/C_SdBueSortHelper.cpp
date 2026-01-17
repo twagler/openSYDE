@@ -14,13 +14,13 @@
 
 #include "C_Uti.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_SdBueSortHelper.hpp"
 #include "C_PuiSdHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -76,7 +76,7 @@ bool C_SdBueSortHelper::operator ()(const C_OscCanMessageIdentificationIndices &
       const C_OscCanMessage * const pc_Message2 = C_PuiSdHandler::h_GetInstance()->GetCanMessage(orc_Message2);
 
       //String comparison
-      tgl_assert((pc_Message1 != NULL) && (pc_Message2 != NULL));
+      Q_ASSERT((pc_Message1 != NULL) && (pc_Message2 != NULL));
       if ((pc_Message1 != NULL) && (pc_Message2 != NULL))
       {
          q_Retval = h_CompareString(pc_Message1->c_Name, pc_Message2->c_Name);

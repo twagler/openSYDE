@@ -13,14 +13,14 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_SclChecksums.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvDbParam.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -121,10 +121,10 @@ int32_t C_PuiSvDbParam::CheckError(const C_OscNodeDataPoolListId & orc_ListId, b
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(this->c_DataPoolElementsConfig.size() == this->c_ListValues.size());
+   Q_ASSERT(this->c_DataPoolElementsConfig.size() == this->c_ListValues.size());
    if (this->c_DataPoolElementsConfig.size() == this->c_ListValues.size())
    {
-      tgl_assert(this->c_DataPoolElementsConfig.size() == this->c_DataSetSelectionIndices.size());
+      Q_ASSERT(this->c_DataPoolElementsConfig.size() == this->c_DataSetSelectionIndices.size());
       if (this->c_DataPoolElementsConfig.size() == this->c_DataSetSelectionIndices.size())
       {
          const C_OscNodeDataPoolList * const pc_List = C_PuiSdHandler::h_GetInstance()->GetOscDataPoolList(

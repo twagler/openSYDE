@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Delegate (interaction) component base for any table (implementation)
@@ -15,14 +15,14 @@
 #include <QBitArray>
 #include <QSvgRenderer>
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_TblDelegate.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_SdNdeDpContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -105,12 +105,12 @@ QWidget * C_TblDelegate::createEditor(QWidget * const opc_Parent, const QStyleOp
                bool q_Ok;
                const QString & rc_Factor = c_StringList.at(2);
                const QString & rc_Offset = c_StringList.at(3);
-               tgl_assert(C_SdNdeDpContentUtil::h_SetAllContentFromString(c_StringList.at(0), c_Min) == C_NO_ERR);
-               tgl_assert(C_SdNdeDpContentUtil::h_SetAllContentFromString(c_StringList.at(1), c_Max) == C_NO_ERR);
+               Q_ASSERT(C_SdNdeDpContentUtil::h_SetAllContentFromString(c_StringList.at(0), c_Min) == C_NO_ERR);
+               Q_ASSERT(C_SdNdeDpContentUtil::h_SetAllContentFromString(c_StringList.at(1), c_Max) == C_NO_ERR);
                f64_Factor = rc_Factor.toDouble(&q_Ok);
-               tgl_assert(q_Ok == true);
+               Q_ASSERT(q_Ok == true);
                f64_Offset = rc_Offset.toDouble(&q_Ok);
-               tgl_assert(q_Ok == true);
+               Q_ASSERT(q_Ok == true);
                pc_ComboBox->InitMinMaxAndScaling(c_Min, c_Max, f64_Factor, f64_Offset);
             }
          }
@@ -136,12 +136,12 @@ QWidget * C_TblDelegate::createEditor(QWidget * const opc_Parent, const QStyleOp
             bool q_Ok;
             const QString & rc_Factor = c_StringList.at(2);
             const QString & rc_Offset = c_StringList.at(3);
-            tgl_assert(C_SdNdeDpContentUtil::h_SetAllContentFromString(c_StringList.at(0), c_Min) == C_NO_ERR);
-            tgl_assert(C_SdNdeDpContentUtil::h_SetAllContentFromString(c_StringList.at(1), c_Max) == C_NO_ERR);
+            Q_ASSERT(C_SdNdeDpContentUtil::h_SetAllContentFromString(c_StringList.at(0), c_Min) == C_NO_ERR);
+            Q_ASSERT(C_SdNdeDpContentUtil::h_SetAllContentFromString(c_StringList.at(1), c_Max) == C_NO_ERR);
             f64_Factor = rc_Factor.toDouble(&q_Ok);
-            tgl_assert(q_Ok == true);
+            Q_ASSERT(q_Ok == true);
             f64_Offset = rc_Offset.toDouble(&q_Ok);
-            tgl_assert(q_Ok == true);
+            Q_ASSERT(q_Ok == true);
             pc_Retval = m_CreateGenericEditor(opc_Parent, orc_Index, c_Min, c_Max, f64_Factor, f64_Offset, 0UL);
          }
          break;
@@ -149,7 +149,7 @@ QWidget * C_TblDelegate::createEditor(QWidget * const opc_Parent, const QStyleOp
          pc_Retval = QStyledItemDelegate::createEditor(opc_Parent, orc_Option, orc_Index);
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -223,7 +223,7 @@ void C_TblDelegate::setEditorData(QWidget * const opc_Editor, const QModelIndex 
       QStyledItemDelegate::setEditorData(opc_Editor, orc_Index);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }
@@ -308,7 +308,7 @@ void C_TblDelegate::setModelData(QWidget * const opc_Editor, QAbstractItemModel 
       QStyledItemDelegate::setModelData(opc_Editor, opc_Model, orc_Index);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }

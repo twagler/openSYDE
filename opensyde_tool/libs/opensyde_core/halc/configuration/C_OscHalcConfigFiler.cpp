@@ -11,10 +11,11 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
+#include <QDir>
 
 #include <sstream>
 
-#include "TglFile.hpp"
 #include "stwerrors.hpp"
 #include "C_OscXmlParserLog.hpp"
 #include "C_OscLoggingHandler.hpp"
@@ -25,7 +26,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -62,7 +63,7 @@ int32_t C_OscHalcConfigFiler::h_LoadFile(C_OscHalcConfig & orc_IoData, const C_S
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading IO data");
@@ -121,7 +122,7 @@ int32_t C_OscHalcConfigFiler::h_SaveFile(const C_OscHalcConfig & orc_IoData, con
    {
       C_OscXmlParser c_XmlParser;
       c_XmlParser.CreateNodeChild("opensyde-node-io-config");
-      tgl_assert(c_XmlParser.SelectRoot() == "opensyde-node-io-config");
+      Q_ASSERT(c_XmlParser.SelectRoot() == "opensyde-node-io-config");
       s32_Retval = h_SaveData(orc_IoData, c_XmlParser, orc_BasePath, opc_CreatedFiles);
       if (s32_Retval == C_NO_ERR)
       {
@@ -259,12 +260,12 @@ int32_t C_OscHalcConfigFiler::h_SaveData(const C_OscHalcConfig & orc_IoData, C_O
    int32_t s32_Retval;
 
    //File version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
    orc_XmlParser.SetNodeContent(C_SclString::IntToStr(mhu16_FILE_VERSION_1));
    //Return
    orc_XmlParser.SelectNodeParent();
    //Content version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("ref-content-version") == "ref-content-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("ref-content-version") == "ref-content-version");
    orc_XmlParser.SetNodeContent(C_SclString::IntToStr(orc_IoData.u32_ContentVersion));
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -274,7 +275,7 @@ int32_t C_OscHalcConfigFiler::h_SaveData(const C_OscHalcConfig & orc_IoData, C_O
    {
       {
          //General
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("general") == "general");
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("general") == "general");
          // Datablock assignment is now only in Datapools. Fill structure with dummies to be able to open HALC projects
          // always in older tool versions too.
          orc_XmlParser.SetAttributeBool("is-safe-datablock-set", false);
@@ -308,7 +309,7 @@ int32_t C_OscHalcConfigFiler::h_PrepareForFile(const C_SclString & orc_Path)
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       //erase it:
       int x_Return; //lint !e970 !e8080  //using type to match library interface
@@ -321,10 +322,10 @@ int32_t C_OscHalcConfigFiler::h_PrepareForFile(const C_SclString & orc_Path)
    }
    if (s32_Retval == C_NO_ERR)
    {
-      const C_SclString c_Folder = TglExtractFilePath(orc_Path);
-      if (TglDirectoryExists(c_Folder) == false)
+      const C_SclString c_Folder = (QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).absolutePath() + "/").toStdString();
+      if (QFileInfo(QString::fromStdString(*c_Folder.AsStdString())).isDir() == false)
       {
-         if (TglCreateDirectory(c_Folder) != 0)
+         if ((QDir().mkpath(QString::fromStdString(*c_Folder.AsStdString())) ? 0 : -1) != 0)
          {
             osc_write_log_error("Saving IO data", "Could not create folder \"" + c_Folder + "\".");
             s32_Retval = C_RD_WR;
@@ -351,7 +352,7 @@ int32_t C_OscHalcConfigFiler::h_SaveIoDomain(const C_OscHalcConfigDomain & orc_I
 {
    int32_t s32_Retval;
 
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("domain") == "domain");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("domain") == "domain");
    //Config
    s32_Retval = mh_SaveIoChannel(orc_IoDomain.c_DomainConfig, orc_XmlParser, "config", "domain");
    //Channels
@@ -384,7 +385,7 @@ int32_t C_OscHalcConfigFiler::h_LoadIoDomain(C_OscHalcConfigDomain & orc_IoDomai
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
       }
    }
    if (s32_Retval == C_NO_ERR)
@@ -419,7 +420,7 @@ int32_t C_OscHalcConfigFiler::h_LoadIoDomain(C_OscHalcConfigDomain & orc_IoDomai
                if (s32_Retval == C_NO_ERR)
                {
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "channels");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "channels");
                }
             }
             if (u32_ExpectedCount != u32_ActualCount)
@@ -433,7 +434,7 @@ int32_t C_OscHalcConfigFiler::h_LoadIoDomain(C_OscHalcConfigDomain & orc_IoDomai
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
          }
       }
    }
@@ -467,7 +468,7 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoDataBase(const C_OscHalcDefBase & orc_IoD
 {
    int32_t s32_Retval;
 
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("io-base-file") == "io-base-file");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("io-base-file") == "io-base-file");
    if (orc_BasePath.IsEmpty())
    {
       //To string
@@ -522,7 +523,7 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoDomains(const C_OscHalcConfig & orc_IoDat
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("domains") == "domains");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("domains") == "domains");
    orc_XmlParser.SetAttributeUint32("length", orc_IoData.GetDomainSize());
    for (uint32_t u32_ItDomain = 0UL; (u32_ItDomain < orc_IoData.GetDomainSize()) && (s32_Retval == C_NO_ERR);
         ++u32_ItDomain)
@@ -535,7 +536,7 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoDomains(const C_OscHalcConfig & orc_IoDat
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "domains");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domains");
          }
       }
       else
@@ -569,7 +570,7 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoChannels(const std::vector<C_OscHalcConfi
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("channels") == "channels");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("channels") == "channels");
    orc_XmlParser.SetAttributeUint32("length", static_cast<uint32_t>(orc_Channels.size()));
    for (uint32_t u32_ItChannel = 0UL; (u32_ItChannel < orc_Channels.size()) && (s32_Retval == C_NO_ERR);
         ++u32_ItChannel)
@@ -579,7 +580,7 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoChannels(const std::vector<C_OscHalcConfi
    if (s32_Retval == C_NO_ERR)
    {
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
    }
    return s32_Retval;
 }
@@ -603,7 +604,7 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoChannel(const C_OscHalcConfigChannel & or
 {
    int32_t s32_Retval;
 
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(orc_NodeName) == orc_NodeName);
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(orc_NodeName) == orc_NodeName);
    orc_XmlParser.SetAttributeBool("safety-relevant", orc_Channel.q_SafetyRelevant);
    orc_XmlParser.SetAttributeUint32("use-case-index", orc_Channel.u32_UseCaseIndex);
    orc_XmlParser.CreateNodeChild("name", orc_Channel.c_Name.c_str());
@@ -612,7 +613,7 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoChannel(const C_OscHalcConfigChannel & or
    if (s32_Retval == C_NO_ERR)
    {
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == orc_NodeParentName);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_NodeParentName);
    }
    return s32_Retval;
 }
@@ -635,24 +636,24 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoParameterStructs(
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("parameter-structs") == "parameter-structs");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("parameter-structs") == "parameter-structs");
    orc_XmlParser.SetAttributeUint32("length", static_cast<uint32_t>(orc_ParameterStructs.size()));
    for (uint32_t u32_ItParameter = 0UL;
         (u32_ItParameter < static_cast<uint32_t>(orc_ParameterStructs.size())) && (s32_Retval == C_NO_ERR);
         ++u32_ItParameter)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("parameter-struct") == "parameter-struct");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("parameter-struct") == "parameter-struct");
       s32_Retval = mh_SaveIoParameterStruct(orc_ParameterStructs[u32_ItParameter], orc_XmlParser);
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "parameter-structs");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameter-structs");
       }
    }
    if (s32_Retval == C_NO_ERR)
    {
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == orc_NodeName);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_NodeName);
    }
    return s32_Retval;
 }
@@ -679,12 +680,12 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoParameterStruct(const C_OscHalcConfigPara
    }
    else
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("single-value") == "single-value");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("single-value") == "single-value");
       s32_Retval = mh_SaveIoParameter(orc_ParameterStruct, orc_XmlParser, "single-value");
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "parameter-struct");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameter-struct");
       }
    }
    return s32_Retval;
@@ -706,23 +707,23 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoParameters(const std::vector<C_OscHalcCon
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("parameters") == "parameters");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("parameters") == "parameters");
    orc_XmlParser.SetAttributeUint32("length", static_cast<uint32_t>(orc_Parameters.size()));
    for (uint32_t u32_ItParameter = 0UL; (u32_ItParameter < orc_Parameters.size()) && (s32_Retval == C_NO_ERR);
         ++u32_ItParameter)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("parameter") == "parameter");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("parameter") == "parameter");
       s32_Retval = mh_SaveIoParameter(orc_Parameters[u32_ItParameter], orc_XmlParser, "parameter");
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "parameters");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameters");
       }
    }
    if (s32_Retval == C_NO_ERR)
    {
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "parameter-struct");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameter-struct");
    }
    return s32_Retval;
 }
@@ -745,7 +746,7 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoParameter(const C_OscHalcConfigParameter 
    int32_t s32_Retval = C_NO_ERR;
    bool q_ValueHandled = false;
 
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("value") == "value");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("value") == "value");
    switch (orc_Parameter.c_Value.GetComplexType())
    {
    case C_OscHalcDefContent::eCT_PLAIN:
@@ -789,13 +790,13 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoParameter(const C_OscHalcConfigParameter 
               rc_EnumItems.begin();
            (c_It != rc_EnumItems.end()) && (s32_Retval == C_NO_ERR); ++c_It)
       {
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("enum-item") == "enum-item");
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("enum-item") == "enum-item");
          orc_XmlParser.SetAttributeString("display", c_It->first);
          s32_Retval = C_OscHalcDefStructFiler::h_SaveSimpleValueAsAttribute("value", orc_XmlParser, c_It->second);
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "value");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "value");
          }
       }
    }
@@ -806,17 +807,17 @@ int32_t C_OscHalcConfigFiler::mh_SaveIoParameter(const C_OscHalcConfigParameter 
       {
          std::stringstream c_Mask;
          const C_OscHalcDefContentBitmaskItem & rc_BitmaskItem = rc_BitmaskItems[u32_ItBitMask];
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("bitmask-selection") == "bitmask-selection");
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("bitmask-selection") == "bitmask-selection");
          orc_XmlParser.SetAttributeString("display", rc_BitmaskItem.c_Display);
          orc_XmlParser.SetAttributeBool("initial-apply-value-setting", rc_BitmaskItem.q_ApplyValueSetting);
          c_Mask << "0x" << &std::hex << rc_BitmaskItem.u64_Value;
          orc_XmlParser.SetAttributeString("value", c_Mask.str().c_str());
          orc_XmlParser.CreateNodeChild("comment", rc_BitmaskItem.c_Comment);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "value");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "value");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == orc_BaseNode);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_BaseNode);
       orc_XmlParser.CreateNodeChild("comment", orc_Parameter.c_Comment);
    }
    return s32_Retval;
@@ -846,10 +847,10 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoDataBase(C_OscHalcDefBase & orc_IoData, C
          //From string
          s32_Retval = C_OscHalcDefFiler::h_LoadData(orc_IoData, orc_XmlParser);
          //Retrieve file name
-         tgl_assert(orc_XmlParser.GetAttributeStringError("original_file_name",
+         Q_ASSERT(orc_XmlParser.GetAttributeStringError("original_file_name",
                                                           orc_IoData.c_OriginalFileName) == C_NO_ERR);
          //Remember file content
-         tgl_assert(orc_XmlParser.GetAttributeStringError("original_file_content",
+         Q_ASSERT(orc_XmlParser.GetAttributeStringError("original_file_content",
                                                           orc_IoData.c_FileString) == C_NO_ERR);
       }
       else
@@ -907,7 +908,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoDomains(C_OscHalcConfig & orc_IoData, C_O
                   s32_Retval = h_LoadIoDomain(c_DomainCopy, orc_XmlParser);
                   if (s32_Retval == C_NO_ERR)
                   {
-                     tgl_assert(orc_IoData.SetDomainConfig(u32_ActualCount, c_DomainCopy) == C_NO_ERR);
+                     Q_ASSERT(orc_IoData.SetDomainConfig(u32_ActualCount, c_DomainCopy) == C_NO_ERR);
                      //Count
                      ++u32_ActualCount;
                      //Iterate
@@ -924,7 +925,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoDomains(C_OscHalcConfig & orc_IoData, C_O
             if (s32_Retval == C_NO_ERR)
             {
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "domains");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domains");
             }
          }
          if (u32_ExpectedCount != u32_ActualCount)
@@ -971,7 +972,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoChannel(C_OscHalcConfigChannel & orc_IoCh
       {
          orc_IoChannel.c_Name = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_NodeName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_NodeName);
       }
    }
    if (s32_Retval == C_NO_ERR)
@@ -981,7 +982,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoChannel(C_OscHalcConfigChannel & orc_IoCh
       {
          orc_IoChannel.c_Comment = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_NodeName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_NodeName);
       }
    }
    if (s32_Retval == C_NO_ERR)
@@ -1037,7 +1038,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoParameterStructs(
             if (s32_Retval == C_NO_ERR)
             {
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "parameter-structs");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameter-structs");
             }
          }
          if (s32_Retval == C_NO_ERR)
@@ -1056,7 +1057,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoParameterStructs(
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_NodeName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_NodeName);
       }
    }
    return s32_Retval;
@@ -1086,7 +1087,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoParameterStruct(C_OscHalcConfigParameterS
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "parameter-struct");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameter-struct");
          }
       }
    }
@@ -1135,7 +1136,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoParameters(std::vector<C_OscHalcConfigPar
             if (s32_Retval == C_NO_ERR)
             {
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "parameters");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameters");
             }
          }
          if (s32_Retval == C_NO_ERR)
@@ -1154,7 +1155,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoParameters(std::vector<C_OscHalcConfigPar
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "parameter-struct");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameter-struct");
       }
    }
    return s32_Retval;
@@ -1193,7 +1194,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoParameter(C_OscHalcConfigParameter & orc_
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_BaseName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_BaseName);
       }
    }
    if (s32_Retval == C_NO_ERR)
@@ -1203,7 +1204,7 @@ int32_t C_OscHalcConfigFiler::mh_LoadIoParameter(C_OscHalcConfigParameter & orc_
       {
          orc_Parameter.c_Comment = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_BaseName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_BaseName);
       }
    }
    return s32_Retval;

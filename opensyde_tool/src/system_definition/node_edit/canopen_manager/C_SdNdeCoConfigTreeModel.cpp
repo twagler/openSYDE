@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Model for tree for navigation and configuration of CANopen Manager
@@ -15,7 +15,7 @@
 #include <QDir>
 
 #include "C_Uti.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "constants.hpp"
 #include "stwerrors.hpp"
@@ -26,7 +26,7 @@
 #include "C_SdNdeCoConfigTreeModel.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -181,7 +181,7 @@ bool C_SdNdeCoConfigTreeModel::setData(const QModelIndex & orc_Index, const QVar
             const QModelIndex c_StartIndex = orc_Index;
             const QModelIndex c_EndIndex = orc_Index;
 
-            tgl_assert(this->m_CountLayers(orc_Index, u32_ValidLayers) == C_NO_ERR);
+            Q_ASSERT(this->m_CountLayers(orc_Index, u32_ValidLayers) == C_NO_ERR);
             if (u32_ValidLayers == 1UL)
             {
                if (this->m_CheckInterface(orc_Index, *pc_TreeItem))
@@ -193,7 +193,7 @@ bool C_SdNdeCoConfigTreeModel::setData(const QModelIndex & orc_Index, const QVar
             else
             {
                //Currently no other possibility
-               tgl_assert(false);
+               Q_ASSERT(false);
             }
 
             Q_EMIT (this->dataChanged(c_StartIndex, c_EndIndex));
@@ -392,7 +392,7 @@ void C_SdNdeCoConfigTreeModel::AddDevice(const uint32_t ou32_SelectedNodeIndex,
 
    this->beginInsertRows(c_Index, u32_Count, u32_Count);
    //Handle data
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->AddCanOpenManagerDevice(this->mu32_NodeIndex,
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->AddCanOpenManagerDevice(this->mu32_NodeIndex,
                                                                        ou8_OriginalNodeInterfaceNumber, c_DeviceId,
                                                                        orc_Config) == C_NO_ERR);
    //Handle tree
@@ -429,7 +429,7 @@ void C_SdNdeCoConfigTreeModel::RemoveDevice(const uint8_t ou8_OriginalNodeInterf
 
    this->beginRemoveRows(c_DevicesIndex, c_DeviceIndex.row(), c_DeviceIndex.row());
    //Handle data
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManagerDevice(this->mu32_NodeIndex,
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManagerDevice(this->mu32_NodeIndex,
                                                                           ou8_OriginalNodeInterfaceNumber,
                                                                           orc_DeviceId) == C_NO_ERR);
    //Handle tree
@@ -594,7 +594,7 @@ QModelIndex C_SdNdeCoConfigTreeModel::GetDeviceModelIndex(const uint8_t ou8_Inte
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeCoConfigTreeModel::CheckError(const QModelIndex & orc_InterfaceEntry)
 {
-   tgl_assert(orc_InterfaceEntry.parent().isValid() == false);
+   Q_ASSERT(orc_InterfaceEntry.parent().isValid() == false);
    if (orc_InterfaceEntry.parent().isValid() == false)
    {
       //lint -e{9079}  Result of Qt interface restrictions, set by index function
@@ -955,7 +955,7 @@ void C_SdNdeCoConfigTreeModel::m_HandleCheckInterfaceAction(const QModelIndex & 
 
    this->m_InitDevicesNodeContent(c_NewManager, *pc_DeviceEntry);
    orc_InterfaceItem.AddChild(pc_DeviceEntry);
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->AddCanOpenManager(this->mu32_NodeIndex,
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->AddCanOpenManager(this->mu32_NodeIndex,
                                                                  static_cast<uint8_t>(orc_InterfaceItem.u32_Index),
                                                                  c_NewManager, q_DatapoolChanged) == C_NO_ERR);
 
@@ -978,7 +978,7 @@ void C_SdNdeCoConfigTreeModel::m_HandleUncheckInterfaceAction(const QModelIndex 
 
    this->beginRemoveRows(orc_Index, 0, 0);
    orc_InterfaceItem.ClearChildren();
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManager(this->mu32_NodeIndex,
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManager(this->mu32_NodeIndex,
                                                                     static_cast<uint8_t>(orc_InterfaceItem.u32_Index),
                                                                     true, q_DatapoolChanged) ==
               C_NO_ERR);
@@ -1117,13 +1117,13 @@ uint32_t C_SdNdeCoConfigTreeModel::m_GetExpectedPosInTree(const uint8_t ou8_Inte
       else
       {
          //Should not happen
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
    else
    {
       //Should not happen
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 
    return u32_Retval;
@@ -1335,7 +1335,7 @@ void C_SdNdeCoConfigTreeModel::m_CheckError(C_TblTreeModelCheckableItem * const 
 void C_SdNdeCoConfigTreeModel::m_CheckError(const QModelIndex & orc_InterfaceIndex,
                                             C_TblTreeModelCheckableItem * const opc_InterfaceEntry)
 {
-   tgl_assert(opc_InterfaceEntry != NULL);
+   Q_ASSERT(opc_InterfaceEntry != NULL);
    if (opc_InterfaceEntry != NULL)
    {
       const uint8_t u8_InterfaceNumber = static_cast<uint8_t>(opc_InterfaceEntry->u32_Index);
@@ -1367,7 +1367,7 @@ void C_SdNdeCoConfigTreeModel::m_CheckError(const QModelIndex & orc_InterfaceInd
                C_TblTreeModelCheckableItem * const pc_DeviceItem = dynamic_cast<C_TblTreeModelCheckableItem *>(
                   opc_InterfaceEntry->c_Children[0]->c_Children[u32_DeviceCounter]);
 
-               tgl_assert(pc_DeviceItem != NULL);
+               Q_ASSERT(pc_DeviceItem != NULL);
                if (pc_DeviceItem != NULL)
                {
                   C_OscCanInterfaceId c_DeviceId;
@@ -1377,7 +1377,7 @@ void C_SdNdeCoConfigTreeModel::m_CheckError(const QModelIndex & orc_InterfaceInd
                                                                                pc_DeviceItem->u32_Index,
                                                                                c_DeviceId);
 
-                  tgl_assert(s32_Retval == C_NO_ERR);
+                  Q_ASSERT(s32_Retval == C_NO_ERR);
                   if (s32_Retval == C_NO_ERR)
                   {
                      // Check for any error of the device
@@ -1387,13 +1387,13 @@ void C_SdNdeCoConfigTreeModel::m_CheckError(const QModelIndex & orc_InterfaceInd
                      // Device configuration errors
                      s32_Retval = pc_Manager->CheckErrorDeviceCoNodeId(c_DeviceId, &q_NodeIdConflict,
                                                                        &q_NodeIdInvalid, true);
-                     tgl_assert(s32_Retval == C_NO_ERR);
+                     Q_ASSERT(s32_Retval == C_NO_ERR);
                      if (s32_Retval == C_NO_ERR)
                      {
                         bool q_HeartbeatInvalid;
 
                         s32_Retval = pc_Manager->CheckErrorDeviceHeartbeat(c_DeviceId, &q_HeartbeatInvalid);
-                        tgl_assert(s32_Retval == C_NO_ERR);
+                        Q_ASSERT(s32_Retval == C_NO_ERR);
                         if (s32_Retval == C_NO_ERR)
                         {
                            q_DeviceErrorDetected = (q_NodeIdInvalid == true) ||
@@ -1409,7 +1409,7 @@ void C_SdNdeCoConfigTreeModel::m_CheckError(const QModelIndex & orc_InterfaceInd
                               C_TblTreeModelCheckableItem * const pc_SubItem = dynamic_cast<
                                  C_TblTreeModelCheckableItem *>(pc_DeviceItem->c_Children[u32_ChildCounter]);
 
-                              tgl_assert(pc_SubItem != NULL);
+                              Q_ASSERT(pc_SubItem != NULL);
                               if ((pc_SubItem != NULL) &&
                                   (pc_SubItem->u32_Index == hu32_INDEX_DEVICE_USE_CASE_CONFIGURATION))
                               {

@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       A datapool item widget for the list widget
@@ -17,7 +17,7 @@
 
 #include "C_Uti.hpp"
 #include "C_OgeWiUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSdUtil.hpp"
 #include "C_OscNode.hpp"
@@ -234,7 +234,7 @@ void C_SdNdeDpSelectorItemWidget::UpdateData(void)
    const C_OscNodeDataPool * const pc_OscDataPool = C_PuiSdHandler::h_GetInstance()->GetOscDataPool(
       this->mc_DatapoolId.u32_NodeIndex, this->mc_DatapoolId.u32_DataPoolIndex);
 
-   tgl_assert(pc_OscDataPool != NULL);
+   Q_ASSERT(pc_OscDataPool != NULL);
    if (pc_OscDataPool != NULL)
    {
       QString c_ToolTipText;
@@ -297,10 +297,10 @@ void C_SdNdeDpSelectorItemWidget::UpdateData(void)
          const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(
             this->mc_DatapoolId.u32_NodeIndex);
 
-         tgl_assert(pc_Node != NULL);
+         Q_ASSERT(pc_Node != NULL);
          if (pc_Node != NULL)
          {
-            tgl_assert(static_cast<uint32_t>(pc_OscDataPool->s32_RelatedDataBlockIndex) <
+            Q_ASSERT(static_cast<uint32_t>(pc_OscDataPool->s32_RelatedDataBlockIndex) <
                        pc_Node->c_Applications.size());
             if (static_cast<uint32_t>(pc_OscDataPool->s32_RelatedDataBlockIndex) < pc_Node->c_Applications.size())
             {

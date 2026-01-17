@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       System view data element (implementation)
@@ -17,7 +17,7 @@
 #include "C_Uti.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiUtil.hpp"
 #include "C_PuiSvData.hpp"
 #include "C_PuiSdUtil.hpp"
@@ -26,7 +26,7 @@
 #include "C_OscLoggingHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -954,7 +954,7 @@ void C_PuiSvData::OnSyncNodeAdded(const uint32_t ou32_Index)
    {
       const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(ou32_Index);
 
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          uint32_t u32_NodeUpdateCounter;
@@ -1178,7 +1178,7 @@ void C_PuiSvData::OnSyncNodeHalc(const uint32_t ou32_Index, const std::map<C_Osc
                      const C_OscNodeDataPoolListElementId c_Id(c_ItLi->u32_NodeIndex,
                                                                c_ItLi->u32_DataPoolIndex,
                                                                c_ItLi->u32_ListIndex, u32_ItElement);
-                     tgl_assert(this->AddDashboardParamNewDataPoolElement(u32_ItDashboard, u32_ItPa, c_Id,
+                     Q_ASSERT(this->AddDashboardParamNewDataPoolElement(u32_ItDashboard, u32_ItPa, c_Id,
                                                                           NULL) == C_NO_ERR);
                   }
                }
@@ -1200,7 +1200,7 @@ void C_PuiSvData::OnSyncNodeReplace(const uint32_t ou32_Index)
    {
       const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(ou32_Index);
 
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          //Handle node applications (could not be synced up to this point) AFTER node update information was added
@@ -1373,8 +1373,8 @@ void C_PuiSvData::OnSyncNodeApplicationAdded(const uint32_t ou32_NodeIndex, cons
          C_PuiSdHandler::h_GetInstance()->GetApplication(ou32_NodeIndex, ou32_ApplicationIndex);
       const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(ou32_NodeIndex);
 
-      tgl_assert(pc_App != NULL);
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_App != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if ((pc_App != NULL) && (pc_Node != NULL))
       {
          C_OscViewNodeUpdate & rc_Update = this->mc_NodeUpdateInformation[ou32_NodeIndex];
@@ -1402,8 +1402,8 @@ void C_PuiSvData::OnSyncNodeApplicationMoved(const uint32_t ou32_NodeIndex, cons
       const stw::opensyde_core::C_OscNodeApplication * const pc_AppTarget =
          C_PuiSdHandler::h_GetInstance()->GetApplication(ou32_NodeIndex, ou32_ApplicationTargetIndex);
 
-      tgl_assert(pc_AppSource != NULL);
-      tgl_assert(pc_AppTarget != NULL);
+      Q_ASSERT(pc_AppSource != NULL);
+      Q_ASSERT(pc_AppTarget != NULL);
 
       if ((pc_AppSource != NULL) && (pc_AppTarget != NULL))
       {
@@ -1429,7 +1429,7 @@ void C_PuiSvData::OnSyncNodeApplicationAboutToBeDeleted(const uint32_t ou32_Node
       const stw::opensyde_core::C_OscNodeApplication * const pc_App =
          C_PuiSdHandler::h_GetInstance()->GetApplication(ou32_NodeIndex, ou32_ApplicationIndex);
 
-      tgl_assert(pc_App != NULL);
+      Q_ASSERT(pc_App != NULL);
       if (pc_App != NULL)
       {
          C_OscViewNodeUpdate & rc_Update = this->mc_NodeUpdateInformation[ou32_NodeIndex];
@@ -1455,7 +1455,7 @@ void C_PuiSvData::OnSyncNodeApplicationAboutToBeChangedFromParamSetHalc(const ui
          C_PuiSdHandler::h_GetInstance()->GetApplication(ou32_NodeIndex, ou32_ApplicationIndex);
 
       // Application still exists. Deletion will be done after this function
-      tgl_assert(pc_App != NULL);
+      Q_ASSERT(pc_App != NULL);
       if (pc_App != NULL)
       {
          C_OscViewNodeUpdate & rc_Update = this->mc_NodeUpdateInformation[ou32_NodeIndex];
@@ -1482,8 +1482,8 @@ void C_PuiSvData::OnSyncNodeApplicationChangedToParamSetHalc(const uint32_t ou32
       const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(ou32_NodeIndex);
 
       // Application still exists. Deletion will be done after this function
-      tgl_assert(pc_App != NULL);
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_App != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if ((pc_App != NULL) && (pc_Node != NULL))
       {
          C_OscViewNodeUpdate & rc_Update = this->mc_NodeUpdateInformation[ou32_NodeIndex];
@@ -1513,7 +1513,7 @@ void C_PuiSvData::OnSyncNodeApplicationResultPathSizeChanged(const uint32_t ou32
          ou32_NodeIndex,
          ou32_ApplicationIndex);
 
-      tgl_assert(pc_App != NULL);
+      Q_ASSERT(pc_App != NULL);
       if (pc_App != NULL)
       {
          C_OscViewNodeUpdate & rc_Update = this->mc_NodeUpdateInformation[ou32_NodeIndex];
@@ -1747,8 +1747,8 @@ void C_PuiSvData::OnSyncNodeDataPoolListElementAdded(const uint32_t ou32_NodeInd
             const C_PuiSvDbParam & rc_Param = rc_Params[u32_ItParam];
             bool q_Found = false;
             //For each list and value item
-            tgl_assert(rc_Param.c_ListValues.size() == rc_Param.c_DataPoolElementsConfig.size());
-            tgl_assert(rc_Param.c_DataSetSelectionIndices.size() == rc_Param.c_DataPoolElementsConfig.size());
+            Q_ASSERT(rc_Param.c_ListValues.size() == rc_Param.c_DataPoolElementsConfig.size());
+            Q_ASSERT(rc_Param.c_DataSetSelectionIndices.size() == rc_Param.c_DataPoolElementsConfig.size());
             for (uint32_t u32_ItElement = 0; u32_ItElement < rc_Param.c_DataPoolElementsConfig.size(); ++u32_ItElement)
             {
                const C_PuiSvDbNodeDataElementConfig & rc_Config = rc_Param.c_DataPoolElementsConfig[u32_ItElement];
@@ -1764,7 +1764,7 @@ void C_PuiSvData::OnSyncNodeDataPoolListElementAdded(const uint32_t ou32_NodeInd
             if (q_Found == true)
             {
                //Add new element
-               tgl_assert(this->AddDashboardParamNewDataPoolElement(u32_ItDashboard, u32_ItParam,
+               Q_ASSERT(this->AddDashboardParamNewDataPoolElement(u32_ItDashboard, u32_ItParam,
                                                                     C_OscNodeDataPoolListElementId(ou32_NodeIndex,
                                                                                                    ou32_DataPoolIndex,
                                                                                                    ou32_ListIndex,
@@ -2085,7 +2085,7 @@ int32_t C_PuiSvData::AddReadRailItem(const C_OscNodeDataPoolListElementId & orc_
 //----------------------------------------------------------------------------------------------------------------------
 void C_PuiSvData::AddDashboard(const C_PuiSvDashboard & orc_Dashboard, const bool oq_AutoAdapt)
 {
-   tgl_assert(InsertDashboard(this->mc_Dashboards.size(), orc_Dashboard, oq_AutoAdapt, NULL) == C_NO_ERR);
+   Q_ASSERT(InsertDashboard(this->mc_Dashboards.size(), orc_Dashboard, oq_AutoAdapt, NULL) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2142,7 +2142,7 @@ int32_t C_PuiSvData::InsertDashboard(const uint32_t ou32_Index, const C_PuiSvDas
                         const QMap<C_OscNodeDataPoolListElementId,
                                    C_PuiSvReadDataConfiguration>::ConstIterator c_ItMap =
                            opc_Rails->find(rc_Config.c_ElementId);
-                        tgl_assert(c_ItMap != opc_Rails->cend());
+                        Q_ASSERT(c_ItMap != opc_Rails->cend());
                         this->AddReadRailItem(rc_Config.c_ElementId, c_ItMap.value());
                      }
                      else
@@ -2562,7 +2562,7 @@ int32_t C_PuiSvData::AddDashboardParamNewDataPoolElement(const uint32_t ou32_Das
             //Handle read rail assignments
             c_NewReadRail.u8_RailIndex = 0;
             c_NewReadRail.e_TransmissionMode = C_PuiSvReadDataConfiguration::eTM_ON_TRIGGER;
-            tgl_assert(c_NewReadRail.InitDefaultThreshold(pc_Element->c_MinValue, pc_Element->c_MaxValue) ==
+            Q_ASSERT(c_NewReadRail.InitDefaultThreshold(pc_Element->c_MinValue, pc_Element->c_MaxValue) ==
                        C_NO_ERR);
             if (this->GetReadRailAssignment(orc_NewId, c_ReadRail) != C_NO_ERR)
             {
@@ -2960,7 +2960,7 @@ void C_PuiSvData::InitFromSystemDefinition(void)
                if (rc_Application.e_Type != C_OscNodeApplication::ePARAMETER_SET_HALC)
                {
                   // Only in case of a HALC NVM Datapool the size >1 is possible
-                  tgl_assert(rc_Application.c_ResultPaths.size() == 1);
+                  Q_ASSERT(rc_Application.c_ResultPaths.size() == 1);
                   QString c_Path = rc_Application.c_ResultPaths[0U].c_str();
                   if (pc_Node->c_Properties.q_XappSupport == true)
                   {

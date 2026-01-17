@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Common graphics scene with system view functionality (implementation)
@@ -19,12 +19,12 @@
 #include "C_GiSvTextElementBus.hpp"
 #include "C_GiSvPcBusConnector.hpp"
 #include "gitypes.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSvHandler.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_gui_logic;
@@ -520,12 +520,12 @@ C_GiLiBus * C_SyvTopologyBaseScene::m_CheckBusState(void) const
          {
             const C_GiNode * const pc_Node = pc_BusConnector->GetNodeItem();
             const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
-            tgl_assert((pc_Node != NULL) && (pc_View != NULL));
+            Q_ASSERT((pc_Node != NULL) && (pc_View != NULL));
             if ((pc_Node != NULL) && (pc_View != NULL))
             {
                const std::vector<uint8_t> & rc_NodeActiveFlages = pc_View->GetNodeActiveFlags();
                const int32_t s32_NodeIndex = pc_Node->GetIndex();
-               tgl_assert((s32_NodeIndex >= 0) && (static_cast<uint32_t>(s32_NodeIndex) < rc_NodeActiveFlages.size()));
+               Q_ASSERT((s32_NodeIndex >= 0) && (static_cast<uint32_t>(s32_NodeIndex) < rc_NodeActiveFlages.size()));
                if ((s32_NodeIndex >= 0) && (static_cast<uint32_t>(s32_NodeIndex) < rc_NodeActiveFlages.size()))
                {
                   pc_BusConnector->SetDisabledLook(rc_NodeActiveFlages[static_cast<uint32_t>(s32_NodeIndex)] == 0U);
@@ -630,7 +630,7 @@ bool C_SyvTopologyBaseScene::m_HandlePcReconnectIfNecessary(QString & orc_BusNam
          }
       }
       //Delete connection if existing
-      tgl_assert(c_ItemsToBeDeleted.size() <= 1);
+      Q_ASSERT(c_ItemsToBeDeleted.size() <= 1);
       for (uint32_t u32_ItItemToBeDeleted = 0; u32_ItItemToBeDeleted < c_ItemsToBeDeleted.size();
            ++u32_ItItemToBeDeleted)
       {
@@ -679,7 +679,7 @@ bool C_SyvTopologyBaseScene::m_HandlePcReconnectIfNecessary(QString & orc_BusNam
          if (pc_PcConnector != NULL)
          {
             const C_GiLiBus * const pc_CurBus = pc_PcConnector->GetBusItem();
-            tgl_assert(pc_CurBus != NULL);
+            Q_ASSERT(pc_CurBus != NULL);
             if (pc_CurBus != NULL)
             {
                const bool q_Disabled = C_PuiSvHandler::h_GetInstance()->CheckBusDisabled(this->mu32_ViewIndex,

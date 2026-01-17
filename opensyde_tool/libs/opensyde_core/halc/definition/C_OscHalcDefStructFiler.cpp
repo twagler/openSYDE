@@ -16,14 +16,14 @@
 #include <sstream>
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscNodeDataPoolContentUtil.hpp"
 #include "C_OscHalcDefStructFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::scl;
 
 using namespace stw::errors;
@@ -95,14 +95,14 @@ int32_t C_OscHalcDefStructFiler::h_LoadStructs(std::vector<C_OscHalcDefStruct> &
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == orc_SectionNodeName);
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_SectionNodeName);
          }
       }
 
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_CurrentNodeName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_CurrentNodeName);
       }
    }
    else
@@ -142,23 +142,23 @@ int32_t C_OscHalcDefStructFiler::h_SaveStructs(const std::vector<C_OscHalcDefStr
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(orc_SectionNodeName) == orc_SectionNodeName);
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(orc_SectionNodeName) == orc_SectionNodeName);
    for (uint32_t u32_ItStruct = 0UL; (u32_ItStruct < orc_Structs.size()) && (s32_Retval == C_NO_ERR); ++u32_ItStruct)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(orc_GroupNodeName) == orc_GroupNodeName);
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(orc_GroupNodeName) == orc_GroupNodeName);
       s32_Retval = C_OscHalcDefStructFiler::mh_SaveStruct(orc_Structs[u32_ItStruct], orc_UseCases, orc_XmlParser,
                                                           orc_GroupNodeName,
                                                           orc_SingleNodeName);
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_SectionNodeName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_SectionNodeName);
       }
    }
    if (s32_Retval == C_NO_ERR)
    {
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == orc_CurrentNodeName);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_CurrentNodeName);
    }
    return s32_Retval;
 }
@@ -514,7 +514,7 @@ int32_t C_OscHalcDefStructFiler::h_SaveSimpleValueAsAttribute(const C_SclString 
          orc_XmlParser.SetAttributeFloat64(orc_Node, orc_Content.GetValueF64());
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -706,7 +706,7 @@ int32_t C_OscHalcDefStructFiler::h_SetType(C_OscXmlParserBase & orc_XmlParser, C
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == orc_CurrentNodeName);
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_CurrentNodeName);
          }
       }
       else
@@ -740,7 +740,7 @@ int32_t C_OscHalcDefStructFiler::h_SetType(C_OscXmlParserBase & orc_XmlParser, C
                {
                   c_BitmaskItem.c_Comment = orc_XmlParser.GetNodeContent();
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "bitmask-selection");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bitmask-selection");
                }
                s32_Retval = orc_XmlParser.GetAttributeStringError("display", c_BitmaskItem.c_Display);
                if (s32_Retval == C_NO_ERR)
@@ -794,7 +794,7 @@ int32_t C_OscHalcDefStructFiler::h_SetType(C_OscXmlParserBase & orc_XmlParser, C
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == orc_CurrentNodeName);
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_CurrentNodeName);
          }
       }
       else
@@ -1024,7 +1024,7 @@ int32_t C_OscHalcDefStructFiler::mh_LoadStruct(C_OscHalcDefStruct & orc_Struct, 
             {
                orc_Struct.c_Comment = orc_XmlParser.GetNodeContent();
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == orc_GroupNodeName);
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_GroupNodeName);
             }
             c_NodeParameter = orc_XmlParser.SelectNodeChild(orc_SingleNodeName);
             if (c_NodeParameter == orc_SingleNodeName)
@@ -1045,7 +1045,7 @@ int32_t C_OscHalcDefStructFiler::mh_LoadStruct(C_OscHalcDefStruct & orc_Struct, 
                if (s32_Retval == C_NO_ERR)
                {
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == orc_GroupNodeName);
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_GroupNodeName);
                }
             }
          }
@@ -1094,16 +1094,16 @@ int32_t C_OscHalcDefStructFiler::mh_SaveStruct(const C_OscHalcDefStruct & orc_St
       if (s32_Retval == C_NO_ERR)
       {
          orc_XmlParser.SetAttributeString("availability", c_Availability);
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("comment") == "comment");
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("comment") == "comment");
          orc_XmlParser.SetNodeContent(orc_Struct.c_Comment);
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_GroupNodeName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_GroupNodeName);
          for (uint32_t u32_ItElem = 0UL; (u32_ItElem < orc_Struct.c_StructElements.size()) && (s32_Retval == C_NO_ERR);
               ++u32_ItElem)
          {
-            tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(orc_SingleNodeName) == orc_SingleNodeName);
+            Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(orc_SingleNodeName) == orc_SingleNodeName);
             s32_Retval = mh_SaveDataElement(orc_Struct.c_StructElements[u32_ItElem], orc_UseCases, orc_XmlParser,
                                             orc_SingleNodeName);
-            tgl_assert(orc_XmlParser.SelectNodeParent() == orc_GroupNodeName);
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_GroupNodeName);
          }
       }
    }
@@ -1146,7 +1146,7 @@ int32_t C_OscHalcDefStructFiler::mh_LoadDataElement(C_OscHalcDefElement & orc_El
    {
       orc_Element.c_Comment = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == orc_SingleNodeName);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_SingleNodeName);
    }
    if (orc_XmlParser.AttributeExists("id"))
    {
@@ -1329,9 +1329,9 @@ int32_t C_OscHalcDefStructFiler::mh_SaveDataElement(const C_OscHalcDefElement & 
    }
    orc_XmlParser.SetAttributeString("display", orc_Element.c_Display);
    //Comment before any other child elements
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("comment") == "comment");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("comment") == "comment");
    orc_XmlParser.SetNodeContent(orc_Element.c_Comment);
-   tgl_assert(orc_XmlParser.SelectNodeParent() == orc_SingleNodeName);
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_SingleNodeName);
    //Type
    switch (orc_Element.GetComplexType())
    {
@@ -1344,15 +1344,15 @@ int32_t C_OscHalcDefStructFiler::mh_SaveDataElement(const C_OscHalcDefElement & 
          for (uint32_t u32_It = 0UL; (u32_It < rc_BitmaskItems.size()) && (s32_Retval == C_NO_ERR); ++u32_It)
          {
             const C_OscHalcDefContentBitmaskItem & rc_Bitmask = rc_BitmaskItems[u32_It];
-            tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("bitmask-selection") == "bitmask-selection");
+            Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("bitmask-selection") == "bitmask-selection");
             orc_XmlParser.SetAttributeString("display", rc_Bitmask.c_Display);
             orc_XmlParser.SetAttributeBool("initial-apply-value-setting", rc_Bitmask.q_ApplyValueSetting);
             orc_XmlParser.SetAttributeString("value", C_OscHalcDefStructFiler::mh_ConvertToHex(
                                                 rc_Bitmask.u64_Value).c_str());
-            tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("comment") == "comment");
+            Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("comment") == "comment");
             orc_XmlParser.SetNodeContent(rc_Bitmask.c_Comment);
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "bitmask-selection");
-            tgl_assert(orc_XmlParser.SelectNodeParent() == orc_SingleNodeName);
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bitmask-selection");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_SingleNodeName);
          }
       }
       break;
@@ -1367,12 +1367,12 @@ int32_t C_OscHalcDefStructFiler::mh_SaveDataElement(const C_OscHalcDefElement & 
                  rc_EnumItems.begin();
               (c_It != rc_EnumItems.end()) && (s32_Retval == C_NO_ERR); ++c_It)
          {
-            tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("enum-item") == "enum-item");
+            Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("enum-item") == "enum-item");
             orc_XmlParser.SetAttributeString("display", c_It->first);
             s32_Retval = h_SaveSimpleValueAsAttribute("value", orc_XmlParser, c_It->second);
             if (s32_Retval == C_NO_ERR)
             {
-               tgl_assert(orc_XmlParser.SelectNodeParent() == orc_SingleNodeName);
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_SingleNodeName);
             }
          }
       }
@@ -1381,7 +1381,7 @@ int32_t C_OscHalcDefStructFiler::mh_SaveDataElement(const C_OscHalcDefElement & 
       {
          std::string c_Tmp;
          orc_XmlParser.SetAttributeString("type", "string");
-         tgl_assert(orc_Element.c_InitialValue.GetStringValue(c_Tmp) == C_NO_ERR);
+         Q_ASSERT(orc_Element.c_InitialValue.GetStringValue(c_Tmp) == C_NO_ERR);
          orc_XmlParser.SetAttributeString("initial-value", c_Tmp);
          orc_XmlParser.SetAttributeUint32("strlen", orc_Element.c_InitialValue.GetArraySize() - 1UL);
          q_SpecialValueHandling = true;
@@ -1391,7 +1391,7 @@ int32_t C_OscHalcDefStructFiler::mh_SaveDataElement(const C_OscHalcDefElement & 
       orc_XmlParser.SetAttributeString("type", c_BaseType);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    if (q_SpecialValueHandling == false)
@@ -1448,9 +1448,9 @@ int32_t C_OscHalcDefStructFiler::mh_ParseAttributeAvailability(std::vector<uint3
    }
    else
    {
-      C_SclDynamicArray<C_SclString> c_SplittedString;
+      QList<C_SclString> c_SplittedString;
       orc_AttributeContent.Tokenize(",", c_SplittedString);
-      for (int32_t s32_ItSplit = 0L; s32_ItSplit < c_SplittedString.GetLength(); ++s32_ItSplit)
+      for (int32_t s32_ItSplit = 0L; s32_ItSplit < c_SplittedString.size(); ++s32_ItSplit)
       {
          const C_SclString c_CurSplit = c_SplittedString[s32_ItSplit].Trim();
          bool q_Found = false;
@@ -1766,13 +1766,13 @@ void C_OscHalcDefStructFiler::mh_HandleEnumMinMax(C_OscHalcDefElement & orc_Elem
          if (c_It == rc_Enums.begin())
          {
             //Init
-            tgl_assert(orc_Element.c_MinValue.SetEnumValue(c_It->first) == C_NO_ERR);
-            tgl_assert(orc_Element.c_MaxValue.SetEnumValue(c_It->first) == C_NO_ERR);
+            Q_ASSERT(orc_Element.c_MinValue.SetEnumValue(c_It->first) == C_NO_ERR);
+            Q_ASSERT(orc_Element.c_MaxValue.SetEnumValue(c_It->first) == C_NO_ERR);
          }
          else
          {
             C_OscHalcDefContent c_Tmp = orc_Element.c_MinValue;
-            tgl_assert(c_Tmp.SetEnumValue(c_It->first) == C_NO_ERR);
+            Q_ASSERT(c_Tmp.SetEnumValue(c_It->first) == C_NO_ERR);
             if (c_Tmp < orc_Element.c_MinValue)
             {
                orc_Element.c_MinValue = c_Tmp;

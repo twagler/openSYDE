@@ -14,11 +14,11 @@
 
 #include <limits>
 #include <QLineEdit>
-#include "TglUtils.hpp"
+
 #include "C_OgeSpxInt64.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_elements;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -109,7 +109,7 @@ void C_OgeSpxInt64::SetValue(const QVariant & orc_Value, const bool oq_AllowValu
       }
       else
       {
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
    else
@@ -124,7 +124,7 @@ void C_OgeSpxInt64::SetValue(const QVariant & orc_Value, const bool oq_AllowValu
       }
       else
       {
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
    this->m_SetSpinBoxValue(c_ValueStr);
@@ -582,7 +582,7 @@ QString C_OgeSpxInt64::h_ExtractSpinBoxValue(const QString & orc_Text, const QSt
       if (c_Retval.contains(C_OgeSpxInt64::hc_UNIT_SEPERATION_CHARACTER))
       {
          const QStringList c_Tmp = c_Retval.split(C_OgeSpxInt64::hc_UNIT_SEPERATION_CHARACTER);
-         tgl_assert(c_Tmp.size() > 0);
+         Q_ASSERT(c_Tmp.size() > 0);
          if (c_Tmp.size() > 0)
          {
             c_Retval = c_Tmp.at(0);
@@ -740,7 +740,7 @@ QVariant C_OgeSpxInt64::m_PrepareValue(const QVariant & orc_Value) const
       }
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    return c_Retval;

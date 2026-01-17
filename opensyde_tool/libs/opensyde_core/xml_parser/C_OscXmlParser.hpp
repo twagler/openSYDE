@@ -1,12 +1,12 @@
 //----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
-   \brief      Wrapper class for tinyxml2
+   \brief      Wrapper class for QtXml (QDomDocument)
 
    \class      stw::opensyde_core::C_OscXMLParser
-   \brief      Wrapper class for tinyxml2
+   \brief      Wrapper class for QtXml (QDomDocument)
 
-   Based on an pre-existing implementation for rapidxml.
+   Based on an pre-existing implementation for tinyxml2.
    Documented and modified to fit into openSYDE structure and conventions.
 
    \copyright   Copyright 2016 Sensor-Technik Wiedemann GmbH. All rights reserved.
@@ -16,8 +16,9 @@
 #define C_OSCXMLPARSER_HPP
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
-#include <list>
-#include "tinyxml2.h"
+#include <QDomDocument>
+#include <QDomElement>
+#include <vector>
 #include "stwtypes.hpp"
 #include "C_SclString.hpp"
 
@@ -48,10 +49,10 @@ private:
    C_OscXmlParserBase(const C_OscXmlParserBase & orc_Source);               ///< not implemented: prevent copying
    C_OscXmlParserBase & operator = (const C_OscXmlParserBase & orc_Source); ///< not implemented: prevent assignment
 
-   tinyxml2::XMLElement * mpc_CurrentNode;
+   QDomElement mc_CurrentElement;
 
 protected:
-   tinyxml2::XMLDocument mc_Document;
+   QDomDocument mc_Document;
 
    void m_Init(void);
 
@@ -60,7 +61,7 @@ public:
    C_OscXmlParserBase(void);
    virtual ~C_OscXmlParserBase(void);
 
-   // init node system - selects second node, if available; first node is declaration
+   // init node system - selects root node
    stw::scl::C_SclString SelectRoot(void);
    virtual int32_t SelectRootError(const stw::scl::C_SclString & orc_Name);
 
@@ -114,7 +115,7 @@ public:
 
    // get attribute values (includes error check)
    virtual int32_t GetAttributeStringError(const stw::scl::C_SclString & orc_Name,
-                                           stw::scl::C_SclString & orc_Value) const;
+                                            stw::scl::C_SclString & orc_Value) const;
    virtual int32_t GetAttributeSint32Error(const stw::scl::C_SclString & orc_Name, int32_t & ors32_Value) const;
    virtual int32_t GetAttributeUint32Error(const stw::scl::C_SclString & orc_Name, uint32_t & oru32_Value) const;
    virtual int32_t GetAttributeSint64Error(const stw::scl::C_SclString & orc_Name, int64_t & ors64_Value) const;
@@ -127,12 +128,12 @@ public:
    virtual void ReportErrorForNodeContentAppendXmlContext(const stw::scl::C_SclString & orc_ErrorMessage)
    const;
    virtual void ReportErrorForAttributeContentAppendXmlContext(const stw::scl::C_SclString & orc_Attribute,
-                                                               const stw::scl::C_SclString & orc_ErrorMessage)
+                                                                const stw::scl::C_SclString & orc_ErrorMessage)
    const;
    virtual void ReportErrorForNodeContentStartingWithXmlContext(const stw::scl::C_SclString & orc_ErrorMessage)
    const;
    virtual void ReportErrorForAttributeContentStartingWithXmlContext(const stw::scl::C_SclString & orc_Attribute,
-                                                                     const stw::scl::C_SclString & orc_ErrorMessage)
+                                                                      const stw::scl::C_SclString & orc_ErrorMessage)
    const;
    virtual void ReportErrorForNodeMissing(const stw::scl::C_SclString & orc_MissingNodeName) const;
 

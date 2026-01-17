@@ -11,13 +11,13 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscDeviceManager.hpp"
 #include "C_SclIniFile.hpp"
-#include "TglUtils.hpp"
-#include "TglFile.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
 
@@ -26,7 +26,7 @@
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -102,7 +102,7 @@ int32_t C_OscDeviceManager::AddDevice(const stw::scl::C_SclString & orc_DeviceDe
    // Ini with toolbox structure definition
    C_SclIniFile c_Ini(orc_IniFile);
 
-   if (TglFileExists(orc_IniFile) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).isFile()) == false)
    {
       c_Ini.WriteInteger("DeviceTypes", "NumTypes", 1);
       c_Ini.WriteString("DeviceTypes", "TypeName1", orc_DeviceGroup);
@@ -152,7 +152,7 @@ int32_t C_OscDeviceManager::AddDevice(const stw::scl::C_SclString & orc_DeviceDe
          if (this->mc_DeviceGroups[u32_DeviceGroupCounter].GetGroupName() == orc_DeviceGroup)
          {
             s32_Return =
-               this->mc_DeviceGroups[u32_DeviceGroupCounter].LoadGroup(c_Ini, TglExtractFilePath(orc_IniFile));
+               this->mc_DeviceGroups[u32_DeviceGroupCounter].LoadGroup(c_Ini, (QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).absolutePath() + "/").toStdString());
             q_NewGroupNecessary = false;
             break;
          }
@@ -163,7 +163,7 @@ int32_t C_OscDeviceManager::AddDevice(const stw::scl::C_SclString & orc_DeviceDe
          // Set group name
          C_OscDeviceGroup c_Group;
          c_Group.SetGroupName(c_Ini.ReadString("DeviceTypes", "TypeName1", "").c_str());
-         s32_Return = c_Group.LoadGroup(c_Ini, TglExtractFilePath(orc_IniFile));
+         s32_Return = c_Group.LoadGroup(c_Ini, (QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).absolutePath() + "/").toStdString());
          this->mc_DeviceGroups.push_back(c_Group);
       }
    }
@@ -211,7 +211,7 @@ int32_t C_OscDeviceManager::ChangeDevices(std::vector<C_OscDeviceDefinition> & o
    // Ini with toolbox structure definition
    C_SclIniFile c_Ini(orc_IniFile);
 
-   if (TglFileExists(orc_IniFile) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).isFile()) == false)
    {
       osc_write_log_error("Delete device definitions", "File \"" + orc_IniFile + "\" does not exist.");
       s32_Return = C_RD_WR;
@@ -237,7 +237,7 @@ int32_t C_OscDeviceManager::ChangeDevices(std::vector<C_OscDeviceDefinition> & o
          }
 
          s32_Return =
-            this->mc_DeviceGroups[u32_DeviceGroupCounter].LoadGroup(c_Ini, TglExtractFilePath(orc_IniFile));
+            this->mc_DeviceGroups[u32_DeviceGroupCounter].LoadGroup(c_Ini, (QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).absolutePath() + "/").toStdString());
 
          // Check number of devices in group after deleting a device
          if (c_Ini.ReadInteger(orc_DeviceGroup, "DeviceCount", 0) == 0)
@@ -301,7 +301,7 @@ int32_t C_OscDeviceManager::LoadFromFile(const C_SclString & orc_File, const boo
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_File) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_File.AsStdString())).isFile()) == false)
    {
       if (oq_Optional == true)
       {
@@ -344,7 +344,7 @@ int32_t C_OscDeviceManager::LoadFromFile(const C_SclString & orc_File, const boo
       }
 
       c_Group.SetGroupName(c_GroupName.c_str());
-      s32_Return = c_Group.LoadGroup(c_Ini, TglExtractFilePath(orc_File));
+      s32_Return = c_Group.LoadGroup(c_Ini, (QFileInfo(QString::fromStdString(*orc_File.AsStdString())).absolutePath() + "/").toStdString());
       this->mc_DeviceGroups.push_back(c_Group);
 
       if (s32_Return != C_NO_ERR)

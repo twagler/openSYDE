@@ -11,6 +11,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp" //pre-compiled headers
+#include <QFileInfo>
 
 #include "DiagLib_config.hpp" //diaglib configuration
 
@@ -25,19 +26,19 @@
 #include "CXFLFlashWrite.hpp"
 #include "CXFLActions.hpp"
 
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
 
+#include <QElapsedTimer>
+#include <QThread>
+
+#include <QDateTime>
 #include "C_SclString.hpp"
-#include "C_SclDateTime.hpp"
 #include "C_SclStringList.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::diag_lib;
 using namespace stw::hex_file;
 
@@ -69,7 +70,7 @@ int32_t C_XFLFlashWrite::m_Wakeup(const C_XFLWakeupParameters & orc_Params)
    s32_Return = PerformWakeup(orc_Params, &mu8_ActualLocalID);
    if (s32_Return == C_NO_ERR)
    {
-      m_ReportVerboseStatus(TGL_LoadStr(STR_FM_CONNECTED_NODE) + C_SclString::IntToStr(mu8_ActualLocalID));
+      m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_CONNECTED_NODE) + C_SclString::IntToStr(mu8_ActualLocalID));
    }
 
    return s32_Return;
@@ -85,7 +86,7 @@ void C_XFLFlashWrite::m_FlashingFinished(const E_XFLFlashFinishedAction oe_Actio
 
    if (oe_Action == eXFL_FLASH_FINISHED_ACTION_ASK_USER)
    {
-      s32_Return = TRG_UserInteraction(eXFL_USER_INTERACTION_REASON_FINISHED, TGL_LoadStr(STR_FM_FLASHING_FINISHED),
+      s32_Return = TRG_UserInteraction(eXFL_USER_INTERACTION_REASON_FINISHED, stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_FLASHING_FINISHED),
                                        u32_Action);
       if (s32_Return != C_NO_ERR)
       {
@@ -112,17 +113,17 @@ void C_XFLFlashWrite::m_FlashingFinished(const E_XFLFlashFinishedAction oe_Actio
       break;
    case eXFL_FLASH_FINISHED_ACTION_NET_START:
       NodeSleep(); //make sure CRC over CRCs is written !!
-      TglSleep(50U);
+      QThread::msleep(50UL);
       NetStart();
       //wait for request to be sent out for sure (there's no response ...)
-      TglSleep(50U);
+      QThread::msleep(50UL);
       break;
    case eXFL_FLASH_FINISHED_ACTION_NET_RESET:
       NodeSleep(); //make sure CRC over CRCs is written !!
-      TglSleep(50U);
+      QThread::msleep(50UL);
       NetReset();
       //wait for request to be sent out for sure (there's no response ...)
-      TglSleep(50U);
+      QThread::msleep(50UL);
       break;
    case eXFL_FLASH_FINISHED_ACTION_NONE:
       break;
@@ -130,7 +131,7 @@ void C_XFLFlashWrite::m_FlashingFinished(const E_XFLFlashFinishedAction oe_Actio
    default:
       break;
    }
-   this->TRG_ReportStatus(TGL_LoadStr(STR_FM_FINISHED), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+   this->TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_FINISHED), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -150,7 +151,7 @@ int32_t C_XFLFlashWrite::m_GetVersionNumber(uint8_t & oru8_Version, bool & orq_S
    s32_Return = GetVersionNumber(au8_Version, u8_DLC);
    if (s32_Return != C_NO_ERR)
    {
-      c_Text = TGL_LoadStr(STR_FDL_VERSION_ERR) + C_XFLActions::XFLProtocolErrorToText(s32_Return, GetLastXFLError());
+      c_Text = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_VERSION_ERR) + C_XFLActions::XFLProtocolErrorToText(s32_Return, GetLastXFLError());
       TRG_ReportStatus(c_Text, gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return -1;
    }
@@ -170,7 +171,7 @@ int32_t C_XFLFlashWrite::m_GetVersionNumber(uint8_t & oru8_Version, bool & orq_S
       }
       if ((u32_Version < 203U) && (oq_DivertStreamDesired == true))
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_DIVERT_ERR_NO_SUPP), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_DIVERT_ERR_NO_SUPP), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
       break;
@@ -202,7 +203,7 @@ int32_t C_XFLFlashWrite::m_WriteBlockBasedChecksums(void)
    int32_t s32_Index;
    uint32_t u32_CheckSum;
 
-   C_SclDynamicArray<C_XFLChecksumBlock> c_Blocks;
+   QList<C_XFLChecksumBlock> c_Blocks;
 
    s32_Return = GetBlockAddressesAll(c_Blocks);
    if (s32_Return != C_NO_ERR)
@@ -210,10 +211,10 @@ int32_t C_XFLFlashWrite::m_WriteBlockBasedChecksums(void)
       return s32_Return;
    }
 
-   for (s32_Index = 0; s32_Index < c_Blocks.GetLength(); s32_Index++)
+   for (s32_Index = 0; s32_Index < c_Blocks.size(); s32_Index++)
    {
       //for blocks with CRCs in EEPROM there should be no way for them to become invalid
-      tgl_assert(c_Blocks[s32_Index].q_BlockDefinitionValid == true);
+      Q_ASSERT(c_Blocks[s32_Index].q_BlockDefinitionValid == true);
 
       if (c_Blocks[s32_Index].u32_EndAddress != XFL_CHK_BLOCK_END_INVALID)
       {
@@ -258,27 +259,28 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
 
    if (mc_Config.pc_CANDispatcher == NULL)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_DISPATCHER_NA), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_DISPATCHER_NA), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return C_CONFIG;
    }
 
    if (orc_Params.u16_Version != CXFLFLASHWRITE_VERSION)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_VERSION_MISMATCH),
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_VERSION_MISMATCH),
                        gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return C_CONFIG;
    }
 
    mu8_ActualLocalID = orc_Params.c_WakeupConfig.u8_LocalID; //copied as it might change during the process when doing
                                                              // wakeup with SNR
-
-   u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_TotalTimer;
+   c_TotalTimer.start();
+   u32_StartTime = 0;
 
    TRG_ReportStatus("<<<CLRALL", gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
 
-   if (TglFileExists(orc_Params.c_HexFile) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_Params.c_HexFile.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Params.c_HexFile.AsStdString())).isFile()) == false)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_FILE_NOT_FOUND) + " (" + orc_Params.c_HexFile + ")",
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_FILE_NOT_FOUND) + " (" + orc_Params.c_HexFile + ")",
                        gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return C_RD_WR;
    }
@@ -287,7 +289,7 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
    s32_Return = m_Wakeup(orc_Params.c_WakeupConfig);
    if (s32_Return != C_NO_ERR)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_WAKEUP), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_WAKEUP), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return C_NOACT;
    }
 
@@ -296,16 +298,16 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
       s32_Return = SetXflExchange();
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_XFL_EXCHANGE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_XFL_EXCHANGE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return C_NOACT;
       }
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_XFL_EXCHANGE), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_XFL_EXCHANGE), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
 
       //STW Flashloader-Spec: set_xfl_exchange will cause the server to go back to sleep ...
       s32_Return = m_Wakeup(orc_Params.c_WakeupConfig);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_WAKEUP), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_WAKEUP), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return C_NOACT;
       }
    }
@@ -314,12 +316,12 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
    if (s32_Return != C_NO_ERR)
    {
       //no response or error response: we have to assume we have a version <= 3.00r0
-      TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_FL_PROTOCOL_VERSION), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_FL_PROTOCOL_VERSION), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       u16_ProtocolVersion = 0x0000U;
    }
    else
    {
-      c_Text.PrintFormatted(TGL_LoadStr(STR_FM_FL_PROTOCOL_VERSION).c_str(),
+      c_Text.PrintFormatted(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_FL_PROTOCOL_VERSION).c_str(),
                             static_cast<uint8_t>((u16_ProtocolVersion >> 12U) & 0x0FU),
                             static_cast<uint8_t>((u16_ProtocolVersion >> 8U) & 0x0FU),
                             static_cast<uint8_t>((u16_ProtocolVersion >> 4U) & 0x0FU),
@@ -346,7 +348,7 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
       s32_Return = GetImplementationInformationServices(mt_AvailableServices);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_READ_IMPL_INFO), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_READ_IMPL_INFO), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return C_NOACT;
       }
 
@@ -374,14 +376,14 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
          s32_Return = GetFingerPrintSupportedIndexes(c_FingerPrintIndexes);
          if (s32_Return != C_NO_ERR)
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_READ_FINGER_PRINT),
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_READ_FINGER_PRINT),
                              gu8_DL_REPORT_STATUS_TYPE_ERROR);
             return C_NOACT;
          }
       }
       else
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_FINGER_PRINT_NA), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_FINGER_PRINT_NA), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
          //keep defaults: no finger-print information ...
       }
    }
@@ -398,7 +400,7 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
       s32_Return = DivertStreamOnOffBBB(true, orc_Params.u8_DivertTargetIndex, orc_Params.au8_DivertUserID);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FM_ERR_DIVERT_STREAM), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_DIVERT_STREAM), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return C_NOACT;
       }
       //ESX2 babyboard B flashloader version 1.00 does not support CRCs
@@ -414,41 +416,41 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
    switch (u8_ChecksumType)
    {
    case 0U: //not supported
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_CRCS_NO_SUPP), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_CRCS_NO_SUPP), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       break;
    case 1U: //sector based
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_SBC_SUPPORTED), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_SBC_SUPPORTED), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       break;
    case 2U: //no break
    case 3U: //block based EEPROM or FLASH
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_BBC_SUPPORTED), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_BBC_SUPPORTED), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       break;
    case 4U: //deactivated
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_CS_DEACTIVATED), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_CS_DEACTIVATED), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
    s32_Return = GetSectorCount(u16_NumSectors);
    if (s32_Return != C_NO_ERR)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_SEC_COUNT_ERR), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_SEC_COUNT_ERR), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return C_NOACT;
    }
-   TRG_ReportStatus(TGL_LoadStr(STR_FDL_NUM_SECTORS) + " " + C_SclString::IntToStr(u16_NumSectors),
+   TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_NUM_SECTORS) + " " + C_SclString::IntToStr(u16_NumSectors),
                     gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
 
    s32_Return = GetDeviceID(u16_ProtocolVersion >= mu16_PROTOCOL_VERSION_3_00, c_DeviceId);
    if (s32_Return != C_NO_ERR)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FW_ERR_READ_DEV_ID), gu8_DL_REPORT_STATUS_TYPE_WARNING);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_ERR_READ_DEV_ID), gu8_DL_REPORT_STATUS_TYPE_WARNING);
       c_DeviceId = "";
    }
    else
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FW_DEV_ID) + " \"" + c_DeviceId + "\"", gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FW_DEV_ID) + " \"" + c_DeviceId + "\"", gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
    }
 
    //hack for ESX2: new flashloader: Intel->7, old flashloader: Intel->6
@@ -459,12 +461,12 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
          u16_NumSectors = 7U;
       }
    }
-   mau8_SectorsToErase.SetLength(u16_NumSectors);
+   mau8_SectorsToErase.resize(u16_NumSectors);
 
    s32_Return = m_FlashESXLokalID(c_DeviceId, c_FingerPrintIndexes, orc_Params, u16_ProtocolVersion);
    if (s32_Return != C_NO_ERR)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_FLASHING), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_FLASHING), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return C_NOACT;
    }
 
@@ -489,8 +491,8 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
       //ignore result; show flashing finished dialog in any case !
    }
 
-   u32_EndTime = TglGetTickCount();
-   c_Text.PrintFormatted("%s %d s", TGL_LoadStr(STR_FDL_TOTAL_TIME).c_str(), (u32_EndTime - u32_StartTime) / 1000U);
+   u32_EndTime = c_TotalTimer.elapsed();
+   c_Text.PrintFormatted("%s %d s", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TOTAL_TIME).c_str(), u32_EndTime / 1000U);
    m_ReportVerboseStatus(c_Text);
 
    m_FlashingFinished(orc_Params.e_FlashFinishedAction);
@@ -531,8 +533,8 @@ int32_t C_XFLFlashWrite::m_WriteFlashChecksums(const uint8_t ou8_Mode, const C_X
    switch (ou8_Mode)
    {
    case 1U: //sector based
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_WRITING_CRCS), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
-      for (s32_Block = 0; s32_Block < mau8_SectorsToErase.GetLength(); s32_Block++)
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_WRITING_CRCS), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      for (s32_Block = 0; s32_Block < mau8_SectorsToErase.size(); s32_Block++)
       {
          //Always write CRC for Boot Sector !
          //Reason: make sure the checksum over the flashloader is correct.
@@ -545,7 +547,7 @@ int32_t C_XFLFlashWrite::m_WriteFlashChecksums(const uint8_t ou8_Mode, const C_X
             s32_Return = SetSecCRC(static_cast<uint16_t>(s32_Block), u16_Dummy);
             if (s32_Return != C_NO_ERR)
             {
-               TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_WRITING_CRCS), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+               TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_WRITING_CRCS), gu8_DL_REPORT_STATUS_TYPE_ERROR);
                s32_Return = C_NOACT;
             }
          }
@@ -562,11 +564,11 @@ int32_t C_XFLFlashWrite::m_WriteFlashChecksums(const uint8_t ou8_Mode, const C_X
       }
       break;
    case 2U: //block based EEPROM
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_WRITING_CRCS), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_WRITING_CRCS), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       s32_Return = this->m_WriteBlockBasedChecksums();
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_WRITING_CRCS), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_WRITING_CRCS), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          s32_Return = C_NOACT;
       }
       break;
@@ -579,7 +581,7 @@ int32_t C_XFLFlashWrite::m_WriteFlashChecksums(const uint8_t ou8_Mode, const C_X
       s32_Return = this->ReadServerBlockChecksumInformation(c_CRCs);
       if (s32_Return == C_NO_ERR) //information read, check the content ...
       {
-         for (s32_Block = 0; s32_Block < c_CRCs.c_BlockConfig.GetLength(); s32_Block++)
+         for (s32_Block = 0; s32_Block < c_CRCs.c_BlockConfig.size(); s32_Block++)
          {
             if (c_CRCs.c_BlockConfig[s32_Block].q_BlockDefinitionValid == false)
             {
@@ -658,9 +660,9 @@ int32_t C_XFLFlashWrite::m_SetAutoSectors(C_HexFile & orc_HexFile, const bool oq
    orc_FlashInfo.ConvertToFlashSectorTable(c_SectorTable);
 
    //consistency check: at_SectorTable.Length must match total number of sectors !
-   if (mau8_SectorsToErase.GetLength() != c_SectorTable.GetLength())
+   if (mau8_SectorsToErase.size() != c_SectorTable.size())
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_FL_IMPLEMENTATION),
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_FL_IMPLEMENTATION),
                        gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return C_CONFIG;
    }
@@ -668,7 +670,7 @@ int32_t C_XFLFlashWrite::m_SetAutoSectors(C_HexFile & orc_HexFile, const bool oq
    if (oq_AllButProtected == true)
    {
       //flag all sectors except protected ones:
-      for (s32_Index = 0; s32_Index < mau8_SectorsToErase.GetLength(); s32_Index++)
+      for (s32_Index = 0; s32_Index < mau8_SectorsToErase.size(); s32_Index++)
       {
          mau8_SectorsToErase[s32_Index] = (c_SectorTable[s32_Index].q_IsProtected == false) ? 1U : 0U;
       }
@@ -717,7 +719,7 @@ int32_t C_XFLFlashWrite::m_SetAutoSectors(C_HexFile & orc_HexFile, const bool oq
             mau8_SectorsToErase[u16_Sector] = 1U;
             if (c_SectorTable[u16_Sector].q_IsProtected == true)
             {
-               TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_HEX_ON_PROTECTED_S), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+               TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_HEX_ON_PROTECTED_S), gu8_DL_REPORT_STATUS_TYPE_ERROR);
                return C_RANGE;
             }
             q_FoundStartSector = true;
@@ -729,7 +731,7 @@ int32_t C_XFLFlashWrite::m_SetAutoSectors(C_HexFile & orc_HexFile, const bool oq
             mau8_SectorsToErase[u16_Sector] = 1U;
             if (c_SectorTable[u16_Sector].q_IsProtected == true)
             {
-               TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_HEX_ON_PROTECTED_S), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+               TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_HEX_ON_PROTECTED_S), gu8_DL_REPORT_STATUS_TYPE_ERROR);
                return C_RANGE;
             }
             q_FoundEndSector = true;
@@ -759,9 +761,9 @@ int32_t C_XFLFlashWrite::m_SetSectorsToErase(C_HexFile & orc_HexFile, const C_Sc
                                              C_XFLFlashInformation & orc_FlashInfo, const uint16_t ou16_ProtocolVersion)
 {
    int32_t s32_Return;
-   const uint16_t u16_NumSectorsTotal = static_cast<uint16_t>(mau8_SectorsToErase.GetLength());
+   const uint16_t u16_NumSectorsTotal = static_cast<uint16_t>(mau8_SectorsToErase.size());
 
-   for (int32_t s32_Sector = 0; s32_Sector < mau8_SectorsToErase.GetLength(); s32_Sector++)
+   for (int32_t s32_Sector = 0; s32_Sector < mau8_SectorsToErase.size(); s32_Sector++)
    {
       mau8_SectorsToErase[s32_Sector] = 0U;
    }
@@ -776,14 +778,14 @@ int32_t C_XFLFlashWrite::m_SetSectorsToErase(C_HexFile & orc_HexFile, const C_Sc
          break;                          //valid
       case eXFL_ERASE_MODE_C_APPLICATION:
          //issue a warning, that this might not be a very good selection:
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_HINT_USE_AUTO_MODE), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_HINT_USE_AUTO_MODE), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
          break;                             //valid
       case eXFL_ERASE_MODE_CANOPEN_CONFIG:  //no break
       case eXFL_ERASE_MODE_IEC_APPLICATION: //no break
       case eXFL_ERASE_MODE_IEC_RUN_TIME_SYSTEM:
       default:
          //do not hint at using "C-Application" (we do not really want the user to use it)
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_ONLY_F_AUTO_UD), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ONLY_F_AUTO_UD), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
    }
@@ -791,7 +793,7 @@ int32_t C_XFLFlashWrite::m_SetSectorsToErase(C_HexFile & orc_HexFile, const C_Sc
    {
       if (orc_Params.e_EraseMode == eXFL_ERASE_MODE_AUTOMATIC)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_FILETYPE_AUTO_NA),
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_FILETYPE_AUTO_NA),
                           gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
@@ -819,7 +821,7 @@ int32_t C_XFLFlashWrite::m_SetSectorsToErase(C_HexFile & orc_HexFile, const C_Sc
          {
             if (u16_NumSectorsTotal < 3U)
             {
-               TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_C_APPL_NOT_POSSIBLE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+               TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_C_APPL_NOT_POSSIBLE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
                return -1;
             }
             mau8_SectorsToErase[1] = 0U;
@@ -830,7 +832,7 @@ int32_t C_XFLFlashWrite::m_SetSectorsToErase(C_HexFile & orc_HexFile, const C_Sc
    case eXFL_ERASE_MODE_CANOPEN_CONFIG:
       if (u16_NumSectorsTotal < 3U)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_CANOPEN_NOT_POSSIBLE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_CANOPEN_NOT_POSSIBLE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
       mau8_SectorsToErase[2] = 1U;
@@ -865,7 +867,7 @@ int32_t C_XFLFlashWrite::m_SetSectorsToErase(C_HexFile & orc_HexFile, const C_Sc
          mau8_SectorsToErase[16] = 1U;
          break;
       default:
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_IECAPPL_NOT_POSSIBLE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_IECAPPL_NOT_POSSIBLE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
       break;
@@ -896,7 +898,7 @@ int32_t C_XFLFlashWrite::m_SetSectorsToErase(C_HexFile & orc_HexFile, const C_Sc
          mau8_SectorsToErase[18] = 1U;
          break;
       default:
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_IECRTS_NOT_POSSIBLE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_IECRTS_NOT_POSSIBLE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
       break;
@@ -904,7 +906,7 @@ int32_t C_XFLFlashWrite::m_SetSectorsToErase(C_HexFile & orc_HexFile, const C_Sc
       s32_Return = m_SetUserDefinedSectors(orc_Params.c_UserDefinedSectors);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_SEC_ERASE_INVALID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_SEC_ERASE_INVALID), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
       break;
@@ -916,7 +918,7 @@ int32_t C_XFLFlashWrite::m_SetSectorsToErase(C_HexFile & orc_HexFile, const C_Sc
       }
       break;
    default:
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_INVALID_HEX_FILE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_INVALID_HEX_FILE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return -1;
    }
    return C_NO_ERR;
@@ -934,7 +936,7 @@ int32_t C_XFLFlashWrite::m_SetUserDefinedSectors(const C_SclString & orc_Sectors
    C_SclStringList c_Strings;
    char_t * pcn_String;
 
-   for (uint32_t u32_Sector = 0; u32_Sector < static_cast<uint32_t>(mau8_SectorsToErase.GetLength()); u32_Sector++)
+   for (uint32_t u32_Sector = 0; u32_Sector < static_cast<uint32_t>(mau8_SectorsToErase.size()); u32_Sector++)
    {
       mau8_SectorsToErase[u32_Sector] = 0U; //first set all sectors to not being erased
    }
@@ -986,9 +988,9 @@ int32_t C_XFLFlashWrite::m_SetUserDefinedSectors(const C_SclString & orc_Sectors
          {
             return -1;
          }
-         if ((u16_Value2 < u16_Value) || (u16_Value >= static_cast<uint16_t>(mau8_SectorsToErase.GetLength())))
+         if ((u16_Value2 < u16_Value) || (u16_Value >= static_cast<uint16_t>(mau8_SectorsToErase.size())))
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_SEC_ERASE_INV2), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_SEC_ERASE_INV2), gu8_DL_REPORT_STATUS_TYPE_ERROR);
             return -1;
          }
          for (uint16_t u16_IndexValue = u16_Value; u16_IndexValue <= u16_Value2; u16_IndexValue++)
@@ -1007,9 +1009,9 @@ int32_t C_XFLFlashWrite::m_SetUserDefinedSectors(const C_SclString & orc_Sectors
          {
             return -1;
          }
-         if (u16_Value >= static_cast<uint16_t>(mau8_SectorsToErase.GetLength()))
+         if (u16_Value >= static_cast<uint16_t>(mau8_SectorsToErase.size()))
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_SEC_ERASE_INV2), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_SEC_ERASE_INV2), gu8_DL_REPORT_STATUS_TYPE_ERROR);
             return -1;
          }
          mau8_SectorsToErase[u16_Value] = 1U;
@@ -1035,49 +1037,50 @@ int32_t C_XFLFlashWrite::m_SetUserDefinedSectors(const C_SclString & orc_Sectors
 int32_t C_XFLFlashWrite::m_WriteStartFingerPrint(const C_XFLFingerPrintSupportedIndexes & orc_FingerPrintIndexes)
 {
    int32_t s32_Return;
-   C_SclString c_UserName;
-   C_SclDateTime c_Now;
-   bool q_Return;
+   const QDateTime c_Now = QDateTime::currentDateTime();
+   const QDate c_Date = c_Now.date();
+   const QTime c_Time = c_Now.time();
 
-   c_Now = C_SclDateTime::Now();
    if (orc_FingerPrintIndexes.q_ProgrammingDate == true)
    {
-      s32_Return = SetFingerPrintProgrammingDate(static_cast<uint8_t>(c_Now.mu16_Year % 100U),
-                                                 static_cast<uint8_t>(c_Now.mu16_Month),
-                                                 static_cast<uint8_t>(c_Now.mu16_Day));
+      s32_Return = SetFingerPrintProgrammingDate(static_cast<uint8_t>(c_Date.year() % 100),
+                                                 static_cast<uint8_t>(c_Date.month()),
+                                                 static_cast<uint8_t>(c_Date.day()));
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_WR_PROG_DATA), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_WR_PROG_DATA), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
    }
 
    if (orc_FingerPrintIndexes.q_ProgrammingTime == true)
    {
-      s32_Return = SetFingerPrintProgrammingTime(static_cast<uint8_t>(c_Now.mu16_Hour),
-                                                 static_cast<uint8_t>(c_Now.mu16_Minute),
-                                                 static_cast<uint8_t>(c_Now.mu16_Second));
+      s32_Return = SetFingerPrintProgrammingTime(static_cast<uint8_t>(c_Time.hour()),
+                                                 static_cast<uint8_t>(c_Time.minute()),
+                                                 static_cast<uint8_t>(c_Time.second()));
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_WR_PROG_TIME), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_WR_PROG_TIME), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
    }
 
    if (orc_FingerPrintIndexes.q_UsernamePart1 == true)
    {
-      q_Return = TglGetSystemUserName(c_UserName);
+      C_SclString c_UserName;
+      bool q_Return;
+      q_Return = stw::opensyde_core::C_OscUtils::h_GetSystemUserName(c_UserName);
       if (q_Return != true)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_RD_USER_NAME), gu8_DL_REPORT_STATUS_TYPE_WARNING);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_RD_USER_NAME), gu8_DL_REPORT_STATUS_TYPE_WARNING);
          c_UserName = "unknown";
       }
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_TXT_REC_USER_N_P1) + c_UserName + TGL_LoadStr(STR_FDL_TXT_REC_USER_N_P2),
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_REC_USER_N_P1) + c_UserName + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_REC_USER_N_P2),
                        gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       s32_Return = SetFingerPrintUserName(c_UserName);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_WR_USER_NAME), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_WR_USER_NAME), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
    }
@@ -1087,7 +1090,7 @@ int32_t C_XFLFlashWrite::m_WriteStartFingerPrint(const C_XFLFingerPrintSupported
       s32_Return = this->SetFingerPrintChecksum(0U);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_WR_APPL_CHECKS), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_WR_APPL_CHECKS), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
    }
@@ -1139,7 +1142,7 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
          s32_Return = -1;
          break;
       case 1U:
-         TRG_ReportStatus(c_Text + TGL_LoadStr(STR_FDL_TXT_IGNORE), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+         TRG_ReportStatus(c_Text + stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_IGNORE), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
          break;
       case 2U:
          if ((u32_Return & stw::hex_file::ERR_MASK) == stw::hex_file::WRN_RECORD_OVERLAY)
@@ -1157,7 +1160,7 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
          }
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          s32_Return = -1;
          break;
       }
@@ -1172,7 +1175,7 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
    if (s32_Return != C_NO_ERR)
    {
       u32_FileChecksum = 0U;
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_WARN_COULD_NOT_CALC_APPL_CHK), gu8_DL_REPORT_STATUS_TYPE_WARNING);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_WARN_COULD_NOT_CALC_APPL_CHK), gu8_DL_REPORT_STATUS_TYPE_WARNING);
    }
 
    //device ID x-check:
@@ -1202,11 +1205,11 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
       s32_Return = GetImplementationInformationHexRecords(u8_RecordLength, u8_Granularity);
       if (s32_Return != C_NO_ERR)
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_RD_HEX_REC_INFO), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_RD_HEX_REC_INFO), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          return -1;
       }
 
-      m_ReportVerboseStatus(TGL_LoadStr(STR_FDL_TXT_CHG_HEX_REC_LENGTH) +
+      m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_CHG_HEX_REC_LENGTH) +
                             C_SclString::IntToStr(u8_RecordLength) + ")");
 
       u32_Return = c_HexFile.Optimize(u8_RecordLength);
@@ -1220,7 +1223,7 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
    {
       if (orc_Params.u8_HexRecordLength != 0U)
       {
-         m_ReportVerboseStatus(TGL_LoadStr(STR_FDL_TXT_DO_CHG_HEX_REC_LENGTH) +
+         m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_DO_CHG_HEX_REC_LENGTH) +
                                C_SclString::IntToStr(orc_Params.u8_HexRecordLength));
 
          u32_Return = c_HexFile.Optimize(orc_Params.u8_HexRecordLength);
@@ -1239,8 +1242,8 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
       return s32_Return;
    }
 
-   c_Text = TGL_LoadStr(STR_FDL_SEC_ERASE) + " ";
-   for (int32_t s32_Sector = 0; s32_Sector < mau8_SectorsToErase.GetLength(); s32_Sector++)
+   c_Text = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_SEC_ERASE) + " ";
+   for (int32_t s32_Sector = 0; s32_Sector < mau8_SectorsToErase.size(); s32_Sector++)
    {
       if (mau8_SectorsToErase[s32_Sector] == 1U)
       {
@@ -1248,14 +1251,17 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
       }
    }
    TRG_ReportStatus(c_Text, gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
-   TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERASING), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
-   u32_OldTimeTotal = TglGetTickCount();
+   TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERASING), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+   
+   QElapsedTimer c_TotalTimer;
+   c_TotalTimer.start();
+   u32_OldTimeTotal = 0;
 
-   for (int32_t s32_Sector = 0; s32_Sector < mau8_SectorsToErase.GetLength(); s32_Sector++)
+   for (int32_t s32_Sector = 0; s32_Sector < mau8_SectorsToErase.size(); s32_Sector++)
    {
       if (mau8_SectorsToErase[s32_Sector] == 1U)
       {
-         c_Text = TGL_LoadStr(STR_FDL_ERASING_SECTOR) + " " + C_SclString::IntToStr(s32_Sector);
+         c_Text = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERASING_SECTOR) + " " + C_SclString::IntToStr(s32_Sector);
          TRG_ReportStatus("<<<CLRLINE", gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
          TRG_ReportStatus(c_Text, gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
 
@@ -1273,7 +1279,7 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
          }
          if (s32_Return != C_NO_ERR)
          {
-            c_Text = TGL_LoadStr(STR_FDL_ERR_ERASE) + " " + C_SclString::IntToStr(s32_Sector) +
+            c_Text = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ERASE) + " " + C_SclString::IntToStr(s32_Sector) +
                      ": " + C_XFLActions::XFLProtocolErrorToText(s32_Return, GetLastXFLError());
             TRG_ReportStatus(c_Text, gu8_DL_REPORT_STATUS_TYPE_ERROR);
             return -1;
@@ -1281,8 +1287,8 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
       }
    }
 
-   u32_EraseTime = TglGetTickCount() - u32_OldTimeTotal;
-   c_Text.PrintFormatted("%s %d s", TGL_LoadStr(STR_FDL_ERASE_TIME).c_str(), u32_EraseTime / 1000);
+   u32_EraseTime = c_TotalTimer.elapsed();
+   c_Text.PrintFormatted("%s %d s", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERASE_TIME).c_str(), u32_EraseTime / 1000);
    m_ReportVerboseStatus(c_Text.c_str());
 
    s32_Return = m_WriteStartFingerPrint(orc_FingerPrintIndexes);
@@ -1295,7 +1301,7 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
    s32_Return = ProgFlash();
    if (s32_Return != C_NO_ERR)
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_ENTER_PROG_MODE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ENTER_PROG_MODE), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return -1;
    }
 
@@ -1303,16 +1309,17 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
       //get file information:
       int32_t s32_Size;
 
-      s32_Size = TglFileSize(orc_Params.c_HexFile);
+      s32_Size = static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_Params.c_HexFile.AsStdString())).size());
       if (s32_Size != -1)
       {
-         m_ReportVerboseStatus(TGL_LoadStr(STR_FILESIZE) + " " + C_SclString::IntToStr(s32_Size) +
-                               TGL_LoadStr(STR_FDL_BYTES));
-         TglFileAgeString(orc_Params.c_HexFile, c_Text);
-         m_ReportVerboseStatus(TGL_LoadStr(STR_TIMESTAMP) + " " + c_Text);
+         m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FILESIZE) + " " + C_SclString::IntToStr(s32_Size) +
+                               stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_BYTES));
+         const QFileInfo c_FileInfo(QString::fromStdString(*orc_Params.c_HexFile.AsStdString()));
+         c_Text = c_FileInfo.lastModified().toString("dd.MM.yyyy HH:mm:ss").toStdString().c_str();
+         m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_TIMESTAMP) + " " + c_Text);
       }
    }
-   TRG_ReportStatus(TGL_LoadStr(STR_FM_WRITING), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+   TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_WRITING), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
    m_ReportVerboseStatus("");
 
    pu8_Line = c_HexFile.LineInit();
@@ -1321,10 +1328,13 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
       u32_NumLinesTotal = c_HexFile.LineCount();
       u32_NumBytesTotal = c_HexFile.ByteCount();
 
-      TRG_ReportProgress(0U, TGL_LoadStr(STR_FDL_TXT_WR_FLASH_DO));
-      u32_OldTimeTotal = TglGetTickCount();
+      TRG_ReportProgress(0U, stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_WR_FLASH_DO));
+      c_TotalTimer.restart();
+      u32_OldTimeTotal = 0;
 
-      u32_OldTime = TglGetTickCount();
+      QElapsedTimer c_StepTimer;
+      c_StepTimer.start();
+      u32_OldTime = 0;
       u32_NumSentProgress = 0U;
 
       for (;;)
@@ -1352,12 +1362,12 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
             c_Text = "";
             break;
          case C_CHECKSUM:
-            c_Text.PrintFormatted("%s %d)", TGL_LoadStr(STR_FDL_ERR_WRITE_CHECKSUM).c_str(), u32_LineCount);
+            c_Text.PrintFormatted("%s %d)", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_WRITE_CHECKSUM).c_str(), u32_LineCount);
             break;
          default:
-            c_Text = (TGL_LoadStr(STR_FDL_ERR_WR_FLASH_DO_PT1) +
+            c_Text = (stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_WR_FLASH_DO_PT1) +
                       C_XFLActions::XFLProtocolErrorToText(s32_Return, GetLastXFLError()) +
-                      TGL_LoadStr(STR_FDL_ERR_WR_FLASH_DO_PT2) + C_SclString::IntToStr(u32_LineCount)).c_str();
+                      stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_WR_FLASH_DO_PT2) + C_SclString::IntToStr(u32_LineCount)).c_str();
             break;
          }
          if (c_Text != "")
@@ -1371,11 +1381,11 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
          u32_NumSentProgress += u32_NumBytes;
 
          //do not update too often; might cause flickering in the application
-         if (((TglGetTickCount() - u32_OldTime) > 750U) || (u32_LineCount == u32_NumLinesTotal))
+         if ((c_StepTimer.elapsed() > 750U) || (u32_LineCount == u32_NumLinesTotal))
          {
-            const uint32_t u32_Diff = TglGetTickCount() - u32_OldTime;
+            const uint32_t u32_Diff = c_StepTimer.elapsed();
 
-            c_Text.PrintFormatted("%s %d / %d", TGL_LoadStr(STR_FM_LINE).c_str(), u32_LineCount, u32_NumLinesTotal);
+            c_Text.PrintFormatted("%s %d / %d", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_LINE).c_str(), u32_LineCount, u32_NumLinesTotal);
             TRG_ReportStatus("<<<CLRLINE", gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
             m_ReportVerboseStatus("<<<CLRLINE");
             TRG_ReportStatus(c_Text, gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
@@ -1384,26 +1394,27 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
             {
                f32_Rate = ((((static_cast<float32_t>(u32_NumSentProgress)) / 1024.0F) /
                             (static_cast<float32_t>(u32_Diff))) * 1000.0F);
-               c_Text.PrintFormatted("%s %d / %d at %2.2fkB/s", TGL_LoadStr(STR_FDL_BYTE).c_str(), u32_NumBytesFlashed,
+               c_Text.PrintFormatted("%s %d / %d at %2.2fkB/s", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_BYTE).c_str(), u32_NumBytesFlashed,
                                      u32_NumBytesTotal, static_cast<float64_t>(f32_Rate));
             }
             else
             {
-               c_Text.PrintFormatted("%s %d / %d", TGL_LoadStr(STR_FDL_BYTE).c_str(), u32_NumBytesFlashed,
+               c_Text.PrintFormatted("%s %d / %d", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_BYTE).c_str(), u32_NumBytesFlashed,
                                      u32_NumBytesTotal);
             }
             m_ReportVerboseStatus(c_Text);
 
             u32_NumSentProgress = 0U;
-            u32_OldTime = TglGetTickCount();
+            c_StepTimer.restart();
+            u32_OldTime = 0;
          }
 
          //report progress for e.g. progress bar update:
          s32_Return2 = TRG_ReportProgress(static_cast<uint16_t>((u32_LineCount * 1000U) / u32_NumLinesTotal),
-                                          TGL_LoadStr(STR_FDL_TXT_WR_FLASH_DO));
+                                          stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_WR_FLASH_DO));
          if (s32_Return2 != C_NO_ERR)
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_USER_ABORT), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_USER_ABORT), gu8_DL_REPORT_STATUS_TYPE_ERROR);
             return -1;
          }
          if (s32_Return == 1)
@@ -1412,8 +1423,8 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
          }
       }
 
-      u32_FlashTime = TglGetTickCount() - u32_OldTimeTotal;
-      c_Text.PrintFormatted("%s %d s", TGL_LoadStr(STR_FDL_DOWNLOAD_TIME).c_str(), u32_FlashTime / 1000U);
+      u32_FlashTime = c_TotalTimer.elapsed();
+      c_Text.PrintFormatted("%s %d s", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_DOWNLOAD_TIME).c_str(), u32_FlashTime / 1000U);
       m_ReportVerboseStatus(c_Text);
       if (u32_FlashTime == 0U)
       {
@@ -1421,15 +1432,15 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
       }
       f32_Rate = (((static_cast<float32_t>(u32_NumBytesTotal) / 1024.0F) /
                    (static_cast<float32_t>(u32_FlashTime))) * 1000.0F);
-      c_Text.PrintFormatted("%s %2.2fkB/s", TGL_LoadStr(STR_FDL_AVERAGE_RATE).c_str(),
+      c_Text.PrintFormatted("%s %2.2fkB/s", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_AVERAGE_RATE).c_str(),
                             static_cast<float64_t>(f32_Rate));
       m_ReportVerboseStatus(c_Text);
 
-      TRG_ReportProgress(1000U, TGL_LoadStr(STR_FDL_TXT_WR_FLASH_DO));
+      TRG_ReportProgress(1000U, stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_WR_FLASH_DO));
    }
    else
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_UNKNOWN_ERR), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_UNKNOWN_ERR), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return -1;
    }
 
@@ -1463,7 +1474,7 @@ int32_t C_XFLFlashWrite::m_WriteFingerPrintCheckSum(const bool oq_FingerPrintAva
    s32_Return = this->SetFingerPrintChecksum(ou32_Checksum);
    if (s32_Return != C_NO_ERR)
    {
-      this->TRG_ReportStatus(TGL_LoadStr(STR_FDL_WARN_COULD_NOT_WR_APPL_CHK), gu8_DL_REPORT_STATUS_TYPE_WARNING);
+      this->TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_WARN_COULD_NOT_WR_APPL_CHK), gu8_DL_REPORT_STATUS_TYPE_WARNING);
    }
    return s32_Return;
 }
@@ -1496,16 +1507,16 @@ int32_t C_XFLFlashWrite::m_ScanDeviceIDFromHexFile(const uint32_t ou32_StartAddr
    C_SclString c_DeviceId = "";
    C_SclString c_Help;
 
-   C_SclDynamicArray<C_XFLECUInformation> ac_InfoBlocks;
+   QList<C_XFLECUInformation> ac_InfoBlocks;
    s32_Return = orc_HexFile.GetECUInformationBlocks(ac_InfoBlocks, ou32_StartAddress, oq_FailIfNotFoundAtStartAddress,
                                                     oq_FailIfNotFoundAtStartAddress, true);
-   if ((s32_Return != C_NO_ERR) || (ac_InfoBlocks.GetLength() == 0))
+   if ((s32_Return != C_NO_ERR) || (ac_InfoBlocks.size() == 0))
    {
       if ((oq_FailIfNotFoundAtStartAddress == false) && (ou32_StartAddress > 0U))
       {
          //retry from beginning:
          s32_Return = orc_HexFile.GetECUInformationBlocks(ac_InfoBlocks, 0x00000000UL, false, false, true);
-         if ((s32_Return != C_NO_ERR) || (ac_InfoBlocks.GetLength() == 0))
+         if ((s32_Return != C_NO_ERR) || (ac_InfoBlocks.size() == 0))
          {
             return C_NOACT;
          }
@@ -1516,7 +1527,7 @@ int32_t C_XFLFlashWrite::m_ScanDeviceIDFromHexFile(const uint32_t ou32_StartAddr
       }
    }
 
-   for (s32_Index = 0; s32_Index < ac_InfoBlocks.GetLength(); s32_Index++)
+   for (s32_Index = 0; s32_Index < ac_InfoBlocks.size(); s32_Index++)
    {
       if (ac_InfoBlocks[s32_Index].ContainsDeviceID() == true)
       {
@@ -1563,7 +1574,7 @@ int32_t C_XFLFlashWrite::m_DoDeviceIDXCheck(C_XFLHexFile & orc_HexFile, const C_
                                             const C_XFLFlashWriteParameters & orc_Params,
                                             const uint16_t ou16_ProtocolVersion)
 {
-   C_SclDynamicArray<uint32_t> c_StartAddresses;
+   QList<uint32_t> c_StartAddresses;
    uint32_t u32_StartAddress = 0U;
    bool q_ExactAddressRequired;
    int32_t s32_Return;
@@ -1575,28 +1586,28 @@ int32_t C_XFLFlashWrite::m_DoDeviceIDXCheck(C_XFLHexFile & orc_HexFile, const C_
        (orc_Params.e_DevTypeCheckGetIDFailedReaction > eXFL_DEV_TYPE_CHECK_GETID_FAIL_REACTION_ASK) ||
        (orc_Params.e_DevTypeCheckMatchIDFailedReaction > eXFL_DEV_TYPE_CHECK_MATCHID_FAIL_REACTION_ASK))
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_CFG_DIC), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_CFG_DIC), gu8_DL_REPORT_STATUS_TYPE_ERROR);
       return C_CONFIG;
    }
 
    switch (orc_Params.e_DevTypeCheck)
    {
    case eXFL_DEV_TYPE_CHECK_NONE:
-      m_ReportVerboseStatus(TGL_LoadStr(STR_FDL_TXT_ID_CHECK_PASSED));
+      m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_ID_CHECK_PASSED));
       return C_NO_ERR; //finished here
    case eXFL_DEV_TYPE_CHECK_SCAN_HEX_FILE:
-      m_ReportVerboseStatus(TGL_LoadStr(STR_FDL_TXT_ID_OF_HEX_FILE));
+      m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_ID_OF_HEX_FILE));
       q_ExactAddressRequired = false;
       s32_Return = C_NO_ERR;
       break;
    case eXFL_DEV_TYPE_CHECK_GET_ADDRESS_THEN_SCAN:
-      m_ReportVerboseStatus(TGL_LoadStr(STR_FDL_TXT_ID_CHECKING));
+      m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_ID_CHECKING));
       if (mt_AvailableServices.q_GetDeviceInfoAddress == true)
       {
          s32_Return = GetDeviceInfoAddresses(c_StartAddresses, ou16_ProtocolVersion);
-         if ((s32_Return != C_NO_ERR) || (c_StartAddresses.GetLength() == 0))
+         if ((s32_Return != C_NO_ERR) || (c_StartAddresses.size() == 0))
          {
-            m_ReportVerboseStatus(TGL_LoadStr(STR_FDL_TXT_ID_CHECK_NODE_HEX));
+            m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_ID_CHECK_NODE_HEX));
          }
          else
          {
@@ -1606,19 +1617,19 @@ int32_t C_XFLFlashWrite::m_DoDeviceIDXCheck(C_XFLHexFile & orc_HexFile, const C_
       }
       else
       {
-         m_ReportVerboseStatus(TGL_LoadStr(STR_FDL_TXT_ID_CHECK_ADDR_NA));
+         m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_ID_CHECK_ADDR_NA));
       }
       q_ExactAddressRequired = false;
       s32_Return = C_NO_ERR;
       break;
    case eXFL_DEV_TYPE_CHECK_GET_ADDRESS_THEN_FAIL:
-      m_ReportVerboseStatus(TGL_LoadStr(STR_FDL_TXT_ID_CHECKING));
+      m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_ID_CHECKING));
       if (mt_AvailableServices.q_GetDeviceInfoAddress == true)
       {
          s32_Return = GetDeviceInfoAddresses(c_StartAddresses, ou16_ProtocolVersion);
-         if ((s32_Return != C_NO_ERR) || (c_StartAddresses.GetLength() == 0))
+         if ((s32_Return != C_NO_ERR) || (c_StartAddresses.size() == 0))
          {
-            TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_ID_CHECK_RD_NODE),
+            TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ID_CHECK_RD_NODE),
                              gu8_DL_REPORT_STATUS_TYPE_ERROR);
             s32_Return = C_CHECKSUM;
          }
@@ -1630,7 +1641,7 @@ int32_t C_XFLFlashWrite::m_DoDeviceIDXCheck(C_XFLHexFile & orc_HexFile, const C_
       }
       else
       {
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_ID_CHECK_ID_ADDR_NA), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ID_CHECK_ID_ADDR_NA), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          s32_Return = C_CHECKSUM;
       }
       q_ExactAddressRequired = true;
@@ -1649,13 +1660,13 @@ int32_t C_XFLFlashWrite::m_DoDeviceIDXCheck(C_XFLHexFile & orc_HexFile, const C_
       case C_NO_ERR:
          break;
       case C_NOACT:
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_ID_CHECK_ID_NA_HEX), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ID_CHECK_ID_NA_HEX), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          break;
       case C_CONFIG:
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_ID_CHECK_ID_AMBIG_HEX), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ID_CHECK_ID_AMBIG_HEX), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          break;
       default:
-         TRG_ReportStatus(TGL_LoadStr(STR_FDL_ERR_ID_CHECK_ID_UNDEF), gu8_DL_REPORT_STATUS_TYPE_ERROR);
+         TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ID_CHECK_ID_UNDEF), gu8_DL_REPORT_STATUS_TYPE_ERROR);
          break;
       }
    }
@@ -1665,7 +1676,7 @@ int32_t C_XFLFlashWrite::m_DoDeviceIDXCheck(C_XFLHexFile & orc_HexFile, const C_
       switch (orc_Params.e_DevTypeCheckGetIDFailedReaction)
       {
       case eXFL_DEV_TYPE_CHECK_GETID_FAIL_REACTION_IGNORE:
-         m_ReportVerboseStatus(TGL_LoadStr(STR_FDL_ERR_ID_CHECK_IGNOR));
+         m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ID_CHECK_IGNOR));
          s32_Return = C_NO_ERR; //no check, as we don't have a device id ...
          break;
       case eXFL_DEV_TYPE_CHECK_GETID_FAIL_REACTION_FAIL:
@@ -1673,7 +1684,7 @@ int32_t C_XFLFlashWrite::m_DoDeviceIDXCheck(C_XFLHexFile & orc_HexFile, const C_
          break;
       case eXFL_DEV_TYPE_CHECK_GETID_FAIL_REACTION_ASK:
          s32_Return = TRG_UserInteraction(eXFL_USER_INTERACTION_REASON_GETID_FAIL,
-                                          TGL_LoadStr(STR_FDL_TXT_ID_NA_CHECK_HEX_FILE), u32_Dummy);
+                                          stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_ID_NA_CHECK_HEX_FILE), u32_Dummy);
          if (s32_Return != C_NO_ERR)
          {
             s32_Return = C_CONFIG;
@@ -1689,18 +1700,18 @@ int32_t C_XFLFlashWrite::m_DoDeviceIDXCheck(C_XFLHexFile & orc_HexFile, const C_
    //finally do the comparison:
    if (c_DeviceIDHexFile.Trim() == orc_DeviceId.Trim())
    {
-      TRG_ReportStatus(TGL_LoadStr(STR_FDL_ID_CHECK_MATCH), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
+      TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ID_CHECK_MATCH), gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
       return C_NO_ERR;
    }
 
-   c_Error = TGL_LoadStr(STR_FDL_ERR_ID_CHECK_MISMATCH_PT1) + c_DeviceIDHexFile.Trim() +
-             TGL_LoadStr(STR_FDL_ERR_ID_CHECK_MISMATCH_PT2) + orc_DeviceId.Trim() + "\"";
+   c_Error = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ID_CHECK_MISMATCH_PT1) + c_DeviceIDHexFile.Trim() +
+             stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ID_CHECK_MISMATCH_PT2) + orc_DeviceId.Trim() + "\"";
    TRG_ReportStatus(c_Error, gu8_DL_REPORT_STATUS_TYPE_ERROR);
 
    switch (orc_Params.e_DevTypeCheckMatchIDFailedReaction)
    {
    case eXFL_DEV_TYPE_CHECK_MATCHID_FAIL_REACTION_IGNORE:
-      m_ReportVerboseStatus(TGL_LoadStr(STR_FDL_ERR_ID_CHECK_IGNOR));
+      m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_ERR_ID_CHECK_IGNOR));
       s32_Return = C_NO_ERR;
       break;
    case eXFL_DEV_TYPE_CHECK_MATCHID_FAIL_REACTION_FAIL:

@@ -18,7 +18,7 @@
 #include "constants.hpp"
 #include "stwerrors.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeHalcChannelCopyPaste.hpp"
@@ -139,7 +139,7 @@ void C_SdNdeHalcChannelTreeModel::SetNode(const uint32_t ou32_NodeIndex)
 
             // icon is done by CheckError()
 
-            tgl_assert(pc_Domain->c_Channels.size() == pc_Domain->c_ChannelConfigs.size());
+            Q_ASSERT(pc_Domain->c_Channels.size() == pc_Domain->c_ChannelConfigs.size());
             if (pc_Domain->c_Channels.size() == pc_Domain->c_ChannelConfigs.size())
             {
                // set selectable only if domain without channels
@@ -342,7 +342,7 @@ void C_SdNdeHalcChannelTreeModel::Reset(const QModelIndexList & orc_Indexes)
       }
 
       // finally reset channel
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->
                  ResetHalcDomainChannelConfig(this->mu32_NodeIndex, u32_DomainIndex,
                                               u32_ChannelIndex, q_ChannelCase) == C_NO_ERR);
 
@@ -588,7 +588,7 @@ QIcon C_SdNdeHalcChannelTreeModel::m_GetIcon(const C_OscHalcDefDomain::E_Categor
 {
    const uint32_t u32_Index = this->m_GetIconIdentifier(oe_Category, oq_Large, oq_Error, oq_Linked);
 
-   tgl_assert(u32_Index < this->mc_Icons.size());
+   Q_ASSERT(u32_Index < this->mc_Icons.size());
    const QIcon & rc_Icon = this->mc_Icons[u32_Index];
 
    return rc_Icon;
@@ -651,7 +651,7 @@ uint32_t C_SdNdeHalcChannelTreeModel::m_GetIconIdentifier(const C_OscHalcDefDoma
       u32_Return += 1;
    }
 
-   tgl_assert(u32_Return < this->mc_Icons.size());
+   Q_ASSERT(u32_Return < this->mc_Icons.size());
    if (u32_Return >= this->mc_Icons.size())
    {
       u32_Return = 0;

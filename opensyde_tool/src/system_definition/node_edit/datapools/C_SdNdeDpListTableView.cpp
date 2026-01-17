@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Data pool list elements table item (implementation)
@@ -20,7 +20,7 @@
 
 #include "C_SdNdeDpListTableView.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_SdClipBoardHelper.hpp"
 #include "C_Uti.hpp"
@@ -40,7 +40,7 @@ using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -1227,7 +1227,7 @@ void C_SdNdeDpListTableView::m_HandleLinkClicked(const QModelIndex & orc_Index)
 {
    if (orc_Index.isValid() == true)
    {
-      tgl_assert(this->mpc_ModelViewManager != NULL);
+      Q_ASSERT(this->mpc_ModelViewManager != NULL);
       if (this->mpc_ModelViewManager != NULL)
       {
          //Model
@@ -1341,7 +1341,7 @@ void C_SdNdeDpListTableView::m_CheckContextMenuText(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeDpListTableView::m_OnColumnResize(void)
 {
-   tgl_assert(this->mpc_ModelViewManager != NULL);
+   Q_ASSERT(this->mpc_ModelViewManager != NULL);
    if (this->mpc_ModelViewManager != NULL)
    {
       //Model

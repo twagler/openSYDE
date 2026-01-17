@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Tree model for file generation items
@@ -11,7 +11,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 
 #include "C_SdCodeGenerationModel.hpp"
 #include "C_PuiSdHandler.hpp"

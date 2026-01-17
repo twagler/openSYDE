@@ -13,7 +13,7 @@
 #include <cmath>
 #include "C_Uti.hpp"
 #include "C_GiSvPc.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_PuiSdUtil.hpp"
@@ -25,7 +25,7 @@
 #include "C_GiBiConnectableItem.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -165,7 +165,7 @@ void C_SyvUpScene::SetUpdating(const bool oq_Active) const
 void C_SyvUpScene::UpdateDeviceInformation(const std::vector<uint32_t> & orc_NodeIndexes,
                                            const std::vector<C_SyvUpDeviceInfo> & orc_DeviceInformation) const
 {
-   tgl_assert(orc_NodeIndexes.size() == orc_DeviceInformation.size());
+   Q_ASSERT(orc_NodeIndexes.size() == orc_DeviceInformation.size());
    if (orc_NodeIndexes.size() == orc_DeviceInformation.size())
    {
       const QList<QGraphicsItem *> c_Items = this->items();

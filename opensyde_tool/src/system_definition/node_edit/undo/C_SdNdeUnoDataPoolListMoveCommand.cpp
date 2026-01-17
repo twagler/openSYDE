@@ -13,13 +13,13 @@
 #include "precomp_headers.hpp"
 
 #include "C_Uti.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeUnoDataPoolListMoveCommand.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -140,7 +140,7 @@ void C_SdNdeUnoDataPoolListMoveCommand::m_DoMoveRows(const std::vector<uint32_t>
    for (uint32_t u32_Index = 0; u32_Index < orc_TargetIndices.size(); ++u32_Index)
    {
       QTreeWidgetItem * const pc_Item = this->mpc_DataPoolListsTreeWidget->topLevelItem(orc_TargetIndices[u32_Index]);
-      tgl_assert(pc_Item != NULL);
+      Q_ASSERT(pc_Item != NULL);
       if (pc_Item != NULL)
       {
          pc_Item->setSelected(true);

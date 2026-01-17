@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for system view dashboard spin box properties (implementation)
@@ -12,7 +12,7 @@
 
 #include "stwtypes.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SyvDaPeSpinBox.hpp"
 #include "ui_C_SyvDaPeSpinBox.h"
 
@@ -166,7 +166,7 @@ void C_SyvDaPeSpinBox::SetType(const C_PuiSvDbSpinBox::E_Type oe_Type) const
       this->mpc_Ui->pc_ComboBoxType->setCurrentIndex(C_SyvDaPeSpinBox::mhs32_INDEX_STYLE_TYPE2);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }

@@ -16,7 +16,7 @@
 
 #include "gitypes.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -29,7 +29,7 @@
 #include "C_SdNdeDpContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -111,7 +111,7 @@ void C_GiSvDaToggleBase::SetDisplayStyle(const C_PuiSvDbWidgetBase::E_Style oe_S
       {
          const C_PuiSvDbToggle * const pc_Box =
             pc_Dashboard->GetToggle(static_cast<uint32_t>(this->ms32_Index));
-         tgl_assert(pc_Box != NULL);
+         Q_ASSERT(pc_Box != NULL);
          if (pc_Box != NULL)
          {
             this->UpdateType(pc_Box->e_Type);
@@ -140,7 +140,7 @@ void C_GiSvDaToggleBase::LoadData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbToggle * const pc_Box = pc_Dashboard->GetToggle(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          this->LoadSvBasicData(*pc_Box);
@@ -164,7 +164,7 @@ void C_GiSvDaToggleBase::UpdateData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbToggle * const pc_Box = pc_Dashboard->GetToggle(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          C_PuiSvDbToggle c_Box = *pc_Box;
@@ -173,7 +173,7 @@ void C_GiSvDaToggleBase::UpdateData(void)
          {
             c_Box.q_State = this->mpc_CheckBoxWidget->isChecked();
          }
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                         this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         &c_Box, this->me_Type) == C_NO_ERR);
@@ -189,7 +189,7 @@ void C_GiSvDaToggleBase::DeleteData(void)
 {
    if (this->ms32_Index >= 0)
    {
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex,
                                                                         this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         this->me_Type) ==
@@ -230,7 +230,7 @@ void C_GiSvDaToggleBase::SendCurrentValue(void)
    if (this->mpc_CheckBoxWidget != NULL)
    {
       C_PuiSvDbDataElementScaling c_Scaling;
-      tgl_assert(this->GetDataPoolElementScaling(0, c_Scaling) == C_NO_ERR);
+      Q_ASSERT(this->GetDataPoolElementScaling(0, c_Scaling) == C_NO_ERR);
 
       // Prepare the value
       this->mf64_WriteValue = static_cast<float64_t>(this->mpc_CheckBoxWidget->isChecked());
@@ -259,7 +259,7 @@ bool C_GiSvDaToggleBase::CallProperties(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbToggle * const pc_Box = pc_Dashboard->GetToggle(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          int32_t s32_Return = C_NO_ERR;
@@ -349,8 +349,8 @@ bool C_GiSvDaToggleBase::CallProperties(void)
                                                 pc_Dialog->GetFormatterInformation());
                }
 
-               tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
-               tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+               Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
+               Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                               this->mu32_DashboardIndex,
                                                                               static_cast<uint32_t>(this->ms32_Index),
                                                                               &c_Box, this->me_Type) == C_NO_ERR);
@@ -391,7 +391,7 @@ void C_GiSvDaToggleBase::ConnectionActiveChanged(const bool oq_Active)
             // Scaling is here necessary
             C_PuiSvDbDataElementScaling c_Scaling;
             QVariant c_VariantValue;
-            tgl_assert(this->GetDataPoolElementScaling(0, c_Scaling) == C_NO_ERR);
+            Q_ASSERT(this->GetDataPoolElementScaling(0, c_Scaling) == C_NO_ERR);
             c_VariantValue = C_SdNdeDpContentUtil::h_ConvertScaledContentToGeneric(pc_Box->c_InitialValue,
                                                                                    c_Scaling.f64_Factor,
                                                                                    c_Scaling.f64_Offset,

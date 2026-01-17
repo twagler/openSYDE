@@ -11,7 +11,7 @@
 #include "precomp_headers.hpp"
 #include "stwerrors.hpp"
 
-#include "TglUtils.hpp"
+
 #include <QScrollBar>
 
 #include "C_OgeTreeViewToolTipBaseCheckable.hpp"
@@ -21,7 +21,7 @@ using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_core;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -81,7 +81,7 @@ void C_OgeTreeViewToolTipBaseCheckable::Init(C_TblTreeModelCheckable * const opc
    {
       this->mpc_Model = opc_Model;
       this->setModel(mpc_Model);
-      tgl_assert(mpc_Model->Init(orc_ElementIndices) == C_NO_ERR);
+      Q_ASSERT(mpc_Model->Init(orc_ElementIndices) == C_NO_ERR);
       const uint32_t u32_CheckedElements = mpc_Model->GetCheckedItemCount();
       this->expandAll();
       connect(mpc_Model, &C_TblTreeModelCheckable::dataChanged,

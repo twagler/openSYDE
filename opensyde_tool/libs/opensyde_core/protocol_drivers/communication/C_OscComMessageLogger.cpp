@@ -14,14 +14,14 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <algorithm>
 
 #include "stwerrors.hpp"
 
-#include "TglTime.hpp"
-#include "TglFile.hpp"
-
+#include <QDateTime>
+#include <chrono>
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscComMessageLogger.hpp"
 #include "C_OscSystemDefinitionFiler.hpp"
@@ -179,28 +179,28 @@ void C_OscComMessageLogger::Stop(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_OscComMessageLogger::Start(void)
 {
-   stw::tgl::C_TglDateTime c_Time;
+   QDateTime c_Time = QDateTime::currentDateTime();
 
    this->mq_Paused = false;
    this->mu32_FilteredMessages = 0U;
 
-   stw::tgl::TglGetDateTimeNow(c_Time);
-
    // Init all reference timestamps on each start
    // Save first timestamp for starting at current time
    // Using the same function as the CAN message timestamps bases on
-   this->mu64_FirstTimeStampStart = stw::tgl::TglGetTickCountUs();
+   auto now = std::chrono::steady_clock::now();
+   auto duration = now.time_since_epoch();
+   this->mu64_FirstTimeStampStart = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
    this->mu64_LastTimeStamp = this->mu64_FirstTimeStampStart;
 
    // Calculate the start time beginning at midnight too, for showing the absolute timestamp as time of day
    // In seconds
    this->mu64_FirstTimeStampDayOfTime =
-      (((static_cast<uint64_t>(c_Time.mu8_Hour) * 60ULL) * 60ULL) +
-       (static_cast<uint64_t>(c_Time.mu8_Minute) * 60ULL)) +
-      static_cast<uint64_t>(c_Time.mu8_Second);
+      (((static_cast<uint64_t>(c_Time.time().hour()) * 60ULL) * 60ULL) +
+       (static_cast<uint64_t>(c_Time.time().minute()) * 60ULL)) +
+      static_cast<uint64_t>(c_Time.time().second());
    // the ms
    this->mu64_FirstTimeStampDayOfTime *= 1000ULL;
-   this->mu64_FirstTimeStampDayOfTime += static_cast<uint64_t>(c_Time.mu16_MilliSeconds);
+   this->mu64_FirstTimeStampDayOfTime += static_cast<uint64_t>(c_Time.time().msec());
    // in us
    this->mu64_FirstTimeStampDayOfTime *= 1000ULL;
 }
@@ -272,7 +272,8 @@ int32_t C_OscComMessageLogger::AddOsySysDef(const C_SclString & orc_PathSystemDe
 int32_t C_OscComMessageLogger::AddOsySysDef(const C_SclString & orc_PathSystemDefinition, const uint32_t ou32_BusIndex,
                                             std::vector<C_OscSystemBus> & orc_Buses)
 {
-   const C_SclString c_FileExtension = stw::tgl::TglExtractFileExtension(orc_PathSystemDefinition).LowerCase();
+   const QString c_QExtension = "." + QFileInfo(QString::fromStdString(*orc_PathSystemDefinition.AsStdString())).suffix();
+   const C_SclString c_FileExtension = c_QExtension.toStdString().c_str();
    int32_t s32_Return = C_RANGE;
 
    if (c_FileExtension == ".syde_sysdef")
@@ -1006,7 +1007,7 @@ bool C_OscComMessageLogger::m_CheckSysDef(const T_STWCAN_Msg_RX & orc_Msg)
                {
                   const C_OscCanProtocol & rc_CanProt = rc_Node.c_ComProtocols[u32_ProtCounter];
 
-                  tgl_assert(u32_IntfCounter < rc_CanProt.c_ComMessages.size());
+                  Q_ASSERT(u32_IntfCounter < rc_CanProt.c_ComMessages.size());
                   if (u32_IntfCounter < rc_CanProt.c_ComMessages.size())
                   {
                      const std::vector<C_OscCanMessage> & rc_CanMsgContainerTx =
@@ -1027,13 +1028,13 @@ bool C_OscComMessageLogger::m_CheckSysDef(const T_STWCAN_Msg_RX & orc_Msg)
                            q_SearchAlsoInRxMessages = false; // found message, no need to search in Rx messages anymore
 
                            // Get the associated list
-                           tgl_assert(rc_CanProt.u32_DataPoolIndex < rc_Node.c_DataPools.size());
+                           Q_ASSERT(rc_CanProt.u32_DataPoolIndex < rc_Node.c_DataPools.size());
                            if (rc_CanProt.u32_DataPoolIndex < rc_Node.c_DataPools.size())
                            {
                               this->mpc_OsySysDefDataPoolList =
                                  C_OscCanProtocol::h_GetComListConst(rc_Node.c_DataPools[rc_CanProt.u32_DataPoolIndex],
                                                                      u32_IntfCounter, true);
-                              tgl_assert(this->mpc_OsySysDefDataPoolList != NULL);
+                              Q_ASSERT(this->mpc_OsySysDefDataPoolList != NULL);
 
                               q_Return = true;
                            }
@@ -1065,14 +1066,14 @@ bool C_OscComMessageLogger::m_CheckSysDef(const T_STWCAN_Msg_RX & orc_Msg)
                               this->mpc_OsySysDefMessage = &rc_OscMsg;
 
                               // Get the associated list
-                              tgl_assert(rc_CanProt.u32_DataPoolIndex < rc_Node.c_DataPools.size());
+                              Q_ASSERT(rc_CanProt.u32_DataPoolIndex < rc_Node.c_DataPools.size());
                               if (rc_CanProt.u32_DataPoolIndex < rc_Node.c_DataPools.size())
                               {
                                  this->mpc_OsySysDefDataPoolList =
                                     C_OscCanProtocol::h_GetComListConst(
                                        rc_Node.c_DataPools[rc_CanProt.u32_DataPoolIndex],
                                        u32_IntfCounter, false);
-                                 tgl_assert(this->mpc_OsySysDefDataPoolList != NULL);
+                                 Q_ASSERT(this->mpc_OsySysDefDataPoolList != NULL);
 
                                  q_Return = true;
                               }
@@ -1645,11 +1646,11 @@ void C_OscComMessageLogger::mh_AddSpecialEcesSignals(C_OscNode & orc_Node,
    s32_Result = orc_Node.InsertSignal(orc_Id.e_ComProtocol, orc_Id.u32_InterfaceIndex, orc_Id.u32_DatapoolIndex,
                                       orc_Id.q_MessageIsTx, orc_Id.u32_MessageIndex, ou32_SignalIndex,
                                       c_MessageCounterSig, c_MessageCounterElement);
-   tgl_assert(s32_Result == C_NO_ERR);
+   Q_ASSERT(s32_Result == C_NO_ERR);
    s32_Result = orc_Node.InsertSignal(orc_Id.e_ComProtocol, orc_Id.u32_InterfaceIndex, orc_Id.u32_DatapoolIndex,
                                       orc_Id.q_MessageIsTx, orc_Id.u32_MessageIndex, ou32_SignalIndex + 1,
                                       c_ChecksumSig, c_ChecksumElement);
-   tgl_assert(s32_Result == C_NO_ERR);
+   Q_ASSERT(s32_Result == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1825,7 +1826,7 @@ bool C_OscComMessageLogger::m_CheckIfEcosMessage(const stw::can::T_STWCAN_Msg_RX
                   // Search for ECoS messages only
                   if (rc_CanProt.e_Type == C_OscCanProtocol::eCAN_OPEN_SAFETY)
                   {
-                     tgl_assert(u32_IntfCounter < rc_CanProt.c_ComMessages.size());
+                     Q_ASSERT(u32_IntfCounter < rc_CanProt.c_ComMessages.size());
                      if (u32_IntfCounter < rc_CanProt.c_ComMessages.size())
                      {
                         // Search TX messages

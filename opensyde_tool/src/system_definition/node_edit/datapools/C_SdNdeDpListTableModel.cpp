@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Node data pool list table model (implementation)
@@ -26,10 +26,10 @@
 #include "C_NagToolTip.hpp"
 #include "C_SdNdeUnoUtil.hpp"
 #include "C_SdNdeDpContentUtil.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
 using namespace stw::errors;
@@ -1230,7 +1230,7 @@ void C_SdNdeDpListTableModel::DoRemoveRows(const std::vector<uint32_t> & orc_Row
                                rc_Section[static_cast<std::vector<uint32_t>::size_type>(rc_Section.size() - 1UL)]);
          for (uint32_t u32_ItItem = rc_Section.size(); u32_ItItem > 0UL; --u32_ItItem)
          {
-            tgl_assert(C_PuiSdHandler::h_GetInstance()->RemoveDataPoolListElement(this->mu32_NodeIndex,
+            Q_ASSERT(C_PuiSdHandler::h_GetInstance()->RemoveDataPoolListElement(this->mu32_NodeIndex,
                                                                                   this->mu32_DataPoolIndex,
                                                                                   this->mu32_ListIndex,
                                                                                   rc_Section[static_cast<std::vector<uint32_t>

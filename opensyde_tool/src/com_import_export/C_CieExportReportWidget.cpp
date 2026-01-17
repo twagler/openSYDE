@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Dialog for export report to DBC file (implementation)
@@ -12,7 +12,7 @@
 
 #include <QFileInfo>
 #include "C_SdUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_OscLoggingHandler.hpp"
@@ -21,7 +21,7 @@
 #include "C_CieExportDbc.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;

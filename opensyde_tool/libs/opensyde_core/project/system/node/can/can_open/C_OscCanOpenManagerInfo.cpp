@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclChecksums.hpp"
 #include "C_OscCanOpenManagerInfo.hpp"
 
@@ -145,7 +145,7 @@ void C_OscCanOpenManagerInfo::CheckErrorManager(bool * const opq_CoNodeIdConflic
       // Check all devices
       for (c_ItDevice = this->c_CanOpenDevices.begin(); c_ItDevice != this->c_CanOpenDevices.end(); ++c_ItDevice)
       {
-         tgl_assert(this->CheckErrorDeviceCoNodeId(c_ItDevice->first, pq_TempCoNodeIdConflict,
+         Q_ASSERT(this->CheckErrorDeviceCoNodeId(c_ItDevice->first, pq_TempCoNodeIdConflict,
                                                    pq_TempCoDevicesNodeIdInvalid,
                                                    oq_CheckDeviceToDeviceErrors) == C_NO_ERR);
 
@@ -170,7 +170,7 @@ void C_OscCanOpenManagerInfo::CheckErrorManager(bool * const opq_CoNodeIdConflic
       // Check all devices
       for (c_ItDevice = this->c_CanOpenDevices.begin(); c_ItDevice != this->c_CanOpenDevices.end(); ++c_ItDevice)
       {
-         tgl_assert(this->CheckErrorDeviceHeartbeat(c_ItDevice->first, opq_HearbeatTimeInvalid) == C_NO_ERR);
+         Q_ASSERT(this->CheckErrorDeviceHeartbeat(c_ItDevice->first, opq_HearbeatTimeInvalid) == C_NO_ERR);
 
          if (*opq_HearbeatTimeInvalid == true)
          {

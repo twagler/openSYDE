@@ -19,7 +19,7 @@
 
 #include "C_OscComDriverBase.hpp"
 #include "C_SclString.hpp"
-#include "TglTime.hpp"
+#include <chrono>
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscComAutoSupport.hpp"
 
@@ -348,7 +348,8 @@ void C_OscComDriverBase::DistributeMessages(void)
       while (s32_Return == C_NO_ERR);
 
       // Check and update bus load
-      u32_BusLoadTimeDiff = stw::tgl::TglGetTickCount() - hu32_BusLoadTimeRefresh;
+      const uint32_t u32_Now = static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
+      u32_BusLoadTimeDiff = u32_Now - hu32_BusLoadTimeRefresh;
       if (u32_BusLoadTimeDiff >= 1000U)
       {
          const uint32_t u32_MaxBitsSec = static_cast<uint32_t>(this->ms32_CanBitrate) * 1024U;
@@ -360,7 +361,7 @@ void C_OscComDriverBase::DistributeMessages(void)
          {
             uint32_t u32_Load = (this->mu32_CanMessageBits * 100U) / u32_MaxBits;
 
-            hu32_BusLoadTimeRefresh = stw::tgl::TglGetTickCount();
+            hu32_BusLoadTimeRefresh = u32_Now;
 
             if (u32_Load > 100U)
             {
@@ -457,7 +458,8 @@ int32_t C_OscComDriverBase::SendCanMessageDirect(T_STWCAN_Msg_TX & orc_Msg)
          c_Msg.u32_ID = orc_Msg.u32_ID;
 
          // The logger need the timestamp
-         c_Msg.u64_TimeStamp = stw::tgl::TglGetTickCountUs();
+         auto now = std::chrono::steady_clock::now();
+         c_Msg.u64_TimeStamp = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count());
 
          this->m_HandleCanMessage(c_Msg, true);
 
@@ -473,7 +475,7 @@ int32_t C_OscComDriverBase::SendCanMessageDirect(T_STWCAN_Msg_TX & orc_Msg)
             c_RecieveInvertedMsg.u8_XTD = orc_Msg.u8_XTD;
             c_RecieveInvertedMsg.u8_RTR = orc_Msg.u8_RTR;
             c_RecieveInvertedMsg.u8_Align = orc_Msg.u8_Align;
-            c_RecieveInvertedMsg.u64_TimeStamp = stw::tgl::TglGetTickCountUs();
+            c_RecieveInvertedMsg.u64_TimeStamp = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count());
             this->m_HandleCanMessage(c_RecieveInvertedMsg, true);
          }
 
@@ -688,7 +690,7 @@ void C_OscComDriverBase::m_HandleCanMessagesForSending(void)
    // Send all registered cyclic messages
    while (c_ItCanMessageConfig != this->mc_CanMessageConfigs.end())
    {
-      const uint32_t u32_CurTimeStamp = stw::tgl::TglGetTickCount();
+      const uint32_t u32_CurTimeStamp = static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count());
 
       if ((*c_ItCanMessageConfig).u32_TimeToSend <= u32_CurTimeStamp)
       {

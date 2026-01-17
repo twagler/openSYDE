@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Base class for all system view dashboard items which are rectangle based (implementation)
@@ -30,7 +30,7 @@
 #include "C_OscLoggingHandler.hpp"
 #include "C_GiSvDaRectBaseGroup.hpp"
 #include "C_PuiSvHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_UtiStyleSheets.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeDpContentUtil.hpp"
@@ -348,9 +348,9 @@ void C_GiSvDaRectBaseGroup::UpdateSvBasicData(C_PuiSvDbWidgetBase & orc_Data, co
       {
          C_PuiSvDbNodeDataElementConfig c_Tmp;
 
-         tgl_assert(GetDataPoolElementIndex(u32_It, c_Tmp.c_ElementId) == C_NO_ERR);
-         tgl_assert(GetDataPoolElementScaling(u32_It, c_Tmp.c_ElementScaling) == C_NO_ERR);
-         tgl_assert(GetDataPoolElementFormatter(u32_It, c_Tmp.c_DisplayFormatter) == C_NO_ERR);
+         Q_ASSERT(GetDataPoolElementIndex(u32_It, c_Tmp.c_ElementId) == C_NO_ERR);
+         Q_ASSERT(GetDataPoolElementScaling(u32_It, c_Tmp.c_ElementScaling) == C_NO_ERR);
+         Q_ASSERT(GetDataPoolElementFormatter(u32_It, c_Tmp.c_DisplayFormatter) == C_NO_ERR);
          orc_Data.c_DataPoolElementsConfig.push_back(c_Tmp);
       }
    }
@@ -364,7 +364,7 @@ void C_GiSvDaRectBaseGroup::DeleteData(void)
 {
    if (this->ms32_Index >= 0)
    {
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex,
                                                                         this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         this->me_Type) ==
@@ -655,9 +655,9 @@ void C_GiSvDaRectBaseGroup::SendCurrentValue(void)
       int32_t s32_Return;
 
       s32_Return = this->GetDataPoolElementIndex(this->mu32_NextManualActionIndex, c_ElementId);
-      tgl_assert(s32_Return == C_NO_ERR);
+      Q_ASSERT(s32_Return == C_NO_ERR);
       s32_Return = this->GetDataPoolElementScaling(this->mu32_NextManualActionIndex, c_Scaling);
-      tgl_assert(s32_Return == C_NO_ERR);
+      Q_ASSERT(s32_Return == C_NO_ERR);
 
       if ((c_ElementId.GetIsValid() == true) &&
           (this->m_CheckNodeActive(c_ElementId.u32_NodeIndex) == true) &&
@@ -674,7 +674,7 @@ void C_GiSvDaRectBaseGroup::SendCurrentValue(void)
                                                                               c_OscElement,
                                                                               c_UiElement);
 
-         tgl_assert(s32_Return == C_NO_ERR);
+         Q_ASSERT(s32_Return == C_NO_ERR);
          if (s32_Return == C_NO_ERR)
          {
             // Update the value
@@ -696,7 +696,7 @@ void C_GiSvDaRectBaseGroup::SendCurrentValue(void)
                                                                                  c_ElementId.u32_ElementIndex,
                                                                                  c_OscElement,
                                                                                  c_UiElement);
-            tgl_assert(s32_Return == C_NO_ERR);
+            Q_ASSERT(s32_Return == C_NO_ERR);
 
             ++this->mu32_NextManualActionIndex;
             Q_EMIT this->SigDataPoolWrite(c_ElementId.u32_NodeIndex,
@@ -970,16 +970,16 @@ C_PuiSvDbWidgetBase::E_Style C_GiSvDaRectBaseGroup::GetDisplayStyleType(void) co
 {
    C_PuiSvDbWidgetBase::E_Style e_Retval = C_PuiSvDbWidgetBase::eOPENSYDE;
    const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
-   tgl_assert(pc_View != NULL);
+   Q_ASSERT(pc_View != NULL);
    if (pc_View != NULL)
    {
       const C_PuiSvDashboard * const pc_Dashboard = pc_View->GetDashboard(this->mu32_DashboardIndex);
-      tgl_assert((pc_Dashboard != NULL) && (this->ms32_Index >= 0));
+      Q_ASSERT((pc_Dashboard != NULL) && (this->ms32_Index >= 0));
       if ((pc_Dashboard != NULL) && (this->ms32_Index >= 0))
       {
          const C_PuiSvDbWidgetBase * const pc_WidgetBase =
             pc_Dashboard->GetWidgetBase(this->GetWidgetType(), static_cast<uint32_t>(this->ms32_Index));
-         tgl_assert(pc_WidgetBase != NULL);
+         Q_ASSERT(pc_WidgetBase != NULL);
          if (pc_WidgetBase != NULL)
          {
             e_Retval = pc_WidgetBase->e_DisplayStyle;
@@ -1024,16 +1024,16 @@ const C_PuiSvDashboard * C_GiSvDaRectBaseGroup::m_GetSvDashboard(void) const
 {
    const C_PuiSvDashboard * pc_Dashboard = NULL;
 
-   tgl_assert(this->ms32_Index >= 0);
+   Q_ASSERT(this->ms32_Index >= 0);
    if (this->ms32_Index >= 0)
    {
       const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
-      tgl_assert(pc_View != NULL);
+      Q_ASSERT(pc_View != NULL);
       if (pc_View != NULL)
       {
          pc_Dashboard = pc_View->GetDashboard(this->mu32_DashboardIndex);
-         tgl_assert(pc_Dashboard != NULL);
+         Q_ASSERT(pc_Dashboard != NULL);
       }
    }
 
@@ -1910,7 +1910,7 @@ void C_GiSvDaRectBaseGroup::m_ManualRead(void)
       C_PuiSvDbNodeDataPoolListElementId c_ElementId;
 
       const int32_t s32_Return = this->GetDataPoolElementIndex(this->mu32_NextManualActionIndex, c_ElementId);
-      tgl_assert(s32_Return == C_NO_ERR);
+      Q_ASSERT(s32_Return == C_NO_ERR);
       if (s32_Return == C_NO_ERR)
       {
          //Always iterate to next element!

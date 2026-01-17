@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Common graphics scene with basic functionality (implementation)
@@ -26,7 +26,7 @@
 
 #include "C_GiBiCustomMouseItem.hpp"
 #include "C_GiUnique.hpp"
-#include "TglUtils.hpp"
+
 #include "C_GiCustomFunctions.hpp"
 #include "C_Uti.hpp"
 #include "C_OscLoggingHandler.hpp"
@@ -34,7 +34,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -1220,7 +1220,7 @@ void C_SebScene::m_AddImageWithFileDialog(const QPointF & orc_Pos)
    const QList<QGraphicsView *> & rc_Views = this->views();
 
    // convert coordinates
-   tgl_assert(rc_Views.size() > 0);
+   Q_ASSERT(rc_Views.size() > 0);
 
    // no file path check necessary here, because image load can handle crazy characters
    c_File = QFileDialog::getOpenFileName(rc_Views[0], "Load Image", c_Dir, c_Filter);
@@ -1243,7 +1243,7 @@ void C_SebScene::m_MapToGlobal(const QPointF & orc_ScenePos, QPoint & orc_Global
    const QList<QGraphicsView *> c_Views = this->views();
 
    // convert coordinates
-   tgl_assert(c_Views.size() > 0);
+   Q_ASSERT(c_Views.size() > 0);
    // adapt the coordinates if zoom was used
    orc_GlobalPos = c_Views[0]->mapFromScene(orc_ScenePos);
    // adapt the coordinates to screen coordinates for the context menu
@@ -1262,7 +1262,7 @@ void C_SebScene::m_MapFromGlobal(const QPoint & orc_GlobalPos, QPointF & orc_Sce
    const QList<QGraphicsView *> c_Views = this->views();
 
    // convert coordinates
-   tgl_assert(c_Views.size() > 0);
+   Q_ASSERT(c_Views.size() > 0);
    // adapt the coordinates if zoom was used
    const QPoint c_Tmp = c_Views[0]->mapFromGlobal(orc_GlobalPos);
    // adapt the coordinates to screen coordinates for the context menu
@@ -1678,7 +1678,7 @@ uint64_t C_SebScene::m_GetNewUniqueId(const QMap<C_PuiBsTemporaryDataId,
          ++mu64_LastUnusedUniqueId;
          if (oq_CheckExist)
          {
-            tgl_assert(false);
+            Q_ASSERT(false);
          }
       }
    }

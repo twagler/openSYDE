@@ -25,12 +25,12 @@
 #include "C_SebUnoAddBendPointCommand.hpp"
 #include "C_SebUnoRemoveBendPointCommand.hpp"
 #include "C_SebUnoMoveSubLineCommand.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace std;
 using namespace stw::opensyde_gui;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -117,7 +117,7 @@ void C_SebUnoBaseManager::DoMove(const QList<QGraphicsItem *> & orc_Items, const
       C_SebUnoMoveCommand * const pc_MoveCommand = new C_SebUnoMoveCommand(this->mpc_Scene, c_Ids,
                                                                            orc_PositionDifference);
       pc_MoveCommand->redo();
-      tgl_assert(this->mpc_LastMoveCommand->mergeWith(pc_MoveCommand) == true);
+      Q_ASSERT(this->mpc_LastMoveCommand->mergeWith(pc_MoveCommand) == true);
       delete (pc_MoveCommand);
    }
 }

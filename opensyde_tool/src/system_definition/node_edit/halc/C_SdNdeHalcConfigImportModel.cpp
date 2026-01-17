@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Tree model for HALC configuration import items
@@ -11,7 +11,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 
 #include "C_SdNdeHalcConfigImportModel.hpp"
 
@@ -251,9 +251,9 @@ void C_SdNdeHalcConfigImportModel::GetAdaptedConfiguration(C_OscHalcConfig & orc
             const C_OscHalcConfigDomain * const pc_DomainConfigToAdapt = orc_AdaptedConfig.GetDomainConfigDataConst(
                pc_DomainItem->u32_Index);
 
-            tgl_assert(pc_DomainConfigToAdapt != NULL);
-            tgl_assert(pc_DomainItem->u32_Index < orc_AdaptedConfig.GetDomainSize());
-            tgl_assert(pc_DomainItem->u32_ImportIndex < this->mc_ImportConfigCopy.c_Domains.size());
+            Q_ASSERT(pc_DomainConfigToAdapt != NULL);
+            Q_ASSERT(pc_DomainItem->u32_Index < orc_AdaptedConfig.GetDomainSize());
+            Q_ASSERT(pc_DomainItem->u32_ImportIndex < this->mc_ImportConfigCopy.c_Domains.size());
 
             if (pc_DomainConfigToAdapt != NULL)
             {
@@ -300,7 +300,7 @@ void C_SdNdeHalcConfigImportModel::GetAdaptedConfiguration(C_OscHalcConfig & orc
                if (q_Changed == true)
                {
                   // Update the configuration with the adapted domain and channel configuration
-                  tgl_assert(orc_AdaptedConfig.SetDomainConfig(pc_DomainItem->u32_Index,
+                  Q_ASSERT(orc_AdaptedConfig.SetDomainConfig(pc_DomainItem->u32_Index,
                                                                c_DomainConfigAdaption) == C_NO_ERR);
                }
             }
@@ -344,8 +344,8 @@ bool C_SdNdeHalcConfigImportModel::IsSelectionOfLinkedChannelsValid(std::vector<
 
          if ((pc_DomainItem != NULL) && (pc_DomainItem->q_Enabled == true))
          {
-            tgl_assert(pc_DomainItem->u32_Index < this->mc_ConfigCopy.GetDomainSize());
-            tgl_assert(pc_DomainItem->u32_ImportIndex < this->mc_ImportConfigCopy.c_Domains.size());
+            Q_ASSERT(pc_DomainItem->u32_Index < this->mc_ConfigCopy.GetDomainSize());
+            Q_ASSERT(pc_DomainItem->u32_ImportIndex < this->mc_ImportConfigCopy.c_Domains.size());
 
             const C_OscHalcConfigDomain & rc_ImpDomainConfig =
                this->mc_ImportConfigCopy.c_Domains[pc_DomainItem->u32_ImportIndex];
@@ -470,7 +470,7 @@ bool C_SdNdeHalcConfigImportModel::IsSelectionOfLinkedChannelsValid(std::vector<
 void C_SdNdeHalcConfigImportModel::CheckChannels(const std::vector<uint32_t> & orc_DomainIndices,
                                                  const std::vector<std::vector<uint32_t> > & orc_ChannelIndices)
 {
-   tgl_assert(orc_DomainIndices.size() == orc_ChannelIndices.size());
+   Q_ASSERT(orc_DomainIndices.size() == orc_ChannelIndices.size());
 
    const QModelIndex & rc_VisibleRoot = this->index(0, 0);
    if (rc_VisibleRoot.isValid() == true)

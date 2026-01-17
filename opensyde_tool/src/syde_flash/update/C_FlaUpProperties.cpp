@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for update properties
@@ -15,10 +15,9 @@
 #include <cmath>
 #include <QFileDialog>
 
-#include "TglUtils.hpp"
+
 #include "C_Uti.hpp"
 #include "C_OgeWiUtil.hpp"
-#include "TglFile.hpp"
 #include "C_UsHandler.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_FlaUpProperties.hpp"

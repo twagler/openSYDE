@@ -11,11 +11,11 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <fstream>
 
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "AES.h"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
@@ -30,7 +30,7 @@
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 using namespace std;
 
@@ -83,10 +83,10 @@ int32_t C_OscAesFile::h_EncryptFile(const C_SclString & orc_Key, const C_SclStri
    const C_SclString c_AesKey = stw::md5::C_Md5Checksum::GetMD5(
       reinterpret_cast<const uint8_t *>(orc_Key.c_str()), orc_Key.Length());
 
-   tgl_assert(c_AesKey.Length() == 32); //really should be 16 bytes, resp. 32 hex characters
+   Q_ASSERT(c_AesKey.Length() == 32); //really should be 16 bytes, resp. 32 hex characters
 
    //check whether input file exists:
-   if (TglFileExists(orc_InFilePath) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).isFile()) == false)
    {
       s32_Return = C_RD_WR;
    }
@@ -95,7 +95,7 @@ int32_t C_OscAesFile::h_EncryptFile(const C_SclString & orc_Key, const C_SclStri
       //load data from input file:
       vector<uint8_t> c_InputData;
       std::ifstream c_InputFileStream;
-      const uint32_t u32_InputFileSize = static_cast<uint32_t>(TglFileSize(orc_InFilePath));
+      const uint32_t u32_InputFileSize = static_cast<uint32_t>(static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).size()));
       const uint8_t u8_Pkcs7Size = static_cast<uint8_t>(16U - (u32_InputFileSize % 16U));
 
       c_InputData.resize(static_cast<size_t>(u32_InputFileSize) + u8_Pkcs7Size);
@@ -149,7 +149,7 @@ int32_t C_OscAesFile::h_EncryptFile(const C_SclString & orc_Key, const C_SclStri
                &au8_Key[0],
                x_EncryptedSize);
             //we added the padding manually: no magic expected here ...
-            tgl_assert(x_EncryptedSize == c_InputData.size());
+            Q_ASSERT(x_EncryptedSize == c_InputData.size());
 
             //save to output file:
             c_OutputFileStream.open(orc_OutFilePath.c_str(), std::ofstream::binary | std::ofstream::trunc);
@@ -217,10 +217,10 @@ int32_t C_OscAesFile::h_DecryptFile(const C_SclString & orc_Key, const C_SclStri
    const C_SclString c_AesKey = stw::md5::C_Md5Checksum::GetMD5(
       reinterpret_cast<const uint8_t *>(orc_Key.c_str()), orc_Key.Length());
 
-   tgl_assert(c_AesKey.Length() == 32); //really should be 16 bytes, resp. 32 hex characters
+   Q_ASSERT(c_AesKey.Length() == 32); //really should be 16 bytes, resp. 32 hex characters
 
    //check whether input file exists:
-   if (TglFileExists(orc_InFilePath) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).isFile()) == false)
    {
       s32_Return = C_RD_WR;
    }
@@ -229,7 +229,7 @@ int32_t C_OscAesFile::h_DecryptFile(const C_SclString & orc_Key, const C_SclStri
       //load data from input file:
       vector<uint8_t> c_InputData;
       std::ifstream c_InputFileStream;
-      const uint32_t u32_InputFileSize = TglFileSize(orc_InFilePath);
+      const uint32_t u32_InputFileSize = static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).size());
 
       //is the file correctly padded ?
       if ((u32_InputFileSize % 16U) != 0U)
@@ -238,7 +238,7 @@ int32_t C_OscAesFile::h_DecryptFile(const C_SclString & orc_Key, const C_SclStri
       }
       else
       {
-         c_InputData.resize(TglFileSize(orc_InFilePath));
+         c_InputData.resize(static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).size()));
 
          c_InputFileStream.open(orc_InFilePath.c_str(), std::ifstream::binary);
 

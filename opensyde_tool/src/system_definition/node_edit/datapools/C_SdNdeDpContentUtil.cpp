@@ -16,7 +16,7 @@
 #include <limits>
 #include <QLocale>
 #include "C_Uti.hpp"
-#include "TglUtils.hpp"
+
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
@@ -26,7 +26,7 @@
 #include "C_OscNodeDataPoolContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -971,8 +971,8 @@ int32_t C_SdNdeDpContentUtil::h_GetMinMaxAfterScaling(const C_OscNodeDataPoolCon
       if (orc_Min.GetArray() == false)
       {
          //Scale min & max
-         tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Min, f64_Min, ou32_Index) == C_NO_ERR);
-         tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Max, f64_Max, ou32_Index) == C_NO_ERR);
+         Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Min, f64_Min, ou32_Index) == C_NO_ERR);
+         Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Max, f64_Max, ou32_Index) == C_NO_ERR);
          f64_Min = C_OscUtils::h_GetValueScaled(f64_Min, of64_Factor, of64_Offset);
          f64_Max = C_OscUtils::h_GetValueScaled(f64_Max, of64_Factor, of64_Offset);
          if (C_SdNdeDpContentUtil::h_GetNumberOfAvailableSteps(orc_Min, orc_Max, u64_Steps, 0) == C_NO_ERR)
@@ -1182,8 +1182,8 @@ int32_t C_SdNdeDpContentUtil::h_GetMinimalTypeAfterScaling(const C_OscNodeDataPo
       if (orc_Min.GetArray() == false)
       {
          //Scale min & max
-         tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Min, f64_Min, 0UL) == C_NO_ERR);
-         tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Max, f64_Max, 0UL) == C_NO_ERR);
+         Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Min, f64_Min, 0UL) == C_NO_ERR);
+         Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Max, f64_Max, 0UL) == C_NO_ERR);
          f64_Min = C_OscUtils::h_GetValueScaled(f64_Min, of64_Factor, of64_Offset);
          f64_Max = C_OscUtils::h_GetValueScaled(f64_Max, of64_Factor, of64_Offset);
          if (C_SdNdeDpContentUtil::h_GetNumberOfAvailableSteps(orc_Min, orc_Max, u64_Steps, 0) == C_NO_ERR)
@@ -1423,31 +1423,31 @@ int32_t C_SdNdeDpContentUtil::h_SimpleConvertFromVariant(const QVariant & orc_Va
       orc_Content.SetType(C_OscNodeDataPoolContent::eSINT32);
       orc_Content.SetArray(false);
       orc_Content.SetValueS32(orc_Variant.toInt(&q_Ok));
-      tgl_assert(q_Ok == true);
+      Q_ASSERT(q_Ok == true);
       break;
    case QVariant::UInt:
       orc_Content.SetType(C_OscNodeDataPoolContent::eUINT32);
       orc_Content.SetArray(false);
       orc_Content.SetValueU32(orc_Variant.toUInt(&q_Ok));
-      tgl_assert(q_Ok == true);
+      Q_ASSERT(q_Ok == true);
       break;
    case QVariant::LongLong:
       orc_Content.SetType(C_OscNodeDataPoolContent::eSINT64);
       orc_Content.SetArray(false);
       orc_Content.SetValueS64(orc_Variant.toLongLong(&q_Ok));
-      tgl_assert(q_Ok == true);
+      Q_ASSERT(q_Ok == true);
       break;
    case QVariant::ULongLong:
       orc_Content.SetType(C_OscNodeDataPoolContent::eUINT64);
       orc_Content.SetArray(false);
       orc_Content.SetValueU64(orc_Variant.toULongLong(&q_Ok));
-      tgl_assert(q_Ok == true);
+      Q_ASSERT(q_Ok == true);
       break;
    case QVariant::Double:
       orc_Content.SetType(C_OscNodeDataPoolContent::eFLOAT64);
       orc_Content.SetArray(false);
       orc_Content.SetValueF64(orc_Variant.toDouble(&q_Ok));
-      tgl_assert(q_Ok == true);
+      Q_ASSERT(q_Ok == true);
       break;
    default:
       s32_Retval = C_RANGE;
@@ -1968,7 +1968,7 @@ void C_SdNdeDpContentUtil::h_InitMaxForSignal(C_OscNodeDataPoolContent & orc_Con
             orc_Content.SetValueU64(u64_Max);
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -1998,7 +1998,7 @@ void C_SdNdeDpContentUtil::h_InitMaxForSignal(C_OscNodeDataPoolContent & orc_Con
             orc_Content.SetValueS64(static_cast<int64_t>(u64_Max - 1ULL));
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -2014,7 +2014,7 @@ void C_SdNdeDpContentUtil::h_InitMaxForSignal(C_OscNodeDataPoolContent & orc_Con
             orc_Content.SetValueF64(std::numeric_limits<float64_t>::max());
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -2136,7 +2136,7 @@ void C_SdNdeDpContentUtil::h_InitMinForSignal(C_OscNodeDataPoolContent & orc_Con
             orc_Content.SetValueU64(0ULL);
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -2166,7 +2166,7 @@ void C_SdNdeDpContentUtil::h_InitMinForSignal(C_OscNodeDataPoolContent & orc_Con
             orc_Content.SetValueS64(-static_cast<int64_t>(u64_Max));
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -2182,7 +2182,7 @@ void C_SdNdeDpContentUtil::h_InitMinForSignal(C_OscNodeDataPoolContent & orc_Con
             orc_Content.SetValueF64(-std::numeric_limits<float64_t>::max());
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }

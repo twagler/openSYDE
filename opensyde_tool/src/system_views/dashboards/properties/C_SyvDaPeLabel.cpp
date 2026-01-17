@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for system view dashboard widget properties (implementation)
@@ -10,7 +10,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_GiSvDaLabelBase.hpp"
 #include "C_SyvDaPeLabel.hpp"
 #include "ui_C_SyvDaPeLabel.h"
@@ -184,7 +184,7 @@ void C_SyvDaPeLabel::SetType(const C_PuiSvDbLabel::E_Type oe_Type) const
       this->mpc_Ui->pc_ComboBoxType->setCurrentIndex(C_SyvDaPeLabel::mhs32_INDEX_STYLE_TYPE_DEFAULT);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }

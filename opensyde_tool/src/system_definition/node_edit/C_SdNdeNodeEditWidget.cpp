@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for node edit
@@ -22,7 +22,7 @@
 
 #include "C_UsHandler.hpp"
 #include "C_OgeWiUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -171,7 +171,7 @@ void C_SdNdeNodeEditWidget::SetFlag(const uint32_t ou32_Flag) const
 
       if (ou32_Flag == mu32_FLAG_EDIT_NAME)
       {
-         tgl_assert(this->mpc_PropertiesWidget != NULL);
+         Q_ASSERT(this->mpc_PropertiesWidget != NULL);
          if (this->mpc_PropertiesWidget != NULL)
          {
             this->mpc_PropertiesWidget->SelectName();
@@ -185,7 +185,7 @@ void C_SdNdeNodeEditWidget::SetFlag(const uint32_t ou32_Flag) const
       // Special case: the interface number of the manager to navigate to in the tree of the manager is part of the flag
       const uint8_t u8_InterfaceNumber = static_cast<uint8_t>(ou32_Flag & (~mu32_FLAG_OPEN_SYSDEF_CANOPENMANAGER));
       this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_CO_MANAGER);
-      tgl_assert(this->mpc_CoManagerWidget != NULL);
+      Q_ASSERT(this->mpc_CoManagerWidget != NULL);
       if (this->mpc_CoManagerWidget != NULL)
       {
          this->mpc_CoManagerWidget->OpenManagerConfiguration(u8_InterfaceNumber);
@@ -198,7 +198,7 @@ void C_SdNdeNodeEditWidget::SetFlag(const uint32_t ou32_Flag) const
       // Special case: the node id of the device to navigate to in the tree of the manager is part of the flag
       const uint32_t u32_DeviceNodeIndex = ou32_Flag & (~mu32_FLAG_OPEN_SYSDEF_DEVICENODE_IN_CANOPENMANAGER);
       this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_CO_MANAGER);
-      tgl_assert(this->mpc_CoManagerWidget != NULL);
+      Q_ASSERT(this->mpc_CoManagerWidget != NULL);
       if (this->mpc_CoManagerWidget != NULL)
       {
          this->mpc_CoManagerWidget->OpenDeviceConfiguration(u32_DeviceNodeIndex);
@@ -235,7 +235,7 @@ void C_SdNdeNodeEditWidget::OpenDetail(const int32_t os32_MainIndex, const int32
    {
       // open the datapool
       this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_DATA_POOL);
-      tgl_assert(this->mpc_DataPoolEditWidget != NULL);
+      Q_ASSERT(this->mpc_DataPoolEditWidget != NULL);
       if (this->mpc_DataPoolEditWidget != NULL)
       {
          this->mpc_DataPoolEditWidget->OpenDetail(os32_MainIndex, os32_ListIndex, os32_ElementIndex);
@@ -246,7 +246,7 @@ void C_SdNdeNodeEditWidget::OpenDetail(const int32_t os32_MainIndex, const int32
    {
       // open the interface description widget
       this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_COMM);
-      tgl_assert(this->mpc_ComIfDescriptionWidget != NULL);
+      Q_ASSERT(this->mpc_ComIfDescriptionWidget != NULL);
       if (this->mpc_ComIfDescriptionWidget != NULL)
       {
          if (os32_Flag == 1)
@@ -273,7 +273,7 @@ void C_SdNdeNodeEditWidget::OpenDetail(const int32_t os32_MainIndex, const int32
    {
       // show the application / data block
       this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_PROPERTIES);
-      tgl_assert(this->mpc_PropertiesWidget != NULL);
+      Q_ASSERT(this->mpc_PropertiesWidget != NULL);
       if (this->mpc_PropertiesWidget != NULL)
       {
          this->mpc_PropertiesWidget->ShowApplication(os32_MainIndex);
@@ -283,7 +283,7 @@ void C_SdNdeNodeEditWidget::OpenDetail(const int32_t os32_MainIndex, const int32
    {
       // show HALC
       this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_HALC);
-      tgl_assert(this->mpc_HalWidget != NULL);
+      Q_ASSERT(this->mpc_HalWidget != NULL);
       if (this->mpc_HalWidget != NULL)
       {
          this->mpc_HalWidget->ShowChannel(os32_MainIndex, os32_ListIndex);
@@ -293,7 +293,7 @@ void C_SdNdeNodeEditWidget::OpenDetail(const int32_t os32_MainIndex, const int32
    {
       // show CANopen Manager
       this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_CO_MANAGER);
-      tgl_assert(this->mpc_CoManagerWidget != NULL);
+      Q_ASSERT(this->mpc_CoManagerWidget != NULL);
       if (this->mpc_CoManagerWidget != NULL)
       {
          // TODO: Handle CANopen Manager
@@ -317,7 +317,7 @@ void C_SdNdeNodeEditWidget::AddFromTsp(const bool oq_IsNewNode)
 
    //Widget necessary
    m_CreatePropertiesTab(q_ADAPT_CURSOR);
-   tgl_assert(this->mpc_PropertiesWidget != NULL);
+   Q_ASSERT(this->mpc_PropertiesWidget != NULL);
    if (this->mpc_PropertiesWidget != NULL)
    {
       this->mpc_PropertiesWidget->AddFromTsp(oq_IsNewNode);
@@ -464,7 +464,7 @@ void C_SdNdeNodeEditWidget::m_OnSwitchToHalc(void)
 void C_SdNdeNodeEditWidget::m_OnSwitchToCommMessages(const uint32_t ou32_DataPoolIndex)
 {
    this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_COMM);
-   tgl_assert(this->mpc_ComIfDescriptionWidget != NULL);
+   Q_ASSERT(this->mpc_ComIfDescriptionWidget != NULL);
    if (this->mpc_ComIfDescriptionWidget != NULL)
    {
       this->mpc_ComIfDescriptionWidget->SetProtocolByDataPool(ou32_DataPoolIndex);
@@ -528,7 +528,7 @@ void C_SdNdeNodeEditWidget::m_CurrentTabChanged(const int32_t os32_Index)
 
    if (os32_Index == hs32_TAB_INDEX_COMM)
    {
-      tgl_assert(this->mpc_ComIfDescriptionWidget != NULL);
+      Q_ASSERT(this->mpc_ComIfDescriptionWidget != NULL);
       if (this->mpc_ComIfDescriptionWidget != NULL)
       {
          this->mpc_ComIfDescriptionWidget->SetInitialFocus();
@@ -550,7 +550,7 @@ void C_SdNdeNodeEditWidget::m_TabClicked(const int32_t os32_Index) const
        (os32_Index == hs32_TAB_INDEX_DATA_POOL))
    {
       // Only relevant if no other tab than the Datapool tab was clicked and no other tab was selected before
-      tgl_assert(this->mpc_DataPoolEditWidget != NULL);
+      Q_ASSERT(this->mpc_DataPoolEditWidget != NULL);
       if (this->mpc_DataPoolEditWidget != NULL)
       {
          this->mpc_DataPoolEditWidget->OpenOverview();
@@ -716,10 +716,10 @@ void C_SdNdeNodeEditWidget::m_HalcLoadedFromTsp(void) const
    // run magician
    const int32_t s32_Result = C_PuiSdHandler::h_GetInstance()->HalcGenerateDatapools(this->mu32_NodeIndex);
 
-   tgl_assert((s32_Result == stw::errors::C_NO_ERR) || (s32_Result == stw::errors::C_NOACT));
+   Q_ASSERT((s32_Result == stw::errors::C_NO_ERR) || (s32_Result == stw::errors::C_NOACT));
 
    // assign HALC Datapools to Data Block if possible
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->AssignAllHalcNvmDataPools(this->mu32_NodeIndex) ==
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->AssignAllHalcNvmDataPools(this->mu32_NodeIndex) ==
               stw::errors::C_NO_ERR);
 
    // reload tabs to update GUI

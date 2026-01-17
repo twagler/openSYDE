@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       A concrete node selector widget for C_SdBueNodeSelectorCheckBoxListWidget (implementation)
@@ -15,7 +15,7 @@
 #include "C_OscNode.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSdUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_Uti.hpp"
 #include "C_SdUtil.hpp"
 
@@ -226,7 +226,7 @@ void C_SdBueNodeSelectorCheckBoxItemWidget::UpdateToolTip(void)
    this->mpc_CheckBox->GetIndexes(u32_NodeIndex, u32_InterfaceIndex);
    pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(u32_NodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       // Prepare tooltip
@@ -238,7 +238,7 @@ void C_SdBueNodeSelectorCheckBoxItemWidget::UpdateToolTip(void)
 
       // Get the interface name
       c_Content += "Interface: ";
-      tgl_assert(u32_InterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
+      Q_ASSERT(u32_InterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
       if (u32_InterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size())
       {
          c_Content += C_PuiSdUtil::h_GetInterfaceName(
@@ -258,7 +258,7 @@ void C_SdBueNodeSelectorCheckBoxItemWidget::UpdateToolTip(void)
       if (C_SdUtil::h_GetMessageCountOfNode(u32_NodeIndex, u32_InterfaceIndex, this->me_ProtocolType, pc_DeviceId,
                                             u32_RxMessageCount, u32_TxMessageCount, &u32_SignalCount) != C_NO_ERR)
       {
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
 
       // Messages
@@ -348,7 +348,7 @@ void C_SdBueNodeSelectorCheckBoxItemWidget::m_OnLinkSwitchToManager(const QStrin
    this->GetIndexes(u32_ManagerNodeIndex, u32_ManagerIntfIndex);
 
    pc_ManagerNode = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(u32_ManagerNodeIndex);
-   tgl_assert(pc_ManagerNode != NULL);
+   Q_ASSERT(pc_ManagerNode != NULL);
    if (pc_ManagerNode != NULL)
    {
       if (u32_ManagerIntfIndex < pc_ManagerNode->c_Properties.c_ComInterfaces.size())

@@ -13,6 +13,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "stwtypes.hpp"
+#include <QtGlobal>
 
 #include "C_OscNodeDataPoolContent.hpp"
 
@@ -36,11 +37,11 @@ public:
                                                                                                 // to
                                                                                                 // hide the base func.
 
-   void SetTimeStamp(const uint32_t ou32_Timestamp);
-   uint32_t GetTimeStamp(void) const;
+   void SetTimeStamp(const qint64 os64_Timestamp);
+   qint64 GetTimeStamp(void) const;
 
 private:
-   uint32_t mu32_TimeStamp;
+   qint64 ms64_TimeStamp;
 };
 
 /* -- Extern Global Variables --------------------------------------------------------------------------------------- */

@@ -217,7 +217,7 @@ int32_t C_OscNodeCommFiler::h_SaveNodeComProtocolFile(const C_OscCanProtocol & o
    {
       //Version
       c_XmlParser.CreateNodeChild("file-version", "1");
-      tgl_assert(c_XmlParser.CreateAndSelectNodeChild("com-protocol") == "com-protocol");
+      Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("com-protocol") == "com-protocol");
       //node
       C_OscNodeCommFiler::h_SaveNodeComProtocol(orc_NodeComProtocol, c_XmlParser, orc_DatapoolName);
       //Don't forget to save!
@@ -257,7 +257,7 @@ void C_OscNodeCommFiler::h_SaveNodeComProtocol(const C_OscCanProtocol & orc_Node
    orc_XmlParser.CreateAndSelectNodeChild("com-message-containers");
    h_SaveNodeComMessageContainers(orc_NodeComProtocol.c_ComMessages, orc_XmlParser, orc_NodeComProtocol.e_Type);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "com-protocol");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-protocol");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -313,7 +313,7 @@ int32_t C_OscNodeCommFiler::h_LoadNodeComMessageContainers(
       }
       while (c_CurNodeComMessageContainer == "com-message-container");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-containers");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-containers");
    }
    //Compare length
    if ((s32_Retval == C_NO_ERR) && (q_ExpectedSizeHere == true))
@@ -353,7 +353,7 @@ void C_OscNodeCommFiler::h_SaveNodeComMessageContainers(
       h_SaveNodeComMessageContainer(orc_NodeComMessageContainers[u32_ItComMessageContainer], orc_XmlParser,
                                     oe_ProtocolType);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-containers");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-containers");
    }
 }
 
@@ -386,7 +386,7 @@ int32_t C_OscNodeCommFiler::h_LoadNodeComMessageContainer(C_OscCanMessageContain
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-container");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-container");
       }
    }
    else
@@ -401,7 +401,7 @@ int32_t C_OscNodeCommFiler::h_LoadNodeComMessageContainer(C_OscCanMessageContain
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-container");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-container");
       }
    }
    else
@@ -434,12 +434,12 @@ void C_OscNodeCommFiler::h_SaveNodeComMessageContainer(const C_OscCanMessageCont
    orc_XmlParser.CreateAndSelectNodeChild("tx-messages");
    h_SaveNodeComMessages(orc_NodeComMessageContainer.c_TxMessages, orc_XmlParser, oe_ProtocolType);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-container");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-container");
    //Rx messages
    orc_XmlParser.CreateAndSelectNodeChild("rx-messages");
    h_SaveNodeComMessages(orc_NodeComMessageContainer.c_RxMessages, orc_XmlParser, oe_ProtocolType);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-container");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-container");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -579,7 +579,7 @@ int32_t C_OscNodeCommFiler::h_LoadNodeComMessage(C_OscCanMessage & orc_NodeComMe
    {
       orc_NodeComMessage.c_Name = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message");
    }
    else
    {
@@ -590,14 +590,14 @@ int32_t C_OscNodeCommFiler::h_LoadNodeComMessage(C_OscCanMessage & orc_NodeComMe
    {
       orc_NodeComMessage.c_Comment = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message");
    }
    if ((orc_XmlParser.SelectNodeChild("tx-method") == "tx-method") &&
        (s32_Retval == C_NO_ERR))
    {
       mh_StringToNodeComMessageTxMethod(orc_XmlParser.GetNodeContent(), orc_NodeComMessage.e_TxMethod);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message");
    }
    else
    {
@@ -611,7 +611,7 @@ int32_t C_OscNodeCommFiler::h_LoadNodeComMessage(C_OscCanMessage & orc_NodeComMe
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message");
       }
    }
    else
@@ -654,7 +654,7 @@ void C_OscNodeCommFiler::h_SaveNodeComMessage(const C_OscCanMessage & orc_NodeCo
    orc_XmlParser.CreateAndSelectNodeChild("com-signals");
    h_SaveNodeComSignals(orc_NodeComMessage.c_Signals, orc_XmlParser, oe_ProtocolType);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message");
    if (oe_ProtocolType == C_OscCanProtocol::eCAN_OPEN)
    {
       C_OscNodeCommFiler::mh_SaveMessageCanOpenPart(orc_NodeComMessage, orc_XmlParser);
@@ -715,7 +715,7 @@ int32_t C_OscNodeCommFiler::h_LoadNodeComSignals(std::vector<C_OscCanSignal> & o
       }
       while (c_CurNodeComSignal == "com-signal");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-signals");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-signals");
    }
    //Compare length
    if ((s32_Retval == C_NO_ERR) && (q_ExpectedSizeHere == true))
@@ -753,7 +753,7 @@ void C_OscNodeCommFiler::h_SaveNodeComSignals(const std::vector<C_OscCanSignal> 
       orc_XmlParser.CreateAndSelectNodeChild("com-signal");
       h_SaveNodeComSignal(orc_NodeComSignals[u32_ItComSignal], orc_XmlParser, oe_ProtocolType);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-signals");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-signals");
    }
 }
 
@@ -787,7 +787,7 @@ int32_t C_OscNodeCommFiler::h_LoadNodeComSignal(C_OscCanSignal & orc_NodeComSign
    {
       s32_Retval = mh_StringToCommunicationByteOrder(orc_XmlParser.GetNodeContent(), orc_NodeComSignal.e_ComByteOrder);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-signal");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-signal");
    }
    else
    {
@@ -799,7 +799,7 @@ int32_t C_OscNodeCommFiler::h_LoadNodeComSignal(C_OscCanSignal & orc_NodeComSign
    {
       s32_Retval = mh_StringToCommunicationMuxType(orc_XmlParser.GetNodeContent(), orc_NodeComSignal.e_MultiplexerType);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-signal");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-signal");
    }
    else
    {
@@ -976,7 +976,7 @@ void C_OscNodeCommFiler::h_SaveNodeOwnerIndex(const C_OscCanInterfaceId & orc_Ow
    orc_XmlParser.SetAttributeUint32("node-index", orc_OwnerNodeIndex.u32_NodeIndex);
    orc_XmlParser.SetAttributeUint32("interface-id", orc_OwnerNodeIndex.u8_InterfaceNumber);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "node-owner-indices");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-owner-indices");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1023,7 +1023,7 @@ void C_OscNodeCommFiler::mh_SaveMessageCanOpenPart(const C_OscCanMessage & orc_N
    orc_XmlParser.SetAttributeUint32("tx-method-additional-info", orc_NodeCommMessage.u8_CanOpenTxMethodAdditionalInfo);
    C_OscNodeCommFiler::mh_SaveNodeOwnerIndices(orc_NodeCommMessage.c_CanOpenManagerOwnerNodeIndex, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1085,7 +1085,7 @@ int32_t C_OscNodeCommFiler::mh_LoadMessageCanOpenPart(C_OscCanMessage & orc_Node
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message");
       }
    }
 
@@ -1107,7 +1107,7 @@ void C_OscNodeCommFiler::mh_SaveNodeOwnerIndices(const C_OscCanInterfaceId & orc
    C_OscNodeCommFiler::h_SaveNodeOwnerIndex(orc_OwnerNodeIndex, orc_XmlParser);
 
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1147,7 +1147,7 @@ int32_t C_OscNodeCommFiler::mh_LoadNodeOwnerIndices(C_OscCanInterfaceId & orc_Ow
             }
             while ((c_NodeName == "node-owner-index") && (s32_Retval == C_NO_ERR));
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "node-owner-indices");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-owner-indices");
          }
       }
       if (s32_Retval == C_NO_ERR)
@@ -1160,7 +1160,7 @@ int32_t C_OscNodeCommFiler::mh_LoadNodeOwnerIndices(C_OscCanInterfaceId & orc_Ow
             osc_write_log_warning("Load file", c_Tmp.c_str());
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open");
       }
    }
 
@@ -1211,7 +1211,7 @@ int32_t C_OscNodeCommFiler::mh_LoadSignalCanOpenPart(C_OscCanSignal & orc_NodeCo
          }
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-signal");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-signal");
    }
    return s32_Retval;
 }
@@ -1254,7 +1254,7 @@ int32_t C_OscNodeCommFiler::mh_LoadSignalJ1939Part(C_OscCanSignal & orc_NodeComm
          orc_NodeCommSignal.u32_J1939SuspectParameterNumber = u32_Value;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-signal");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-signal");
    }
    return s32_Retval;
 }

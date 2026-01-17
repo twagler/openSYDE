@@ -15,7 +15,7 @@
 #include <cmath>
 #include <QLineEdit>
 #include "C_Uti.hpp"
-#include "TglUtils.hpp"
+
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
@@ -23,7 +23,7 @@
 #include "C_SdNdeDpContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;
@@ -224,7 +224,7 @@ QValidator::State C_OgeSpxInt64AutoFix::validate(QString & orc_Input, int32_t & 
 //----------------------------------------------------------------------------------------------------------------------
 void C_OgeSpxInt64AutoFix::m_Init(void)
 {
-   tgl_assert(this->mc_UnscaledMin.GetType() == this->mc_UnscaledMax.GetType());
+   Q_ASSERT(this->mc_UnscaledMin.GetType() == this->mc_UnscaledMax.GetType());
    if (this->mc_UnscaledMin.GetType() == this->mc_UnscaledMax.GetType())
    {
       QVariant c_ScaledMin;

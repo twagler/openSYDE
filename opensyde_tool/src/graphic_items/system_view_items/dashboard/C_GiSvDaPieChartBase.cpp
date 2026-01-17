@@ -16,7 +16,7 @@
 
 #include "gitypes.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -28,7 +28,7 @@
 #include "C_SdNdeDpContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -109,7 +109,7 @@ void C_GiSvDaPieChartBase::SetDisplayStyle(const C_PuiSvDbWidgetBase::E_Style oe
       if (pc_Dashboard != NULL)
       {
          const C_PuiSvDbPieChart * const pc_Box = pc_Dashboard->GetPieChart(static_cast<uint32_t>(this->ms32_Index));
-         tgl_assert(pc_Box != NULL);
+         Q_ASSERT(pc_Box != NULL);
          if (pc_Box != NULL)
          {
             this->mpc_PieChartWidget->SetDisplayStyle(oe_Style, oq_DarkMode, pc_Box->q_ShowUnit, pc_Box->q_ShowValue);
@@ -138,7 +138,7 @@ void C_GiSvDaPieChartBase::LoadData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbPieChart * const pc_Box = pc_Dashboard->GetPieChart(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          this->LoadSvBasicData(*pc_Box);
@@ -160,12 +160,12 @@ void C_GiSvDaPieChartBase::UpdateData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbPieChart * const pc_Box = pc_Dashboard->GetPieChart(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          C_PuiSvDbPieChart c_Box = *pc_Box;
          this->UpdateSvBasicData(c_Box);
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                         this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         &c_Box, this->me_Type) == C_NO_ERR);
@@ -240,7 +240,7 @@ bool C_GiSvDaPieChartBase::CallProperties(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbPieChart * const pc_Box = pc_Dashboard->GetPieChart(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          int32_t s32_Return = C_NO_ERR;
@@ -326,8 +326,8 @@ bool C_GiSvDaPieChartBase::CallProperties(void)
                                                 pc_Dialog->GetFormatterInformation());
                }
 
-               tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
-               tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+               Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
+               Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                               this->mu32_DashboardIndex,
                                                                               static_cast<uint32_t>(this->ms32_Index),
                                                                               &c_Box, this->me_Type) == C_NO_ERR);

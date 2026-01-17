@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for user key selection (implementation)
@@ -13,13 +13,13 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_CamProHandler.hpp"
 #include "C_CamGenKeySelect.hpp"
 #include "ui_C_CamGenKeySelect.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -158,7 +158,7 @@ void C_CamGenKeySelect::keyPressEvent(QKeyEvent * const opc_KeyEvent)
 void C_CamGenKeySelect::m_OkClicked(void)
 {
    //Update data
-   tgl_assert(C_CamProHandler::h_GetInstance()->SetMessageKey(this->mu32_MessageIndex,
+   Q_ASSERT(C_CamProHandler::h_GetInstance()->SetMessageKey(this->mu32_MessageIndex,
                                                               this->mpc_Ui->pc_LineEditKey->text(),
                                                               this->mpc_Ui->pc_SpinBoxOffset->value()) == C_NO_ERR);
    this->mrc_ParentDialog.accept();

@@ -11,13 +11,13 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <cmath>
 #include <limits>
 #include <sstream>
 #include <iomanip>
 #include <cstdlib>
-#include "TglFile.hpp"
 #include "stwerrors.hpp"
 #include "C_SclIniFile.hpp"
 #include "C_OscImportEdsDcf.hpp"
@@ -25,7 +25,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -86,10 +86,10 @@ int32_t C_OscImportEdsDcf::h_Import(const C_SclString & orc_FilePath, const uint
    orc_ImportMessagesPerMessage.clear();
    orc_ParsingError = "";
 
-   if (TglFileExists(orc_FilePath) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).isFile()) == true)
    {
       bool q_Eds = true;
-      const C_SclString c_Extension = TglExtractFileExtension(orc_FilePath).LowerCase();
+      const C_SclString c_Extension = ("." + QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).suffix()).toStdString().LowerCase();
       if (c_Extension == ".eds")
       {
          q_Eds = true;
@@ -1567,12 +1567,12 @@ int32_t C_OscImportEdsDcf::mh_GetIntegerValue(const C_SclString & orc_CoValue, c
       c_LowerCaseNoWhiteSpaceNumber = c_LowerCaseNoWhiteSpaceNumber.LowerCase();
       if (c_LowerCaseNoWhiteSpaceNumber.Length() > 0)
       {
-         C_SclDynamicArray<C_SclString> c_Tokens;
+         QList<C_SclString> c_Tokens;
          c_LowerCaseNoWhiteSpaceNumber.Tokenize("+", c_Tokens);
-         if (c_Tokens.GetLength() > 0L)
+         if (c_Tokens.size() > 0L)
          {
             for (uint32_t u32_ItToken = 0;
-                 (u32_ItToken < static_cast<uint32_t>(c_Tokens.GetLength())) && (s32_Retval == C_NO_ERR);
+                 (u32_ItToken < static_cast<uint32_t>(c_Tokens.size())) && (s32_Retval == C_NO_ERR);
                  ++u32_ItToken)
             {
                const C_SclString & rc_CurToken = c_Tokens[u32_ItToken];

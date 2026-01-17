@@ -12,7 +12,6 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglFile.hpp"
 #include "stwerrors.hpp"
 #include "C_OscExportUti.hpp"
 #include "C_OscExportNode.hpp"
@@ -28,7 +27,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -332,7 +331,7 @@ int32_t C_OscExportNode::mh_CreateDatapoolCode(const C_OscNode & orc_Node, const
             C_OscNodeDataPool c_DataPool;
             //Patch Datapool to include message names
             s32_Retval = C_OscExportNode::mh_GetAdaptedComDataPool(orc_Node, u32_ItDataPool, c_DataPool);
-            tgl_assert(s32_Retval == C_NO_ERR);
+            Q_ASSERT(s32_Retval == C_NO_ERR);
 
             //Export
             s32_Retval = C_OscExportDataPool::h_CreateSourceCode(orc_Path, u16_GenCodeVersion,

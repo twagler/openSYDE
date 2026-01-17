@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       View for tree for navigation and configuration of CANopen Manager
@@ -9,14 +9,14 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <QPainter>
 #include <QKeyEvent>
 #include <QScrollBar>
 
 #include "C_Uti.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_CieUtil.hpp"
@@ -36,7 +36,7 @@
 #include "C_UsHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -491,7 +491,7 @@ void C_SdNdeCoConfigTreeView::OpenDeviceConfiguration(const uint32_t ou32_Device
 {
    const C_OscNode * const pc_Manager = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_NodeIndex);
 
-   tgl_assert(pc_Manager != NULL);
+   Q_ASSERT(pc_Manager != NULL);
    if (pc_Manager != NULL)
    {
       uint8_t u8_InterfaceNumber;
@@ -502,7 +502,7 @@ void C_SdNdeCoConfigTreeView::OpenDeviceConfiguration(const uint32_t ou32_Device
                                                                                    &u8_InterfaceNumber,
                                                                                    &c_DeviceNodeId);
 
-      tgl_assert(s32_Return == C_NO_ERR);
+      Q_ASSERT(s32_Return == C_NO_ERR);
       if (s32_Return == C_NO_ERR)
       {
          this->SetDeviceSelected(u8_InterfaceNumber, c_DeviceNodeId,
@@ -583,9 +583,9 @@ C_OscCanOpenManagerDeviceInfo C_SdNdeCoConfigTreeView::h_CreateNewDevice(const Q
    C_OscCanOpenManagerDeviceInfo c_Config;
    const QFileInfo c_FileInfo(orc_EdsPath);
 
-   c_Config.c_OriginalEdsFileName = TglExtractFileName(orc_EdsPath.toStdString());
+   c_Config.c_OriginalEdsFileName = QFileInfo(QString::fromStdString(*orc_EdsPath.toStdString(.AsStdString())).fileName().toStdString());
    c_Config.c_ProjectEdsFilePath = orc_EdsPath.toStdString();
-   tgl_assert(c_FileInfo.exists());
+   Q_ASSERT(c_FileInfo.exists());
    C_SdNdeCoConfigTreeView::mh_InitMappableSignals(c_Config.c_EdsFileMappableSignals, c_Config.GetEdsFileContent(),
                                                    c_FileInfo.suffix().toLower() == "eds");
    C_SdNdeCoConfigTreeView::mh_InitNewDeviceContent(c_Config);
@@ -807,7 +807,7 @@ void C_SdNdeCoConfigTreeView::m_OnAddDevice(void)
             c_Message.SetCustomMinHeight(180, 250);
             c_Message.Execute();
          }
-         else if (!TglFileExists(pc_AddDialog->GetEdsFile()))
+         else if (!(QFileInfo(QString::fromStdString(*pc_AddDialog->GetEdsFile(.AsStdString())).exists() && QFileInfo(QString::fromStdString(*pc_AddDialog->GetEdsFile(.AsStdString())).isFile())))
          {
             C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eERROR);
             c_Message.SetHeading("EDS File");
@@ -847,10 +847,10 @@ void C_SdNdeCoConfigTreeView::m_OnAddDeviceReport(const uint32_t ou32_SelectedNo
 {
    const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(ou32_SelectedNodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
-      tgl_assert(ou32_SelectedNodeInterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
+      Q_ASSERT(ou32_SelectedNodeInterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
       if (ou32_SelectedNodeInterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size())
       {
          QString c_ParsingError;
@@ -984,7 +984,7 @@ void C_SdNdeCoConfigTreeView::m_OnItemSelected(void)
    if (c_SelectedItems.size() >= 1)
    {
       const QModelIndex c_Current =  c_SelectedItems.at(0);
-      tgl_assert(c_SelectedItems.size() == 1);
+      Q_ASSERT(c_SelectedItems.size() == 1);
       if (c_Current.isValid() == true)
       {
          if ((c_Current.parent().isValid() == true) &&
@@ -1168,7 +1168,7 @@ void C_SdNdeCoConfigTreeView::mh_InitNewDeviceContent(C_OscCanOpenManagerDeviceI
       //supported
       // check for read-only
       bool q_HbProducerRo = true;
-      tgl_assert(rc_EdsFileContent.IsHeartbeatProducerRo(q_HbProducerRo) == C_NO_ERR);
+      Q_ASSERT(rc_EdsFileContent.IsHeartbeatProducerRo(q_HbProducerRo) == C_NO_ERR);
 
       // get default value first (100 ms)
       const int32_t s32_DefaultHeartbeatProducerTimeMs =
@@ -1224,7 +1224,7 @@ void C_SdNdeCoConfigTreeView::mh_InitNewDeviceContent(C_OscCanOpenManagerDeviceI
    {
       // check for read-only
       bool q_HbConsumerRo = true;
-      tgl_assert(rc_EdsFileContent.IsHeartbeatConsumerRo(q_HbConsumerRo) == C_NO_ERR);
+      Q_ASSERT(rc_EdsFileContent.IsHeartbeatConsumerRo(q_HbConsumerRo) == C_NO_ERR);
 
       orc_Device.q_EnableHeartbeatConsuming = !q_HbConsumerRo;
 

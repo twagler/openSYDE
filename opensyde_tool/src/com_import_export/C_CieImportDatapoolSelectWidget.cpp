@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for selecting a datapool while DBC/EDS/DCF file import.
@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSdUtil.hpp"
 
@@ -140,7 +140,7 @@ uint32_t C_CieImportDatapoolSelectWidget::GetSelectedDatapoolIndex(void) const
    }
 
    // if no matching index was found something really went wrong
-   tgl_assert(q_IndexFound == true);
+   Q_ASSERT(q_IndexFound == true);
 
    return u32_Return;
 }

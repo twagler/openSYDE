@@ -12,14 +12,14 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_SclChecksums.hpp"
 #include "C_OscHalcDefContent.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -476,7 +476,7 @@ int32_t C_OscHalcDefContent::SetBitmask(const stw::scl::C_SclString & orc_Displa
                break;
             default:
                //Should not happen
-               tgl_assert(false);
+               Q_ASSERT(false);
                break;
             }
          }

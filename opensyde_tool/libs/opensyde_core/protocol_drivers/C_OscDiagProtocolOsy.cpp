@@ -15,8 +15,8 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscDiagProtocolOsy.hpp"
-#include "TglTime.hpp"
-#include "TglUtils.hpp"
+
+
 #include "C_SclString.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */

@@ -11,6 +11,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
+#include <QDir>
 
 #include <fstream>
 #include <iterator>
@@ -25,7 +27,6 @@
 #include "C_OscDeviceDefinition.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
 #include "C_OscSuSequences.hpp"
-#include "TglFile.hpp"
 #include "C_SclIniFile.hpp"
 #include "C_OscSuSequences.hpp"
 #include "C_OscUtils.hpp"
@@ -36,7 +37,7 @@
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::diag_lib;
 using namespace std;
 using namespace stw::opensyde_core;
@@ -195,10 +196,8 @@ int32_t C_OscSupServiceUpdatePackageV1::h_CreatePackage(const C_SclString & orc_
          else
          {
             // use sub folder named like package
-            c_PackagePathTmp = TglFileIncludeTrailingDelimiter(orc_TemporaryDirectory) +
-                               TglExtractFileName(orc_PackagePath);
-            // TglExpandFileName() in the linux tgl only works for existing paths, but our path does not yet exist,
-            // so we need to expand the path manually
+            c_PackagePathTmp = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_TemporaryDirectory) +
+                               QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).fileName().toStdString();
          }
          c_PackagePathTmp = c_PackagePathTmp.SubString(1, c_PackagePathTmp.Pos(mc_PACKAGE_EXT) - 1) +
                             mc_PACKAGE_EXT_TMP;
@@ -211,7 +210,7 @@ int32_t C_OscSupServiceUpdatePackageV1::h_CreatePackage(const C_SclString & orc_
       }
 
       // add trailing path delimiter to temporary folder if not present
-      c_PackagePathTmp = TglFileIncludeTrailingDelimiter(c_PackagePathTmp);
+      c_PackagePathTmp = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(c_PackagePathTmp);
 
       osc_write_log_info("Creating Update Package", "Temporary folder path: " + c_PackagePathTmp);
 
@@ -296,7 +295,7 @@ int32_t C_OscSupServiceUpdatePackageV1::h_CreatePackage(const C_SclString & orc_
       {
          const C_OscDeviceDefinition * const pc_DeviceDefinition =
             orc_SystemDefinition.c_Nodes[u32_Pos].pc_DeviceDefinition;
-         tgl_assert(pc_DeviceDefinition != NULL);
+         Q_ASSERT(pc_DeviceDefinition != NULL);
          if (pc_DeviceDefinition != NULL)
          {
             const C_SclString c_DevDefPath = pc_DeviceDefinition->c_FilePath;
@@ -320,14 +319,14 @@ int32_t C_OscSupServiceUpdatePackageV1::h_CreatePackage(const C_SclString & orc_
            (c_Iter != c_DeviceDefinitionFiles.end()) && (s32_Return == C_NO_ERR);
            ++c_Iter)
       {
-         const C_SclString c_TargetFileName = TglExtractFileName(*c_Iter);
+         const C_SclString c_TargetFileName = QFileInfo(QString::fromStdString(**c_Iter.AsStdString())).fileName().toStdString();
          c_SupFiles.insert(c_TargetFileName);
          const C_SclString c_TargetFilePath = c_PackagePathTmp + c_TargetFileName;
          s32_Return = C_OscUtils::h_CopyFile(*c_Iter, c_TargetFilePath, NULL, &mhc_ErrorMessage);
          if (s32_Return != C_NO_ERR)
          {
             mhc_ErrorMessage = "Could not save device definition file \"" +
-                               TglExtractFileName(c_TargetFilePath) + "\" to path \"" + orc_PackagePath + "\".";
+                               QFileInfo(QString::fromStdString(*c_TargetFilePath.AsStdString())).fileName().toStdString() + "\" to path \"" + orc_PackagePath + "\".";
             osc_write_log_error("Creating Update Package", mhc_ErrorMessage);
             s32_Return = C_RD_WR;
          }
@@ -366,7 +365,7 @@ int32_t C_OscSupServiceUpdatePackageV1::h_CreatePackage(const C_SclString & orc_
       // cleanup: delete temporary result folder
       if (q_TemporaryFolderCreated == true)
       {
-         const int32_t s32_Tmp = TglRemoveDirectory(c_PackagePathTmp, false);
+         const int32_t s32_Tmp = (QDir(QString::fromStdString(*c_PackagePathTmp.AsStdString())).removeRecursively() ? 0 : -1);
          if (s32_Tmp != 0)
          {
             const C_SclString c_Message = "Could not delete temporary result folder \"" + c_PackagePathTmp + "\".";
@@ -453,7 +452,7 @@ int32_t C_OscSupServiceUpdatePackageV1::h_ProcessPackage(const C_SclString & orc
    if (orc_TargetUnzipPath != "")
    {
       // add trailing path delimiter in case there is none
-      c_TargetUnzipPath = TglFileIncludeTrailingDelimiter(orc_TargetUnzipPath);
+      c_TargetUnzipPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_TargetUnzipPath);
    }
    else
    {
@@ -468,7 +467,7 @@ int32_t C_OscSupServiceUpdatePackageV1::h_ProcessPackage(const C_SclString & orc
    if (oq_IsZip)
    {
       // check if zip archive exists
-      if (TglFileExists(orc_PackagePath) == false)
+      if ((QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isFile()) == false)
       {
          mhc_ErrorMessage = "Zip archive \"" + orc_PackagePath + "\" does not exist.";
          osc_write_log_error("Unpacking Update Package", mhc_ErrorMessage);
@@ -478,9 +477,9 @@ int32_t C_OscSupServiceUpdatePackageV1::h_ProcessPackage(const C_SclString & orc
       //erase target path if it exists
       if (s32_Return == C_NO_ERR)
       {
-         if (TglDirectoryExists(c_TargetUnzipPath) == true)
+         if (QFileInfo(QString::fromStdString(*c_TargetUnzipPath.AsStdString())).isDir() == true)
          {
-            s32_Return = TglRemoveDirectory(c_TargetUnzipPath, false);
+            s32_Return = (QDir(QString::fromStdString(*c_TargetUnzipPath.AsStdString())).removeRecursively() ? 0 : -1);
             if (s32_Return != 0)
             {
                mhc_ErrorMessage = "Could not remove folder \"" + c_TargetUnzipPath +
@@ -529,10 +528,10 @@ int32_t C_OscSupServiceUpdatePackageV1::h_ProcessPackage(const C_SclString & orc
    else
    {
       //no zip -> we have a plain directory. Does it even exist?
-      if (TglDirectoryExists(orc_PackagePath) == true)
+      if (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isDir() == true)
       {
          //We need the base path for handling relative paths of files to transfer:
-         c_TargetUnzipPath = TglFileIncludeTrailingDelimiter(orc_PackagePath);
+         c_TargetUnzipPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_PackagePath);
 
          //check if necessary files are present
          s32_Return = C_OscSupServiceUpdatePackageV1::mh_CheckSupFiles(orc_PackagePath);
@@ -562,23 +561,23 @@ int32_t C_OscSupServiceUpdatePackageV1::h_ProcessPackage(const C_SclString & orc
       }
       else
       {
-         c_PackagePath = TglFileIncludeTrailingDelimiter(orc_PackagePath);
+         c_PackagePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_PackagePath);
          c_XmlParser.LoadFromFile(c_PackagePath + mc_PACKAGE_UPDATE_DEF);
       }
 
-      tgl_assert(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and compatible update package
+      Q_ASSERT(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and compatible update package
 
       // active bus index
-      tgl_assert(c_XmlParser.SelectNodeChild(mc_BUS_INDEX) == mc_BUS_INDEX);
+      Q_ASSERT(c_XmlParser.SelectNodeChild(mc_BUS_INDEX) == mc_BUS_INDEX);
       const C_SclString c_BusIndex = c_XmlParser.GetNodeContent();
       oru32_ActiveBusIndex = static_cast<uint32_t>(c_BusIndex.ToInt());
 
       // get active nodes with update positions and files to flash
 
-      tgl_assert(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and compatible update package
-      tgl_assert(c_XmlParser.SelectNodeChild(mc_NODES) == mc_NODES);
+      Q_ASSERT(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and compatible update package
+      Q_ASSERT(c_XmlParser.SelectNodeChild(mc_NODES) == mc_NODES);
 
-      tgl_assert(c_XmlParser.SelectNodeChild(mc_NODE) == mc_NODE);
+      Q_ASSERT(c_XmlParser.SelectNodeChild(mc_NODE) == mc_NODE);
 
       // go through all nodes
       C_SclString c_SelectedNode;
@@ -647,7 +646,7 @@ int32_t C_OscSupServiceUpdatePackageV1::h_ProcessPackage(const C_SclString & orc
              (orc_SystemDefinition.c_Nodes[u8_Node].pc_DeviceDefinition != NULL))
          {
             const C_OscNode & rc_CurNode = orc_SystemDefinition.c_Nodes[u8_Node];
-            tgl_assert(rc_CurNode.u32_SubDeviceIndex < rc_CurNode.pc_DeviceDefinition->c_SubDevices.size());
+            Q_ASSERT(rc_CurNode.u32_SubDeviceIndex < rc_CurNode.pc_DeviceDefinition->c_SubDevices.size());
 
             orc_ApplicationsToWrite[u8_Node].c_OtherAcceptedDeviceNames =
                rc_CurNode.pc_DeviceDefinition->c_SubDevices[rc_CurNode.u32_SubDeviceIndex].c_OtherAcceptedNames;
@@ -701,12 +700,14 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CheckSupFiles(const C_SclString & orc
 {
    int32_t s32_Return = C_NO_ERR;
 
-   C_SclDynamicArray<C_TglFileSearchRecord> c_Files; //storage for found files
    std::vector<C_SclString> c_NecessaryFiles;        //those are the files we look for
 
    c_NecessaryFiles.push_back(mc_PACKAGE_UPDATE_DEF); //".syde_supdef"
    c_NecessaryFiles.push_back(mc_SUP_SYSDEF);         //".syde_sysdef"
    c_NecessaryFiles.push_back(mc_INI_DEV);            //"devices.ini"
+   
+   stw::scl::C_SclString c_PackagePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_PackagePath);
+   QDir c_QDir(QString(c_PackagePath.c_str()));
 
    for (uint32_t u32_It = 0; u32_It < c_NecessaryFiles.size(); ++u32_It)
    {
@@ -714,19 +715,18 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CheckSupFiles(const C_SclString & orc
       {
          break;
       }
-      const C_SclString c_FileExt = TglExtractFileExtension(c_NecessaryFiles[u32_It]);
-      //define search pattern for TGL_FileFind including the package path, otherwise function would search the whole
-      //system. This probably would slow us down. We first search for a certain extension and in second step for
-      //specific name.
-      const C_SclString c_SearchPattern = TglFileIncludeTrailingDelimiter(orc_PackagePath) + "*" + c_FileExt;
-
-      TglFileFind(c_SearchPattern, c_Files);
+      
+      const C_SclString c_FileExt = ("." + QFileInfo(QString::fromStdString(*c_NecessaryFiles[u32_It].AsStdString())).suffix()).toStdString();
+      QStringList c_Filter;
+      c_Filter << "*" + QString(c_FileExt.c_str());
+      
+      QFileInfoList c_InfoList = c_QDir.entryInfoList(c_Filter, QDir::Files | QDir::NoDotAndDotDot);
 
       //only one of the specified files is allowed
-      if (c_Files.GetLength() == 1)
+      if (c_InfoList.count() == 1)
       {
          //if the correct amount of files is present, we need to have a match on the exact name, otherwise -> fail.
-         if (c_Files[0].c_FileName != c_NecessaryFiles[u32_It])
+         if (c_InfoList.at(0).fileName().toStdString().c_str() != c_NecessaryFiles[u32_It])
          {
             s32_Return = C_DEFAULT;
          }
@@ -771,8 +771,8 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CheckParamsToCreatePackage(const C_Sc
    int32_t s32_Return = C_NO_ERR;
 
    // does package already exist ?
-   const bool q_FileExists = TglFileExists(orc_PackagePath);
-   const bool q_DirectoryExists = TglDirectoryExists(orc_PackagePath);
+   const bool q_FileExists = (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isFile());
+   const bool q_DirectoryExists = QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isDir();
 
    if ((q_FileExists == true) || (q_DirectoryExists == true))
    {
@@ -784,11 +784,11 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CheckParamsToCreatePackage(const C_Sc
    // does target directory for package exist ?
    if (s32_Return == C_NO_ERR)
    {
-      const C_SclString c_TargetDir = TglExtractFilePath(orc_PackagePath);
+      const C_SclString c_TargetDir = (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).absolutePath() + "/").toStdString();
 
       // package name without path or './' leads to target directory "",
       // which should not lead to error as it will result in creating package next to executable
-      if ((c_TargetDir.IsEmpty() == false) && (TglDirectoryExists(c_TargetDir) == false))
+      if ((c_TargetDir.IsEmpty() == false) && (QFileInfo(QString::fromStdString(*c_TargetDir.AsStdString())).isDir() == false))
       {
          mhc_ErrorMessage = "Target directory \"" + c_TargetDir + "\" does not exist.";
          osc_write_log_error("Creating Update Package", mhc_ErrorMessage);
@@ -815,8 +815,8 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CheckParamsToCreatePackage(const C_Sc
       C_SclString c_TmpPackagePath = orc_PackagePath.SubString(1, orc_PackagePath.Pos(mc_PACKAGE_EXT) - 1) +
                                      mc_PACKAGE_EXT_TMP;
       // add trailing path delimiter to temporary folder if not present
-      c_TmpPackagePath = TglFileIncludeTrailingDelimiter(c_TmpPackagePath);
-      if ((TglFileExists(c_TmpPackagePath) == true) || (TglDirectoryExists(c_TmpPackagePath) == true))
+      c_TmpPackagePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(c_TmpPackagePath);
+      if (((QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).isFile()) == true) || (QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).isDir() == true))
       {
          mhc_ErrorMessage = "Temporary result folder \"" + c_TmpPackagePath +
                             "\" to create zip archive already exists.";
@@ -912,7 +912,7 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CheckParamsToCreatePackage(const C_Sc
 int32_t C_OscSupServiceUpdatePackageV1::mh_CreateUpdatePackageDefFile(const C_SclString & orc_Path,
                                                                       const C_SupDefContent & orc_SupDefContent)
 {
-   const C_SclString c_FileName = TglFileIncludeTrailingDelimiter(orc_Path) + mc_PACKAGE_UPDATE_DEF;
+   const C_SclString c_FileName = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_Path) + mc_PACKAGE_UPDATE_DEF;
    int32_t s32_Result;
 
    // fill update package definition
@@ -920,17 +920,17 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CreateUpdatePackageDefFile(const C_Sc
 
    //Root Node
    c_XmlParser.CreateNodeChild(mc_ROOT_NAME);
-   tgl_assert(c_XmlParser.SelectRoot() == mc_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectRoot() == mc_ROOT_NAME);
 
    //File version
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
    c_XmlParser.SetNodeContent(C_SclString::IntToStr(mu16_FILE_VERSION));
 
    //Return
-   tgl_assert(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
 
    //Nodes
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(mc_NODES) == mc_NODES);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(mc_NODES) == mc_NODES);
 
    //List nodes
    for (uint32_t u32_Pos = 0; u32_Pos < orc_SupDefContent.c_Nodes.size(); u32_Pos++)
@@ -938,7 +938,7 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CreateUpdatePackageDefFile(const C_Sc
       const C_SupDefNodeContent c_CurrentNode = orc_SupDefContent.c_Nodes[u32_Pos];
 
       //Node
-      tgl_assert(c_XmlParser.CreateAndSelectNodeChild(mc_NODE) == mc_NODE);
+      Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(mc_NODE) == mc_NODE);
       c_XmlParser.SetAttributeUint32(mc_NODE_ACTIVE_ATTR, static_cast<uint32_t>(c_CurrentNode.u8_Active));
 
       // active node?
@@ -957,23 +957,23 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CreateUpdatePackageDefFile(const C_Sc
          mh_SaveFiles(c_CurrentNode.c_NvmFileNames, c_XmlParser, mc_PARAM_FILES, mc_PARAM_FILE);
          mh_SavePemConfig(c_CurrentNode, c_XmlParser);
 
-         tgl_assert(c_XmlParser.SelectNodeParent() == mc_NODES);
+         Q_ASSERT(c_XmlParser.SelectNodeParent() == mc_NODES);
       }
       else
       {
          //Return for next node
-         tgl_assert(c_XmlParser.SelectNodeParent() == mc_NODES);
+         Q_ASSERT(c_XmlParser.SelectNodeParent() == mc_NODES);
       }
    }
 
    //Return
-   tgl_assert(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
 
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(mc_BUS_INDEX) == mc_BUS_INDEX);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(mc_BUS_INDEX) == mc_BUS_INDEX);
    c_XmlParser.SetNodeContent(C_SclString::IntToStr(orc_SupDefContent.u32_ActiveBusIndex));
 
    //Return
-   tgl_assert(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
 
    // save update package definition file
    s32_Result = c_XmlParser.SaveToFile(c_FileName);
@@ -1015,7 +1015,7 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CreateDeviceIniFile(const C_SclString
    const C_SclString c_DEVICE_SECTION = "UsedDevices";
    const C_SclString c_DEVICE_COUNT = "DeviceCount";
    const C_SclString c_DEVICE_KEY = "Device";
-   const C_SclString c_IniDevPath = TglFileIncludeTrailingDelimiter(orc_Path) + mc_INI_DEV;
+   const C_SclString c_IniDevPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_Path) + mc_INI_DEV;
 
    // build up devices.ini --> device definitions are in the same folder
    try
@@ -1033,7 +1033,7 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CreateDeviceIniFile(const C_SclString
       for (c_Iter = orc_DeviceDefinitionPaths.begin(); c_Iter != orc_DeviceDefinitionPaths.end(); ++c_Iter)
       {
          const C_SclString c_Key = c_DEVICE_KEY + C_SclString::IntToStr(u32_DeviceCounter);
-         const C_SclString c_Value = TglExtractFileName(*c_Iter);
+         const C_SclString c_Value = QFileInfo(QString::fromStdString(**c_Iter.AsStdString())).fileName().toStdString();
          c_IniFile.WriteString(c_DEVICE_SECTION, c_Key, c_Value);
          u32_DeviceCounter++;
       }
@@ -1114,7 +1114,7 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_SupDefParamAdapter(const C_OscSystemD
            ++c_IterAppl)
       {
          // store application file names with relative path
-         const C_SclString c_Tmp = c_Folder + "/" + TglExtractFileName(*c_IterAppl);
+         const C_SclString c_Tmp = c_Folder + "/" + QFileInfo(QString::fromStdString(**c_IterAppl.AsStdString())).fileName().toStdString();
          c_SupDefNodeContent.c_ApplicationFileNames.push_back(c_Tmp);
       }
       // get parameter sets of node
@@ -1124,14 +1124,14 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_SupDefParamAdapter(const C_OscSystemD
            ++c_IterParam)
       {
          // store application file names with relative path
-         const C_SclString c_Tmp = c_Folder + "/" + TglExtractFileName(*c_IterParam);
+         const C_SclString c_Tmp = c_Folder + "/" + QFileInfo(QString::fromStdString(**c_IterParam.AsStdString())).fileName().toStdString();
          c_SupDefNodeContent.c_NvmFileNames.push_back(c_Tmp);
       }
 
       // get PEM file and its settings of node
       if (orc_ApplicationsToWrite[u32_Pos].c_PemFile != "")
       {
-         const C_SclString c_Tmp = c_Folder + "/" + TglExtractFileName(orc_ApplicationsToWrite[u32_Pos].c_PemFile);
+         const C_SclString c_Tmp = c_Folder + "/" + QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u32_Pos].c_PemFile.AsStdString())).fileName().toStdString();
          c_SupDefNodeContent.c_PemFile = c_Tmp;
 
          c_SupDefNodeContent.q_SendSecurityEnabledState = orc_ApplicationsToWrite[u32_Pos].q_SendSecurityEnabledState;
@@ -1239,25 +1239,25 @@ void C_OscSupServiceUpdatePackageV1::mh_LoadFilesSection(std::vector<C_SclString
       // node has applications to update
       orc_PositionMap.insert(std::pair<uint32_t, uint32_t>(ou32_NodeCounter, ou32_UpdatePos));
       // get update application paths
-      tgl_assert(orc_XmlParser.SelectNodeChild(orc_ElementNodeName) == orc_ElementNodeName);
+      Q_ASSERT(orc_XmlParser.SelectNodeChild(orc_ElementNodeName) == orc_ElementNodeName);
 
       // go through all files
       do
       {
          // we have to take care of OS dependent path delimiters for windows '\\'
          const C_SclString c_XmlAttr = orc_XmlParser.GetAttributeString(mc_FILE_NAME_ATTR);
-         const C_SclString c_FileName = TglExtractFileName(c_XmlAttr);
+         const C_SclString c_FileName = QFileInfo(QString::fromStdString(*c_XmlAttr.AsStdString())).fileName().toStdString();
          // subfolder without '/'
          const C_SclString c_SubFolder =
             c_XmlAttr.SubString(1, (c_XmlAttr.Length() - c_FileName.Length()) - 1);
-         const C_SclString c_FilePath = TglFileIncludeTrailingDelimiter(
+         const C_SclString c_FilePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(
             orc_TargetUnzipPath + c_SubFolder) + c_FileName;
          orc_Files.push_back(c_FilePath);
          c_SelectedNode = orc_XmlParser.SelectNodeNext(orc_ElementNodeName);
       }
       while (c_SelectedNode == orc_ElementNodeName);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == orc_BaseNodeName);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_NODE);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_BaseNodeName);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_NODE);
    }
 }
 
@@ -1281,17 +1281,17 @@ void C_OscSupServiceUpdatePackageV1::mh_LoadPemConfigSection(C_OscSuSequences::C
    if (orc_XmlParser.SelectNodeChild(mc_PEM_FILE_CONFIG) == mc_PEM_FILE_CONFIG)
    {
       // get PEM file path
-      tgl_assert(orc_XmlParser.SelectNodeChild(mc_PEM_FILE) == mc_PEM_FILE);
+      Q_ASSERT(orc_XmlParser.SelectNodeChild(mc_PEM_FILE) == mc_PEM_FILE);
 
       // we have to take care of OS dependent path delimiters for windows '\\'
       const C_SclString c_XmlAttr = orc_XmlParser.GetAttributeString(mc_FILE_NAME_ATTR);
       if (c_XmlAttr != "")
       {
-         const C_SclString c_FileName = TglExtractFileName(c_XmlAttr);
+         const C_SclString c_FileName = QFileInfo(QString::fromStdString(*c_XmlAttr.AsStdString())).fileName().toStdString();
          // subfolder without '/'
          const C_SclString c_SubFolder =
             c_XmlAttr.SubString(1, (c_XmlAttr.Length() - c_FileName.Length()) - 1);
-         const C_SclString c_FilePath = TglFileIncludeTrailingDelimiter(
+         const C_SclString c_FilePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(
             orc_TargetUnzipPath + c_SubFolder) + c_FileName;
          orc_DoFlash.c_PemFile = c_FilePath;
 
@@ -1299,7 +1299,7 @@ void C_OscSupServiceUpdatePackageV1::mh_LoadPemConfigSection(C_OscSuSequences::C
          orc_PositionMap.insert(std::pair<uint32_t, uint32_t>(ou32_NodeCounter, ou32_UpdatePos));
       }
 
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_PEM_FILE_CONFIG);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_PEM_FILE_CONFIG);
 
       if (orc_DoFlash.c_PemFile != "")
       {
@@ -1313,7 +1313,7 @@ void C_OscSupServiceUpdatePackageV1::mh_LoadPemConfigSection(C_OscSuSequences::C
          orc_DoFlash.q_DebuggerEnabled = orc_XmlParser.GetAttributeBool(mc_PEM_FILE_CONFIG_DEB_ENAB_ATTR, false);
       }
 
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_NODE);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_NODE);
    }
 }
 
@@ -1334,17 +1334,17 @@ void C_OscSupServiceUpdatePackageV1::mh_SaveFiles(const std::vector<C_SclString>
    if (orc_Files.size() > 0)
    {
       //Files
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(orc_BaseNodeName) == orc_BaseNodeName);
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(orc_BaseNodeName) == orc_BaseNodeName);
       for (uint32_t u32_PosFile = 0; u32_PosFile < orc_Files.size(); u32_PosFile++)
       {
          //File
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(orc_ElementNodeName) == orc_ElementNodeName);
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(orc_ElementNodeName) == orc_ElementNodeName);
          orc_XmlParser.SetAttributeString(mc_FILE_NAME_ATTR, orc_Files[u32_PosFile]);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == orc_BaseNodeName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_BaseNodeName);
       }
       //Return for next node
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_NODE);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_NODE);
    }
 }
 
@@ -1361,19 +1361,19 @@ void C_OscSupServiceUpdatePackageV1::mh_SavePemConfig(const C_SupDefNodeContent 
    if (orc_CurrentNode.c_PemFile != "")
    {
       //Files
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(mc_PEM_FILE_CONFIG) == mc_PEM_FILE_CONFIG);
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(mc_PEM_FILE_CONFIG) == mc_PEM_FILE_CONFIG);
       orc_XmlParser.SetAttributeBool(mc_PEM_FILE_CONFIG_SEC_SEND_ATTR, orc_CurrentNode.q_SendSecurityEnabledState);
       orc_XmlParser.SetAttributeBool(mc_PEM_FILE_CONFIG_SEC_ENAB_ATTR, orc_CurrentNode.q_SecurityEnabled);
       orc_XmlParser.SetAttributeBool(mc_PEM_FILE_CONFIG_DEB_SEND_ATTR, orc_CurrentNode.q_SendDebuggerEnabledState);
       orc_XmlParser.SetAttributeBool(mc_PEM_FILE_CONFIG_DEB_ENAB_ATTR, orc_CurrentNode.q_DebuggerEnabled);
 
       //File
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(mc_PEM_FILE) == mc_PEM_FILE);
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(mc_PEM_FILE) == mc_PEM_FILE);
       orc_XmlParser.SetAttributeString(mc_FILE_NAME_ATTR, orc_CurrentNode.c_PemFile);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_PEM_FILE_CONFIG);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_PEM_FILE_CONFIG);
 
       //Return for next node
-      tgl_assert(orc_XmlParser.SelectNodeParent() == mc_NODE);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_NODE);
    }
 }

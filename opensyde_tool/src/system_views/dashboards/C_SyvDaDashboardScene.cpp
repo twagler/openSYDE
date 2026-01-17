@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Main graphics scene for a concrete dashboard (implementation)
@@ -19,7 +19,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_GiSvDaArrow.hpp"
 #include "C_GiSvDaBoundary.hpp"
 #include "C_GiSvDaLabelBase.hpp"
@@ -39,7 +39,7 @@
 #include "C_OgeWiCustomMessage.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -330,7 +330,7 @@ void C_SyvDaDashboardScene::Load(void)
    const QVector<uint32_t> c_SaveIndices(13, 0);
 
    //Sync system definition scaling information
-   tgl_assert(C_PuiSvHandler::h_GetInstance()->SyncDashboardScalingInformation(this->mu32_ViewIndex,
+   Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SyncDashboardScalingInformation(this->mu32_ViewIndex,
                                                                                this->mu32_DashboardIndex) == C_NO_ERR);
 
    this->m_LoadSubset(c_SaveIndices, false, NULL);
@@ -416,7 +416,7 @@ void C_SyvDaDashboardScene::CopyFromSnapshotToScene(const C_PuiSvDashboard & orc
          //Copy labels
          for (u32_ItElem = 0; u32_ItElem < rc_Labels.size(); ++u32_ItElem)
          {
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            &rc_Labels[u32_ItElem],
                                                                            C_PuiSvDbDataElement::eLABEL) == C_NO_ERR);
@@ -424,7 +424,7 @@ void C_SyvDaDashboardScene::CopyFromSnapshotToScene(const C_PuiSvDashboard & orc
          //Copy param widgets
          for (u32_ItElem = 0; u32_ItElem < rc_Params.size(); ++u32_ItElem)
          {
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            &rc_Params[u32_ItElem],
                                                                            C_PuiSvDbDataElement::ePARAM) == C_NO_ERR);
@@ -432,7 +432,7 @@ void C_SyvDaDashboardScene::CopyFromSnapshotToScene(const C_PuiSvDashboard & orc
          //Copy pie charts
          for (u32_ItElem = 0; u32_ItElem < rc_PieCharts.size(); ++u32_ItElem)
          {
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            &rc_PieCharts[u32_ItElem],
                                                                            C_PuiSvDbDataElement::ePIE_CHART) ==
@@ -441,7 +441,7 @@ void C_SyvDaDashboardScene::CopyFromSnapshotToScene(const C_PuiSvDashboard & orc
          //Copy progress bars
          for (u32_ItElem = 0; u32_ItElem < rc_ProgressBars.size(); ++u32_ItElem)
          {
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            &rc_ProgressBars[u32_ItElem],
                                                                            C_PuiSvDbDataElement::ePROGRESS_BAR) ==
@@ -450,7 +450,7 @@ void C_SyvDaDashboardScene::CopyFromSnapshotToScene(const C_PuiSvDashboard & orc
          //Copy sliders
          for (u32_ItElem = 0; u32_ItElem < rc_Sliders.size(); ++u32_ItElem)
          {
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            &rc_Sliders[u32_ItElem],
                                                                            C_PuiSvDbDataElement::eSLIDER) == C_NO_ERR);
@@ -458,7 +458,7 @@ void C_SyvDaDashboardScene::CopyFromSnapshotToScene(const C_PuiSvDashboard & orc
          //Copy spin boxes
          for (u32_ItElem = 0; u32_ItElem < rc_SpinBoxes.size(); ++u32_ItElem)
          {
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            &rc_SpinBoxes[u32_ItElem],
                                                                            C_PuiSvDbDataElement::eSPIN_BOX) ==
@@ -467,7 +467,7 @@ void C_SyvDaDashboardScene::CopyFromSnapshotToScene(const C_PuiSvDashboard & orc
          //Copy tables
          for (u32_ItElem = 0; u32_ItElem < rc_Tables.size(); ++u32_ItElem)
          {
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            &rc_Tables[u32_ItElem],
                                                                            C_PuiSvDbDataElement::eTABLE) == C_NO_ERR);
@@ -475,7 +475,7 @@ void C_SyvDaDashboardScene::CopyFromSnapshotToScene(const C_PuiSvDashboard & orc
          //Copy toggles
          for (u32_ItElem = 0; u32_ItElem < rc_Toggles.size(); ++u32_ItElem)
          {
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            &rc_Toggles[u32_ItElem],
                                                                            C_PuiSvDbDataElement::eTOGGLE) ==

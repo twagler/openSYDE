@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_PuiSdHandlerHalc.hpp"
 #include "C_OscHalcMagicianUtil.hpp"
@@ -21,7 +21,7 @@
 #include "C_OscHalcMagicianDatapoolListHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -1818,7 +1818,7 @@ int32_t C_PuiSdHandlerHalc::HalcGenerateDatapools(const uint32_t ou32_NodeIndex)
                if (s32_Retval == C_NO_ERR)
                {
                   C_PuiSdNode & rc_UiNode = this->mc_UiNodes[ou32_NodeIndex];
-                  tgl_assert(rc_OscNode.c_DataPools.size() == rc_UiNode.c_UiDataPools.size());
+                  Q_ASSERT(rc_OscNode.c_DataPools.size() == rc_UiNode.c_UiDataPools.size());
                   if (rc_OscNode.c_DataPools.size() == rc_UiNode.c_UiDataPools.size())
                   {
                      std::vector<C_PuiSdNodeDataPool> c_UiDatapools;
@@ -1831,14 +1831,14 @@ int32_t C_PuiSdHandlerHalc::HalcGenerateDatapools(const uint32_t ou32_NodeIndex)
                         c_UiDatapools.push_back(c_Tmp2);
                      }
                      //Add new datapools
-                     tgl_assert(c_Datapools.size() == c_UiDatapools.size());
+                     Q_ASSERT(c_Datapools.size() == c_UiDatapools.size());
                      for (uint32_t u32_It = 0UL; u32_It < c_Datapools.size(); ++u32_It)
                      {
                         if (c_Tmp.size() == c_Datapools.size())
                         {
                            C_OscNodeDataPool & rc_Datapool = c_Datapools[u32_It];
                            C_OscNodeDataPool & rc_Tmp = c_Tmp[u32_It];
-                           tgl_assert(rc_Tmp.c_Name == rc_Datapool.c_Name);
+                           Q_ASSERT(rc_Tmp.c_Name == rc_Datapool.c_Name);
                            if (rc_Tmp.c_Name == rc_Datapool.c_Name)
                            {
                               rc_Datapool.q_ScopeIsPrivate = rc_Tmp.q_ScopeIsPrivate;

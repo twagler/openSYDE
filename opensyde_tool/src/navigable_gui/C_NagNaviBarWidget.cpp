@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for navigation bar
@@ -15,7 +15,7 @@
 
 #include <QProcess>
 
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSvHandler.hpp"
 #include "C_NagNaviBarWidget.hpp"
@@ -35,7 +35,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
@@ -675,7 +675,7 @@ void C_NagNaviBarWidget::m_BusChanged(const uint32_t ou32_BusIndex) const
 {
    const C_OscSystemBus * const pc_Bus = C_PuiSdHandler::h_GetInstance()->GetOscBus(ou32_BusIndex);
 
-   tgl_assert(pc_Bus != NULL);
+   Q_ASSERT(pc_Bus != NULL);
    if (pc_Bus != NULL)
    {
       this->mpc_Ui->pc_TreeViewBuses->UpdateItem(ou32_BusIndex, pc_Bus->c_Name.c_str());

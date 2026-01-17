@@ -3,7 +3,7 @@
 //---------------------------------------------------------------------------
 
 #include "stwtypes.hpp"
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 #include "C_SclIniFile.hpp"
 #include "C_SclString.hpp"
 #include "DiagLib_config.hpp"
@@ -39,16 +39,16 @@ class C_KFXCommConfigurationBase
 public:
    C_KFXCommConfigurationBase(void);
    C_KFXCommConfigurationBase(const C_KFXCommConfigurationBase & orc_Source);
-   C_KFXCommConfigurationBase(const stw::scl::C_SclDynamicArray<C_KFXCommParameter> & orc_Parameters);
+   C_KFXCommConfigurationBase(const QList<C_KFXCommParameter> & orc_Parameters);
    virtual ~C_KFXCommConfigurationBase(void);
 
    C_KFXCommConfigurationBase & operator =(const C_KFXCommConfigurationBase & orc_Source);
 
-   stw::scl::C_SclDynamicArray<C_KFXCommParameter> mc_Parameters;
-   stw::scl::C_SclDynamicArray<int64_t> mc_Values;
+   QList<C_KFXCommParameter> mc_Parameters;
+   QList<int64_t> mc_Values;
    stw::scl::C_SclString mc_ProtocolName;
 
-   void SetParameterList(const stw::scl::C_SclDynamicArray<C_KFXCommParameter> & orc_Parameters);
+   void SetParameterList(const QList<C_KFXCommParameter> & orc_Parameters);
    int32_t GetParameterValue(const stw::scl::C_SclString & orc_ParameterName, int64_t & ors64_Value) const;
    int32_t SetParameterValue(const stw::scl::C_SclString & orc_ParameterName, const int64_t os64_Value);
    void SetAllDefaults(void);

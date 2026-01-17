@@ -18,14 +18,14 @@
 
 #include "C_OscNode.hpp"
 #include "C_SclChecksums.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscUtils.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -1768,7 +1768,7 @@ void C_OscNode::CheckErrorDataPool(const uint32_t ou32_DataPoolIndex, bool * con
                      if (pc_Protocol->e_Type == C_OscCanProtocol::eCAN_OPEN)
                      {
                         // Get the CANopen Manager
-                        tgl_assert(u32_ItContainer < this->c_Properties.c_ComInterfaces.size());
+                        Q_ASSERT(u32_ItContainer < this->c_Properties.c_ComInterfaces.size());
                         if (u32_ItContainer < this->c_Properties.c_ComInterfaces.size())
                         {
                            const std::map<uint8_t,
@@ -2170,7 +2170,7 @@ bool C_OscNode::IsAnyUpdateAvailable(void) const
            (u32_ItInterface < this->c_Properties.c_ComInterfaces.size()) && (q_Retval == false); ++u32_ItInterface)
       {
          const C_OscNodeComInterfaceSettings & rc_CurInterface = this->c_Properties.c_ComInterfaces[u32_ItInterface];
-         tgl_assert(this->u32_SubDeviceIndex < this->pc_DeviceDefinition->c_SubDevices.size());
+         Q_ASSERT(this->u32_SubDeviceIndex < this->pc_DeviceDefinition->c_SubDevices.size());
          if (this->pc_DeviceDefinition->c_SubDevices[this->u32_SubDeviceIndex].IsUpdateAvailable(rc_CurInterface.
                                                                                                  e_InterfaceType) ==
              true)
@@ -2202,7 +2202,7 @@ bool C_OscNode::IsRoutingAvailable(const C_OscSystemBus::E_Type oe_Type) const
    if ((this->pc_DeviceDefinition != NULL) &&
        (this->c_Properties.e_DiagnosticServer == C_OscNodeProperties::eDS_OPEN_SYDE))
    {
-      tgl_assert(this->u32_SubDeviceIndex < this->pc_DeviceDefinition->c_SubDevices.size());
+      Q_ASSERT(this->u32_SubDeviceIndex < this->pc_DeviceDefinition->c_SubDevices.size());
       q_Return = this->pc_DeviceDefinition->c_SubDevices[this->u32_SubDeviceIndex].IsRoutingAvailable(oe_Type);
    }
 

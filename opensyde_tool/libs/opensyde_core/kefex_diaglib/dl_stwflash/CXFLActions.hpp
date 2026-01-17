@@ -15,7 +15,7 @@
 #include "CXFLProtocol.hpp"
 #include "C_SclString.hpp"
 #include "C_SclIniFile.hpp"
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 #include "DiagLib_config.hpp"
 
 namespace stw
@@ -41,8 +41,8 @@ public:
    C_XFLDivertParameters & operator =(const C_XFLDivertParameters & orc_Source);
 
    uint8_t u8_DeviceIndex;                                             ///target device index (0 = CAN; 1 = RS232)
-   stw::scl::C_SclDynamicArray<stw::scl::C_SclString> c_PositionNames; ///available positions e.g. "CAN_BUS_[n]"
-   stw::scl::C_SclDynamicArray<C_XFLDivertParameter> c_Parameters;     ///list of parameters for target device
+   QList<stw::scl::C_SclString> c_PositionNames; ///available positions e.g. "CAN_BUS_[n]"
+   QList<C_XFLDivertParameter> c_Parameters;     ///list of parameters for target device
    uint8_t u8_SelectedPosition;                                        ///target position (e.g. "0" for CAN_1)
 
    void LoadFromINI(stw::scl::C_SclIniFile & orc_IniFile, const stw::scl::C_SclString & orc_Section);
@@ -125,7 +125,7 @@ public:
                                                                        // "slowest" sector
    uint32_t u32_ProgrammingTime;                                       ///< time in [ms] that it takes to write up to
                                                                        // 255 bytes
-   stw::scl::C_SclDynamicArray<C_XFLFlashRegionInformation> c_Regions; ///< individual regions within the IC
+   QList<C_XFLFlashRegionInformation> c_Regions; ///< individual regions within the IC
 
    uint16_t GetNumberOfSectors(void) const;
 };
@@ -146,7 +146,7 @@ public:
 //----------------------------------------------------------------------------------------------------------------------
 ///Information about a number of flash memory sectors
 class C_XFLFlashSectors :
-   public stw::scl::C_SclDynamicArray<C_XFLFlashSector>
+   public QList<C_XFLFlashSector>
 {
 public:
    int32_t GetSectorOccupiedByAddress(const uint32_t ou32_Address, uint16_t & oru16_Sector)
@@ -158,8 +158,8 @@ public:
 class C_XFLFlashInformation
 {
 public:
-   stw::scl::C_SclDynamicArray<C_XFLProtectedSectorInfo> c_ProtectedSectors;
-   stw::scl::C_SclDynamicArray<C_XFLFlashICInformation> c_ICs;
+   QList<C_XFLProtectedSectorInfo> c_ProtectedSectors;
+   QList<C_XFLFlashICInformation> c_ICs;
    C_XFLAliasedRanges c_Aliases;
 
    uint32_t GetEraseTimeByLinearSectorNumber(const uint16_t ou16_Sector) const;
@@ -260,10 +260,10 @@ public:
    C_XFLFingerPrintInformationFromServer c_FingerPrintData;
 
    //device information:
-   stw::scl::C_SclDynamicArray<uint32_t> c_DeviceInfoAddresses;
+   QList<uint32_t> c_DeviceInfoAddresses;
    bool q_DeviceInfoAddressesValid;
-   stw::scl::C_SclDynamicArray<C_XFLECUInformation> c_DeviceInfoBlocks; ///< from target's flash area
-   stw::scl::C_SclDynamicArray<uint8_t> c_DeviceInfoBlocksValid;
+   QList<C_XFLECUInformation> c_DeviceInfoBlocks; ///< from target's flash area
+   QList<uint8_t> c_DeviceInfoBlocksValid;
 
    //flash mapping information:
    C_XFLFlashInformation c_FlashMappingInformation;
@@ -292,9 +292,9 @@ public:
 class C_XFLChecksumAreas
 {
 public:
-   stw::scl::C_SclDynamicArray<C_XFLChecksumBlock> c_BlockConfig; ///< start / end address (not available if sector
+   QList<C_XFLChecksumBlock> c_BlockConfig; ///< start / end address (not available if sector
                                                                   // based)
-   stw::scl::C_SclDynamicArray<C_XFLChecksumArea> c_Areas;        ///< array with individual checksum areas
+   QList<C_XFLChecksumArea> c_Areas;        ///< array with individual checksum areas
    bool q_IsBlockBased;                                           ///< false -> sector based
 };
 
@@ -362,7 +362,7 @@ public:
 
    int32_t ReadFlashInformation(C_XFLFlashInformation & orc_Information, stw::scl::C_SclString & orc_ErrorText);
    int32_t SearchNodes(const stw::scl::C_SclString & orc_CompanyID, const uint32_t ou32_StartTime,
-                       const uint8_t ou8_FlashInterval, stw::scl::C_SclDynamicArray<C_XFLFoundNode> & orc_FoundNodes);
+                       const uint8_t ou8_FlashInterval, QList<C_XFLFoundNode> & orc_FoundNodes);
 
    int32_t ReadServerInformation(C_XFLInformationFromServer & orc_Info);
    int32_t ReadServerSectorChecksumInformation(const uint16_t ou16_SectorCount,

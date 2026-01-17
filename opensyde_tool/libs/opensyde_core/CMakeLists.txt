@@ -31,8 +31,10 @@
 cmake_minimum_required(VERSION 3.16)
 project("opensyde_core")
 
+find_package(Qt6 REQUIRED COMPONENTS Core Xml)
+
 # --- Project source files ---------------------------------------------------------------------------------------------
-#basic infrastructure (also requires Windows target layer, or a corresponding implementation for e.g. Linux)
+#basic infrastructure (requires platform-specific target layer; e.g. TGL for Windows)
 set(OPENSYDE_CORE_COMMON_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers/precomp_headers.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscBinaryHash.cpp
@@ -44,14 +46,12 @@ set(OPENSYDE_CORE_COMMON_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/logging/C_OscLoggingHandler.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/md5/C_Md5Checksum.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclChecksums.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclDateTime.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclIniFile.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclString.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclStringList.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/C_OscXmlParser.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/C_OscXmlParserLog.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/C_OscChecksummedXml.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/tinyxml2/tinyxml2.cpp
 
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscBinaryHash.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscChecksummedIniFile.hpp
@@ -63,11 +63,9 @@ set(OPENSYDE_CORE_COMMON_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/logging/C_OscLoggingHandler.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/md5/C_Md5Checksum.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclChecksums.hpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclDateTime.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclIniFile.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclString.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclStringList.hpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclDynamicArray.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/stwerrors/stwerrors.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/stwerrors/stwerrors.h
    ${CMAKE_CURRENT_SOURCE_DIR}/stwtypes/stwtypes.hpp
@@ -75,7 +73,6 @@ set(OPENSYDE_CORE_COMMON_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/C_OscXmlParser.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/C_OscXmlParserLog.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/C_OscChecksummedXml.hpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/tinyxml2/tinyxml2.h
    ${CMAKE_CURRENT_SOURCE_DIR}/conf_file_handler/C_OscConfFileHandler.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/conf_file_handler/C_OscConfFileHandler.hpp
 )
@@ -91,7 +88,6 @@ set(OPENSYDE_CORE_COMMON_INCLUDE_DIRECTORIES
    ${CMAKE_CURRENT_SOURCE_DIR}/stwerrors
    ${CMAKE_CURRENT_SOURCE_DIR}/stwtypes
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser
-   ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/tinyxml2
    ${CMAKE_CURRENT_SOURCE_DIR}/conf_file_handler
 )
 
@@ -755,18 +751,9 @@ else()
    message("OPENSYDE_CORE_SKIP_WINDOWS_TARGET not detected ... dragging in package")
 
    set (OPENSYDE_CORE_WINDOWS_TARGET_SOURCES
-      ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/tgl_windows/TglFile.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/tgl_windows/TglTasks.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/tgl_windows/TglTime.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/tgl_windows/TglUtils.cpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/tgl_windows/TglFile.hpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/tgl_windows/TglTasks.hpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/tgl_windows/TglTime.hpp
-      ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/tgl_windows/TglUtils.hpp
    )
 
    set(OPENSYDE_CORE_WINDOWS_TARGET_INCLUDE_DIRECTORIES
-      ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/tgl_windows
    )
 endif()
 
@@ -877,3 +864,5 @@ add_library(opensyde_core ${OPENSYDE_CORE_SOURCES})
 target_include_directories(opensyde_core PUBLIC ${OPENSYDE_CORE_INCLUDE_DIRECTORIES})
 
 target_precompile_headers(opensyde_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers/precomp_headers.hpp)
+
+target_link_libraries(opensyde_core PUBLIC Qt6::Core Qt6::Xml)

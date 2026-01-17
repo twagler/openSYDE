@@ -18,7 +18,7 @@
 #include <limits>
 #include "gitypes.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -32,7 +32,7 @@
 #include "C_PuiSdHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
@@ -125,7 +125,7 @@ void C_GiSvDaSpinBoxBase::LoadData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbSpinBox * const pc_Box = pc_Dashboard->GetSpinBox(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          //Load twice to fix initial size font issue
@@ -154,7 +154,7 @@ void C_GiSvDaSpinBoxBase::UpdateData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbSpinBox * const pc_Box = pc_Dashboard->GetSpinBox(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          C_PuiSvDbSpinBox c_Box = *pc_Box;
@@ -162,9 +162,9 @@ void C_GiSvDaSpinBoxBase::UpdateData(void)
          if (this->mpc_SpinBoxWidget != NULL)
          {
             const QVariant c_VariantValue = this->mpc_SpinBoxWidget->GetValue();
-            tgl_assert(C_SdNdeDpContentUtil::h_SimpleConvertFromVariant(c_VariantValue, c_Box.c_Value) == C_NO_ERR);
+            Q_ASSERT(C_SdNdeDpContentUtil::h_SimpleConvertFromVariant(c_VariantValue, c_Box.c_Value) == C_NO_ERR);
          }
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                         this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         &c_Box, this->me_Type) == C_NO_ERR);
@@ -180,7 +180,7 @@ void C_GiSvDaSpinBoxBase::DeleteData(void)
 {
    if (this->ms32_Index >= 0)
    {
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex,
                                                                         this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         this->me_Type) ==
@@ -236,7 +236,7 @@ void C_GiSvDaSpinBoxBase::ConnectionActiveChanged(const bool oq_Active)
             // Scaling is here necessary
             C_PuiSvDbDataElementScaling c_Scaling;
             QVariant c_VariantValue;
-            tgl_assert(this->GetDataPoolElementScaling(0, c_Scaling) == C_NO_ERR);
+            Q_ASSERT(this->GetDataPoolElementScaling(0, c_Scaling) == C_NO_ERR);
             c_VariantValue = C_SdNdeDpContentUtil::h_ConvertScaledContentToGeneric(pc_Box->c_InitialValue,
                                                                                    c_Scaling.f64_Factor,
                                                                                    c_Scaling.f64_Offset,
@@ -298,7 +298,7 @@ void C_GiSvDaSpinBoxBase::SendCurrentValue(void)
 
       this->mf64_WriteValue = c_Value.toDouble(&q_Success);
 
-      tgl_assert(q_Success);
+      Q_ASSERT(q_Success);
       if (q_Success == true)
       {
          // Send the value
@@ -320,7 +320,7 @@ bool C_GiSvDaSpinBoxBase::CallProperties(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbSpinBox * const pc_Box = pc_Dashboard->GetSpinBox(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          C_PuiSvDbNodeDataPoolListElementId c_ElementId;
@@ -400,8 +400,8 @@ bool C_GiSvDaSpinBoxBase::CallProperties(void)
                                              pc_Dialog->GetFormatterInformation());
             }
 
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            static_cast<uint32_t>(this->ms32_Index),
                                                                            &c_Box, this->me_Type) == C_NO_ERR);
@@ -493,7 +493,7 @@ void C_GiSvDaSpinBoxBase::m_UpdateStaticValues(void)
       if ((this->GetDataPoolElementIndex(0, c_Id) == C_NO_ERR) && (pc_Dashboard != NULL))
       {
          const C_PuiSvDbSpinBox * const pc_Box = pc_Dashboard->GetSpinBox(static_cast<uint32_t>(this->ms32_Index));
-         tgl_assert(pc_Box != NULL);
+         Q_ASSERT(pc_Box != NULL);
          const C_OscNodeDataPoolListElement * const pc_Element =
             C_PuiSdHandler::h_GetInstance()->GetOscDataPoolListElement(c_Id.u32_NodeIndex, c_Id.u32_DataPoolIndex,
                                                                        c_Id.u32_ListIndex, c_Id.u32_ElementIndex);
@@ -502,12 +502,12 @@ void C_GiSvDaSpinBoxBase::m_UpdateStaticValues(void)
             QVariant c_VariantValue;
             C_PuiSvDbDataElementScaling c_Scaling;
 
-            tgl_assert(this->GetDataPoolElementScaling(0, c_Scaling) == C_NO_ERR);
+            Q_ASSERT(this->GetDataPoolElementScaling(0, c_Scaling) == C_NO_ERR);
             this->mpc_SpinBoxWidget->Init(pc_Element->c_MinValue, pc_Element->c_MaxValue, c_Scaling.f64_Factor,
                                           c_Scaling.f64_Offset);
             this->mpc_SpinBoxWidget->SetShowUnit(pc_Box->q_ShowUnit);
             this->mpc_SpinBoxWidget->SetUnit(c_Scaling.c_Unit);
-            tgl_assert(C_SdNdeDpContentUtil::h_SimpleConvertToVariant(pc_Box->c_Value, c_VariantValue) == C_NO_ERR);
+            Q_ASSERT(C_SdNdeDpContentUtil::h_SimpleConvertToVariant(pc_Box->c_Value, c_VariantValue) == C_NO_ERR);
 
             float64_t f64_Test;
             pc_Box->c_Value.GetAnyValueAsFloat64(f64_Test, 0);

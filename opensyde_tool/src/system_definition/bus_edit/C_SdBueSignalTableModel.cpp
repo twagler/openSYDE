@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Signal table model (implementation)
@@ -20,7 +20,7 @@
 #include "C_SdUtil.hpp"
 #include "C_SdTooltipUtil.hpp"
 #include "C_SdNdeDpContentUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdBueCoAddSignalsModel.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -161,7 +161,7 @@ QVariant C_SdBueSignalTableModel::headerData(const int32_t os32_Section, const Q
             c_Retval = "Unit";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -284,7 +284,7 @@ QVariant C_SdBueSignalTableModel::data(const QModelIndex & orc_Index, const int3
             //No decoration
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -586,7 +586,7 @@ QString C_SdBueSignalTableModel::m_GetMultiplexingValue(const C_OscCanMessageIde
          }
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -672,7 +672,7 @@ QVariant C_SdBueSignalTableModel::m_GetDisplayAndEditValue(const QModelIndex & o
          c_Retval = this->mc_SigInfoAll[s32_Index].c_SignalData.c_Unit;
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -719,7 +719,7 @@ QFont C_SdBueSignalTableModel::m_GetFontValue(const C_SdBueSignalTableModel::E_C
       c_Font = mc_STYLE_GUIDE_FONT_REGULAR_14;
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    //Convert point to pixel

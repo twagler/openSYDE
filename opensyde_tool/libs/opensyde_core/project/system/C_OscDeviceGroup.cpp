@@ -11,21 +11,20 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscDeviceGroup.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
-#include "TglFile.hpp"
-
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
 using namespace stw::opensyde_core;
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -184,7 +183,7 @@ int32_t C_OscDeviceGroup::LoadGroup(C_SclIniFile & orc_Ini, const C_SclString & 
          {
             C_SclString c_FullDevicePath;
             C_OscDeviceDefinition c_DeviceDefinition;
-            if (TglFileExists(c_DevicePath) == 0)
+            if ((QFileInfo(QString::fromStdString(*c_DevicePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_DevicePath.AsStdString())).isFile()) == 0)
             {
                c_FullDevicePath = orc_BasePath + c_DevicePath;
             }

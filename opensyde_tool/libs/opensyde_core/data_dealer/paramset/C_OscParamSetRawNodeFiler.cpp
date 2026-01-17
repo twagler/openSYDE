@@ -13,8 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include <cstdio>
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscChecksummedXml.hpp"
 #include "C_OscParamSetRawNodeFiler.hpp"
@@ -22,7 +21,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -142,7 +141,7 @@ int32_t C_OscParamSetRawNodeFiler::mh_LoadEntries(std::vector<C_OscParamSetRawEn
          }
          while ((c_SelectedNode == "raw-entry") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "raw");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "raw");
       }
       else
       {
@@ -150,7 +149,7 @@ int32_t C_OscParamSetRawNodeFiler::mh_LoadEntries(std::vector<C_OscParamSetRawEn
          s32_Retval = C_CONFIG;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
    else
    {
@@ -176,19 +175,19 @@ void C_OscParamSetRawNodeFiler::mh_SaveEntries(const std::vector<C_OscParamSetRa
    //Clean start
    if (orc_XmlParser.SelectNodeChild("raw") == "raw")
    {
-      tgl_assert(orc_XmlParser.DeleteNode() == "raw");
-      tgl_assert(orc_XmlParser.SelectRoot() == "opensyde-parameter-sets");
+      Q_ASSERT(orc_XmlParser.DeleteNode() == "raw");
+      Q_ASSERT(orc_XmlParser.SelectRoot() == "opensyde-parameter-sets");
    }
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("raw") == "raw");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("raw") == "raw");
    for (uint32_t u32_Index = 0U; u32_Index < orc_Entries.size(); u32_Index++)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("raw-entry") == "raw-entry");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("raw-entry") == "raw-entry");
       C_OscParamSetRawNodeFiler::mh_SaveEntry(orc_Entries[u32_Index], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "raw");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "raw");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -223,7 +222,7 @@ int32_t C_OscParamSetRawNodeFiler::mh_LoadEntry(C_OscParamSetRawEntry & orc_Entr
          s32_Retval = C_CONFIG;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "raw-entry");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "raw-entry");
    }
    else
    {
@@ -235,10 +234,10 @@ int32_t C_OscParamSetRawNodeFiler::mh_LoadEntry(C_OscParamSetRawEntry & orc_Entr
       if (orc_XmlParser.SelectNodeChild("value") == "value")
       {
          const C_SclString c_Content = orc_XmlParser.GetNodeContent();
-         C_SclDynamicArray<C_SclString> c_Tokens;
+         QList<C_SclString> c_Tokens;
          c_Content.Tokenize(";", c_Tokens);
-         orc_Entry.c_Bytes.reserve(c_Tokens.GetLength());
-         for (int32_t s32_It = 0; (s32_It < c_Tokens.GetLength()) && (s32_Retval == C_NO_ERR); ++s32_It)
+         orc_Entry.c_Bytes.reserve(c_Tokens.size());
+         for (int32_t s32_It = 0; (s32_It < c_Tokens.size()) && (s32_Retval == C_NO_ERR); ++s32_It)
          {
             const C_SclString & rc_Token = c_Tokens[s32_It];
             try
@@ -254,7 +253,7 @@ int32_t C_OscParamSetRawNodeFiler::mh_LoadEntry(C_OscParamSetRawEntry & orc_Entr
             }
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "raw-entry");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "raw-entry");
       }
       else
       {
@@ -283,7 +282,7 @@ int32_t C_OscParamSetRawNodeFiler::mh_LoadEntry(C_OscParamSetRawEntry & orc_Entr
             }
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "raw-entry");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "raw-entry");
       }
       else
       {

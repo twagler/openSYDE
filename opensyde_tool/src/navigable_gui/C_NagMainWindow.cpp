@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Main window with all sub widgets
@@ -21,7 +21,7 @@
 
 #include "constants.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_OscUtils.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "stwerrors.hpp"
@@ -45,7 +45,7 @@
 #include "C_TblTreDataElementModel.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
@@ -941,7 +941,7 @@ void C_NagMainWindow::m_ShowSysViewItem(int32_t & ors32_SubMode, const uint32_t 
    if (ors32_SubMode != ms32_SUBMODE_SYSVIEW_SETUP)
    {
       bool q_Reconnect;
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckViewReconnectNecessary(ou32_Index, q_Reconnect) == C_NO_ERR);
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckViewReconnectNecessary(ou32_Index, q_Reconnect) == C_NO_ERR);
       if (q_Reconnect == true)
       {
          ors32_SubMode = ms32_SUBMODE_SYSVIEW_SETUP;
@@ -1127,7 +1127,7 @@ void C_NagMainWindow::m_ProjectLoaded(const bool & orq_SwitchToLastKnownMode)
          if (this->ms32_SvSubMode != ms32_SUBMODE_SYSVIEW_SETUP)
          {
             bool q_Reconnect;
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckViewReconnectNecessary(this->mu32_SvIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckViewReconnectNecessary(this->mu32_SvIndex,
                                                                                     q_Reconnect) == C_NO_ERR);
             if (q_Reconnect == true)
             {
@@ -1226,7 +1226,7 @@ void C_NagMainWindow::m_CloseAndPrepareProjectLoad(void)
    // close active project
    if (this->mpc_ActiveWidget != NULL)
    {
-      tgl_assert(this->mpc_ActiveWidget->PrepareToClose() == true);
+      Q_ASSERT(this->mpc_ActiveWidget->PrepareToClose() == true);
       this->m_RemoveUseCaseWidget();
 
       // prepare project load

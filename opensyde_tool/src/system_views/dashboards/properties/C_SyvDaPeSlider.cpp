@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for system view dashboard slider properties (implementation)
@@ -12,7 +12,7 @@
 
 #include "stwtypes.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SyvDaPeSlider.hpp"
 #include "ui_C_SyvDaPeSlider.h"
 
@@ -197,7 +197,7 @@ void C_SyvDaPeSlider::SetType(const C_PuiSvDbSlider::E_Type oe_Type) const
       this->mpc_Ui->pc_ComboBoxTypeHandle->setCurrentIndex(C_SyvDaPeSlider::mhs32_INDEX_STYLE_TYPE1);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }

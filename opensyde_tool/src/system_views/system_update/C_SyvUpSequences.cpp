@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       GUI Integration class for system update sequences
@@ -17,13 +17,15 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QMutexLocker>
+#include <QThread>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
+
+
 #include "C_Uti.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -34,7 +36,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
 
@@ -64,7 +66,7 @@ C_SyvUpSequences::C_SyvUpSequences(void) :
    me_Sequence(eNOT_ACTIVE),
    ms32_Result(C_NOACT)
 {
-   mpc_Lock = new stw::tgl::C_TglCriticalSection();
+   mpc_Lock = new QRecursiveMutex();
    mpc_Thread = new C_SyvComDriverThread(&C_SyvUpSequences::mh_ThreadFunc, this);
 }
 
@@ -342,17 +344,15 @@ int32_t C_SyvUpSequences::GetLastUpdatePosition(uint32_t & oru32_NodeIndex, uint
 void C_SyvUpSequences::GetOsyDeviceInformation(std::vector<uint32_t> & orc_OsyNodeIndexes,
                                                std::vector<C_OscSuSequences::C_OsyDeviceInformation> & orc_OsyDeviceInformation)
 {
-   this->mpc_Lock->Acquire();
+   QMutexLocker c_Locker(this->mpc_Lock);
 
-   tgl_assert(this->mc_ReportOsyDeviceInformationNodeIndex.size() == this->mc_ReportOsyDeviceInformation.size());
+   Q_ASSERT(this->mc_ReportOsyDeviceInformationNodeIndex.size() == this->mc_ReportOsyDeviceInformation.size());
 
    // Copy all elements
    orc_OsyNodeIndexes = this->mc_ReportOsyDeviceInformationNodeIndex;
    orc_OsyDeviceInformation = this->mc_ReportOsyDeviceInformation;
    this->mc_ReportOsyDeviceInformationNodeIndex.clear();
    this->mc_ReportOsyDeviceInformation.clear();
-
-   this->mpc_Lock->Release();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -368,17 +368,15 @@ void C_SyvUpSequences::GetOsyDeviceInformation(std::vector<uint32_t> & orc_OsyNo
 void C_SyvUpSequences::GetXflDeviceInformation(std::vector<uint32_t> & orc_XflNodeIndexes,
                                                std::vector<C_OscSuSequences::C_XflDeviceInformation> & orc_XflDeviceInformation)
 {
-   this->mpc_Lock->Acquire();
+   QMutexLocker c_Locker(this->mpc_Lock);
 
-   tgl_assert(this->mc_ReportXflDeviceInformationNodeIndex.size() == this->mc_ReportXflDeviceInformation.size());
+   Q_ASSERT(this->mc_ReportXflDeviceInformationNodeIndex.size() == this->mc_ReportXflDeviceInformation.size());
 
    // Copy all elements
    orc_XflNodeIndexes = this->mc_ReportXflDeviceInformationNodeIndex;
    orc_XflDeviceInformation = this->mc_ReportXflDeviceInformation;
    this->mc_ReportXflDeviceInformationNodeIndex.clear();
    this->mc_ReportXflDeviceInformation.clear();
-
-   this->mpc_Lock->Release();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -746,7 +744,7 @@ QString C_SyvUpSequences::GetStepName(const E_ProgressStep oe_Step) const
       c_Text = "Reset System: Finished";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -962,7 +960,7 @@ bool C_SyvUpSequences::m_ReportProgress(const E_ProgressStep oe_Step, const int3
    C_SclString c_Text;
 
    if ((oe_Step != C_SyvUpSequences::eXFL_PROGRESS) ||
-       (orc_Information.Pos(TGL_LoadStr(STR_FDL_TXT_WR_FLASH_RQ)) == 0))
+       (orc_Information.Pos(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_WR_FLASH_RQ)) == 0))
    {
       c_Text =  ("Step: " + this->GetStepName(oe_Step)).toStdString().c_str();
       c_Text += " Progress: " + C_SclString::IntToStr(ou8_Progress);
@@ -1001,7 +999,7 @@ bool C_SyvUpSequences::m_ReportProgress(const E_ProgressStep oe_Step, const int3
    C_SclString c_Text;
 
    if ((oe_Step != C_SyvUpSequences::eXFL_PROGRESS) ||
-       (orc_Information.Pos(TGL_LoadStr(STR_FDL_TXT_WR_FLASH_RQ)) == 0))
+       (orc_Information.Pos(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_WR_FLASH_RQ)) == 0))
    {
       c_Text =  ("Step: " + this->GetStepName(oe_Step)).toStdString().c_str();
       c_Text += " Progress: " + C_SclString::IntToStr(ou8_Progress);
@@ -1073,7 +1071,7 @@ void C_SyvUpSequences::mh_ThreadFunc(void * const opv_Instance)
    //lint -e{9079}  This class is the only one which registers itself at the caller of this function. It must match.
    C_SyvUpSequences * const pc_Sequences = reinterpret_cast<C_SyvUpSequences *>(opv_Instance);
 
-   tgl_assert(pc_Sequences != NULL);
+   Q_ASSERT(pc_Sequences != NULL);
    if (pc_Sequences != NULL)
    {
       pc_Sequences->m_ThreadFunc();
@@ -1112,10 +1110,10 @@ void C_SyvUpSequences::m_ThreadFunc(void)
       case eRESET_SYSTEM:
          this->ms32_Result = this->ResetSystem();
          //Wait until every device is restarted
-         stw::tgl::TglSleep(2000);
+          QThread::msleep(2000);
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }

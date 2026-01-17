@@ -11,9 +11,9 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
-#include "TglUtils.hpp"
-#include "TglFile.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscChecksummedXml.hpp"
 #include "C_OscParamSetHandler.hpp"
@@ -23,7 +23,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -65,19 +65,20 @@ int32_t C_OscParamSetHandler::CreateCleanFileWithoutCrc(const C_SclString & orc_
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_FilePath.c_str()) == false)
+   const QFileInfo c_FileInfo(QString::fromStdString(*orc_FilePath.AsStdString()));
+   if ((c_FileInfo.exists() && c_FileInfo.isFile()) == false)
    {
       if ((oq_InterpretedDataOnly == true) ||
           (this->mc_RawNodes.size() == this->mc_Data.c_InterpretedNodes.size()))
       {
          C_OscXmlParser c_XmlParser;
-         tgl_assert(c_XmlParser.CreateAndSelectNodeChild("opensyde-parameter-sets") == "opensyde-parameter-sets");
+         Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("opensyde-parameter-sets") == "opensyde-parameter-sets");
          C_OscParamSetFilerBase::h_SaveFileVersion(c_XmlParser);
          C_OscParamSetFilerBase::h_SaveFileInfo(c_XmlParser, this->mc_Data.c_FileInfo);
-         tgl_assert(c_XmlParser.CreateAndSelectNodeChild("nodes") == "nodes");
+         Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("nodes") == "nodes");
          for (uint32_t u32_ItNode = 0; u32_ItNode < this->mc_Data.c_InterpretedNodes.size(); ++u32_ItNode)
          {
-            tgl_assert(c_XmlParser.CreateAndSelectNodeChild("node") == "node");
+            Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("node") == "node");
             if (oq_InterpretedDataOnly == false)
             {
                C_OscParamSetRawNodeFiler::h_SaveRawNode(this->mc_RawNodes[u32_ItNode], c_XmlParser);
@@ -85,7 +86,7 @@ int32_t C_OscParamSetHandler::CreateCleanFileWithoutCrc(const C_SclString & orc_
             C_OscParamSetInterpretedNodeFiler::h_SaveInterpretedNode(this->mc_Data.c_InterpretedNodes[u32_ItNode],
                                                                      c_XmlParser);
             //Return
-            tgl_assert(c_XmlParser.SelectNodeParent() == "nodes");
+            Q_ASSERT(c_XmlParser.SelectNodeParent() == "nodes");
          }
 
          s32_Return = c_XmlParser.SaveToFile(orc_FilePath);
@@ -96,7 +97,7 @@ int32_t C_OscParamSetHandler::CreateCleanFileWithoutCrc(const C_SclString & orc_
       }
       else
       {
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
    else
@@ -132,7 +133,7 @@ int32_t C_OscParamSetHandler::ReadFile(const C_SclString & orc_FilePath, const b
    int32_t s32_Retval = C_NO_ERR;
 
    this->ClearContent();
-   if (TglFileExists(orc_FilePath) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).isFile()) == true)
    {
       C_OscXmlParser * pc_Parser;
       if (oq_IgnoreCrc == true)
@@ -431,7 +432,7 @@ int32_t C_OscParamSetHandler::m_LoadNodes(C_OscXmlParser & orc_XmlParser, const 
          }
          while ((c_SelectedNode == "node") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "nodes");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "nodes");
       }
       else
       {
@@ -439,7 +440,7 @@ int32_t C_OscParamSetHandler::m_LoadNodes(C_OscXmlParser & orc_XmlParser, const 
          s32_Retval = C_CONFIG;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-parameter-sets");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-parameter-sets");
    }
    else
    {

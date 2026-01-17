@@ -67,6 +67,13 @@ public:
    static stw::scl::C_SclString h_ConcatPathIfNecessary(const stw::scl::C_SclString & orc_BaseDir,
                                                         const stw::scl::C_SclString & orc_RelativeOrAbsolutePath);
 
+   // Tgl replacement helpers
+   static stw::scl::C_SclString h_IncludeTrailingDelimiter(const stw::scl::C_SclString& orc_Path);
+   static bool h_GetSystemUserName(stw::scl::C_SclString& orc_UserName);
+   static bool h_GetSystemMachineName(stw::scl::C_SclString& orc_MachineName);
+   static void h_HandleSystemMessages(void);
+   static stw::scl::C_SclString h_ChangeFileExtension(const stw::scl::C_SclString& orc_FilePath, const stw::scl::C_SclString& orc_NewExtension);
+
    //Unique string
    static stw::scl::C_SclString h_GetUniqueName(const std::map<stw::scl::C_SclString, bool> & orc_ExistingStrings,
                                                 const stw::scl::C_SclString & orc_ProposedName,

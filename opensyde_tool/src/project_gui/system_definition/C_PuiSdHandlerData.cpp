@@ -11,10 +11,10 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "C_Uti.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_SclChecksums.hpp"
@@ -28,7 +28,7 @@
 #include "C_OscSystemDefinitionFilerV2.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -72,7 +72,7 @@ int32_t C_PuiSdHandlerData::LoadFromFile(const stw::scl::C_SclString & orc_Path,
 
    const uint16_t u16_TimerId = osc_write_log_performance_start();
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscXmlParser c_XmlParser;
       s32_Return = c_XmlParser.LoadFromFile(orc_Path);
@@ -94,8 +94,8 @@ int32_t C_PuiSdHandlerData::LoadFromFile(const stw::scl::C_SclString & orc_Path,
             if ((u16_FileVersion == 1U) || (u16_FileVersion == 2U))
             {
                //Deprecated version: reuse same XML parser
-               tgl_assert(c_XmlParser.SelectRoot() == "opensyde-system-definition");
-               tgl_assert(c_XmlParser.SelectNodeChild("nodes") == "nodes");
+               Q_ASSERT(c_XmlParser.SelectRoot() == "opensyde-system-definition");
+               Q_ASSERT(c_XmlParser.SelectNodeChild("nodes") == "nodes");
 
                s32_Return = C_PuiSdHandlerFilerV2::h_LoadNodes(this->mc_UiNodes, c_XmlParser,
                                                                &this->mc_CoreDefinition.c_Nodes);
@@ -103,23 +103,23 @@ int32_t C_PuiSdHandlerData::LoadFromFile(const stw::scl::C_SclString & orc_Path,
                if (s32_Return == C_NO_ERR)
                {
                   //Return
-                  tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+                  Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-definition");
                   //Bus
-                  tgl_assert(c_XmlParser.SelectNodeChild("buses") == "buses");
+                  Q_ASSERT(c_XmlParser.SelectNodeChild("buses") == "buses");
                   s32_Return = C_PuiSdHandlerFilerV2::h_LoadBuses(this->mc_UiBuses, c_XmlParser);
                }
                //GUI items
                if (s32_Return == C_NO_ERR)
                {
                   //Return
-                  tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+                  Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-definition");
                   if (c_XmlParser.SelectNodeChild("gui-only") == "gui-only")
                   {
                      //bus text elements
                      if (c_XmlParser.SelectNodeChild("bus-text-elements") == "bus-text-elements")
                      {
                         s32_Return = C_PuiSdHandlerFilerV2::h_LoadBusTextElements(this->c_BusTextElements, c_XmlParser);
-                        tgl_assert(c_XmlParser.SelectNodeParent() == "gui-only");
+                        Q_ASSERT(c_XmlParser.SelectNodeParent() == "gui-only");
                      }
                      else
                      {
@@ -240,7 +240,7 @@ int32_t C_PuiSdHandlerData::SaveToFile(const stw::scl::C_SclString & orc_Path, c
 
    const uint16_t u16_TimerId = osc_write_log_performance_start();
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       //erase it:
       int32_t s32_ReturnRemove;
@@ -259,16 +259,16 @@ int32_t C_PuiSdHandlerData::SaveToFile(const stw::scl::C_SclString & orc_Path, c
          C_OscXmlParser c_XmlParser;
          C_OscSystemDefinitionFilerV2::h_SaveSystemDefinition(this->mc_CoreDefinition, c_XmlParser);
          //Reuse same XML parser for deprecated file format
-         tgl_assert(c_XmlParser.SelectRoot() == "opensyde-system-definition");
-         tgl_assert(c_XmlParser.SelectNodeChild("nodes") == "nodes");
+         Q_ASSERT(c_XmlParser.SelectRoot() == "opensyde-system-definition");
+         Q_ASSERT(c_XmlParser.SelectNodeChild("nodes") == "nodes");
 
          C_PuiSdHandlerFilerV2::h_SaveNodes(this->mc_UiNodes, c_XmlParser);
-         tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-definition"); //back up
+         Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-definition"); //back up
 
          //Bus
-         tgl_assert(c_XmlParser.SelectNodeChild("buses") == "buses");
+         Q_ASSERT(c_XmlParser.SelectNodeChild("buses") == "buses");
          C_PuiSdHandlerFilerV2::h_SaveBuses(this->mc_UiBuses, c_XmlParser);
-         tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-definition"); //back up
+         Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-definition"); //back up
 
          //GUI items
          c_XmlParser.CreateAndSelectNodeChild("gui-only");
@@ -276,7 +276,7 @@ int32_t C_PuiSdHandlerData::SaveToFile(const stw::scl::C_SclString & orc_Path, c
          //Bus text elements
          c_XmlParser.CreateAndSelectNodeChild("bus-text-elements");
          C_PuiSdHandlerFilerV2::h_SaveBusTextElements(this->c_BusTextElements, c_XmlParser);
-         tgl_assert(c_XmlParser.SelectNodeParent() == "gui-only"); //back up
+         Q_ASSERT(c_XmlParser.SelectNodeParent() == "gui-only"); //back up
 
          //Base elements
          C_PuiBsElementsFiler::h_SaveBaseElements(this->c_Elements, c_XmlParser);
@@ -545,7 +545,7 @@ int32_t C_PuiSdHandlerData::mh_SortMessagesByName(C_OscNode & orc_OscNode, C_Pui
 
    //Protocols
    //---------
-   tgl_assert(orc_UiNode.c_UiCanProtocols.size() == orc_OscNode.c_ComProtocols.size());
+   Q_ASSERT(orc_UiNode.c_UiCanProtocols.size() == orc_OscNode.c_ComProtocols.size());
    if (orc_UiNode.c_UiCanProtocols.size() == orc_OscNode.c_ComProtocols.size())
    {
       for (uint32_t u32_ItProtocol = 0;
@@ -555,7 +555,7 @@ int32_t C_PuiSdHandlerData::mh_SortMessagesByName(C_OscNode & orc_OscNode, C_Pui
 
          //Data pools
          //----------
-         tgl_assert((rc_OscProtocol.u32_DataPoolIndex < orc_OscNode.c_DataPools.size()) &&
+         Q_ASSERT((rc_OscProtocol.u32_DataPoolIndex < orc_OscNode.c_DataPools.size()) &&
                     (rc_OscProtocol.u32_DataPoolIndex < orc_UiNode.c_UiDataPools.size()));
          if ((rc_OscProtocol.u32_DataPoolIndex < orc_OscNode.c_DataPools.size()) &&
              (rc_OscProtocol.u32_DataPoolIndex < orc_UiNode.c_UiDataPools.size()))
@@ -564,7 +564,7 @@ int32_t C_PuiSdHandlerData::mh_SortMessagesByName(C_OscNode & orc_OscNode, C_Pui
 
             //Message containers
             //------------------
-            tgl_assert(rc_UiProtocol.c_ComMessages.size() == rc_OscProtocol.c_ComMessages.size());
+            Q_ASSERT(rc_UiProtocol.c_ComMessages.size() == rc_OscProtocol.c_ComMessages.size());
             if (rc_UiProtocol.c_ComMessages.size() == rc_OscProtocol.c_ComMessages.size())
             {
                for (uint32_t u32_ItContainer = 0;
@@ -577,7 +577,7 @@ int32_t C_PuiSdHandlerData::mh_SortMessagesByName(C_OscNode & orc_OscNode, C_Pui
 
                   //Messages
                   //--------
-                  tgl_assert((rc_OscContainer.c_RxMessages.size() == rc_UiContainer.c_RxMessages.size()) &&
+                  Q_ASSERT((rc_OscContainer.c_RxMessages.size() == rc_UiContainer.c_RxMessages.size()) &&
                              (rc_OscContainer.c_TxMessages.size() == rc_UiContainer.c_TxMessages.size()));
                   if ((rc_OscContainer.c_RxMessages.size() == rc_UiContainer.c_RxMessages.size()) &&
                       (rc_OscContainer.c_TxMessages.size() == rc_UiContainer.c_TxMessages.size()))
@@ -593,7 +593,7 @@ int32_t C_PuiSdHandlerData::mh_SortMessagesByName(C_OscNode & orc_OscNode, C_Pui
                                                                                       u32_ItContainer,
                                                                                       false);
                      C_PuiSdNodeDataPool & rc_UiDataPool = orc_UiNode.c_UiDataPools[rc_OscProtocol.u32_DataPoolIndex];
-                     tgl_assert(((((s32_TxListIndex >= 0) && (s32_RxListIndex >= 0)) &&
+                     Q_ASSERT(((((s32_TxListIndex >= 0) && (s32_RxListIndex >= 0)) &&
                                   (rc_OscDataPool.c_Lists.size() == rc_UiDataPool.c_DataPoolLists.size())) &&
                                  (static_cast<uint32_t>(s32_TxListIndex) < rc_OscDataPool.c_Lists.size())) &&
                                 (static_cast<uint32_t>(s32_RxListIndex) < rc_OscDataPool.c_Lists.size()));
@@ -996,7 +996,7 @@ void C_PuiSdHandlerData::m_FixCommInconsistencyErrors(void)
 {
    //Nodes
    //-----
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size())
    {
       for (uint32_t u32_ItNode = 0; u32_ItNode < this->mc_CoreDefinition.c_Nodes.size();
@@ -1007,7 +1007,7 @@ void C_PuiSdHandlerData::m_FixCommInconsistencyErrors(void)
 
          //Protocols
          //---------
-         tgl_assert(rc_UiNode.c_UiCanProtocols.size() == rc_OscNode.c_ComProtocols.size());
+         Q_ASSERT(rc_UiNode.c_UiCanProtocols.size() == rc_OscNode.c_ComProtocols.size());
          if (rc_UiNode.c_UiCanProtocols.size() == rc_OscNode.c_ComProtocols.size())
          {
             for (uint32_t u32_ItProtocol = 0;
@@ -1042,7 +1042,7 @@ void C_PuiSdHandlerData::m_FixCommInconsistencyErrors(void)
                //Fix interface inconsistency (lists)
                //Data pools
                //----------
-               tgl_assert((rc_OscProtocol.u32_DataPoolIndex < rc_OscNode.c_DataPools.size()) &&
+               Q_ASSERT((rc_OscProtocol.u32_DataPoolIndex < rc_OscNode.c_DataPools.size()) &&
                           (rc_OscProtocol.u32_DataPoolIndex < rc_UiNode.c_UiDataPools.size()));
                if ((rc_OscProtocol.u32_DataPoolIndex < rc_OscNode.c_DataPools.size()) &&
                    (rc_OscProtocol.u32_DataPoolIndex < rc_UiNode.c_UiDataPools.size()))
@@ -1052,12 +1052,12 @@ void C_PuiSdHandlerData::m_FixCommInconsistencyErrors(void)
 
                   //Lists
                   //-----
-                  tgl_assert(rc_OscDataPool.c_Lists.size() == rc_UiDataPool.c_DataPoolLists.size());
+                  Q_ASSERT(rc_OscDataPool.c_Lists.size() == rc_UiDataPool.c_DataPoolLists.size());
                   if (rc_OscDataPool.c_Lists.size() == rc_UiDataPool.c_DataPoolLists.size())
                   {
                      //Message containers
                      //------------------
-                     tgl_assert(rc_UiProtocol.c_ComMessages.size() == rc_OscProtocol.c_ComMessages.size());
+                     Q_ASSERT(rc_UiProtocol.c_ComMessages.size() == rc_OscProtocol.c_ComMessages.size());
                      if (rc_UiProtocol.c_ComMessages.size() == rc_OscProtocol.c_ComMessages.size())
                      {
                         //Inconsistency error check

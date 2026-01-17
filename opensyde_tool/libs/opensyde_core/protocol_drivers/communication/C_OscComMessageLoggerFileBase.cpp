@@ -9,12 +9,12 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <cstdio>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglFile.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OscComMessageLoggerFileBase.hpp"
 
@@ -22,7 +22,6 @@
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -72,10 +71,10 @@ C_OscComMessageLoggerFileBase::~C_OscComMessageLoggerFileBase(void)
 int32_t C_OscComMessageLoggerFileBase::OpenFile(void)
 {
    int32_t s32_Return = C_NO_ERR;
-   const C_SclString c_FolderPath = TglExtractFilePath(this->mc_FilePath);
+   const C_SclString c_FolderPath = (QFileInfo(QString::fromStdString(*this->mc_FilePath.AsStdString())).absolutePath() + "/").toStdString();
 
    // Check and create folder
-   if (TglDirectoryExists(c_FolderPath) == false)
+   if (QFileInfo(QString::fromStdString(*c_FolderPath.AsStdString())).isDir() == false)
    {
       s32_Return = C_OscUtils::h_CreateFolderRecursively(c_FolderPath);
 
@@ -84,7 +83,7 @@ int32_t C_OscComMessageLoggerFileBase::OpenFile(void)
          s32_Return = C_RD_WR;
       }
    }
-   else if (TglFileExists(this->mc_FilePath) == true)
+   else if ((QFileInfo(QString::fromStdString(*this->mc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*this->mc_FilePath.AsStdString())).isFile()) == true)
    {
       // Delete the old file
       if (remove(this->mc_FilePath.c_str()) != 0)

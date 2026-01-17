@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Utility class with functions for comm import export (implementation)
@@ -16,7 +16,7 @@
 #include "stwerrors.hpp"
 #include "C_CieUtil.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "C_PuiUtil.hpp"
 #include "C_PuiProject.hpp"
@@ -199,14 +199,14 @@ int32_t C_CieUtil::h_ExportFile(const stw::opensyde_gui_logic::C_CieConverter::C
             std::map<C_SclString, C_SclString> c_NodeMapping;
             int32_t s32_Tmp = C_CieExportDbc::h_GetNodeMapping(c_NodeMapping);
 
-            tgl_assert(s32_Tmp == C_NO_ERR);
+            Q_ASSERT(s32_Tmp == C_NO_ERR);
             if (s32_Tmp == C_NO_ERR)
             {
                const uint32_t u32_NumOfOutputNodes = static_cast<uint32_t>(c_NodeMapping.size());
 
                C_CieExportDbc::C_ExportStatistic c_ExportStatistic;
                s32_Tmp = C_CieExportDbc::h_GetExportStatistic(c_ExportStatistic);
-               tgl_assert(s32_Tmp == C_NO_ERR);
+               Q_ASSERT(s32_Tmp == C_NO_ERR);
 
                if (s32_Tmp == C_NO_ERR)
                {
@@ -310,7 +310,7 @@ void C_CieUtil::h_AdaptName(C_SclString & orc_Name, C_SclString & orc_Comment, c
    //cut string:
    if (c_NewName.Length() > C_PuiSdHandler::h_GetInstance()->GetNameMaxCharLimit())
    {
-      c_NewName.Delete(C_PuiSdHandler::h_GetInstance()->GetNameMaxCharLimit() + 1, c_NewName.Length());
+      c_NewName.removeAt(C_PuiSdHandler::h_GetInstance()->GetNameMaxCharLimit() + 1, c_NewName.Length());
    }
 
    if ((orc_Name == c_NewName) && (oq_AlwaysAppendNameInComment == false))
@@ -365,7 +365,7 @@ void C_CieUtil::h_InsertMessages(const std::vector<C_CieImportDataAssignment> & 
    {
       const C_CieImportDataAssignment & rc_CurData = orc_ImportDataAssignment[u32_ItNodes];
 
-      tgl_assert(rc_CurData.s32_DatapoolIndexForNew >= 0);
+      Q_ASSERT(rc_CurData.s32_DatapoolIndexForNew >= 0);
       if (rc_CurData.s32_DatapoolIndexForNew >= 0)
       {
          // Insert Tx messages
@@ -378,7 +378,7 @@ void C_CieUtil::h_InsertMessages(const std::vector<C_CieImportDataAssignment> & 
                                                 rc_CurData.c_ImportData.c_Ui.c_UiTxSignalData,
                                                 rc_CurData.c_TxMessageOverrideIndices, oq_UniqueAddRequested);
 
-         tgl_assert(s32_Retval == C_NO_ERR);
+         Q_ASSERT(s32_Retval == C_NO_ERR);
          if (s32_Retval == C_NO_ERR)
          {
             // Insert Rx messages
@@ -390,7 +390,7 @@ void C_CieUtil::h_InsertMessages(const std::vector<C_CieImportDataAssignment> & 
                                            rc_CurData.c_ImportData.c_Core.c_OscRxSignalData,
                                            rc_CurData.c_ImportData.c_Ui.c_UiRxSignalData,
                                            rc_CurData.c_RxMessageOverrideIndices, oq_UniqueAddRequested);
-            tgl_assert(s32_Retval == C_NO_ERR);
+            Q_ASSERT(s32_Retval == C_NO_ERR);
          }
       }
    }
@@ -423,10 +423,10 @@ int32_t C_CieUtil::h_GetDeviceInfo(const uint32_t ou32_DeviceNodeIndex, const ui
    int32_t s32_Retval = C_RANGE;
    const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(ou32_DeviceNodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
-      tgl_assert(ou32_DeviceNodeInterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
+      Q_ASSERT(ou32_DeviceNodeInterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
       if (ou32_DeviceNodeInterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size())
       {
          const C_OscNodeComInterfaceSettings & rc_CurInterface =
@@ -744,7 +744,7 @@ int32_t C_CieUtil::mh_ImportDbcFile(const uint32_t ou32_BusIndex, const C_OscCan
                }
                else
                {
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                }
 
                c_NodeAssignmentsConverted.push_back(c_NodeAssignmentConverted);
@@ -840,7 +840,7 @@ int32_t C_CieUtil::mh_ImportDcfEdsFile(const uint32_t ou32_BusIndex, const C_Osc
       // Let user select node and interface
       uint32_t u32_NodeIndex = 0;
       uint32_t u32_InterfaceIndex = 0;
-      tgl_assert(pc_DialogNodeSelection->GetNodeSelection(u32_NodeIndex, u32_InterfaceIndex) == C_NO_ERR);
+      Q_ASSERT(pc_DialogNodeSelection->GetNodeSelection(u32_NodeIndex, u32_InterfaceIndex) == C_NO_ERR);
       pc_DialogNodeSelection->NodeIdToBeChanged(u32_NodeIndex, u32_InterfaceIndex);
       const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(u32_NodeIndex);
 
@@ -848,10 +848,10 @@ int32_t C_CieUtil::mh_ImportDcfEdsFile(const uint32_t ou32_BusIndex, const C_Osc
       orc_NodeIndexes.push_back(u32_NodeIndex);
       orc_InterfaceIndexes.push_back(u32_InterfaceIndex);
 
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
-         tgl_assert(u32_InterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
+         Q_ASSERT(u32_InterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
          if (u32_InterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size())
          {
             const C_OscNodeComInterfaceSettings & rc_CurInterface =
@@ -1149,7 +1149,7 @@ int32_t C_CieUtil::mh_InsertMessages(const uint32_t ou32_NodeIndex, const C_OscC
                   //Handle data sets
                   c_DataSet.SetArray(c_Copy.GetArray());
                   c_DataSet.SetType(c_Copy.GetType());
-                  tgl_assert(pc_CurList->c_DataSets.size() == 1UL);
+                  Q_ASSERT(pc_CurList->c_DataSets.size() == 1UL);
                   c_Copy.c_DataSetValues.resize(pc_CurList->c_DataSets.size(), c_DataSet);
                }
                c_CurOscSignalCommons.push_back(c_Copy);

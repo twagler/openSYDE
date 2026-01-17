@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Pop up dialog widget for updating the EDS file for any existing device
@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "stwerrors.hpp"
 #include "C_CieUtil.hpp"
@@ -23,7 +23,7 @@
 #include "ui_C_SdNdeCoDeviceUpdateEdsDialog.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -138,12 +138,12 @@ void C_SdNdeCoDeviceUpdateEdsDialog::DoApplyData(void) const
    const std::vector<C_CieImportDataAssignment> c_AdaptedNodeAssignmentVector = {this->mc_AdaptedNodeAssignment};
    const C_OscCanOpenManagerDeviceInfo c_AdaptedConfig = this->m_AdaptConfig(this->mc_NewConfig);
 
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->ReplaceCanOpenManagerDevice(this->mu32_ManagerNodeIndex,
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->ReplaceCanOpenManagerDevice(this->mu32_ManagerNodeIndex,
                                                                            this->
                                                                            mu8_ManagerInterfaceId,
                                                                            this->mc_DeviceNodeId,
                                                                            c_AdaptedConfig) == C_NO_ERR);
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManagerMessages(this->mu32_ManagerNodeIndex,
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManagerMessages(this->mu32_ManagerNodeIndex,
                                                                             this->
                                                                             mu8_ManagerInterfaceId,
                                                                             this->mc_DeviceNodeId) == C_NO_ERR);
@@ -430,7 +430,7 @@ int32_t C_SdNdeCoDeviceUpdateEdsDialog::m_PrepareCompareData(C_CieImportedMessag
             uint32_t>(
             s32_DataPoolIndex),
          false);
-      tgl_assert(s32_DataPoolIndex >= 0);
+      Q_ASSERT(s32_DataPoolIndex >= 0);
       if ((pc_OscContainer != NULL) && (pc_UiContainer != NULL) && (pc_OscRxList != NULL) && (pc_OscTxList != NULL) &&
           (pc_UiTxList != NULL) && (pc_UiRxList != NULL) &&
           (u32_ManagerInterfaceIndex < pc_UiContainer->c_ComMessages.size()))
@@ -622,11 +622,11 @@ void C_SdNdeCoDeviceUpdateEdsDialog::m_CompareDataMessageVector(
    //Clear deleted
    orc_DeletedMessages.Clear();
    //Vector size check
-   tgl_assert(orc_ExistingMessages.c_OscMessageData.size() == orc_ExistingMessages.c_UiMessageData.size());
-   tgl_assert(orc_ExistingMessages.c_OscSignalData.size() == orc_ExistingMessages.c_UiSignalData.size());
-   tgl_assert(orc_ImportedMessages.c_OscMessageData.size() == orc_ImportedMessages.c_UiMessageData.size());
-   tgl_assert(orc_ImportedMessages.c_OscSignalData.size() == orc_ImportedMessages.c_UiSignalData.size());
-   tgl_assert(orc_ImportedMessages.c_OscMessageData.size() == orc_ImportedMessages.c_WarningMessagesPerMessage.size());
+   Q_ASSERT(orc_ExistingMessages.c_OscMessageData.size() == orc_ExistingMessages.c_UiMessageData.size());
+   Q_ASSERT(orc_ExistingMessages.c_OscSignalData.size() == orc_ExistingMessages.c_UiSignalData.size());
+   Q_ASSERT(orc_ImportedMessages.c_OscMessageData.size() == orc_ImportedMessages.c_UiMessageData.size());
+   Q_ASSERT(orc_ImportedMessages.c_OscSignalData.size() == orc_ImportedMessages.c_UiSignalData.size());
+   Q_ASSERT(orc_ImportedMessages.c_OscMessageData.size() == orc_ImportedMessages.c_WarningMessagesPerMessage.size());
    if ((orc_ExistingMessages.c_OscMessageData.size() == orc_ExistingMessages.c_UiMessageData.size()) &&
        (orc_ExistingMessages.c_OscSignalData.size() == orc_ExistingMessages.c_UiSignalData.size()) &&
        (orc_ImportedMessages.c_OscMessageData.size() == orc_ImportedMessages.c_UiMessageData.size()) &&
@@ -848,15 +848,15 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AddNewMessage(const C_OscCanMessage & or
    C_OscCanMessage c_NewOscMessage = orc_ImportedOscMessageData;
 
    //Vector size check
-   tgl_assert(c_NewOscMessage.c_Signals.size() == orc_ImportedUiMessageData.c_Signals.size());
+   Q_ASSERT(c_NewOscMessage.c_Signals.size() == orc_ImportedUiMessageData.c_Signals.size());
    if (c_NewOscMessage.c_Signals.size() == orc_ImportedUiMessageData.c_Signals.size())
    {
       const uint32_t u32_SignalOffset = orc_NewOscSignalData.size();
       for (uint32_t u32_ItSignal = 0UL; u32_ItSignal < c_NewOscMessage.c_Signals.size(); ++u32_ItSignal)
       {
          C_OscCanSignal & rc_NewOscSignal = c_NewOscMessage.c_Signals[u32_ItSignal];
-         tgl_assert(rc_NewOscSignal.u32_ComDataElementIndex < orc_ImportedOscSignalData.size());
-         tgl_assert(rc_NewOscSignal.u32_ComDataElementIndex < orc_ImportedUiSignalData.size());
+         Q_ASSERT(rc_NewOscSignal.u32_ComDataElementIndex < orc_ImportedOscSignalData.size());
+         Q_ASSERT(rc_NewOscSignal.u32_ComDataElementIndex < orc_ImportedUiSignalData.size());
          if ((rc_NewOscSignal.u32_ComDataElementIndex < orc_ImportedOscSignalData.size()) &&
              (rc_NewOscSignal.u32_ComDataElementIndex < orc_ImportedUiSignalData.size()))
          {
@@ -908,7 +908,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AddAdaptedMessage(const C_OscCanOpenMana
                                                              c_NewOscMessage,
                                                              oq_MessageIsTxInEds, c_WarningMessages);
 
-   tgl_assert(rc_EdsFileContent.IsPdoMappingRo(c_NewOscMessage.u16_CanOpenManagerPdoIndex,
+   Q_ASSERT(rc_EdsFileContent.IsPdoMappingRo(c_NewOscMessage.u16_CanOpenManagerPdoIndex,
                                                oq_MessageIsTxInEds, q_IsRo) == C_NO_ERR);
    if (q_IsRo)
    {
@@ -963,15 +963,15 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_TransferMessageSignals(const C_OscCanMes
    orc_TargetOscMessageData.c_Signals = orc_SourceOscMessage.c_Signals;
    orc_TargetUiMessageData.c_Signals = orc_SourceUiMessage.c_Signals;
    //Vector size check
-   tgl_assert(orc_TargetOscMessageData.c_Signals.size() == orc_TargetUiMessageData.c_Signals.size());
+   Q_ASSERT(orc_TargetOscMessageData.c_Signals.size() == orc_TargetUiMessageData.c_Signals.size());
 
    if (orc_TargetOscMessageData.c_Signals.size() == orc_TargetUiMessageData.c_Signals.size())
    {
       for (uint32_t u32_ItSignal = 0UL; u32_ItSignal < orc_TargetOscMessageData.c_Signals.size(); ++u32_ItSignal)
       {
          C_OscCanSignal & rc_NewOscSignal = orc_TargetOscMessageData.c_Signals[u32_ItSignal];
-         tgl_assert(rc_NewOscSignal.u32_ComDataElementIndex < orc_SourceOscSignalData.size());
-         tgl_assert(rc_NewOscSignal.u32_ComDataElementIndex < orc_SourceUiSignalData.size());
+         Q_ASSERT(rc_NewOscSignal.u32_ComDataElementIndex < orc_SourceOscSignalData.size());
+         Q_ASSERT(rc_NewOscSignal.u32_ComDataElementIndex < orc_SourceUiSignalData.size());
          if ((rc_NewOscSignal.u32_ComDataElementIndex < orc_SourceOscSignalData.size()) &&
              (rc_NewOscSignal.u32_ComDataElementIndex < orc_SourceUiSignalData.size()))
          {
@@ -1002,7 +1002,7 @@ C_OscCanOpenManagerDeviceInfo C_SdNdeCoDeviceUpdateEdsDialog::m_AdaptConfig(
                                                                this->mc_DeviceNodeId);
    const C_OscCanOpenObjectDictionary & rc_EdsFileContent = orc_NewConfig.GetEdsFileContent();
 
-   tgl_assert(pc_ExistingConfig != NULL);
+   Q_ASSERT(pc_ExistingConfig != NULL);
    if (pc_ExistingConfig != NULL)
    {
       const std::set<uint8_t> c_Map = rc_EdsFileContent.GetAllAvailableFactorySettingsSubIndices();
@@ -1019,7 +1019,7 @@ C_OscCanOpenManagerDeviceInfo C_SdNdeCoDeviceUpdateEdsDialog::m_AdaptConfig(
       // Conditional replace
       if (rc_EdsFileContent.IsHeartbeatProducerSupported())
       {
-         tgl_assert(rc_EdsFileContent.IsHeartbeatProducerRo(q_IsRo) == C_NO_ERR);
+         Q_ASSERT(rc_EdsFileContent.IsHeartbeatProducerRo(q_IsRo) == C_NO_ERR);
          if (q_IsRo)
          {
             c_NewConfig.q_EnableHeartbeatProducing = false;
@@ -1033,7 +1033,7 @@ C_OscCanOpenManagerDeviceInfo C_SdNdeCoDeviceUpdateEdsDialog::m_AdaptConfig(
       }
       if (rc_EdsFileContent.GetNumHeartbeatConsumers() != 0)
       {
-         tgl_assert(rc_EdsFileContent.IsHeartbeatConsumerRo(q_IsRo) == C_NO_ERR);
+         Q_ASSERT(rc_EdsFileContent.IsHeartbeatConsumerRo(q_IsRo) == C_NO_ERR);
          if (q_IsRo)
          {
             c_NewConfig.q_EnableHeartbeatConsuming = false;
@@ -1079,7 +1079,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AdaptMessageProperties(const C_OscCanOpe
    bool q_IsRo;
    const C_OscCanOpenObjectDictionary & rc_EdsFileContent = orc_NewConfig.GetEdsFileContent();
 
-   tgl_assert(rc_EdsFileContent.IsCobIdRo(orc_NewOscMessage.u16_CanOpenManagerPdoIndex,
+   Q_ASSERT(rc_EdsFileContent.IsCobIdRo(orc_NewOscMessage.u16_CanOpenManagerPdoIndex,
                                           oq_MessageIsTxInEds, q_IsRo) == C_NO_ERR);
    if (q_IsRo)
    {
@@ -1129,7 +1129,7 @@ void C_SdNdeCoDeviceUpdateEdsDialog::mh_AdaptMessageProperties(const C_OscCanOpe
          orc_NewOscMessage.q_IsExtended = orc_ImportedOscMessageData.q_IsExtended;
       }
    }
-   tgl_assert(rc_EdsFileContent.IsTransmissionTypeRo(orc_NewOscMessage.u16_CanOpenManagerPdoIndex,
+   Q_ASSERT(rc_EdsFileContent.IsTransmissionTypeRo(orc_NewOscMessage.u16_CanOpenManagerPdoIndex,
                                                      oq_MessageIsTxInEds, q_IsRo) == C_NO_ERR);
    if (q_IsRo)
    {
@@ -1337,7 +1337,7 @@ QString C_SdNdeCoDeviceUpdateEdsDialog::mh_GetSignalNames(const C_OscCanMessage 
 
    for (const auto & rc_Signal : orc_Message.c_Signals)
    {
-      tgl_assert(rc_Signal.u32_ComDataElementIndex < orc_SignalData.size());
+      Q_ASSERT(rc_Signal.u32_ComDataElementIndex < orc_SignalData.size());
       if (rc_Signal.u32_ComDataElementIndex < orc_SignalData.size())
       {
          const C_OscNodeDataPoolListElement & rc_SignalData = orc_SignalData[rc_Signal.u32_ComDataElementIndex];

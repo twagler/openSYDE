@@ -20,7 +20,7 @@
 #include "stwerrors.hpp"
 #include "C_SclString.hpp"
 #include "C_OscSystemDefinition.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscUtils.hpp"
 #include "C_SclChecksums.hpp"
 
@@ -28,7 +28,7 @@
 using namespace stw::opensyde_core;
 
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -98,7 +98,7 @@ void C_OscSystemDefinition::CalcHash(uint32_t & oru32_HashValue) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_OscSystemDefinition::AddBus(const C_OscSystemBus & orc_Bus)
 {
-   tgl_assert(this->InsertBus(static_cast<uint32_t>(this->c_Buses.size()), orc_Bus) == C_NO_ERR);
+   Q_ASSERT(this->InsertBus(static_cast<uint32_t>(this->c_Buses.size()), orc_Bus) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -505,7 +505,7 @@ const
                stw::scl::C_SclString c_CurName;
                if (C_OscNodeSquad::h_CheckIsMultiDevice(u32_ItNode, this->c_NodeSquads, &u32_GroupIndex))
                {
-                  tgl_assert(u32_GroupIndex < this->c_NodeSquads.size());
+                  Q_ASSERT(u32_GroupIndex < this->c_NodeSquads.size());
                   if (u32_GroupIndex < this->c_NodeSquads.size())
                   {
                      const C_OscNodeSquad & rc_Group = this->c_NodeSquads[u32_GroupIndex];
@@ -531,7 +531,7 @@ const
 
          if (C_OscNodeSquad::h_CheckIsMultiDevice(ou32_NodeIndex, this->c_NodeSquads, &u32_GroupIndex))
          {
-            tgl_assert(u32_GroupIndex < this->c_NodeSquads.size());
+            Q_ASSERT(u32_GroupIndex < this->c_NodeSquads.size());
             if (u32_GroupIndex < this->c_NodeSquads.size())
             {
                const C_OscNodeSquad & rc_Group = this->c_NodeSquads[u32_GroupIndex];
@@ -1500,7 +1500,7 @@ int32_t C_OscSystemDefinition::CheckMessageMatch(const C_OscCanMessageIdentifica
                               }
                               else
                               {
-                                 tgl_assert(pc_SignalData1->c_DataSetValues.size() == 1);
+                                 Q_ASSERT(pc_SignalData1->c_DataSetValues.size() == 1);
                                  if (pc_SignalData1->c_DataSetValues.size() >= 1)
                                  {
                                     //Check init value
@@ -1659,7 +1659,7 @@ void C_OscSystemDefinition::AddNode(C_OscNode & orc_Node, const stw::scl::C_SclS
    orc_Node.pc_DeviceDefinition = C_OscSystemDefinition::hc_Devices.LookForDevice(c_SubDeviceName,
                                                                                   orc_MainDeviceName,
                                                                                   orc_Node.u32_SubDeviceIndex);
-   tgl_assert(orc_Node.pc_DeviceDefinition != NULL);
+   Q_ASSERT(orc_Node.pc_DeviceDefinition != NULL);
    this->c_Nodes.push_back(orc_Node);
 }
 
@@ -1682,14 +1682,14 @@ void C_OscSystemDefinition::AddNodeSquad(std::vector<C_OscNode> & orc_Nodes,
                                          const std::vector<stw::scl::C_SclString> & orc_SubDeviceNames,
                                          const stw::scl::C_SclString & orc_MainDeviceName)
 {
-   tgl_assert(orc_Nodes.size() == orc_SubDeviceNames.size());
+   Q_ASSERT(orc_Nodes.size() == orc_SubDeviceNames.size());
    if (orc_Nodes.size() == orc_SubDeviceNames.size())
    {
       uint32_t u32_Counter;
 
       C_OscNodeSquad c_NewNodeSquad;
 
-      tgl_assert(orc_Nodes.size() > 0);
+      Q_ASSERT(orc_Nodes.size() > 0);
 
       for (u32_Counter = 0U; u32_Counter < orc_Nodes.size(); ++u32_Counter)
       {

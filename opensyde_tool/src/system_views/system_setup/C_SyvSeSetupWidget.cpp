@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing system view setup
@@ -291,7 +291,7 @@ void C_SyvSeSetupWidget::StartDeviceConfiguration(void)
       const std::vector<uint8_t> & rc_NodeActiveFlags = pc_View->GetNodeActiveFlags();
       uint32_t u32_Counter;
 
-      tgl_assert(rc_NodeActiveFlags.size() == c_NodeActiveFlagsWithDeactivatedSubNodes.size());
+      Q_ASSERT(rc_NodeActiveFlags.size() == c_NodeActiveFlagsWithDeactivatedSubNodes.size());
       for (u32_Counter = 0U; u32_Counter < rc_NodeActiveFlags.size(); ++u32_Counter)
       {
          if (rc_NodeActiveFlags[u32_Counter] != c_NodeActiveFlagsWithDeactivatedSubNodes[u32_Counter])

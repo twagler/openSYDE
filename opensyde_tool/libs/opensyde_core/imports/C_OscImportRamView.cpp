@@ -9,9 +9,9 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <cctype>
-#include "TglFile.hpp"
 #include "stwerrors.hpp"
 #include "C_OscImportRamView.hpp"
 #include "CKFXDEFProject.hpp"
@@ -21,7 +21,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::diag_lib;
@@ -128,7 +128,7 @@ int32_t C_OscImportRamView::h_ImportDataPoolFromRamViewDefProject(const C_SclStr
       //copy over lists contents:
       orc_DataPool.c_Lists.clear();
 
-      for (uint16_t u16_ListRamView = 0U; u16_ListRamView < c_VariableLists.GetLength(); u16_ListRamView++)
+      for (uint16_t u16_ListRamView = 0U; u16_ListRamView < c_VariableLists.size(); u16_ListRamView++)
       {
          //check for correct list type:
          if (((orc_DataPool.e_Type == C_OscNodeDataPool::eNVM) &&
@@ -152,7 +152,7 @@ int32_t C_OscImportRamView::h_ImportDataPoolFromRamViewDefProject(const C_SclStr
             {
                C_OscNodeDataPoolDataSet & rc_DataSet = c_List.c_DataSets[u16_DataSet];
 
-               if (u16_DataSet < c_VariableLists.ac_DefaultNames.GetLength())
+               if (u16_DataSet < c_VariableLists.ac_DefaultNames.size())
                {
                   rc_DataSet.c_Name = c_VariableLists.ac_DefaultNames[u16_DataSet];
                }
@@ -191,10 +191,10 @@ int32_t C_OscImportRamView::h_ImportDataPoolFromRamViewDefProject(const C_SclStr
                c_List.u32_NvmSize = 2U; //set offset
             }
 
-            c_List.c_Elements.resize(c_VariableLists[u16_ListRamView].VariableList.GetLength());
+            c_List.c_Elements.resize(c_VariableLists[u16_ListRamView].VariableList.size());
 
             for (uint32_t u32_ElementIndex = 0U; u32_ElementIndex <
-                 static_cast<uint32_t>(c_VariableLists[u16_ListRamView].VariableList.GetLength());
+                 static_cast<uint32_t>(c_VariableLists[u16_ListRamView].VariableList.size());
                  u32_ElementIndex++)
             {
                const C_KFXVariableBase & rc_ElementRamView =
@@ -483,7 +483,7 @@ void C_OscImportRamView::mh_ImportElementMinMax(const C_KFXVariableBase & orc_Ra
          break;
       case C_OscNodeDataPoolContent::eUINT64:
       default:
-         tgl_assert(false); //uint64 is not supported in RAMView projects
+         Q_ASSERT(false); //uint64 is not supported in RAMView projects
          break;
       }
    }
@@ -589,7 +589,7 @@ void C_OscImportRamView::mh_ImportElementMinMax(const C_KFXVariableBase & orc_Ra
          break;
       case C_OscNodeDataPoolContent::eUINT64:
       default:
-         tgl_assert(false); //uint64 is not supported in RAMView projects
+         Q_ASSERT(false); //uint64 is not supported in RAMView projects
          break;
       }
    }
@@ -647,7 +647,7 @@ void C_OscImportRamView::mh_ImportElementDataSetValues(const C_KFXVariableBase &
             break;
          case C_OscNodeDataPoolContent::eUINT64:
          default:
-            tgl_assert(false); //uint64 is not supported in RAMView projects
+            Q_ASSERT(false); //uint64 is not supported in RAMView projects
             break;
          }
       }
@@ -739,7 +739,7 @@ void C_OscImportRamView::mh_ImportElementDataSetValues(const C_KFXVariableBase &
             break;
          case C_OscNodeDataPoolContent::eUINT64:
          default:
-            tgl_assert(false); //uint64 is not supported in RAMView projects
+            Q_ASSERT(false); //uint64 is not supported in RAMView projects
             break;
          }
       }
@@ -780,15 +780,15 @@ int32_t C_OscImportRamView::mh_LoadRamViewDefProject(const stw::scl::C_SclString
 {
    int32_t s32_Return = C_NO_ERR;
 
-   orc_VariableLists.SetLength(0);
+   orc_VariableLists.resize(0);
 
-   if (TglExtractFileExtension(orc_ProjectPath).LowerCase() != ".def")
+   if (("." + QFileInfo(QString::fromStdString(*orc_ProjectPath.AsStdString())).suffix()).toStdString().LowerCase() != ".def")
    {
       osc_write_log_error("Loading RAMView project",
                           "File \"" + orc_ProjectPath + "\" does not have the file extension \".def\".");
       s32_Return = C_RD_WR;
    }
-   else if (TglFileExists(orc_ProjectPath) == false)
+   else if ((QFileInfo(QString::fromStdString(*orc_ProjectPath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_ProjectPath.AsStdString())).isFile()) == false)
    {
       osc_write_log_error("Loading RAMView project", "File \"" + orc_ProjectPath + "\" does not exist.");
       s32_Return = C_RD_WR;
@@ -837,14 +837,14 @@ int32_t C_OscImportRamView::mh_LoadRamViewDefProject(const stw::scl::C_SclString
    //scan for .ram files and read them in:
    if (s32_Return == C_NO_ERR)
    {
-      C_SclDynamicArray<C_SclString> c_Warnings;
+      QList<C_SclString> c_Warnings;
       C_SclString c_ErrorText;
-      const C_SclString c_WorkDirectory = TglExtractFilePath(orc_ProjectPath);
+      const C_SclString c_WorkDirectory = (QFileInfo(QString::fromStdString(*orc_ProjectPath.AsStdString())).absolutePath() + "/").toStdString();
 
       s32_Return = C_KFXDEFProject::LoadRAMFiles(c_WorkDirectory, orc_ProjectOptions.c_DeviceName, orc_VariableLists,
                                                  c_ErrorText, c_Warnings);
       //report warnings from loading .ram files in any case (makes it easier to locate problems for user):
-      for (int32_t s32_Index = 0; s32_Index < c_Warnings.GetLength(); s32_Index++)
+      for (int32_t s32_Index = 0; s32_Index < c_Warnings.size(); s32_Index++)
       {
          osc_write_log_warning("Loading RAMView project", c_Warnings[s32_Index]);
       }
@@ -874,12 +874,12 @@ int32_t C_OscImportRamView::mh_LoadRamViewDefProject(const stw::scl::C_SclString
    //load default file
    if (s32_Return == C_NO_ERR)
    {
-      const C_SclString c_FilePath = TglChangeFileExtension(orc_ProjectPath, ".dat");
+      const C_SclString c_FilePath = stw::opensyde_core::C_OscUtils::h_ChangeFileExtension(orc_ProjectPath, ".dat");
 
       //preset defaults to clearly defined values:
       orc_VariableLists.ClearDefaults();
 
-      s32_Return = C_KFXDATFile::LoadDATAllLists(TglChangeFileExtension(orc_ProjectPath, ".dat"),
+      s32_Return = C_KFXDATFile::LoadDATAllLists(stw::opensyde_core::C_OscUtils::h_ChangeFileExtension(orc_ProjectPath, ".dat"),
                                                  orc_ProjectOptions.c_DeviceName, orc_VariableLists, NULL);
       switch (s32_Return)
       {
@@ -914,7 +914,7 @@ int32_t C_OscImportRamView::mh_LoadRamViewDefProject(const stw::scl::C_SclString
    //load comment file
    if (s32_Return == C_NO_ERR)
    {
-      const C_SclString c_FilePath = TglChangeFileExtension(orc_ProjectPath, ".rec");
+      const C_SclString c_FilePath = stw::opensyde_core::C_OscUtils::h_ChangeFileExtension(orc_ProjectPath, ".rec");
 
       s32_Return = C_KFXDEFProject::LoadComments(c_FilePath,
                                                  orc_ProjectOptions.c_DeviceName, orc_VariableLists,

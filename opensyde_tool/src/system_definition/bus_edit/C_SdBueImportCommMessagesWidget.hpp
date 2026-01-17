@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget to import COMM messages
@@ -20,14 +20,13 @@
 #include <QProcess>
 #include <QFileDialog>
 #include <QDateTime>
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_RtfExportWidget.hpp"
-#include "TglFile.hpp"
 #include "C_OscXmlParser.hpp"
 #include "C_OscProject.hpp"
 #include "C_PuiProject.hpp"

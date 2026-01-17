@@ -16,7 +16,7 @@
 #include <iostream>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglTime.hpp"
+#include <QElapsedTimer>
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscProtocolDriverOsyTpCan.hpp"
 
@@ -26,7 +26,7 @@ using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::can;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -50,8 +50,7 @@ C_OscProtocolDriverOsyTpCan::C_ServiceState::C_ServiceState(void) :
    u16_TransmissionIndex(0U),
    u8_SequenceNumber(0U),
    e_Status(eIDLE),
-   u32_StartTimeMs(0U),
-   u32_SendCfTimeout(0U)
+   u32_SendCfTimeoutDuration(0U)
 {
 }
 
@@ -164,7 +163,7 @@ int32_t C_OscProtocolDriverOsyTpCan::m_HandleIncomingOsySpecificSingleFrame(cons
    // message without request SID 0xFA
    if ((orc_CanMessage.au8_Data[0] & 0x0FU) == mhu8_OSY_OSF_TYPE_EVENT_DRIVEN_DP_SINGLE_FRAME)
    {
-      tgl_assert((u8_Size > 0) && (u8_Size <= 8U));
+      Q_ASSERT((u8_Size > 0) && (u8_Size <= 8U));
 
       c_Service.c_Data.resize(u8_Size);
       //remap to service in the format expected by upper layer ...
@@ -368,14 +367,14 @@ int32_t C_OscProtocolDriverOsyTpCan::m_HandleIncomingFlowControl(const T_STWCAN_
             // in openSYDE (100 kbit/s) and an alien busload of 50%
             //So we'll have around 2 ms/message
             //But we'll add a lower limit of 100ms to compensate for client side timing constraints
-            mc_TxService.u32_SendCfTimeout =
+            mc_TxService.u32_SendCfTimeoutDuration =
                static_cast<uint32_t>((mc_TxService.c_ServiceData.c_Data.size() / 7U) * 2U);
-            if (mc_TxService.u32_SendCfTimeout < 100U)
+            if (mc_TxService.u32_SendCfTimeoutDuration < 100U)
             {
-               mc_TxService.u32_SendCfTimeout = 100U;
+               mc_TxService.u32_SendCfTimeoutDuration = 100U;
             }
             //offset with current system time:
-            mc_TxService.u32_SendCfTimeout += TglGetTickCount();
+            mc_TxService.c_Timer.start();
             mc_TxService.e_Status = C_ServiceState::eMORE_CONSECUTIVE_FRAMES_TO_SEND;
 
             s32_Return = m_SendNextConsecutiveFrames();
@@ -697,14 +696,15 @@ int32_t C_OscProtocolDriverOsyTpCan::m_HandleBroadcastSetNodeIdBySerialNumberRes
 {
    int32_t s32_Return;
    //check for responses
-   const uint32_t u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    T_STWCAN_Msg_RX c_Response;
    bool q_PositiveResponseReceived = false;
    bool q_MultiplePositiveResponsesReceived = false;
    bool q_NegativeResponseReceived = false;
 
    // No further abort condition. Wait always the entire timeout time to get all positive and negative responses
-   while ((TglGetTickCount() - mu32_BroadcastTimeoutMs) < u32_StartTime)
+   while (c_Timer.hasExpired(mu32_BroadcastTimeoutMs) == false)
    {
       int32_t s32_ReturnLocal;
 
@@ -928,7 +928,7 @@ int32_t C_OscProtocolDriverOsyTpCan::Cycle(void)
                   else
                   {
                      mc_TxService.e_Status = C_ServiceState::eWAITING_FOR_FLOW_CONTROL;
-                     mc_TxService.u32_StartTimeMs = TglGetTickCount();
+                     mc_TxService.c_Timer.start();
                   }
 
                   break; //not yet finished with this transfer
@@ -939,7 +939,7 @@ int32_t C_OscProtocolDriverOsyTpCan::Cycle(void)
       else if (mc_TxService.e_Status == C_ServiceState::eWAITING_FOR_FLOW_CONTROL)
       {
          //check for Tx timeout:
-         if ((TglGetTickCount() - mhu16_NBS_TIMEOUTS_MS) > mc_TxService.u32_StartTimeMs)
+         if (mc_TxService.c_Timer.hasExpired(mhu16_NBS_TIMEOUTS_MS))
          {
             //transfer timed out ...
             m_LogWarningWithHeader("N_Bs timeout reached before receiving flow control. Aborting ongoing Tx transfer.",
@@ -955,7 +955,7 @@ int32_t C_OscProtocolDriverOsyTpCan::Cycle(void)
          //still not finished ?
          if (mc_TxService.e_Status == C_ServiceState::eMORE_CONSECUTIVE_FRAMES_TO_SEND)
          {
-            if (TglGetTickCount() > mc_TxService.u32_SendCfTimeout)
+            if (mc_TxService.c_Timer.hasExpired(mc_TxService.u32_SendCfTimeoutDuration))
             {
                //transfer timed out ...
                m_LogWarningWithHeader("Could not send all CFs within timeout. Aborting ongoing Tx transfer.",
@@ -1320,9 +1320,10 @@ int32_t C_OscProtocolDriverOsyTpCan::BroadcastReadSerialNumber(
       else
       {
          //check for responses
-         const uint32_t u32_StartTimeStd = TglGetTickCount();
+         QElapsedTimer c_TimerStd;
+         c_TimerStd.start();
 
-         while ((TglGetTickCount() - mu32_BroadcastTimeoutMs) < u32_StartTimeStd)
+         while (c_TimerStd.hasExpired(mu32_BroadcastTimeoutMs) == false)
          {
             //trigger dispatcher
             //ignore return value: we cannot be sure some other client did not check before us
@@ -1388,9 +1389,10 @@ int32_t C_OscProtocolDriverOsyTpCan::BroadcastReadSerialNumber(
             else
             {
                //check for responses
-               const uint32_t u32_StartTimeExt = TglGetTickCount();
+               QElapsedTimer c_TimerExt;
+               c_TimerExt.start();
 
-               while ((TglGetTickCount() - mu32_BroadcastTimeoutMs) < u32_StartTimeExt)
+               while (c_TimerExt.hasExpired(mu32_BroadcastTimeoutMs) == false)
                {
                   //trigger dispatcher
                   //ignore return value: we cannot be sure some other client did not check before us
@@ -1715,10 +1717,11 @@ int32_t C_OscProtocolDriverOsyTpCan::BroadcastRequestProgramming(
       else
       {
          //check for responses
-         const uint32_t u32_StartTime = TglGetTickCount();
+         QElapsedTimer c_Timer;
+         c_Timer.start();
          T_STWCAN_Msg_RX c_Response;
 
-         while ((TglGetTickCount() - mu32_BroadcastTimeoutMs) < u32_StartTime)
+         while (c_Timer.hasExpired(mu32_BroadcastTimeoutMs) == false)
          {
             int32_t s32_ReturnLocal;
 

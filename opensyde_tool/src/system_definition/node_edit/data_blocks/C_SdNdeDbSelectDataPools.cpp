@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget to handle data pool selections for data blocks (implementation)
@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSdUtil.hpp"
@@ -21,7 +21,7 @@
 #include "ui_C_SdNdeDbSelectDataPools.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;

@@ -16,7 +16,7 @@
 #include <QLineEdit>
 #include "C_Uti.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OgeSpxInt64.hpp"
@@ -24,7 +24,7 @@
 #include "C_SdNdeDpContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
@@ -169,7 +169,7 @@ void C_OgeSpxDoubleAutoFix::m_Init(void)
    else
    {
       this->mf64_ScaledMin = 0.0;
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
    C_SdNdeDpContentUtil::h_GetValuesAsFloat64(this->mc_UnscaledMax, c_Tmp);
    if (this->mu32_Index < c_Tmp.size())
@@ -180,7 +180,7 @@ void C_OgeSpxDoubleAutoFix::m_Init(void)
    else
    {
       this->mf64_ScaledMax = 0.0;
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
    //Range check
    if (this->mf64_ScaledMin > this->mf64_ScaledMax)

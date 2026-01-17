@@ -13,13 +13,13 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_PuiSdHandlerCanOpenLogic.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
@@ -86,14 +86,14 @@ const C_OscCanOpenManagerInfo * C_PuiSdHandlerCanOpenLogic::GetCanOpenManager(
    // If the message is not associated to CANopen no manager will be found
    const C_OscNode * const pc_Node = this->GetOscNodeConst(orc_MessageId.u32_NodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       std::map<uint8_t, C_OscCanOpenManagerInfo>::const_iterator c_ItManager;
-      tgl_assert(orc_MessageId.u32_InterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
+      Q_ASSERT(orc_MessageId.u32_InterfaceIndex < pc_Node->c_Properties.c_ComInterfaces.size());
       c_ItManager = pc_Node->c_CanOpenManagers.find(
          pc_Node->c_Properties.c_ComInterfaces[orc_MessageId.u32_InterfaceIndex].u8_InterfaceNumber);
-      tgl_assert(c_ItManager != pc_Node->c_CanOpenManagers.end());
+      Q_ASSERT(c_ItManager != pc_Node->c_CanOpenManagers.end());
       if (c_ItManager != pc_Node->c_CanOpenManagers.end())
       {
          pc_Manager = &c_ItManager->second;
@@ -244,7 +244,7 @@ const C_OscCanOpenManagerDeviceInfo * C_PuiSdHandlerCanOpenLogic::GetCanOpenMana
    {
       const C_OscCanMessage * const pc_Message = this->GetCanMessage(orc_MessageId);
 
-      tgl_assert(pc_Message != NULL);
+      Q_ASSERT(pc_Message != NULL);
       if (pc_Message != NULL)
       {
          const std::map<C_OscCanInterfaceId,
@@ -252,7 +252,7 @@ const C_OscCanOpenManagerDeviceInfo * C_PuiSdHandlerCanOpenLogic::GetCanOpenMana
             pc_CoManagerInfo->c_CanOpenDevices.find(
                pc_Message->c_CanOpenManagerOwnerNodeIndex);
 
-         tgl_assert(c_ItDevice != pc_CoManagerInfo->c_CanOpenDevices.end());
+         Q_ASSERT(c_ItDevice != pc_CoManagerInfo->c_CanOpenDevices.end());
          if (c_ItDevice != pc_CoManagerInfo->c_CanOpenDevices.end())
          {
             pc_Device = &c_ItDevice->second;
@@ -814,7 +814,7 @@ int32_t C_PuiSdHandlerCanOpenLogic::DeleteCanOpenManager(const uint32_t ou32_Nod
       if (c_ItManager != rc_Node.c_CanOpenManagers.end())
       {
          uint32_t u32_InterfaceIndex = 0UL;
-         tgl_assert(this->m_DeleteAllCanOpenManagerDevices(ou32_NodeIndex, ou8_InterfaceNumber) == C_NO_ERR);
+         Q_ASSERT(this->m_DeleteAllCanOpenManagerDevices(ou32_NodeIndex, ou8_InterfaceNumber) == C_NO_ERR);
          //Delete manager
          rc_Node.c_CanOpenManagers.erase(c_ItManager);
          //Delete DP
@@ -1208,7 +1208,7 @@ int32_t C_PuiSdHandlerCanOpenLogic::m_DeleteAllCanOpenManagerDevices(const uint3
          }
          for (uint32_t u32_ItDevice = 0UL; u32_ItDevice < c_Items.size(); ++u32_ItDevice)
          {
-            tgl_assert(this->DeleteCanOpenManagerDevice(ou32_NodeIndex, ou8_InterfaceNumber,
+            Q_ASSERT(this->DeleteCanOpenManagerDevice(ou32_NodeIndex, ou8_InterfaceNumber,
                                                         c_Items[u32_ItDevice]) == C_NO_ERR);
          }
       }
@@ -1283,7 +1283,7 @@ bool C_PuiSdHandlerCanOpenLogic::m_HandleCreateCanOpenDatapool(const uint32_t ou
    if (this->GetOscCanDataPools(ou32_NodeIndex,
                                 C_OscCanProtocol::eCAN_OPEN).size() == 0UL)
    {
-      tgl_assert(this->AddAutoGenCommDataPool(ou32_NodeIndex,
+      Q_ASSERT(this->AddAutoGenCommDataPool(ou32_NodeIndex,
                                               C_OscCanProtocol::eCAN_OPEN) == C_NO_ERR);
       q_Retval = true;
    }
@@ -1310,7 +1310,7 @@ bool C_PuiSdHandlerCanOpenLogic::m_HandleCleanUpCanOpenDatapool(const uint32_t o
    {
       const C_OscNode * const pc_Node = this->GetOscNodeConst(ou32_NodeIndex);
 
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          for (uint32_t u32_ItProt = 0UL; u32_ItProt < pc_Node->c_ComProtocols.size(); ++u32_ItProt)
@@ -1318,16 +1318,16 @@ bool C_PuiSdHandlerCanOpenLogic::m_HandleCleanUpCanOpenDatapool(const uint32_t o
             const C_OscCanProtocol & rc_Prot = pc_Node->c_ComProtocols[u32_ItProt];
             if (rc_Prot.e_Type == C_OscCanProtocol::eCAN_OPEN)
             {
-               tgl_assert(rc_Prot.u32_DataPoolIndex < pc_Node->c_DataPools.size());
+               Q_ASSERT(rc_Prot.u32_DataPoolIndex < pc_Node->c_DataPools.size());
                if (rc_Prot.u32_DataPoolIndex < pc_Node->c_DataPools.size())
                {
-                  tgl_assert(this->RemoveDataPool(ou32_NodeIndex, rc_Prot.u32_DataPoolIndex) == C_NO_ERR);
+                  Q_ASSERT(this->RemoveDataPool(ou32_NodeIndex, rc_Prot.u32_DataPoolIndex) == C_NO_ERR);
                }
                q_Retval = true;
                break;
             }
          }
-         tgl_assert(q_Retval);
+         Q_ASSERT(q_Retval);
       }
    }
    return q_Retval;
@@ -1350,7 +1350,7 @@ bool C_PuiSdHandlerCanOpenLogic::m_CheckCleanUpCanOpenDatapoolPossible(const uin
    bool q_Retval = false;
    const C_OscNode * const pc_Node =  this->GetOscNodeConst(ou32_NodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       q_Retval = pc_Node->c_CanOpenManagers.size() == 0UL;
@@ -1510,7 +1510,7 @@ void C_PuiSdHandlerCanOpenLogic::m_HandleSyncNodeAboutToBeDeletedForCanOpenDevic
             else if (c_ItSubDevice->first.u32_NodeIndex == ou32_Index)
             {
                //Should not happen here
-               tgl_assert(false);
+               Q_ASSERT(false);
                //Remove
                c_ItSubDevice = c_ItManager->second.c_CanOpenDevices.erase(c_ItSubDevice);
             }
@@ -1582,7 +1582,7 @@ void C_PuiSdHandlerCanOpenLogic::mh_HandleSyncNodeAboutToBeDeletedForCanOpenMess
       else if (rc_Message.c_CanOpenManagerOwnerNodeIndex.u32_NodeIndex == ou32_Index)
       {
          //Should not happen here
-         tgl_assert(false);
+         Q_ASSERT(false);
          //Remove
          orc_Messages.erase(orc_Messages.begin() + u32_ItMessage);
       }
@@ -1682,7 +1682,7 @@ void C_PuiSdHandlerCanOpenLogic::m_HandleChangeConnectionForCanOpenManager(const
 {
    if (orc_PrevId.e_InterfaceType == C_OscSystemBus::eCAN)
    {
-      tgl_assert(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
+      Q_ASSERT(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
       if (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
       {
          C_OscNode & rc_Node = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -1697,7 +1697,7 @@ void C_PuiSdHandlerCanOpenLogic::m_HandleChangeConnectionForCanOpenManager(const
             //May not exist
             this->DeleteCanOpenManager(ou32_NodeIndex, ou8_NewInterface, false, q_Tmp);
             //Move
-            tgl_assert(this->AddCanOpenManager(ou32_NodeIndex, ou8_NewInterface, c_ItPrev->second,
+            Q_ASSERT(this->AddCanOpenManager(ou32_NodeIndex, ou8_NewInterface, c_ItPrev->second,
                                                q_Tmp) == C_NO_ERR);
             //Remove deprecated config
             //Don't use interface as messages should be kept
@@ -1768,7 +1768,7 @@ void C_PuiSdHandlerCanOpenLogic::mh_HandleChangeConnectionForCanOpenDeviceMessag
          else if (rc_Message.c_CanOpenManagerOwnerNodeIndex.u8_InterfaceNumber == ou8_NewInterface)
          {
             //Should not happen here
-            tgl_assert(false);
+            Q_ASSERT(false);
             orc_Messages.erase(orc_Messages.begin() + u32_ItMessage);
          }
          else
@@ -1824,7 +1824,7 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInOscDatapool(const uint32_t ou32
                                                              const uint32_t ou32_PrevInterfaceIndex,
                                                              const uint32_t ou32_NewInterfaceIndex)
 {
-   tgl_assert(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
    if (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_Node = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -1833,7 +1833,7 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInOscDatapool(const uint32_t ou32
          const C_OscCanProtocol & rc_Prot = rc_Node.c_ComProtocols[u32_ItProt];
          if (rc_Prot.e_Type == C_OscCanProtocol::eCAN_OPEN)
          {
-            tgl_assert(rc_Prot.u32_DataPoolIndex < rc_Node.c_DataPools.size());
+            Q_ASSERT(rc_Prot.u32_DataPoolIndex < rc_Node.c_DataPools.size());
             if (rc_Prot.u32_DataPoolIndex < rc_Node.c_DataPools.size())
             {
                C_OscNodeDataPool & rc_Datapool = rc_Node.c_DataPools[rc_Prot.u32_DataPoolIndex];
@@ -1849,10 +1849,10 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInOscDatapool(const uint32_t ou32
                const int32_t s32_NewRxListIndex = C_OscCanProtocol::h_GetListIndex(rc_Datapool, ou32_NewInterfaceIndex,
                                                                                    false);
 
-               tgl_assert(s32_PrevTxListIndex >= 0);
-               tgl_assert(s32_PrevRxListIndex >= 0);
-               tgl_assert(s32_NewTxListIndex >= 0);
-               tgl_assert(s32_NewRxListIndex >= 0);
+               Q_ASSERT(s32_PrevTxListIndex >= 0);
+               Q_ASSERT(s32_PrevRxListIndex >= 0);
+               Q_ASSERT(s32_NewTxListIndex >= 0);
+               Q_ASSERT(s32_NewRxListIndex >= 0);
 
                if ((((s32_PrevTxListIndex >= 0) && (s32_PrevRxListIndex >= 0)) && (s32_NewTxListIndex >= 0)) &&
                    (s32_NewRxListIndex >= 0))
@@ -1862,10 +1862,10 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInOscDatapool(const uint32_t ou32
                   const uint32_t u32_NewTxListIndex = static_cast<uint32_t>(s32_NewTxListIndex);
                   const uint32_t u32_NewRxListIndex = static_cast<uint32_t>(s32_NewRxListIndex);
 
-                  tgl_assert(u32_PrevTxListIndex < rc_Datapool.c_Lists.size());
-                  tgl_assert(u32_PrevRxListIndex < rc_Datapool.c_Lists.size());
-                  tgl_assert(u32_NewTxListIndex < rc_Datapool.c_Lists.size());
-                  tgl_assert(u32_NewRxListIndex < rc_Datapool.c_Lists.size());
+                  Q_ASSERT(u32_PrevTxListIndex < rc_Datapool.c_Lists.size());
+                  Q_ASSERT(u32_PrevRxListIndex < rc_Datapool.c_Lists.size());
+                  Q_ASSERT(u32_NewTxListIndex < rc_Datapool.c_Lists.size());
+                  Q_ASSERT(u32_NewRxListIndex < rc_Datapool.c_Lists.size());
 
                   if ((((u32_PrevTxListIndex < rc_Datapool.c_Lists.size()) &&
                         (u32_PrevRxListIndex < rc_Datapool.c_Lists.size())) &&
@@ -1877,8 +1877,8 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInOscDatapool(const uint32_t ou32
                      C_OscNodeDataPoolList & rc_NewTxList = rc_Datapool.c_Lists[u32_NewTxListIndex];
                      C_OscNodeDataPoolList & rc_NewRxList = rc_Datapool.c_Lists[u32_NewRxListIndex];
                      //Should be handled
-                     tgl_assert(rc_NewTxList.c_Elements.size() == 0UL);
-                     tgl_assert(rc_NewRxList.c_Elements.size() == 0UL);
+                     Q_ASSERT(rc_NewTxList.c_Elements.size() == 0UL);
+                     Q_ASSERT(rc_NewRxList.c_Elements.size() == 0UL);
                      //Copy
                      rc_NewTxList = rc_PrevTxList;
                      rc_NewRxList = rc_PrevRxList;
@@ -1905,7 +1905,7 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInUiDatapool(const uint32_t ou32_
                                                             const uint32_t ou32_PrevInterfaceIndex,
                                                             const uint32_t ou32_NewInterfaceIndex)
 {
-   tgl_assert((ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size()) && (ou32_NodeIndex < this->mc_UiNodes.size()));
+   Q_ASSERT((ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size()) && (ou32_NodeIndex < this->mc_UiNodes.size()));
    if ((ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size()) && (ou32_NodeIndex < this->mc_UiNodes.size()))
    {
       const C_OscNode & rc_Node = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -1915,8 +1915,8 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInUiDatapool(const uint32_t ou32_
          const C_OscCanProtocol & rc_Prot = rc_Node.c_ComProtocols[u32_ItProt];
          if (rc_Prot.e_Type == C_OscCanProtocol::eCAN_OPEN)
          {
-            tgl_assert(rc_Prot.u32_DataPoolIndex < rc_Node.c_DataPools.size());
-            tgl_assert(rc_Prot.u32_DataPoolIndex < rc_UiNode.c_UiDataPools.size());
+            Q_ASSERT(rc_Prot.u32_DataPoolIndex < rc_Node.c_DataPools.size());
+            Q_ASSERT(rc_Prot.u32_DataPoolIndex < rc_UiNode.c_UiDataPools.size());
             if ((rc_Prot.u32_DataPoolIndex < rc_UiNode.c_UiDataPools.size()) &&
                 (rc_Prot.u32_DataPoolIndex < rc_Node.c_DataPools.size()))
             {
@@ -1933,10 +1933,10 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInUiDatapool(const uint32_t ou32_
                const int32_t s32_NewRxListIndex = C_OscCanProtocol::h_GetListIndex(rc_Datapool, ou32_NewInterfaceIndex,
                                                                                    false);
 
-               tgl_assert(s32_PrevTxListIndex >= 0);
-               tgl_assert(s32_PrevRxListIndex >= 0);
-               tgl_assert(s32_NewTxListIndex >= 0);
-               tgl_assert(s32_NewRxListIndex >= 0);
+               Q_ASSERT(s32_PrevTxListIndex >= 0);
+               Q_ASSERT(s32_PrevRxListIndex >= 0);
+               Q_ASSERT(s32_NewTxListIndex >= 0);
+               Q_ASSERT(s32_NewRxListIndex >= 0);
 
                if ((((s32_PrevTxListIndex >= 0) && (s32_PrevRxListIndex >= 0)) && (s32_NewTxListIndex >= 0)) &&
                    (s32_NewRxListIndex >= 0))
@@ -1947,10 +1947,10 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInUiDatapool(const uint32_t ou32_
                   const uint32_t u32_NewTxListIndex = static_cast<uint32_t>(s32_NewTxListIndex);
                   const uint32_t u32_NewRxListIndex = static_cast<uint32_t>(s32_NewRxListIndex);
 
-                  tgl_assert(u32_PrevTxListIndex < rc_UiDatapool.c_DataPoolLists.size());
-                  tgl_assert(u32_PrevRxListIndex < rc_UiDatapool.c_DataPoolLists.size());
-                  tgl_assert(u32_NewTxListIndex < rc_UiDatapool.c_DataPoolLists.size());
-                  tgl_assert(u32_NewRxListIndex < rc_UiDatapool.c_DataPoolLists.size());
+                  Q_ASSERT(u32_PrevTxListIndex < rc_UiDatapool.c_DataPoolLists.size());
+                  Q_ASSERT(u32_PrevRxListIndex < rc_UiDatapool.c_DataPoolLists.size());
+                  Q_ASSERT(u32_NewTxListIndex < rc_UiDatapool.c_DataPoolLists.size());
+                  Q_ASSERT(u32_NewRxListIndex < rc_UiDatapool.c_DataPoolLists.size());
 
                   if ((((u32_PrevTxListIndex < rc_UiDatapool.c_DataPoolLists.size()) &&
                         (u32_PrevRxListIndex < rc_UiDatapool.c_DataPoolLists.size())) &&
@@ -1962,8 +1962,8 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInUiDatapool(const uint32_t ou32_
                      C_PuiSdNodeDataPoolList & rc_NewTxList = rc_UiDatapool.c_DataPoolLists[u32_NewTxListIndex];
                      C_PuiSdNodeDataPoolList & rc_NewRxList = rc_UiDatapool.c_DataPoolLists[u32_NewRxListIndex];
                      //Should be handled
-                     tgl_assert(rc_NewTxList.c_DataPoolListElements.size() == 0UL);
-                     tgl_assert(rc_NewRxList.c_DataPoolListElements.size() == 0UL);
+                     Q_ASSERT(rc_NewTxList.c_DataPoolListElements.size() == 0UL);
+                     Q_ASSERT(rc_NewRxList.c_DataPoolListElements.size() == 0UL);
                      //Copy
                      rc_NewTxList = rc_PrevTxList;
                      rc_NewRxList = rc_PrevRxList;
@@ -1990,7 +1990,7 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInOscProtocol(const uint32_t ou32
                                                              const uint8_t ou8_PrevInterface,
                                                              const uint8_t ou8_NewInterface)
 {
-   tgl_assert(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
    if (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_Node = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -1999,8 +1999,8 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInOscProtocol(const uint32_t ou32
          C_OscCanProtocol & rc_Prot = rc_Node.c_ComProtocols[u32_ItProt];
          if (rc_Prot.e_Type == C_OscCanProtocol::eCAN_OPEN)
          {
-            tgl_assert(static_cast<uint32_t>(ou8_PrevInterface) < rc_Prot.c_ComMessages.size());
-            tgl_assert(static_cast<uint32_t>(ou8_NewInterface) < rc_Prot.c_ComMessages.size());
+            Q_ASSERT(static_cast<uint32_t>(ou8_PrevInterface) < rc_Prot.c_ComMessages.size());
+            Q_ASSERT(static_cast<uint32_t>(ou8_NewInterface) < rc_Prot.c_ComMessages.size());
             if ((static_cast<uint32_t>(ou8_PrevInterface) < rc_Prot.c_ComMessages.size()) &&
                 (static_cast<uint32_t>(ou8_NewInterface) < rc_Prot.c_ComMessages.size()))
             {
@@ -2009,8 +2009,8 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInOscProtocol(const uint32_t ou32
                C_OscCanMessageContainer & rc_NewInterfaceMessages =
                   rc_Prot.c_ComMessages[static_cast<uint32_t>(ou8_NewInterface)];
                //Should be handled
-               tgl_assert(rc_NewInterfaceMessages.c_RxMessages.size() == 0UL);
-               tgl_assert(rc_NewInterfaceMessages.c_TxMessages.size() == 0UL);
+               Q_ASSERT(rc_NewInterfaceMessages.c_RxMessages.size() == 0UL);
+               Q_ASSERT(rc_NewInterfaceMessages.c_TxMessages.size() == 0UL);
                //Copy
                rc_NewInterfaceMessages = rc_PrevInterfaceMessages;
                //Clear
@@ -2034,13 +2034,13 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInUiProtocol(const uint32_t ou32_
                                                             const uint8_t ou8_PrevInterface,
                                                             const uint8_t ou8_NewInterface)
 {
-   tgl_assert(ou32_NodeIndex < this->mc_UiNodes.size());
-   tgl_assert(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(ou32_NodeIndex < this->mc_UiNodes.size());
+   Q_ASSERT(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
    if ((ou32_NodeIndex < this->mc_UiNodes.size()) && (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size()))
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[ou32_NodeIndex];
       C_OscNode & rc_Node = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
-      tgl_assert(rc_UiNode.c_UiCanProtocols.size() == rc_Node.c_ComProtocols.size());
+      Q_ASSERT(rc_UiNode.c_UiCanProtocols.size() == rc_Node.c_ComProtocols.size());
       if (rc_UiNode.c_UiCanProtocols.size() == rc_Node.c_ComProtocols.size())
       {
          for (uint32_t u32_ItProt = 0UL; u32_ItProt < rc_UiNode.c_UiCanProtocols.size(); ++u32_ItProt)
@@ -2049,8 +2049,8 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInUiProtocol(const uint32_t ou32_
             if (rc_Prot.e_Type == C_OscCanProtocol::eCAN_OPEN)
             {
                C_PuiSdNodeCanProtocol & rc_UiProt = rc_UiNode.c_UiCanProtocols[u32_ItProt];
-               tgl_assert(static_cast<uint32_t>(ou8_PrevInterface) < rc_UiProt.c_ComMessages.size());
-               tgl_assert(static_cast<uint32_t>(ou8_NewInterface) < rc_UiProt.c_ComMessages.size());
+               Q_ASSERT(static_cast<uint32_t>(ou8_PrevInterface) < rc_UiProt.c_ComMessages.size());
+               Q_ASSERT(static_cast<uint32_t>(ou8_NewInterface) < rc_UiProt.c_ComMessages.size());
                if ((static_cast<uint32_t>(ou8_PrevInterface) < rc_UiProt.c_ComMessages.size()) &&
                    (static_cast<uint32_t>(ou8_NewInterface) < rc_UiProt.c_ComMessages.size()))
                {
@@ -2059,8 +2059,8 @@ void C_PuiSdHandlerCanOpenLogic::m_MoveMessagesInUiProtocol(const uint32_t ou32_
                   C_PuiSdNodeCanMessageContainer & rc_NewInterfaceMessages =
                      rc_UiProt.c_ComMessages[static_cast<uint32_t>(ou8_NewInterface)];
                   //Should be handled
-                  tgl_assert(rc_NewInterfaceMessages.c_RxMessages.size() == 0UL);
-                  tgl_assert(rc_NewInterfaceMessages.c_TxMessages.size() == 0UL);
+                  Q_ASSERT(rc_NewInterfaceMessages.c_RxMessages.size() == 0UL);
+                  Q_ASSERT(rc_NewInterfaceMessages.c_TxMessages.size() == 0UL);
                   //Copy
                   rc_NewInterfaceMessages = rc_PrevInterfaceMessages;
                   //Clear
@@ -2150,12 +2150,12 @@ void C_PuiSdHandlerCanOpenLogic::m_HandleChangeCompleteConnectionForCanOpenDevic
 void C_PuiSdHandlerCanOpenLogic::m_SyncOsyNodeIdChange(const uint32_t ou32_NodeIndex,
                                                        const uint32_t ou32_InterfaceIndex, const uint8_t ou8_NewNodeId)
 {
-   tgl_assert(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
    if (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       const C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
 
-      tgl_assert(ou32_InterfaceIndex < rc_OscNode.c_Properties.c_ComInterfaces.size());
+      Q_ASSERT(ou32_InterfaceIndex < rc_OscNode.c_Properties.c_ComInterfaces.size());
       if (ou32_InterfaceIndex < rc_OscNode.c_Properties.c_ComInterfaces.size())
       {
          if (rc_OscNode.c_Properties.c_ComInterfaces[ou32_InterfaceIndex].e_InterfaceType == C_OscSystemBus::eCAN)
@@ -2191,7 +2191,7 @@ void C_PuiSdHandlerCanOpenLogic::m_HandleOsyNodeIdChangeForCanOpenManager(const 
 
    if (this->TranslateCanInterfaceIndexToId(ou32_NodeIndex, ou32_InterfaceIndex, u8_InterfaceNumber) == C_NO_ERR)
    {
-      tgl_assert(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
+      Q_ASSERT(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
       if (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
       {
          C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -2326,7 +2326,7 @@ void C_PuiSdHandlerCanOpenLogic::mh_HandleNodeIdChangeForCanOpenMessages(const C
 void C_PuiSdHandlerCanOpenLogic::m_HandlePdoSyncChangeForCanOpenMessages(const uint32_t ou32_NodeIndex,
                                                                          const uint8_t ou8_InterfaceNumber)
 {
-   tgl_assert(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
    if (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_Node = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -2389,7 +2389,7 @@ void C_PuiSdHandlerCanOpenLogic::mh_HandlePdoSyncChangeForCanOpenMessages(const 
                                                                           std::vector<C_OscCanMessage> & orc_Messages,
                                                                           const std::vector<C_PuiSdNodeCanMessage> & orc_UiMessages)
 {
-   tgl_assert(orc_Messages.size() == orc_UiMessages.size());
+   Q_ASSERT(orc_Messages.size() == orc_UiMessages.size());
    if (orc_Messages.size() == orc_UiMessages.size())
    {
       uint32_t u32_MsgCounter;

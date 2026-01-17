@@ -11,8 +11,9 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
+#include <QDir>
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
@@ -23,7 +24,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -67,8 +68,8 @@ int32_t C_OscSpaServicePackageCreateUtil::h_CheckPackagePathParam(const C_SclStr
    int32_t s32_Return = C_NO_ERR;
 
    // does package already exist ?
-   const bool q_FileExists = TglFileExists(orc_PackagePath);
-   const bool q_DirectoryExists = TglDirectoryExists(orc_PackagePath);
+   const bool q_FileExists = (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isFile());
+   const bool q_DirectoryExists = QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isDir();
 
    if ((oq_CheckFileExist) && ((q_FileExists == true) || (q_DirectoryExists == true)))
    {
@@ -80,11 +81,11 @@ int32_t C_OscSpaServicePackageCreateUtil::h_CheckPackagePathParam(const C_SclStr
    // does target directory for package exist ?
    if (s32_Return == C_NO_ERR)
    {
-      const C_SclString c_TargetDir = TglExtractFilePath(orc_PackagePath);
+      const C_SclString c_TargetDir = (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).absolutePath() + "/").toStdString();
 
       // package name without path or './' leads to target directory "",
       // which should not lead to error as it will result in creating package next to executable
-      if ((c_TargetDir.IsEmpty() == false) && (TglDirectoryExists(c_TargetDir) == false))
+      if ((c_TargetDir.IsEmpty() == false) && (QFileInfo(QString::fromStdString(*c_TargetDir.AsStdString())).isDir() == false))
       {
          orc_ErrorMessage = "Target directory \"" + c_TargetDir + "\" does not exist.";
          osc_write_log_error(orc_UseCase, orc_ErrorMessage);
@@ -112,8 +113,8 @@ int32_t C_OscSpaServicePackageCreateUtil::h_CheckPackagePathParam(const C_SclStr
       C_SclString c_TmpPackagePath = orc_PackagePath.SubString(1, orc_PackagePath.Pos(orc_PackageExtension) - 1) +
                                      orc_PackageExtensionTmp;
       // add trailing path delimiter to temporary folder if not present
-      c_TmpPackagePath = TglFileIncludeTrailingDelimiter(c_TmpPackagePath);
-      if ((TglFileExists(c_TmpPackagePath) == true) || (TglDirectoryExists(c_TmpPackagePath) == true))
+      c_TmpPackagePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(c_TmpPackagePath);
+      if (((QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).isFile()) == true) || (QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).isDir() == true))
       {
          orc_ErrorMessage = "Temporary result folder \"" + c_TmpPackagePath +
                             "\" to create zip archive already exists.";
@@ -150,16 +151,16 @@ void C_OscSpaServicePackageCreateUtil::h_GetTempFolderName(const C_SclString & o
    else
    {
       // use sub folder named like package
-      orc_UsedTempPath = TglFileIncludeTrailingDelimiter(orc_TemporaryDirectory) +
-                         TglExtractFileName(orc_PackagePath);
-      // TglExpandFileName() in the linux tgl only works for existing paths, but our path does not yet exist,
+      orc_UsedTempPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_TemporaryDirectory) +
+                         QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).fileName().toStdString();
+      // QDir(QString::fromStdString(*but our path does not yet exist,
       // so we need to expand the path manually
    }
-   orc_UsedTempPath = orc_UsedTempPath.SubString(1, orc_UsedTempPath.Pos(orc_PackageExtension) - 1) +
+   orc_UsedTempPath = orc_UsedTempPath.SubString(1, orc_UsedTempPath.Pos(orc_PackageExtension.AsStdString())).absoluteFilePath(QString::fromStdString(*) might only work for existing paths.AsStdString())).toStdString() - 1) +
                       orc_TemporaryPackageExtension;
 
    // add trailing path delimiter to temporary folder if not present
-   orc_UsedTempPath = TglFileIncludeTrailingDelimiter(orc_UsedTempPath);
+   orc_UsedTempPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_UsedTempPath);
 
    osc_write_log_info(orc_UseCase, "Temporary folder path: " + orc_UsedTempPath);
 }
@@ -198,9 +199,9 @@ int32_t C_OscSpaServicePackageCreateUtil::h_CreateTempFolderAndSubFolders(const 
                                                          orc_TemporaryPackageExtension, orc_UsedTempPath);
 
    //erase target path if it exists:
-   if (TglDirectoryExists(orc_UsedTempPath) == true)
+   if (QFileInfo(QString::fromStdString(*orc_UsedTempPath.AsStdString())).isDir() == true)
    {
-      s32_Return = TglRemoveDirectory(orc_UsedTempPath, false);
+      s32_Return = (QDir(QString::fromStdString(*orc_UsedTempPath.AsStdString())).removeRecursively() ? 0 : -1);
    }
 
    if (s32_Return == C_NO_ERR)
@@ -315,7 +316,7 @@ int32_t C_OscSpaServicePackageCreateUtil::h_SaveDeviceDefinitionsAndIni(
    {
       const C_OscDeviceDefinition * const pc_DeviceDefinition =
          orc_SystemDefinition.c_Nodes[u32_Pos].pc_DeviceDefinition;
-      tgl_assert(pc_DeviceDefinition != NULL);
+      Q_ASSERT(pc_DeviceDefinition != NULL);
       if (pc_DeviceDefinition != NULL)
       {
          const C_SclString c_DevDefPath = pc_DeviceDefinition->c_FilePath;
@@ -338,14 +339,14 @@ int32_t C_OscSpaServicePackageCreateUtil::h_SaveDeviceDefinitionsAndIni(
            (c_Iter != c_DeviceDefinitionFiles.end()) && (s32_Return == C_NO_ERR);
            ++c_Iter)
       {
-         const C_SclString c_TargetFileName = TglExtractFileName(*c_Iter);
+         const C_SclString c_TargetFileName = QFileInfo(QString::fromStdString(**c_Iter.AsStdString())).fileName().toStdString();
          const C_SclString c_TargetFilePath = orc_UsedTempPath + c_TargetFileName;
          orc_AllCreatedFiles.insert(orc_OutFilePrefix + c_TargetFileName);
          s32_Return = C_OscUtils::h_CopyFile(*c_Iter, c_TargetFilePath, NULL, &orc_ErrorMessage);
          if (s32_Return != C_NO_ERR)
          {
             orc_ErrorMessage = "Could not save device definition file \"" +
-                               TglExtractFileName(c_TargetFilePath) + "\" to path \"" + orc_UsedTempPath + "\".";
+                               QFileInfo(QString::fromStdString(*c_TargetFilePath.AsStdString())).fileName().toStdString() + "\" to path \"" + orc_UsedTempPath + "\".";
             osc_write_log_error(orc_UseCase, orc_ErrorMessage);
             s32_Return = C_RD_WR;
          }
@@ -401,7 +402,7 @@ void C_OscSpaServicePackageCreateUtil::h_CleanUpTempFolder(const C_SclString & o
                                                            const C_SclString & orc_UsedTempPath, int32_t & ors32_ErrVal,
                                                            C_SclString & orc_ErrorMessage)
 {
-   const int32_t s32_Tmp = TglRemoveDirectory(orc_UsedTempPath, false);
+   const int32_t s32_Tmp = (QDir(QString::fromStdString(*orc_UsedTempPath.AsStdString())).removeRecursively() ? 0 : -1);
 
    if (s32_Tmp != 0)
    {
@@ -450,7 +451,7 @@ int32_t C_OscSpaServicePackageCreateUtil::mh_CreateDeviceIniFile(const C_SclStri
    const C_SclString c_DEVICE_SECTION = "UsedDevices";
    const C_SclString c_DEVICE_COUNT = "DeviceCount";
    const C_SclString c_DEVICE_KEY = "Device";
-   const C_SclString c_IniDevPath = TglFileIncludeTrailingDelimiter(orc_Path) + mhc_INI_DEV;
+   const C_SclString c_IniDevPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_Path) + mhc_INI_DEV;
 
    // build up devices.ini --> device definitions are in the same folder
    try
@@ -468,7 +469,7 @@ int32_t C_OscSpaServicePackageCreateUtil::mh_CreateDeviceIniFile(const C_SclStri
       for (c_Iter = orc_DeviceDefinitionPaths.begin(); c_Iter != orc_DeviceDefinitionPaths.end(); ++c_Iter)
       {
          const C_SclString c_Key = c_DEVICE_KEY + C_SclString::IntToStr(u32_DeviceCounter);
-         const C_SclString c_Value = TglExtractFileName(*c_Iter);
+         const C_SclString c_Value = QFileInfo(QString::fromStdString(**c_Iter.AsStdString())).fileName().toStdString();
          c_IniFile.WriteString(c_DEVICE_SECTION, c_Key, c_Value);
          u32_DeviceCounter++;
       }

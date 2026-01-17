@@ -6,7 +6,7 @@
 #include "stwerrors.hpp"
 #include "CKFXCommunicationKEFEX.hpp"
 #include "C_SclIniFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclChecksums.hpp"
 
 //---------------------------------------------------------------------------
@@ -14,7 +14,7 @@
 using namespace stw::errors;
 using namespace stw::diag_lib;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 //---------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ C_KFXCommunicationKEFEX::C_KFXCommunicationKEFEX(const bool oq_SleepBetweenPolli
 
    for (u8_Index = 0U; u8_Index < KFX_NUM_LOCKS; u8_Index++)
    {
-      m_apcLocks[u8_Index] = new C_TglCriticalSection();
+      m_apcLocks[u8_Index] = new QRecursiveMutex();
       m_adwNumLocked[u8_Index] = 0U;
    }
 
@@ -106,7 +106,7 @@ void C_KFXCommunicationKEFEX::Cycle(void)
 //  will cause a subsequent Acquire to hang
 void C_KFXCommunicationKEFEX::m_Lock(const uint8_t ou8_Index)
 {
-   m_apcLocks[ou8_Index]->Acquire();
+   m_apcLocks[ou8_Index]->lock();
    m_adwNumLocked[ou8_Index]++;
 }
 
@@ -116,7 +116,7 @@ void C_KFXCommunicationKEFEX::m_Unlock(const uint8_t ou8_Index)
 {
    if (m_adwNumLocked[ou8_Index] > 0U)
    {
-      m_apcLocks[ou8_Index]->Release();
+      m_apcLocks[ou8_Index]->unlock();
       m_adwNumLocked[ou8_Index]--;
    }
 }
@@ -230,7 +230,7 @@ int32_t C_KFXCommunicationKEFEX::ReadService(const uint32_t ou32_Index, uint32_t
    int32_t s32_Return;
    C_KFXProcotolResponse c_Service;
 
-   tgl_assert(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
+   Q_ASSERT(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
 
    this->Cycle(); //clear all orphaned responses (will also trigger event handlers for incoming cyclic transmissions)
 
@@ -269,7 +269,7 @@ int32_t C_KFXCommunicationKEFEX::WriteService(const uint32_t ou32_Index, const u
    int32_t s32_Return;
    C_KFXProcotolResponse c_Service;
 
-   tgl_assert(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
+   Q_ASSERT(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
 
    this->Cycle(); //clear all orphaned responses (will also trigger event handlers for incoming cyclic transmissions)
 
@@ -579,7 +579,7 @@ int32_t C_KFXCommunicationKEFEX::ReadNumericVariable(const uint32_t ou32_Index, 
    int32_t s32_Return;
    C_KFXProcotolResponse c_Service;
 
-   tgl_assert(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
+   Q_ASSERT(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
 
    this->Cycle(); //clear all orphaned responses (will also trigger event handlers for incoming cyclic transmissions)
 
@@ -627,7 +627,7 @@ int32_t C_KFXCommunicationKEFEX::WriteNumericVariable(const uint32_t ou32_Index,
    int32_t s32_Return;
    C_KFXProcotolResponse c_Service;
 
-   tgl_assert(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
+   Q_ASSERT(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
 
    this->Cycle(); //clear all orphaned responses (will also trigger event handlers for incoming cyclic transmissions)
 
@@ -673,7 +673,7 @@ int32_t C_KFXCommunicationKEFEX::ReadAggregateVariable(const uint32_t ou32_Index
 {
    int32_t s32_Return;
 
-   tgl_assert(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
+   Q_ASSERT(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
 
    //only one at a time (m_Lock and m_Unlock only prevent multiple
    // threads at the same time, but we must make sure there is also only
@@ -699,7 +699,7 @@ int32_t C_KFXCommunicationKEFEX::WriteAggregateVariable(const uint32_t ou32_Inde
 {
    int32_t s32_Return;
 
-   tgl_assert(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
+   Q_ASSERT(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
 
    //only one at a time (m_Lock and m_Unlock only prevent multiple
    // threads at the same time, but we must make sure there is also only
@@ -724,7 +724,7 @@ int32_t C_KFXCommunicationKEFEX::SendChangeNotification(const uint32_t ou32_Inde
    int32_t s32_Return;
    C_KFXProcotolResponse c_Service;
 
-   tgl_assert(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
+   Q_ASSERT(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
 
    this->Cycle(); //clear all orphaned responses (will also trigger event handlers for incoming cyclic transmissions)
 
@@ -756,7 +756,7 @@ int32_t C_KFXCommunicationKEFEX::RequestTimeTriggeredTransmission(const uint32_t
 {
    int32_t s32_Return;
 
-   tgl_assert(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
+   Q_ASSERT(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
    s32_Return = mpc_Protocol->SendTCRRRequest(static_cast<uint16_t>(ou32_Index), oq_TimeStamped,
                                               static_cast<uint16_t>(ou32_Interval));
    return s32_Return;
@@ -771,7 +771,7 @@ int32_t C_KFXCommunicationKEFEX::RequestChangeTriggeredTransmission(const uint32
 {
    int32_t s32_Return;
 
-   tgl_assert(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
+   Q_ASSERT(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
    s32_Return = mpc_Protocol->SendECRRRequestAbsolute(static_cast<uint16_t>(ou32_Index),
                                                       static_cast<uint16_t>(ou32_MaxTimeout),
                                                       ou32_UpperHysteresis, ou32_LowerHysteresis);
@@ -789,7 +789,7 @@ int32_t C_KFXCommunicationKEFEX::TerminateCyclicTransmission(const uint32_t ou32
    int32_t s32_Return;
    C_KFXProcotolResponse c_Service;
 
-   tgl_assert(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
+   Q_ASSERT(ou32_Index <= 0xFFFFU); //this protocol implementation can only handle a 16bit index
 
    this->Cycle(); //clear all orphaned responses (will also trigger event handlers for incoming cyclic transmissions)
 

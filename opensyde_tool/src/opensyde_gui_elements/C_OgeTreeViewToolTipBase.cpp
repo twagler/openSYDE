@@ -16,7 +16,7 @@
 #include <QHelpEvent>
 #include <QHeaderView>
 #include <QCheckBox>
-#include "TglUtils.hpp"
+
 #include "C_OgeTreeViewToolTipBase.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -86,7 +86,7 @@ bool C_OgeTreeViewToolTipBaseDelegate::editorEvent(QEvent * const opc_Event, QAb
 
             QMouseEvent * const pc_MouseEvent = dynamic_cast<QMouseEvent *>(opc_Event);
 
-            tgl_assert(pc_MouseEvent != NULL);
+            Q_ASSERT(pc_MouseEvent != NULL);
             if (pc_MouseEvent != NULL)
             {
                this->initStyleOption(&c_ViewOpt, orc_Index);
@@ -112,7 +112,7 @@ bool C_OgeTreeViewToolTipBaseDelegate::editorEvent(QEvent * const opc_Event, QAb
          {
             QKeyEvent * const pc_KeyEvent = dynamic_cast<QKeyEvent *>(opc_Event);
 
-            tgl_assert(pc_KeyEvent != NULL);
+            Q_ASSERT(pc_KeyEvent != NULL);
             if (pc_KeyEvent != NULL)
             {
                if ((pc_KeyEvent->key() != static_cast<int32_t>(Qt::Key_Space)) &&

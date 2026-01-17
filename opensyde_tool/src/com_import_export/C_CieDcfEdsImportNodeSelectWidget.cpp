@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for selecting a system definition node for DCF/EDS file import (implementation)
@@ -13,7 +13,7 @@
 #include <QFileInfo>
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_Uti.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdUtil.hpp"
@@ -223,7 +223,7 @@ void C_CieDcfEdsImportNodeSelectWidget::m_FillUpComboBox(const uint32_t ou32_Bus
                                                                                       this->mc_NodeIndexes,
                                                                                       this->mc_InterfaceIndexes);
 
-   tgl_assert(C_SdUtil::h_GetNames(this->mc_NodeIndexes, this->mc_InterfaceIndexes, c_Names, false) == C_NO_ERR);
+   Q_ASSERT(C_SdUtil::h_GetNames(this->mc_NodeIndexes, this->mc_InterfaceIndexes, c_Names, false) == C_NO_ERR);
 
    for (std::vector<QString>::const_iterator c_NodeIt = c_Names.begin(); c_NodeIt != c_Names.end(); ++c_NodeIt)
    {

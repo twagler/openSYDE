@@ -97,7 +97,7 @@ void C_NagAboutDialog::InitStaticNames(void) const
    c_Text += "\n";
    c_Text += this->mc_ProductName;
    c_Text += " uses the following open source libraries:\n";
-   c_Text += "    - Qt 6.8.3 by The Qt Company\n";
+   c_Text += "    - Qt " + QString(qVersion()) + " by The Qt Company\n";
    c_Text += "    - TinyXML-2 by Lee Thomason and others\n";
    c_Text += "    - The MinGW Runtime\n";
 

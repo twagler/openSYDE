@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing all node applications of a specific node (implementation)
@@ -8,7 +8,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_UsHandler.hpp"
 #include "C_PuiProject.hpp"
@@ -22,7 +22,7 @@
 #include "C_OscHalcDefFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -120,7 +120,7 @@ void C_SdNdeDbViewWidget::SetNodeIndex(const uint32_t ou32_NodeIndex)
    const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(ou32_NodeIndex);
 
    this->mu32_NodeIndex = ou32_NodeIndex;
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       this->mpc_Ui->pc_ListWidget->SetIndex(ou32_NodeIndex);
@@ -181,7 +181,7 @@ void C_SdNdeDbViewWidget::AddApp(void)
    {
       const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_NodeIndex);
 
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          if (pc_Node->IsAnyUpdateAvailable() == true)
@@ -344,7 +344,7 @@ void C_SdNdeDbViewWidget::AddHalcDefFromTsp(C_SdNdeDbAddNewProject * const opc_D
    const QString c_HalcPath = C_PuiProject::h_GetInstance()->GetFolderPath() +
                               opc_Dialog->GetProcessedHalcDefinitionPath();
 
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->IsHalcClear(this->mu32_NodeIndex, q_IsClear) == C_NO_ERR);
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->IsHalcClear(this->mu32_NodeIndex, q_IsClear) == C_NO_ERR);
 
    uint32_t u32_NotHalcDpCount = 0UL;
    {
@@ -385,14 +385,14 @@ void C_SdNdeDbViewWidget::AddHalcDefFromTsp(C_SdNdeDbAddNewProject * const opc_D
          if (q_IsClear == false)
          {
             // Clear configuration
-            tgl_assert(C_PuiSdHandler::h_GetInstance()->ClearHalcConfig(this->mu32_NodeIndex) == C_NO_ERR);
+            Q_ASSERT(C_PuiSdHandler::h_GetInstance()->ClearHalcConfig(this->mu32_NodeIndex) == C_NO_ERR);
 
             // Remove HAL Datapools
-            tgl_assert(C_PuiSdHandler::h_GetInstance()->HalcRemoveDatapools(this->mu32_NodeIndex) == C_NO_ERR);
+            Q_ASSERT(C_PuiSdHandler::h_GetInstance()->HalcRemoveDatapools(this->mu32_NodeIndex) == C_NO_ERR);
          }
 
          // set the HALC definition
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->SetHalcConfig(this->mu32_NodeIndex, c_HalcConfig) == C_NO_ERR);
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetHalcConfig(this->mu32_NodeIndex, c_HalcConfig) == C_NO_ERR);
 
          // run HALC magician and update GUI
          Q_EMIT (this->SigHalcLoadedFromTsp());
@@ -494,11 +494,11 @@ uint32_t C_SdNdeDbViewWidget::m_AddApplication(C_OscNodeApplication & orc_Applic
    uint32_t u32_Retval = 0UL;
    const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_NodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       u32_Retval = pc_Node->c_Applications.size();
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->InsertApplication(this->mu32_NodeIndex, u32_Retval,
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->InsertApplication(this->mu32_NodeIndex, u32_Retval,
                                                                     orc_Application) == C_NO_ERR);
       //No reload required
       this->mpc_Ui->pc_ListWidget->AddApplication(this->mu32_NodeIndex, u32_Retval);
@@ -541,8 +541,8 @@ void C_SdNdeDbViewWidget::m_OnAppDisplay() const
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeDbViewWidget::m_OnDelete(const uint32_t ou32_NodeIndex, const uint32_t ou32_ApplicationIndex)
 {
-   tgl_assert(this->mu32_NodeIndex == ou32_NodeIndex);
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->RemoveApplication(ou32_NodeIndex, ou32_ApplicationIndex) == C_NO_ERR);
+   Q_ASSERT(this->mu32_NodeIndex == ou32_NodeIndex);
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->RemoveApplication(ou32_NodeIndex, ou32_ApplicationIndex) == C_NO_ERR);
 
    //Trigger reload (also important for index update)
    this->SetNodeIndex(ou32_NodeIndex);
@@ -561,11 +561,11 @@ void C_SdNdeDbViewWidget::m_OnDelete(const uint32_t ou32_NodeIndex, const uint32
 void C_SdNdeDbViewWidget::m_DeleteAllDatablocks(const uint32_t ou32_NodeIndex,
                                                 const std::vector<C_OscNodeApplication> & orc_Applications)
 {
-   tgl_assert(this->mu32_NodeIndex == ou32_NodeIndex);
+   Q_ASSERT(this->mu32_NodeIndex == ou32_NodeIndex);
    while (orc_Applications.size() > 0)
    {
       // as the vector gets smaller, we just remove the first element till it's empty
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->RemoveApplication(ou32_NodeIndex, 0) == C_NO_ERR);
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->RemoveApplication(ou32_NodeIndex, 0) == C_NO_ERR);
    }
    this->SetNodeIndex(ou32_NodeIndex);
 
@@ -581,7 +581,7 @@ void C_SdNdeDbViewWidget::m_UpdateCount(void) const
 {
    const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_NodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       this->mpc_Ui->pc_LabelApplicationName->setText(static_cast<QString>("Data Blocks (%1)").arg(pc_Node->
@@ -675,13 +675,13 @@ void C_SdNdeDbViewWidget::m_HandleCodeGenerationSettingsButtonAvailability(void)
 {
    const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_NodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
-      tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
+      Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
       if (pc_Node->pc_DeviceDefinition != NULL)
       {
-         tgl_assert(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
+         Q_ASSERT(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
          if (pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size())
          {
             if ((pc_Node->pc_DeviceDefinition->c_SubDevices[pc_Node->u32_SubDeviceIndex].q_ProgrammingSupport ==

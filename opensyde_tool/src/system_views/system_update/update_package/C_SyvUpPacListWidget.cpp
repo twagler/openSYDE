@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       List for showing all nodes of the update package
@@ -9,6 +9,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <QFileDialog>
 #include <QPainter>
@@ -20,7 +21,7 @@
 
 #include "C_SyvUpPacListWidget.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_Uti.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -32,7 +33,6 @@
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscSupServiceUpdatePackageV1.hpp"
 #include "C_OscSupServiceUpdatePackageCreate.hpp"
-#include "TglFile.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_ImpUtil.hpp"
 #include "C_UsHandler.hpp"
@@ -42,7 +42,7 @@ using namespace stw::errors;
 using namespace stw::scl;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
-using namespace stw::tgl;
+
 using namespace std;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_gui_logic;
@@ -140,7 +140,7 @@ void C_SyvUpPacListWidget::SetViewIndex(const uint32_t ou32_ViewIndex)
 
       this->mu32_ViewIndex = ou32_ViewIndex;
 
-      tgl_assert(rc_NodeUpdate.size() == c_NodeActiveFlags.size());
+      Q_ASSERT(rc_NodeUpdate.size() == c_NodeActiveFlags.size());
 
       do
       {
@@ -159,8 +159,8 @@ void C_SyvUpPacListWidget::SetViewIndex(const uint32_t ou32_ViewIndex)
                   if (pc_Node != NULL)
                   {
                      // Add openSYDE devices only due the possibility to add parameter set image files always
-                     tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
-                     tgl_assert(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
+                     Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
+                     Q_ASSERT(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
                      if (((pc_Node->c_Applications.size() > 0) ||
                           (pc_Node->c_Properties.e_FlashLoader == C_OscNodeProperties::eFL_OPEN_SYDE)) ||
                          (pc_Node->pc_DeviceDefinition->c_SubDevices[pc_Node->u32_SubDeviceIndex].
@@ -436,7 +436,7 @@ void C_SyvUpPacListWidget::UpdateDeviceInformation(const std::vector<uint32_t> &
                                                    const std::vector<C_SyvUpDeviceInfo> & orc_DeviceInformation)
 const
 {
-   tgl_assert(orc_NodeIndexes.size() == orc_DeviceInformation.size());
+   Q_ASSERT(orc_NodeIndexes.size() == orc_DeviceInformation.size());
    if (orc_NodeIndexes.size() == orc_DeviceInformation.size())
    {
       int32_t s32_NodeWidgetCounter;
@@ -535,7 +535,7 @@ void C_SyvUpPacListWidget::ExportConfig(void)
       bool q_Continue = true;
       int32_t s32_Result;
 
-      this->mc_LastPath = TglExtractFilePath(c_FileName.toStdString().c_str()).c_str();
+      this->mc_LastPath = (QFileInfo(QString::fromStdString(*c_FileName.toStdString(.AsStdString())).absolutePath() + "/").toStdString().c_str()).c_str();
 
       // Remove old file
       c_File.setFileName(c_FileName);
@@ -612,7 +612,7 @@ void C_SyvUpPacListWidget::ImportConfig(void)
       C_OgeWiCustomMessage::E_Outputs e_ReturnMessageBox;
       C_OgeWiCustomMessage c_MessageBox(this, C_OgeWiCustomMessage::E_Type::eQUESTION);
 
-      this->mc_LastPath = TglExtractFilePath(c_FileName.toStdString().c_str()).c_str();
+      this->mc_LastPath = (QFileInfo(QString::fromStdString(*c_FileName.toStdString(.AsStdString())).absolutePath() + "/").toStdString().c_str()).c_str();
 
       c_MessageBox.SetHeading("Update Package configuration import");
       c_MessageBox.SetDescription("Do you really want to overwrite the current Update "
@@ -710,7 +710,7 @@ void C_SyvUpPacListWidget::CreateServiceUpdatePackage(const bool oq_SaveAsFile, 
 {
    const C_PuiSvData * const pc_ViewData = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
-   tgl_assert(pc_ViewData != NULL);
+   Q_ASSERT(pc_ViewData != NULL);
 
    QString c_FilterName;
    QString c_DefaultFilename;
@@ -774,10 +774,10 @@ void C_SyvUpPacListWidget::CreateServiceUpdatePackage(const bool oq_SaveAsFile, 
    {
       int32_t s32_Return = C_NO_ERR;
 
-      this->mc_LastPath = TglExtractFilePath(c_FullPackagePath.toStdString().c_str()).c_str();
+      this->mc_LastPath = (QFileInfo(QString::fromStdString(*c_FullPackagePath.toStdString(.AsStdString())).absolutePath() + "/").toStdString().c_str()).c_str();
 
       // check for old zip archive
-      if (TglFileExists(c_FullPackagePath.toStdString().c_str()) == true)
+      if ((QFileInfo(QString::fromStdString(*c_FullPackagePath.toStdString(.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_FullPackagePath.toStdString(.AsStdString())).isFile()).c_str()) == true)
       {
          // delete old zip archive
          if (remove(c_FullPackagePath.toStdString().c_str()) != 0)
@@ -810,14 +810,14 @@ void C_SyvUpPacListWidget::CreateServiceUpdatePackage(const bool oq_SaveAsFile, 
             this->mu32_ViewIndex,
             c_NodeActiveFlags);
 
-         tgl_assert(s32_FuncRetval == C_NO_ERR);
+         Q_ASSERT(s32_FuncRetval == C_NO_ERR);
 
          // update applications of nodes, update position of nodes,
          std::vector<C_OscSuSequences::C_DoFlash> c_ApplicationsToWrite;
          vector<uint32_t> c_NodesUpdateOrder;
 
          s32_Return = this->GetUpdatePackage(c_ApplicationsToWrite, c_NodesUpdateOrder);
-         tgl_assert(s32_Return == C_NO_ERR);
+         Q_ASSERT(s32_Return == C_NO_ERR);
 
          C_SclStringList c_Warnings;
          C_SclString c_Error;
@@ -826,7 +826,7 @@ void C_SyvUpPacListWidget::CreateServiceUpdatePackage(const bool oq_SaveAsFile, 
             // In case of skipped files, check if some nodes do not need to be active for the package anymore
             uint32_t u32_NodeCounter;
 
-            tgl_assert(c_NodeActiveFlags.size() == c_ApplicationsToWrite.size());
+            Q_ASSERT(c_NodeActiveFlags.size() == c_ApplicationsToWrite.size());
             for (u32_NodeCounter = 0; u32_NodeCounter < c_ApplicationsToWrite.size(); ++u32_NodeCounter)
             {
                if ((c_ApplicationsToWrite[u32_NodeCounter].c_FilesToFlash.size() == 0) &&
@@ -1031,7 +1031,7 @@ const
          const uint32_t u32_NodeIndex = pc_WidgetItem->GetNodeIndex();
          const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(u32_NodeIndex);
 
-         tgl_assert(pc_Node != NULL);
+         Q_ASSERT(pc_Node != NULL);
          if (pc_Node != NULL)
          {
             C_OscSuSequences::C_DoFlash & rc_Flash = orc_ApplicationsToWrite[u32_NodeIndex];
@@ -1046,10 +1046,10 @@ const
             s32_Return = pc_WidgetItem->GetUpdatePackage(rc_Flash, pc_AllApplications);
 
             //Append other known device names
-            tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
+            Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
             if (pc_Node->pc_DeviceDefinition != NULL)
             {
-               tgl_assert(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
+               Q_ASSERT(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
                if (pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size())
                {
                   rc_Flash.c_OtherAcceptedDeviceNames =
@@ -1246,7 +1246,7 @@ void C_SyvUpPacListWidget::m_MoveItem(const int32_t os32_SourceIndex, const int3
          {
             const uint32_t u32_NodeIndex = pc_WidgetItem->GetNodeIndex();
 
-            tgl_assert(u32_NodeIndex < c_NodeUpdate.size());
+            Q_ASSERT(u32_NodeIndex < c_NodeUpdate.size());
             if (u32_NodeIndex < c_NodeUpdate.size())
             {
                // Get the position and update the node update position
@@ -1568,7 +1568,7 @@ void C_SyvUpPacListWidget::m_AddNewFile(const QString & orc_DialogCaption, const
             }
 
             // remember last path
-            this->mc_LastPath = TglExtractFilePath(c_Files.last().toStdString().c_str()).c_str();
+            this->mc_LastPath = (QFileInfo(QString::fromStdString(*c_Files.last(.AsStdString())).absolutePath() + "/").toStdString().toStdString().c_str()).c_str();
          }
       }
    }
@@ -1617,7 +1617,7 @@ void C_SyvUpPacListWidget::m_SelectFile(void)
             c_Filter = static_cast<QString>("All files") + " (*.*)";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
 
@@ -1629,7 +1629,7 @@ void C_SyvUpPacListWidget::m_SelectFile(void)
             if (c_File != "")
             {
                // remember path
-               this->mc_LastPath = TglExtractFilePath(c_File.toStdString().c_str()).c_str();
+               this->mc_LastPath = (QFileInfo(QString::fromStdString(*c_File.toStdString(.AsStdString())).absolutePath() + "/").toStdString().c_str()).c_str();
 
                // check if relative path is possible and appreciated
                c_File = C_ImpUtil::h_AskUserToSaveRelativePath(this, c_File,
@@ -1707,7 +1707,7 @@ void C_SyvUpPacListWidget::m_RemoveAllSectionFiles(void)
          c_Section = "Files";
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
       c_MessageBox.SetHeading("Remove files");
@@ -1862,7 +1862,7 @@ QString C_SyvUpPacListWidget::m_GetDialogPath(void)
    if (this->mpc_SelectedApp != NULL)
    {
       this->mc_LastPath =
-         TglExtractFilePath(this->mpc_SelectedApp->GetAppAbsoluteFilePath().toStdString().c_str()).c_str();
+         (QFileInfo(QString::fromStdString(*this->mpc_SelectedApp->GetAppAbsoluteFilePath(.AsStdString())).absolutePath() + "/").toStdString().toStdString().c_str()).c_str();
    }
 
    c_File.setFile(this->mc_LastPath);

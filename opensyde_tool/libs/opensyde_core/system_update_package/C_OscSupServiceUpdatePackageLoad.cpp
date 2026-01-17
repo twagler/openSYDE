@@ -11,6 +11,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
+#include <QDir>
 
 #include <fstream>
 #include <iterator>
@@ -26,7 +28,6 @@
 #include "C_OscDeviceDefinition.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
 #include "C_OscSuSequences.hpp"
-#include "TglFile.hpp"
 #include "C_SclIniFile.hpp"
 #include "C_OscSuSequences.hpp"
 #include "C_OscUtils.hpp"
@@ -43,7 +44,7 @@
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::diag_lib;
 using namespace std;
 using namespace stw::opensyde_core;
@@ -293,7 +294,7 @@ int32_t C_OscSupServiceUpdatePackageLoad::h_ProcessPackage(const C_SclString & o
              (orc_SystemDefinition.c_Nodes[u8_Node].pc_DeviceDefinition != NULL))
          {
             const C_OscNode & rc_CurNode = orc_SystemDefinition.c_Nodes[u8_Node];
-            tgl_assert(rc_CurNode.u32_SubDeviceIndex < rc_CurNode.pc_DeviceDefinition->c_SubDevices.size());
+            Q_ASSERT(rc_CurNode.u32_SubDeviceIndex < rc_CurNode.pc_DeviceDefinition->c_SubDevices.size());
 
             orc_ApplicationsToWrite[u8_Node].c_OtherAcceptedDeviceNames =
                rc_CurNode.pc_DeviceDefinition->c_SubDevices[rc_CurNode.u32_SubDeviceIndex].c_OtherAcceptedNames;
@@ -389,10 +390,10 @@ int32_t C_OscSupServiceUpdatePackageLoad::mh_CheckParamsToProcessPackage(const C
    else
    {
       //no zip -> we have a plain directory. Does it even exist?
-      if (TglDirectoryExists(orc_PackagePath) == true)
+      if (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isDir() == true)
       {
          //We need the base path for handling relative paths of files to transfer:
-         orc_TargetUnzipPath = TglFileIncludeTrailingDelimiter(orc_PackagePath);
+         orc_TargetUnzipPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_PackagePath);
 
          //check if necessary files are present
          s32_Return = mh_CheckSupFiles(orc_PackagePath);
@@ -568,7 +569,7 @@ int32_t C_OscSupServiceUpdatePackageLoad::mh_UnpackNodes(const std::vector<uint8
       {
          const C_SclString c_FinalZipPath = orc_TargetUnzipPath + orc_PackageFiles[u32_ItPackage];
          const C_SclString c_TargetFolder = orc_NodeFoldersAbs[u32_ItPackage];
-         s32_Return = TglCreateDirectory(c_TargetFolder);
+         s32_Return = (QDir().mkpath(QString::fromStdString(*c_TargetFolder.AsStdString())) ? 0 : -1);
          if (s32_Return == C_NO_ERR)
          {
             if (c_DecryptNodes[u32_ItPackage] == C_OscSupNodeDefinitionFiler::hu8_ACTIVE_NODE)
@@ -620,7 +621,7 @@ int32_t C_OscSupServiceUpdatePackageLoad::mh_VerifySignatures(
    mh_AdaptCommonSignatureParameters(orc_NodeSignatureKeys,
                                      static_cast<uint32_t>(orc_ActiveNodes.size()),
                                      c_NodeSignatureKeys);
-   tgl_assert(((((orc_ActiveNodes.size() == c_NodeSignatureKeys.size())) &&
+   Q_ASSERT(((((orc_ActiveNodes.size() == c_NodeSignatureKeys.size())) &&
                 (orc_ActiveNodes.size() == orc_Signatures.size())) &&
                (orc_ActiveNodes.size() == orc_ApplicationsToWrite.size())) &&
               (orc_ActiveNodes.size() == orc_AbsSydeSecureDefFileNames.size()));

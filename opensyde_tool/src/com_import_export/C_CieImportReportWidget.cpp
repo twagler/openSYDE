@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Dialog for system node data pool list import report (implementation)
@@ -16,7 +16,7 @@
 #include <QFileInfo>
 
 #include "C_SdUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -31,7 +31,7 @@
 #include "ui_C_CieImportReportWidget.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -106,7 +106,7 @@ C_CieImportReportWidget::C_CieImportReportWidget(C_OgePopUpDialog & orc_Parent, 
    //Trigger report
    C_CieUtil::h_AdaptImportMessages(this->mc_ImportedAssignedData, this->me_ProtocolType, q_IsEdsOrDcfImport);
    C_CieUtil::h_AdaptImportMessages(this->mc_SkippedImportedAssignedData, this->me_ProtocolType, q_IsEdsOrDcfImport);
-   tgl_assert(m_ShowReport(c_FileInfo.
+   Q_ASSERT(m_ShowReport(c_FileInfo.
                            completeSuffix().
                            toUpper(), oq_IsCanOpen) == C_NO_ERR);
 
@@ -336,7 +336,7 @@ void C_CieImportReportWidget::m_OkClicked(void)
             // No COM datapool yet. New one must be created if permissible
             if (C_SdUtil::h_CheckDatapoolNumber(rc_CurData.u32_OsyNodeIndex, false, this) == true)
             {
-               tgl_assert(C_PuiSdHandler::h_GetInstance()->AddAutoGenCommDataPool(rc_CurData.u32_OsyNodeIndex,
+               Q_ASSERT(C_PuiSdHandler::h_GetInstance()->AddAutoGenCommDataPool(rc_CurData.u32_OsyNodeIndex,
                                                                                   this->me_ProtocolType) == C_NO_ERR);
                u32_NumberCommDps++; // we just added one!
             }
@@ -883,7 +883,7 @@ int32_t C_CieImportReportWidget::mh_GetMessageEntries(uint32_t & oru32_EntryCoun
    int32_t s32_Retval = C_NO_ERR;
 
    //Should not happen at this point
-   tgl_assert((orc_MessageOverrideIndices.size() == orc_OscMessageData.size()) &&
+   Q_ASSERT((orc_MessageOverrideIndices.size() == orc_OscMessageData.size()) &&
               (orc_MessageOverrideIndices.size() == orc_InfoMessagesPerMessage.size()));
    if ((orc_MessageOverrideIndices.size() == orc_OscMessageData.size()) &&
        (orc_MessageOverrideIndices.size() == orc_InfoMessagesPerMessage.size()))

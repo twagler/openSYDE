@@ -5,7 +5,7 @@
 #include <cstring>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp" //tgl_assert
+ //tgl_assert
 #include "C_SclChecksums.hpp"
 #include "C_SclString.hpp"
 #include "CKFXVariableBase.hpp"
@@ -27,7 +27,7 @@ void C_KFXVariableLists::ClearDefaults(void)
 
    for (u16_List = 0U; u16_List < this->GetLength(); u16_List++)
    {
-      for (u16_Variable = 0U; u16_Variable < (*this)[u16_List].VariableList.GetLength(); u16_Variable++)
+      for (u16_Variable = 0U; u16_Variable < (*this)[u16_List].VariableList.size(); u16_Variable++)
       {
          (*this)[u16_List].VariableList[u16_Variable].ClearAllDefaults();
       }
@@ -44,7 +44,7 @@ void C_KFXVariableLists::ClearValues(void)
 
    for (u16_List = 0U; u16_List < this->GetLength(); u16_List++)
    {
-      for (u16_Variable = 0U; u16_Variable < (*this)[u16_List].VariableList.GetLength(); u16_Variable++)
+      for (u16_Variable = 0U; u16_Variable < (*this)[u16_List].VariableList.size(); u16_Variable++)
       {
          (*this)[u16_List].VariableList[u16_Variable].ClearValue();
       }
@@ -63,7 +63,7 @@ void C_KFXVariableLists::CalcCRCOverAllLists(uint16_t & oru16_CRC, const bool oq
       (*this)[u16_Index].CalcCRCOverList(oru16_CRC, oq_SkipValues);
    }
 
-   for (u16_Index = 0; u16_Index < this->ac_DefaultNames.GetLength(); u16_Index++)
+   for (u16_Index = 0; u16_Index < this->ac_DefaultNames.size(); u16_Index++)
    {
       C_SclChecksums::CalcCRC16STW(this->ac_DefaultNames[u16_Index].c_str(), this->ac_DefaultNames[u16_Index].Length(),
                                    oru16_CRC);
@@ -102,7 +102,7 @@ bool C_KFXVariableLists::VariableExists(const uint16_t ou16_List, const uint16_t
    }
    else
    {
-      if ((*this)[ou16_List].VariableList.GetLength() <= ou16_Variable)
+      if ((*this)[ou16_List].VariableList.size() <= ou16_Variable)
       {
          return false;
       }

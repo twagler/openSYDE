@@ -24,14 +24,14 @@
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_Uti.hpp"
-#include "TglTime.hpp"
+#include <QDateTime>
 #include "C_OscUtils.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscBinaryHash.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
@@ -682,12 +682,9 @@ QString C_Uti::h_GetCompleteLogFileLocation(const QString & orc_Extension)
 {
    QString c_Retval;
    //Set up logging (FIRST)
-   C_TglDateTime c_DateTime;
-
-   TglGetDateTimeNow(c_DateTime);
+   QDateTime c_DateTime = QDateTime::currentDateTime();
    //Format:2017-08-29 07:32:19.123
-   QString c_FileBaseName = C_OscLoggingHandler::h_UtilConvertDateTimeToString(
-      c_DateTime).c_str();
+   QString c_FileBaseName = C_OscLoggingHandler::h_UtilConvertDateTimeToString(c_DateTime).c_str();
 
    //Replace invalid characters
    c_FileBaseName = c_FileBaseName.replace(4, 1, '_');

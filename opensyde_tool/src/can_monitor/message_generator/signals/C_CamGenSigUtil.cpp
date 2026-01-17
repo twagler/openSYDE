@@ -13,13 +13,13 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscCanUtil.hpp"
 #include "C_SclChecksums.hpp"
 #include "C_CamGenSigUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
 
@@ -229,7 +229,7 @@ bool C_CamGenSigUtil::h_GetBit(const uint32_t ou32_BitPos, const std::vector<uin
 {
    bool q_Retval = false;
 
-   tgl_assert(ou32_BitPos < 64UL);
+   Q_ASSERT(ou32_BitPos < 64UL);
    if (ou32_BitPos < 64UL)
    {
       //Which byte (CAN)
@@ -255,7 +255,7 @@ bool C_CamGenSigUtil::h_GetBit(const uint32_t ou32_BitPos, const std::vector<uin
 //----------------------------------------------------------------------------------------------------------------------
 void C_CamGenSigUtil::h_SetBit(const uint32_t ou32_BitPos, std::vector<uint8_t> & orc_Bytes, const bool oq_Value)
 {
-   tgl_assert(ou32_BitPos < 64UL);
+   Q_ASSERT(ou32_BitPos < 64UL);
    if (ou32_BitPos < 64UL)
    {
       //Which byte (output)

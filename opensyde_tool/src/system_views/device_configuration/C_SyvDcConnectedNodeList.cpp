@@ -16,7 +16,7 @@
 #include <QMimeData>
 #include <QScrollBar>
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_SyvDcConnectedNodeList.hpp"
 #include "C_SyvDcConnectedNodeWidget.hpp"
@@ -369,7 +369,7 @@ void C_SyvDcConnectedNodeList::m_Init(void)
       }
    }
 
-   tgl_assert(c_DataUnique.size() == c_DataUniqueSubNodeIdsToOldNodeIds.size());
+   Q_ASSERT(c_DataUnique.size() == c_DataUniqueSubNodeIdsToOldNodeIds.size());
 
    //No point if pc not connected
    for (u32_ItData = 0U; u32_ItData < c_DataUnique.size(); ++u32_ItData)

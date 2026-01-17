@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Utility class to centralize tooltip handling (implementation)
@@ -14,7 +14,7 @@
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdTooltipUtil.hpp"
 #include "C_SdNdeDpContentUtil.hpp"
 
@@ -121,7 +121,7 @@ QString C_SdTooltipUtil::h_GetToolTipContentMessage(const stw::opensyde_core::C_
                               "But not later than: %1\n").arg(orc_Message.u32_CycleTimeMs);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    return c_ToolTipContent;

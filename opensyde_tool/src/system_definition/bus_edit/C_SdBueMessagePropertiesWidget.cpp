@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for editing message properties
@@ -26,7 +26,7 @@
 #include "C_OscUtils.hpp"
 #include "C_OscCanUtil.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "ui_C_SdBueMessagePropertiesWidget.h"
 #include "C_OgeWiUtil.hpp"
 #include "C_SdUtil.hpp"
@@ -42,7 +42,7 @@ using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -373,7 +373,7 @@ void C_SdBueMessagePropertiesWidget::m_LoadFromData(void)
       //Disconnects for RegisterChange
       DisconnectAllChanges();
 
-      tgl_assert(pc_Message != NULL);
+      Q_ASSERT(pc_Message != NULL);
       if (pc_Message != NULL)
       {
          const bool q_CanOpenActive = (this->me_ComProtocol == C_OscCanProtocol::eCAN_OPEN);
@@ -481,7 +481,7 @@ void C_SdBueMessagePropertiesWidget::m_LoadFromData(void)
          {
             const C_PuiSdNodeCanMessage * const pc_UiMessage = C_PuiSdHandler::h_GetInstance()->GetUiCanMessage(
                this->mc_MessageId);
-            tgl_assert(pc_UiMessage != NULL);
+            Q_ASSERT(pc_UiMessage != NULL);
             if (pc_UiMessage != NULL)
             {
                if (this->mc_MessageId.q_MessageIsTx == true)
@@ -553,7 +553,7 @@ void C_SdBueMessagePropertiesWidget::m_CoLoadEdsRestricitions(const C_OscCanMess
          const C_OscCanOpenManagerDeviceInfo * const pc_Device =
             C_PuiSdHandler::h_GetInstance()->GetCanOpenManagerDevice(this->mc_MessageId);
 
-         tgl_assert(pc_Device != NULL);
+         Q_ASSERT(pc_Device != NULL);
          if (pc_Device != NULL)
          {
             bool q_RoFlag = false;
@@ -612,7 +612,7 @@ void C_SdBueMessagePropertiesWidget::m_CoLoadEdsRestricitions(const C_OscCanMess
                const C_PuiSdNodeCanMessage * const pc_UiMessage =
                   C_PuiSdHandler::h_GetInstance()->GetUiCanMessage(this->mc_MessageId);
 
-               tgl_assert(pc_UiMessage != NULL);
+               Q_ASSERT(pc_UiMessage != NULL);
                if ((pc_UiMessage != NULL) &&
                    (pc_UiMessage->e_ReceiveTimeoutMode != C_PuiSdNodeCanMessage::eRX_TIMEOUT_MODE_DISABLED))
                {
@@ -894,10 +894,10 @@ uint8_t C_SdBueMessagePropertiesWidget::m_GetCoNodeId(const C_OscCanMessage & or
    const C_OscNode * const pc_Manager = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(
       this->mc_MessageId.u32_NodeIndex);
 
-   tgl_assert(pc_Manager != NULL);
+   Q_ASSERT(pc_Manager != NULL);
    if (pc_Manager != NULL)
    {
-      tgl_assert(this->mc_MessageId.u32_InterfaceIndex <
+      Q_ASSERT(this->mc_MessageId.u32_InterfaceIndex <
                  pc_Manager->c_Properties.c_ComInterfaces.size());
       if (this->mc_MessageId.u32_InterfaceIndex < pc_Manager->c_Properties.c_ComInterfaces.size())
       {
@@ -906,7 +906,7 @@ uint8_t C_SdBueMessagePropertiesWidget::m_GetCoNodeId(const C_OscCanMessage & or
                pc_Manager->c_Properties.c_ComInterfaces[
                   this->mc_MessageId.u32_InterfaceIndex].u8_InterfaceNumber);
 
-         tgl_assert(c_ItManagerInfo != pc_Manager->c_CanOpenManagers.end());
+         Q_ASSERT(c_ItManagerInfo != pc_Manager->c_CanOpenManagers.end());
          if (c_ItManagerInfo != pc_Manager->c_CanOpenManagers.end())
          {
             const C_OscCanOpenManagerInfo & rc_ManagerInfo = c_ItManagerInfo->second;
@@ -916,7 +916,7 @@ uint8_t C_SdBueMessagePropertiesWidget::m_GetCoNodeId(const C_OscCanMessage & or
                            C_OscCanOpenManagerDeviceInfo>::const_iterator c_ItDevice =
                rc_ManagerInfo.c_CanOpenDevices.find(orc_MessageData.c_CanOpenManagerOwnerNodeIndex);
 
-            tgl_assert(c_ItDevice != rc_ManagerInfo.c_CanOpenDevices.end());
+            Q_ASSERT(c_ItDevice != rc_ManagerInfo.c_CanOpenDevices.end());
             if (c_ItDevice != rc_ManagerInfo.c_CanOpenDevices.end())
             {
                // Adding the CANopen node id of the device
@@ -1166,7 +1166,7 @@ void C_SdBueMessagePropertiesWidget::m_OnPropertiesChanged(void)
             }
 
             //save new message data
-            tgl_assert(this->mpc_MessageSyncManager->SetCanMessagePropertiesWithoutDirectionChangeAndWithoutTimeoutChange(
+            Q_ASSERT(this->mpc_MessageSyncManager->SetCanMessagePropertiesWithoutDirectionChangeAndWithoutTimeoutChange(
                           this->mc_MessageId,
                           c_MessageData) ==
                        C_NO_ERR);
@@ -1208,7 +1208,7 @@ void C_SdBueMessagePropertiesWidget::m_OnDirectionChanged(void)
          }
 
          //save new message data
-         tgl_assert(this->mpc_MessageSyncManager->SetCanMessageDirection(c_PrevMessageId,
+         Q_ASSERT(this->mpc_MessageSyncManager->SetCanMessageDirection(c_PrevMessageId,
                                                                          this->mc_MessageId.q_MessageIsTx) == C_NO_ERR);
 
          //Update message index
@@ -1220,7 +1220,7 @@ void C_SdBueMessagePropertiesWidget::m_OnDirectionChanged(void)
          {
             const std::vector<C_OscCanMessage> & rc_Messages = pc_MessageContainer->GetMessagesConst(
                this->mc_MessageId.q_MessageIsTx);
-            tgl_assert(rc_Messages.size() > 0);
+            Q_ASSERT(rc_Messages.size() > 0);
             if (rc_Messages.size() > 0)
             {
                this->mc_MessageId.u32_MessageIndex = static_cast<uint32_t>(rc_Messages.size()) - 1UL;
@@ -1242,14 +1242,14 @@ void C_SdBueMessagePropertiesWidget::m_OnDirectionChanged(void)
                   if (this->mc_MessageId.u32_DatapoolIndex != u32_OhterDatapoolIndex)
                   {
                      const uint32_t u32_DefaultReceiveTimeoutValue = this->m_GetDefaultTimeout();
-                     tgl_assert(this->mpc_MessageSyncManager->AddCanMessageRx(this->mc_MessageId,
+                     Q_ASSERT(this->mpc_MessageSyncManager->AddCanMessageRx(this->mc_MessageId,
                                                                               this->mu32_NodeIndex,
                                                                               this->mu32_InterfaceIndex,
                                                                               this->mc_NodeDatapoolIndexes[u32_Counter]) ==
                                 C_NO_ERR);
 
                      //Also add default receive timeout value (important for core values)
-                     tgl_assert(this->mpc_MessageSyncManager->SetCanMessageReceiveTimeout(this->mc_MessageId,
+                     Q_ASSERT(this->mpc_MessageSyncManager->SetCanMessageReceiveTimeout(this->mc_MessageId,
                                                                                           this->mu32_NodeIndex,
                                                                                           this->mu32_InterfaceIndex,
                                                                                           this->mc_NodeDatapoolIndexes[
@@ -1274,7 +1274,7 @@ void C_SdBueMessagePropertiesWidget::m_OnDirectionChanged(void)
                   if (rc_MsgId.q_MessageIsTx == false)
                   {
                      // Remove the other Rx messages. When Tx is selected, no Rx is allowed
-                     tgl_assert(this->mpc_MessageSyncManager->DeleteCanMessageRx(this->mc_MessageId,
+                     Q_ASSERT(this->mpc_MessageSyncManager->DeleteCanMessageRx(this->mc_MessageId,
                                                                                  rc_MsgId.u32_NodeIndex,
                                                                                  rc_MsgId.u32_InterfaceIndex,
                                                                                  rc_MsgId.u32_DatapoolIndex) ==
@@ -1407,7 +1407,7 @@ void C_SdBueMessagePropertiesWidget::m_OnTxChanged(void)
       }
       else
       {
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
 }
@@ -1434,11 +1434,11 @@ void C_SdBueMessagePropertiesWidget::m_OnRxChanged(const uint32_t ou32_NodeIndex
             if (oq_Checked == true)
             {
                const uint32_t u32_DefaultReceiveTimeoutValue = this->m_GetDefaultTimeout();
-               tgl_assert(this->mpc_MessageSyncManager->AddCanMessageRx(this->mc_MessageId, ou32_NodeIndex,
+               Q_ASSERT(this->mpc_MessageSyncManager->AddCanMessageRx(this->mc_MessageId, ou32_NodeIndex,
                                                                         ou32_InterfaceIndex,
                                                                         ou32_DatapoolIndex) == C_NO_ERR);
                //Also add default receive timeout value (important for core values)
-               tgl_assert(this->mpc_MessageSyncManager->SetCanMessageReceiveTimeout(this->mc_MessageId, ou32_NodeIndex,
+               Q_ASSERT(this->mpc_MessageSyncManager->SetCanMessageReceiveTimeout(this->mc_MessageId, ou32_NodeIndex,
                                                                                     ou32_InterfaceIndex,
                                                                                     ou32_DatapoolIndex,
                                                                                     u32_DefaultReceiveTimeoutValue) ==
@@ -1533,7 +1533,7 @@ void C_SdBueMessagePropertiesWidget::m_OnRxTimeoutFlagChanged(const uint32_t ou3
    if (this->mq_IdIsValid)
    {
       m_RegisterChange();
-      tgl_assert(this->mpc_MessageSyncManager->SetCanMessageReceiveTimeoutAutoFlag(this->mc_MessageId, ou32_NodeIndex,
+      Q_ASSERT(this->mpc_MessageSyncManager->SetCanMessageReceiveTimeoutAutoFlag(this->mc_MessageId, ou32_NodeIndex,
                                                                                    ou32_InterfaceIndex,
                                                                                    ou32_DatapoolIndex,
                                                                                    oe_TimeoutMode) == C_NO_ERR);
@@ -1557,7 +1557,7 @@ void C_SdBueMessagePropertiesWidget::m_OnRxTimeoutValueChanged(const uint32_t ou
    if (this->mq_IdIsValid)
    {
       m_RegisterChange();
-      tgl_assert(this->mpc_MessageSyncManager->SetCanMessageReceiveTimeout(this->mc_MessageId, ou32_NodeIndex,
+      Q_ASSERT(this->mpc_MessageSyncManager->SetCanMessageReceiveTimeout(this->mc_MessageId, ou32_NodeIndex,
                                                                            ou32_InterfaceIndex, ou32_DatapoolIndex,
                                                                            ou32_TimeoutValue) == C_NO_ERR);
    }
@@ -1817,7 +1817,7 @@ void C_SdBueMessagePropertiesWidget::m_UpdateTxSelection(
    }
 
    // get the actual selection
-   tgl_assert((this->mc_BusNodeIndexes.size() == this->mc_BusInterfaceIndexes.size()) &&
+   Q_ASSERT((this->mc_BusNodeIndexes.size() == this->mc_BusInterfaceIndexes.size()) &&
               (this->mc_BusNodeIndexes.size() == this->mc_BusDatapoolIndexes.size()) &&
               (this->mc_BusInterfaceIndexes.size() == c_NodeNames.size()) &&
               (this->mc_BusInterfaceIndexes.size() == c_DatapoolNames.size()));
@@ -1886,13 +1886,13 @@ void C_SdBueMessagePropertiesWidget::m_UpdateTxSelection(
       this->mc_DatapoolNamesTxSelection.clear();
       this->mq_CoDeviceIsTransmitter = true;
 
-      tgl_assert(pc_Message != NULL);
+      Q_ASSERT(pc_Message != NULL);
       if (pc_Message != NULL)
       {
          const C_OscNode * const pc_Device = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(
             pc_Message->c_CanOpenManagerOwnerNodeIndex.u32_NodeIndex);
 
-         tgl_assert(pc_Device != NULL);
+         Q_ASSERT(pc_Device != NULL);
          if (pc_Device != NULL)
          {
             this->mpc_Ui->pc_ComboBoxTransmitterNode->addItem(
@@ -1978,7 +1978,7 @@ void C_SdBueMessagePropertiesWidget::m_UpdateRxAfterTxSelection(
       }
       else
       {
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
 
       // is one node selected as Tx?
@@ -2000,13 +2000,13 @@ void C_SdBueMessagePropertiesWidget::m_UpdateRxAfterTxSelection(
          int32_t s32_RemoveCounter;
 
          // remove this node from the vector
-         tgl_assert(this->mc_BusNodeIndexes.size() == this->mc_BusInterfaceIndexes.size());
-         tgl_assert(this->mc_BusNodeIndexes.size() == this->mc_BusDatapoolIndexes.size());
-         tgl_assert(c_NodeNames.size() == this->mc_BusInterfaceIndexes.size());
-         tgl_assert(this->mc_BusDatapoolIndexes.size() == this->mc_BusInterfaceIndexes.size());
-         tgl_assert(c_DatapoolNames.size() == this->mc_BusInterfaceIndexes.size());
+         Q_ASSERT(this->mc_BusNodeIndexes.size() == this->mc_BusInterfaceIndexes.size());
+         Q_ASSERT(this->mc_BusNodeIndexes.size() == this->mc_BusDatapoolIndexes.size());
+         Q_ASSERT(c_NodeNames.size() == this->mc_BusInterfaceIndexes.size());
+         Q_ASSERT(this->mc_BusDatapoolIndexes.size() == this->mc_BusInterfaceIndexes.size());
+         Q_ASSERT(c_DatapoolNames.size() == this->mc_BusInterfaceIndexes.size());
 
-         tgl_assert(s32_CurrentNodeIndex < static_cast<int32_t>(this->mc_MappingTxSelection.size()));
+         Q_ASSERT(s32_CurrentNodeIndex < static_cast<int32_t>(this->mc_MappingTxSelection.size()));
          pc_MappedDatapools = &this->mc_MappingTxSelection[s32_CurrentNodeIndex];
 
          for (c_ItName = c_NodeNames.begin(); c_ItName != c_NodeNames.end(); ++c_ItName)
@@ -2080,14 +2080,14 @@ void C_SdBueMessagePropertiesWidget::m_UpdateRxAfterTxSelection(
                // CANopen manager is transmitter and device is receiver
                // All data are at the manager for both sides. So changing the shown name to the receiver
                // should be enough
-               tgl_assert(c_NodeNames.size() == 1);
-               tgl_assert(pc_CanMessage != NULL);
+               Q_ASSERT(c_NodeNames.size() == 1);
+               Q_ASSERT(pc_CanMessage != NULL);
                if ((c_NodeNames.size() == 1) && (pc_CanMessage != NULL))
                {
                   const C_OscNode * const pc_Device = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(
                      pc_CanMessage->c_CanOpenManagerOwnerNodeIndex.u32_NodeIndex);
 
-                  tgl_assert(pc_Device != NULL);
+                  Q_ASSERT(pc_Device != NULL);
                   if (pc_Device != NULL)
                   {
                      // Extend node name
@@ -2099,7 +2099,7 @@ void C_SdBueMessagePropertiesWidget::m_UpdateRxAfterTxSelection(
             else
             {
                // CANopen manager is receiver and device is transmitter
-               tgl_assert(c_NodeNames.size() == 1);
+               Q_ASSERT(c_NodeNames.size() == 1);
                if (c_NodeNames.size() == 1)
                {
                   // Extend node name
@@ -2282,7 +2282,7 @@ void C_SdBueMessagePropertiesWidget::m_GetComboBoxIndexesByVectorIndex(const uin
       }
    }
 
-   tgl_assert(q_Found);
+   Q_ASSERT(q_Found);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2368,8 +2368,8 @@ void C_SdBueMessagePropertiesWidget::m_NodeModeDirectionChanged(const bool oq_Di
          if (C_SdUtil::h_GetNames(c_NodeIndexes, c_InterfaceIndexes, c_NodeNames, false,
                                   &this->mc_NodeDatapoolIndexes, &c_DatapoolNames) == C_NO_ERR)
          {
-            tgl_assert(c_NodeNames.size() == c_NodeIndexes.size());
-            tgl_assert(c_DatapoolNames.size() == c_NodeIndexes.size());
+            Q_ASSERT(c_NodeNames.size() == c_NodeIndexes.size());
+            Q_ASSERT(c_DatapoolNames.size() == c_NodeIndexes.size());
 
             if (this->mpc_Ui->pc_ComboBoxDirection->currentIndex() == mu8_DIRECTION_INDEX_RECEIVE)
             {
@@ -2531,7 +2531,7 @@ void C_SdBueMessagePropertiesWidget::m_NodeModeTransmitDatapoolChanged(void)
          }
          else
          {
-            tgl_assert(false);
+            Q_ASSERT(false);
          }
       }
    }
@@ -2574,13 +2574,13 @@ uint32_t C_SdBueMessagePropertiesWidget::m_GetCoPdoSyncTxMethodCycleEquivalent(v
 {
    uint32_t u32_Return = 0U;
 
-   tgl_assert(this->me_ComProtocol == C_OscCanProtocol::eCAN_OPEN);
+   Q_ASSERT(this->me_ComProtocol == C_OscCanProtocol::eCAN_OPEN);
    if (this->me_ComProtocol == C_OscCanProtocol::eCAN_OPEN)
    {
       const C_OscCanOpenManagerInfo * const pc_Manager = C_PuiSdHandler::h_GetInstance()->GetCanOpenManager(
          this->mc_MessageId);
 
-      tgl_assert(pc_Manager != NULL);
+      Q_ASSERT(pc_Manager != NULL);
       if (pc_Manager != NULL)
       {
          uint8_t u8_NumberOfSyncs = 0U;
@@ -2598,7 +2598,7 @@ uint32_t C_SdBueMessagePropertiesWidget::m_GetCoPdoSyncTxMethodCycleEquivalent(v
          }
          else
          {
-            tgl_assert(false);
+            Q_ASSERT(false);
          }
 
          // In ms
@@ -3240,7 +3240,7 @@ void C_SdBueMessagePropertiesWidget::m_CheckEarlyTime(void) const
                                                                          this->mc_MessageId.u32_InterfaceIndex,
                                                                          this->mc_MessageId.u32_DatapoolIndex);
 
-      tgl_assert(pc_MessageContainer != NULL);
+      Q_ASSERT(pc_MessageContainer != NULL);
       if (pc_MessageContainer != NULL)
       {
          bool q_Invalid;
@@ -3318,7 +3318,7 @@ void C_SdBueMessagePropertiesWidget::m_CheckTxMethod(void) const
                                                                             this->mc_MessageId.u32_InterfaceIndex,
                                                                             this->mc_MessageId.u32_DatapoolIndex);
 
-         tgl_assert(pc_MessageContainer != NULL);
+         Q_ASSERT(pc_MessageContainer != NULL);
          if (pc_MessageContainer != NULL)
          {
             bool q_TxMethodInvalid = false;

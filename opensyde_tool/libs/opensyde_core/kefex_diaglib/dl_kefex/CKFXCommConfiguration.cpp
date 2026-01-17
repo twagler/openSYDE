@@ -234,7 +234,7 @@ void C_KFXCommConfiguration::SetBSMax(const uint8_t ou8_Value)
 C_KFXCommConfigurationBase::C_KFXCommConfigurationBase(void)
 {
    //default: stay compatible with existing applications -> use standard KEFEX protocol parameters:
-   mc_Parameters.SetLength(6);
+   mc_Parameters.resize(6);
    mc_Parameters[0].c_Name          = "BASEID";
    mc_Parameters[0].s64_MinValue    = 0;
    mc_Parameters[0].s64_MaxValue    = 6;
@@ -283,7 +283,7 @@ C_KFXCommConfigurationBase::C_KFXCommConfigurationBase(void)
    mc_Parameters[5].c_Comment       = "Maximum number of RX messages without a handshake";
    mc_Parameters[5].c_INIDirective  = "BSMAX";
 
-   mc_Values.SetLength(mc_Parameters.GetLength());
+   mc_Values.resize(mc_Parameters.size());
 }
 
 //---------------------------------------------------------------------------
@@ -311,20 +311,20 @@ C_KFXCommConfigurationBase & C_KFXCommConfigurationBase::operator =(const C_KFXC
 
 //---------------------------------------------------------------------------
 
-C_KFXCommConfigurationBase::C_KFXCommConfigurationBase(const C_SclDynamicArray<C_KFXCommParameter> & orc_Parameters)
+C_KFXCommConfigurationBase::C_KFXCommConfigurationBase(const QList<C_KFXCommParameter> & orc_Parameters)
 {
    this->SetParameterList(orc_Parameters);
 }
 
 //---------------------------------------------------------------------------
 
-void C_KFXCommConfigurationBase::SetParameterList(const C_SclDynamicArray<C_KFXCommParameter> & orc_Parameters)
+void C_KFXCommConfigurationBase::SetParameterList(const QList<C_KFXCommParameter> & orc_Parameters)
 {
    int32_t s32_Index;
 
    mc_Parameters = orc_Parameters;
-   mc_Values.SetLength(orc_Parameters.GetLength());
-   for (s32_Index = 0; s32_Index < mc_Values.GetLength(); s32_Index++)
+   mc_Values.resize(orc_Parameters.size());
+   for (s32_Index = 0; s32_Index < mc_Values.size(); s32_Index++)
    {
       mc_Values[s32_Index] = 0L;
       //make uppercase as we always compare uppercase
@@ -339,7 +339,7 @@ int32_t C_KFXCommConfigurationBase::GetParameterValue(const C_SclString & orc_Pa
 {
    int32_t s32_Index;
 
-   for (s32_Index = 0; s32_Index < mc_Parameters.GetLength(); s32_Index++)
+   for (s32_Index = 0; s32_Index < mc_Parameters.size(); s32_Index++)
    {
       if (mc_Parameters[s32_Index].c_Name == orc_ParameterName.UpperCase())
       {
@@ -356,7 +356,7 @@ int32_t C_KFXCommConfigurationBase::SetParameterValue(const C_SclString & orc_Pa
 {
    int32_t s32_Index;
 
-   for (s32_Index = 0; s32_Index < mc_Parameters.GetLength(); s32_Index++)
+   for (s32_Index = 0; s32_Index < mc_Parameters.size(); s32_Index++)
    {
       if (mc_Parameters[s32_Index].c_Name == orc_ParameterName.UpperCase())
       {
@@ -373,7 +373,7 @@ void C_KFXCommConfigurationBase::SetAllDefaults(void)
 {
    int32_t s32_Index;
 
-   for (s32_Index = 0; s32_Index < mc_Parameters.GetLength(); s32_Index++)
+   for (s32_Index = 0; s32_Index < mc_Parameters.size(); s32_Index++)
    {
       mc_Values[s32_Index] = mc_Parameters[s32_Index].s64_DefaultValue;
    }
@@ -390,7 +390,7 @@ int32_t C_KFXCommConfigurationBase::LoadConfigFromINI(C_SclIniFile & orc_File, c
    //- application checks: which protocol is configured in .def or .ksp file
    //- init corresponding protocol class
    //- load protocol parameters into class
-   for (s32_Index = 0; s32_Index < mc_Parameters.GetLength(); s32_Index++)
+   for (s32_Index = 0; s32_Index < mc_Parameters.size(); s32_Index++)
    {
       mc_Values[s32_Index] =
          static_cast<int64_t>(orc_File.ReadInteger(orc_Section, mc_Parameters[s32_Index].c_INIDirective,
@@ -409,7 +409,7 @@ int32_t C_KFXCommConfigurationBase::SaveConfigToINI(C_SclIniFile & orc_File, con
    try
    {
       orc_File.WriteString(orc_Section, "COMM_PROTOCOL_TYPE", mc_ProtocolName);
-      for (s32_Index = 0; s32_Index < mc_Parameters.GetLength(); s32_Index++)
+      for (s32_Index = 0; s32_Index < mc_Parameters.size(); s32_Index++)
       {
          orc_File.WriteInteger(orc_Section, mc_Parameters[s32_Index].c_INIDirective,
                                static_cast<int32_t>(mc_Values[s32_Index]));

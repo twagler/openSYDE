@@ -14,7 +14,7 @@
 #include <QScrollBar>
 #include <QVBoxLayout>
 
-#include "TglUtils.hpp"
+
 #include "C_SdBueNodeSelectorCheckBoxListWidget.hpp"
 
 #include "ui_C_SdBueNodeSelectorCheckBoxListWidget.h"
@@ -186,7 +186,7 @@ void C_SdBueNodeSelectorCheckBoxListWidget::CheckSpecificNode(const uint32_t ou3
 {
    C_SdBueNodeSelectorCheckBoxItemWidget * const pc_SelectorItem = this->m_GetItemWidget(ou32_Index, ou32_SubIndex);
 
-   tgl_assert(pc_SelectorItem != NULL);
+   Q_ASSERT(pc_SelectorItem != NULL);
    if ((pc_SelectorItem != NULL) &&
        (pc_SelectorItem->IsChecked() != oq_Checked))
    {

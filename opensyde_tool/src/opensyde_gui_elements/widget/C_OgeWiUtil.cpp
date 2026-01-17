@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Util class for QWidget (implementation)
@@ -21,14 +21,14 @@
 #include <QStyleOption>
 
 #include "C_OscUtils.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_OgePopUpDialog.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;
@@ -149,7 +149,7 @@ void C_OgeWiUtil::h_CheckAndFixDialogPositionAndSize(QPoint & orc_GlobalPosition
    const QScreen * const pc_Screen = (static_cast<int32_t>(ou32_ScreenIndex) < QGuiApplication::screens().size()) ?
                                      QGuiApplication::screens().at(ou32_ScreenIndex) : QGuiApplication::primaryScreen();
 
-   tgl_assert(pc_Screen != NULL);
+   Q_ASSERT(pc_Screen != NULL);
 
    // Desktop size gets increase by one on each side
    //  because the check seems to exclude the bottom right corner if exact match
@@ -577,7 +577,7 @@ QString C_OgeWiUtil::mh_GetFileName(QWidget * const opc_Parent, const QString & 
          else
          {
             //Unexpected
-            tgl_assert(false);
+            Q_ASSERT(false);
          }
       }
       else

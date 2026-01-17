@@ -18,12 +18,12 @@
 #include "C_PuiSdHandler.hpp"
 #include "C_SdUtil.hpp"
 #include "C_SdNdeDpListTableView.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeUnoLeDataPoolListElementAddDeleteBaseCommand.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -116,7 +116,7 @@ void C_SdNdeUnoLeDataPoolListElementAddDeleteBaseCommand::m_Delete(void)
          //Store last
          for (uint32_t u32_Index = this->mc_Indices.size(); u32_Index > 0UL; --u32_Index)
          {
-            tgl_assert(C_PuiSdHandler::h_GetInstance()->GetDataPoolListElement(
+            Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetDataPoolListElement(
                           this->mu32_NodeIndex, this->mu32_DataPoolIndex, this->mu32_DataPoolListIndex,
                           this->mc_Indices[static_cast<std::vector<uint32_t>::size_type >(u32_Index - 1UL)],
                           this->mc_OscContent[static_cast<std::vector<stw::opensyde_core::C_OscNodeDataPoolListElement>

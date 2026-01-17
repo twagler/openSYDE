@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Properties dialog for node properties
@@ -23,7 +23,7 @@
 #include "C_OscUtils.hpp"
 #include "C_SdNdeComIfSettingsTableDelegate.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "C_OscNodeProperties.hpp"
 #include "C_OgeChxTristateTransparentError.hpp"
@@ -42,7 +42,7 @@ using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -425,7 +425,7 @@ void C_SdNdeNodePropertiesWidget::m_LoadFromData(void)
               static_cast<void (QComboBox::*)(int32_t)>(&QComboBox::currentIndexChanged), this,
               &C_SdNdeNodePropertiesWidget::m_XappSupportChange);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       QPixmap c_ImgNode;
@@ -433,7 +433,7 @@ void C_SdNdeNodePropertiesWidget::m_LoadFromData(void)
       QString c_BusName;
       const C_OscDeviceDefinition * const pc_DevDef = pc_Node->pc_DeviceDefinition;
       const uint32_t u32_SubDeviceIndex = pc_Node->u32_SubDeviceIndex;
-      tgl_assert(pc_DevDef != NULL);
+      Q_ASSERT(pc_DevDef != NULL);
 
       //create delegate
       this->mpc_Ui->pc_TableWidgetComIfSettings->setItemDelegate(new C_SdNdeComIfSettingsTableDelegate(this,
@@ -442,7 +442,7 @@ void C_SdNdeNodePropertiesWidget::m_LoadFromData(void)
 
       if (pc_DevDef != NULL)
       {
-         tgl_assert(u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size());
+         Q_ASSERT(u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size());
          if (u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size())
          {
             QFileInfo c_FileInfoDevImg;
@@ -490,7 +490,7 @@ void C_SdNdeNodePropertiesWidget::m_LoadFromData(void)
                {
                   //having "none" as flashloader is supported by the device definition structures;
                   // but not by the UI (yet)
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                }
 
                if (((pc_DevDef->c_SubDevices[u32_SubDeviceIndex].q_FlashloaderOpenSydeEthernet == true) ||
@@ -834,7 +834,7 @@ void C_SdNdeNodePropertiesWidget::m_LoadFromData(void)
                   }
                   else
                   {
-                     tgl_assert((pc_DevDef->u8_NumCanBusses - 1) <= 0);
+                     Q_ASSERT((pc_DevDef->u8_NumCanBusses - 1) <= 0);
                   }
                }
                else
@@ -973,11 +973,11 @@ void C_SdNdeNodePropertiesWidget::SaveToData(void)
    {
       const C_OscDeviceDefinition * const pc_DevDef = pc_Node->pc_DeviceDefinition;
       const uint32_t u32_SubDeviceIndex = pc_Node->u32_SubDeviceIndex;
-      tgl_assert(pc_DevDef != NULL);
+      Q_ASSERT(pc_DevDef != NULL);
 
       if (pc_DevDef != NULL)
       {
-         tgl_assert(u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size());
+         Q_ASSERT(u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size());
          if (u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size())
          {
             QString c_Name;
@@ -1168,7 +1168,7 @@ void C_SdNdeNodePropertiesWidget::m_SupportedProtocolChange(void)
       const C_OscDeviceDefinition * const pc_DevDef = pc_Node->pc_DeviceDefinition;
       const C_OscNodeProperties c_NodeProp = pc_Node->c_Properties;
 
-      tgl_assert(pc_DevDef != NULL);
+      Q_ASSERT(pc_DevDef != NULL);
       if (pc_DevDef != NULL)
       {
          for (uint16_t u16_ComIfCnt = 0U;
@@ -1726,7 +1726,7 @@ void C_SdNdeNodePropertiesWidget::m_BusBitrateClick(const uint32_t ou32_Row)
          //get name of connected bus
          const C_OscSystemBus * const pc_Bus = C_PuiSdHandler::h_GetInstance()->GetOscBus(
             rc_ComInterfaces[ou32_Row].u32_BusIndex);
-         tgl_assert(pc_Bus != NULL);
+         Q_ASSERT(pc_Bus != NULL);
          if (pc_Bus != NULL)
          {
             const QString c_BusName = pc_Bus->c_Name.c_str();
@@ -1872,7 +1872,7 @@ void C_SdNdeNodePropertiesWidget::m_XappSupportChange(const int32_t os32_Index)
    if (q_Continue == true)
    {
       // Save new flag and trigger Data Block / Log Job deletion
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->SetOscNodePropertyXappSupport(
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetOscNodePropertyXappSupport(
                     this->mu32_NodeIndex, q_IsXappSupported) == C_NO_ERR);
 
       // Trigger adaption of data logger and Data Blocks

@@ -14,14 +14,14 @@
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "C_SdBueUnoSignalAddDeleteBaseCommand.hpp"
 #include "C_PuiSdHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -120,7 +120,7 @@ void C_SdBueUnoSignalAddDeleteBaseCommand::m_Add(void)
    {
       for (uint32_t u32_ItStep = 0UL; u32_ItStep < this->mc_UniqueId.size(); ++u32_ItStep)
       {
-         tgl_assert(this->mpc_MessageSyncManager->InsertCanSignal(this->mpc_MessageSyncManager->GetMessageIdForUniqueId(
+         Q_ASSERT(this->mpc_MessageSyncManager->InsertCanSignal(this->mpc_MessageSyncManager->GetMessageIdForUniqueId(
                                                                      this->mc_UniqueId[u32_ItStep]),
                                                                   this->mc_SignalIndex[u32_ItStep],
                                                                   this->mc_Signal[u32_ItStep],
@@ -163,10 +163,10 @@ bool C_SdBueUnoSignalAddDeleteBaseCommand::m_CheckSignalsSortedAscending() const
 
    if (q_Sorted)
    {
-      tgl_assert(this->mc_UniqueId.size() == this->mc_SignalIndex.size());
+      Q_ASSERT(this->mc_UniqueId.size() == this->mc_SignalIndex.size());
       if (this->mc_UniqueId.size() == this->mc_SignalIndex.size())
       {
-         tgl_assert(this->mpc_MessageSyncManager != NULL);
+         Q_ASSERT(this->mpc_MessageSyncManager != NULL);
          if (this->mpc_MessageSyncManager != NULL)
          {
             C_OscCanMessageIdentificationIndices c_PrevId;
@@ -238,7 +238,7 @@ void C_SdBueUnoSignalAddDeleteBaseCommand::m_Store(void)
                this->mc_UniqueId[u32_ItStep]),
             this->mc_SignalIndex[u32_ItStep]);
 
-         tgl_assert(pc_Signal != NULL);
+         Q_ASSERT(pc_Signal != NULL);
          if (pc_Signal != NULL)
          {
             if (u32_ItStep < this->mc_Signal.size())
@@ -250,7 +250,7 @@ void C_SdBueUnoSignalAddDeleteBaseCommand::m_Store(void)
                this->mc_Signal.push_back(*pc_Signal);
             }
          }
-         tgl_assert(pc_OscSignalCommon != NULL);
+         Q_ASSERT(pc_OscSignalCommon != NULL);
          if (pc_OscSignalCommon != NULL)
          {
             if (u32_ItStep < this->mc_OscSignalCommon.size())
@@ -262,7 +262,7 @@ void C_SdBueUnoSignalAddDeleteBaseCommand::m_Store(void)
                this->mc_OscSignalCommon.push_back(*pc_OscSignalCommon);
             }
          }
-         tgl_assert(pc_UiSignalCommon != NULL);
+         Q_ASSERT(pc_UiSignalCommon != NULL);
          if (pc_UiSignalCommon != NULL)
          {
             if (u32_ItStep < this->mc_UiSignalCommon.size())
@@ -274,7 +274,7 @@ void C_SdBueUnoSignalAddDeleteBaseCommand::m_Store(void)
                this->mc_UiSignalCommon.push_back(*pc_UiSignalCommon);
             }
          }
-         tgl_assert(pc_UiSignal != NULL);
+         Q_ASSERT(pc_UiSignal != NULL);
          if (pc_UiSignal != NULL)
          {
             if (u32_ItStep < this->mc_UiSignal.size())
@@ -287,7 +287,7 @@ void C_SdBueUnoSignalAddDeleteBaseCommand::m_Store(void)
             }
          }
       }
-      tgl_assert(this->m_CheckSignalsSortedAscending());
+      Q_ASSERT(this->m_CheckSignalsSortedAscending());
    }
 }
 
@@ -301,7 +301,7 @@ void C_SdBueUnoSignalAddDeleteBaseCommand::m_Remove(void)
    {
       for (uint32_t u32_ItStep = this->mc_UniqueId.size(); u32_ItStep > 0UL; --u32_ItStep)
       {
-         tgl_assert(this->mpc_MessageSyncManager->DeleteCanSignal(this->mpc_MessageSyncManager->GetMessageIdForUniqueId(
+         Q_ASSERT(this->mpc_MessageSyncManager->DeleteCanSignal(this->mpc_MessageSyncManager->GetMessageIdForUniqueId(
                                                                      this->mc_UniqueId[static_cast<std::vector<uint64_t>
                                                                                                    ::
                                                                                                    size_type>(u32_ItStep

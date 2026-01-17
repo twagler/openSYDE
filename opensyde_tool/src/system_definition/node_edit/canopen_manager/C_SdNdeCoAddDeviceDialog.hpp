@@ -13,7 +13,7 @@
 #include <QFileInfo>
 #include "C_OgePopUpDialog.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Namespace ----------------------------------------------------------------------------------------------------- */
 namespace Ui

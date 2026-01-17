@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Class for system view dashboard parameterization table item (implementation)
@@ -17,14 +17,14 @@
 #include <QGraphicsView>
 #include "gitypes.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_GiSvDaParam.hpp"
 #include "C_PuiSvHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -136,7 +136,7 @@ void C_GiSvDaParam::LoadData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbParam * const pc_Box = pc_Dashboard->GetParam(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          this->LoadSvBasicData(*pc_Box);
@@ -170,7 +170,7 @@ void C_GiSvDaParam::UpdateData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbParam * const pc_Box = pc_Dashboard->GetParam(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          C_PuiSvDbParam c_Box = *pc_Box;
@@ -182,7 +182,7 @@ void C_GiSvDaParam::UpdateData(void)
             c_Box.c_ExpandedItems = this->mpc_ParamWidget->GetAllExpandedTreeItems();
             c_Box.c_ColPosIndices = this->mpc_ParamWidget->GetCurrentColumnPositionIndices();
          }
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                         this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         &c_Box, this->me_Type) == C_NO_ERR);
@@ -198,7 +198,7 @@ void C_GiSvDaParam::DeleteData(void)
 {
    if (this->ms32_Index >= 0)
    {
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex, this->mu32_DashboardIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex, this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         this->me_Type) ==
                  C_NO_ERR);
@@ -243,7 +243,7 @@ void C_GiSvDaParam::EditModeActiveChanged(const bool oq_Active)
    // Edit mode and edit content mode: The child must handle its own events
    this->setHandlesChildEvents(oq_Active);
 
-   tgl_assert(this->mpc_ParamWidget != NULL);
+   Q_ASSERT(this->mpc_ParamWidget != NULL);
    if (this->mpc_ParamWidget != NULL)
    {
       this->mpc_ParamWidget->SetEditMode(this->mq_EditModeActive, this->mq_EditContentModeEnabled);
@@ -267,7 +267,7 @@ bool C_GiSvDaParam::EnableEditContent(void)
 
    if (q_Return == true)
    {
-      tgl_assert(this->mpc_ParamWidget != NULL);
+      Q_ASSERT(this->mpc_ParamWidget != NULL);
       if (this->mpc_ParamWidget != NULL)
       {
          this->mpc_ParamWidget->SetEditMode(this->mq_EditModeActive, true);
@@ -288,7 +288,7 @@ void C_GiSvDaParam::DisableEditContent(void)
    // Edit mode and no edit content mode: The child shall not handle its own events due to moving functionality
    this->setHandlesChildEvents(true);
 
-   tgl_assert(this->mpc_ParamWidget != NULL);
+   Q_ASSERT(this->mpc_ParamWidget != NULL);
    if (this->mpc_ParamWidget != NULL)
    {
       this->mpc_ParamWidget->SetEditMode(this->mq_EditModeActive, false);
@@ -321,7 +321,7 @@ void C_GiSvDaParam::ConfigureContextMenu(C_SyvDaContextMenuManager * const opc_C
       // In content edit mode only widget specific functions are relevant
       opc_ContextMenuManager->SetSpecificActionsAvailable(false, true);
 
-      tgl_assert(this->mpc_ParamWidget != NULL);
+      Q_ASSERT(this->mpc_ParamWidget != NULL);
       if ((oq_Active == true) && (this->mpc_ParamWidget != NULL))
       {
          // Initial registration of the context menu
@@ -374,7 +374,7 @@ void C_GiSvDaParam::HandleManualOperationFinished(const int32_t os32_Result, con
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvDaParam::SetSyvComDriver(C_SyvComDriverDiag & orc_ComDriver)
 {
-   tgl_assert(this->mpc_ParamWidget != NULL);
+   Q_ASSERT(this->mpc_ParamWidget != NULL);
    if (this->mpc_ParamWidget != NULL)
    {
       this->mpc_ParamWidget->SetSyvComDriver(orc_ComDriver);
@@ -541,13 +541,13 @@ int32_t C_GiSvDaParam::DeleteLists(const std::vector<stw::opensyde_core::C_OscNo
    {
       std::vector<C_PuiSvDbNodeDataPoolListElementId> c_DeletedIds;
       const C_PuiSvDbParam * const pc_Param = this->GetParamItem();
-      tgl_assert(pc_Param != NULL);
+      Q_ASSERT(pc_Param != NULL);
       if (pc_Param != NULL)
       {
-         tgl_assert(pc_Param->c_DataPoolElementsConfig.size() == pc_Param->c_DataSetSelectionIndices.size());
+         Q_ASSERT(pc_Param->c_DataPoolElementsConfig.size() == pc_Param->c_DataSetSelectionIndices.size());
          if (pc_Param->c_DataPoolElementsConfig.size() == pc_Param->c_DataSetSelectionIndices.size())
          {
-            tgl_assert(pc_Param->c_DataPoolElementsConfig.size() == pc_Param->c_ListValues.size());
+            Q_ASSERT(pc_Param->c_DataPoolElementsConfig.size() == pc_Param->c_ListValues.size());
             if (pc_Param->c_DataPoolElementsConfig.size() == pc_Param->c_ListValues.size())
             {
                C_PuiSvDbParam c_Copy = *pc_Param;
@@ -561,7 +561,7 @@ int32_t C_GiSvDaParam::DeleteLists(const std::vector<stw::opensyde_core::C_OscNo
                   for (uint32_t u32_ItListId = 0; u32_ItListId < orc_ListIds.size(); ++u32_ItListId)
                   {
                      const C_OscNodeDataPoolListId & rc_ListId = orc_ListIds[u32_ItListId];
-                     tgl_assert(rc_Config.c_ElementId.GetIsValid() == true);
+                     Q_ASSERT(rc_Config.c_ElementId.GetIsValid() == true);
                      if (rc_Config.c_ElementId.GetIsValid() == true)
                      {
                         if (((rc_Config.c_ElementId.u32_NodeIndex == rc_ListId.u32_NodeIndex) &&
@@ -599,7 +599,7 @@ int32_t C_GiSvDaParam::DeleteLists(const std::vector<stw::opensyde_core::C_OscNo
                      }
                   }
                }
-               tgl_assert(this->SetParamItem(c_Copy) == C_NO_ERR);
+               Q_ASSERT(this->SetParamItem(c_Copy) == C_NO_ERR);
             }
             else
             {

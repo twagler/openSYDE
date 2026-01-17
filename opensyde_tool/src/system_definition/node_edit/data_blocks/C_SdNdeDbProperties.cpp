@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for new data block properties (implementation)
@@ -14,7 +14,7 @@
 
 #include <QFileDialog>
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_ImpUtil.hpp"
 #include "C_OscUtils.hpp"
@@ -29,7 +29,7 @@
 #include "C_OgeWiUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -443,7 +443,7 @@ void C_SdNdeDbProperties::ApplyNewData(C_OscNodeApplication & orc_Application) c
       }
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    orc_Application.c_IdeCall = this->mpc_Ui->pc_LineEditIDE->text().toStdString().c_str();
@@ -472,7 +472,7 @@ void C_SdNdeDbProperties::ApplyNewData(C_OscNodeApplication & orc_Application) c
       break;
    default:
       orc_Application.u16_GenCodeVersion = 6U;
-      tgl_assert(false); // combo box has unknown index should never happen
+      Q_ASSERT(false); // combo box has unknown index should never happen
       break;
    }
 }
@@ -505,7 +505,7 @@ void C_SdNdeDbProperties::HandleDataPools(const uint32_t ou32_ApplicationIndex) 
          if (q_Found == true)
          {
             //Always assign this one
-            tgl_assert(C_PuiSdHandler::h_GetInstance()->
+            Q_ASSERT(C_PuiSdHandler::h_GetInstance()->
                        AssignDataPoolApplication(this->mu32_NodeIndex, u32_ItDataPool,
                                                  static_cast<int32_t>(ou32_ApplicationIndex)) == C_NO_ERR);
          }
@@ -515,7 +515,7 @@ void C_SdNdeDbProperties::HandleDataPools(const uint32_t ou32_ApplicationIndex) 
                 (static_cast<uint32_t>(rc_DataPool.s32_RelatedDataBlockIndex) == ou32_ApplicationIndex))
             {
                //Unassign this one
-               tgl_assert(C_PuiSdHandler::h_GetInstance()->UnassignDataPoolApplication(this->mu32_NodeIndex,
+               Q_ASSERT(C_PuiSdHandler::h_GetInstance()->UnassignDataPoolApplication(this->mu32_NodeIndex,
                                                                                        u32_ItDataPool) == C_NO_ERR);
             }
          }
@@ -600,7 +600,7 @@ void C_SdNdeDbProperties::m_OkClicked(void)
          this->mpc_Ui->pc_LineEditIDE->setText("");
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
 
@@ -1203,7 +1203,7 @@ void C_SdNdeDbProperties::m_LoadOutputFilePaths(const C_OscNodeApplication & orc
             }
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
          this->mpc_Ui->pc_LabelSafeFileValue->setText(c_SafeFile);
@@ -1211,7 +1211,7 @@ void C_SdNdeDbProperties::m_LoadOutputFilePaths(const C_OscNodeApplication & orc
       }
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }
@@ -1300,7 +1300,7 @@ void C_SdNdeDbProperties::m_SetVisibilityOfContentWidgets(const C_OscNodeApplica
       this->mpc_Ui->pc_WidgetPsiFiles->setVisible(true);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }
@@ -1982,7 +1982,7 @@ void C_SdNdeDbProperties::m_AskUserToSaveRelativePath(const QString & orc_Path,
 
       if (c_AdaptedPath != "")
       {
-         tgl_assert(opc_PathLineEdit != NULL);
+         Q_ASSERT(opc_PathLineEdit != NULL);
          if (opc_PathLineEdit != NULL)
          {
             opc_PathLineEdit->SetPath(c_AdaptedPath, orc_AbsoluteReferenceDir);

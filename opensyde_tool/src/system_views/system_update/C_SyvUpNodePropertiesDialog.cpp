@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Dialog for system update node properties view (implementation)
@@ -10,9 +10,9 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
-#include "TglUtils.hpp"
 
-#include "TglUtils.hpp"
+
+
 #include "constants.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSdUtil.hpp"
@@ -22,7 +22,7 @@
 #include "ui_C_SyvUpNodePropertiesDialog.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::diag_lib;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -283,7 +283,7 @@ void C_SyvUpNodePropertiesDialog::m_InitStatus(void) const
          this->mpc_Ui->pc_LabelDescription->setText("");
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -313,7 +313,7 @@ void C_SyvUpNodePropertiesDialog::m_InitDataBlockTable(void) const
    const std::vector<uint32_t> c_NodeIndices = C_PuiSdHandler::h_GetInstance()->GetAllNodeGroupIndicesUsingNodeIndex(
       this->mu32_NodeIndex);
 
-   tgl_assert(c_NodeIndices.size() == this->mc_NodeData.GetSubNodeCount());
+   Q_ASSERT(c_NodeIndices.size() == this->mc_NodeData.GetSubNodeCount());
    if (c_NodeIndices.size() == this->mc_NodeData.GetSubNodeCount())
    {
       for (uint32_t u32_ItDevice = 0UL; u32_ItDevice < c_NodeIndices.size(); ++u32_ItDevice)
@@ -322,7 +322,7 @@ void C_SyvUpNodePropertiesDialog::m_InitDataBlockTable(void) const
             C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(c_NodeIndices[u32_ItDevice]);
          const C_GiSvSubNodeData * const pc_SubDevice =
             this->mc_NodeData.GetSubNodeByNodeIndex(c_NodeIndices[u32_ItDevice]);
-         tgl_assert((pc_Node != NULL) && (pc_SubDevice != NULL));
+         Q_ASSERT((pc_Node != NULL) && (pc_SubDevice != NULL));
          if ((pc_Node != NULL) && (pc_SubDevice != NULL))
          {
             C_SyvUpNodePropertiesDialog::mh_InitDataBlockTableForNode(*pc_SubDevice,
@@ -356,7 +356,7 @@ void C_SyvUpNodePropertiesDialog::mh_InitDataBlockTableForNode(const C_GiSvSubNo
       //Each application
       if (orc_NodeInfo.GetDataBlockFoundStatus())
       {
-         tgl_assert(orc_Node.u32_SubDeviceIndex < orc_Node.pc_DeviceDefinition->c_SubDevices.size());
+         Q_ASSERT(orc_Node.u32_SubDeviceIndex < orc_Node.pc_DeviceDefinition->c_SubDevices.size());
          if (orc_Node.pc_DeviceDefinition->c_SubDevices[orc_Node.u32_SubDeviceIndex].q_FlashloaderOpenSydeIsFileBased ==
              true)
          {
@@ -449,7 +449,7 @@ void C_SyvUpNodePropertiesDialog::mh_GetApplicationDataForNode(const C_GiSvSubNo
    bool q_Match = true;
    const C_SyvUpDeviceInfo c_DeviceInfo = orc_NodeInfo.GetDeviceInfo();
 
-   tgl_assert(pc_FileInfo != NULL);
+   Q_ASSERT(pc_FileInfo != NULL);
    if (pc_FileInfo != NULL)
    {
       orc_FileProjectName = pc_FileInfo->GetProjectName().c_str();
@@ -595,7 +595,7 @@ void C_SyvUpNodePropertiesDialog::mh_ExtractStwDeviceInformation(const C_GiSvSub
    const C_SyvUpDeviceInfo c_DeviceInfo = orc_NodeInfo.GetDeviceInfo();
 
    for (int32_t s32_ItDeviceInfoBlock = 0;
-        s32_ItDeviceInfoBlock < c_DeviceInfo.pc_StwDevice->c_BasicInformation.c_DeviceInfoBlocks.GetLength();
+        s32_ItDeviceInfoBlock < c_DeviceInfo.pc_StwDevice->c_BasicInformation.c_DeviceInfoBlocks.size();
         ++s32_ItDeviceInfoBlock)
    {
       const C_XFLECUInformation & rc_StwDeviceInfo =
@@ -918,7 +918,7 @@ void C_SyvUpNodePropertiesDialog::m_InitFlashloaderTable(void) const
    const std::vector<uint32_t> c_NodeIndices = C_PuiSdHandler::h_GetInstance()->GetAllNodeGroupIndicesUsingNodeIndex(
       this->mu32_NodeIndex);
 
-   tgl_assert(c_NodeIndices.size() == this->mc_NodeData.GetSubNodeCount());
+   Q_ASSERT(c_NodeIndices.size() == this->mc_NodeData.GetSubNodeCount());
    if (c_NodeIndices.size() == this->mc_NodeData.GetSubNodeCount())
    {
       for (uint32_t u32_ItDevice = 0UL; u32_ItDevice < c_NodeIndices.size(); ++u32_ItDevice)
@@ -927,7 +927,7 @@ void C_SyvUpNodePropertiesDialog::m_InitFlashloaderTable(void) const
             C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(c_NodeIndices[u32_ItDevice]);
          const C_GiSvSubNodeData * const pc_SubDevice =
             this->mc_NodeData.GetSubNodeByNodeIndex(c_NodeIndices[u32_ItDevice]);
-         tgl_assert((pc_Node != NULL) && (pc_SubDevice != NULL));
+         Q_ASSERT((pc_Node != NULL) && (pc_SubDevice != NULL));
          if ((pc_Node != NULL) && (pc_SubDevice != NULL))
          {
             C_SyvUpNodePropertiesDialog::mh_InitFlashloaderTableForNode(*pc_SubDevice,
@@ -970,12 +970,12 @@ void C_SyvUpNodePropertiesDialog::mh_InitFlashloaderTableForNode(const C_GiSvSub
    {
       //Unexpected
    }
-   if (c_List.Strings.GetLength() > 1)
+   if (c_List.Strings.size() > 1)
    {
       c_NewContent +=
          static_cast<QString>("Note: Flashloader data is read during \"Enter Update Mode\"");
       c_NewContent += "<p>";
-      for (int32_t s32_ItString = 0; s32_ItString < c_List.Strings.GetLength(); ++s32_ItString)
+      for (int32_t s32_ItString = 0; s32_ItString < c_List.Strings.size(); ++s32_ItString)
       {
          c_NewContent += static_cast<QString>(c_List.Strings[s32_ItString].c_str()) + "<br/>";
       }
@@ -1065,7 +1065,7 @@ QString C_SyvUpNodePropertiesDialog::m_GetProgressLogConnectStatesString(void) c
             const C_GiSvSubNodeData * const pc_SubNodeData =
                this->mc_NodeData.GetSubNodeBySubNodeIndex(u32_SubNodeCounter);
 
-            tgl_assert(pc_SubNodeData != NULL);
+            Q_ASSERT(pc_SubNodeData != NULL);
             if (pc_SubNodeData != NULL)
             {
                if (u32_SubNodeCount > 1)
@@ -1223,7 +1223,7 @@ QString C_SyvUpNodePropertiesDialog::m_GetProgressLogUpdateStatesString(void) co
                const C_GiSvSubNodeData * const pc_SubNodeData =
                   this->mc_NodeData.GetSubNodeBySubNodeIndex(u32_SubNodeCounter);
 
-               tgl_assert(pc_SubNodeData != NULL);
+               Q_ASSERT(pc_SubNodeData != NULL);
                if (pc_SubNodeData != NULL)
                {
                   if (u32_SubNodeCount > 1)

@@ -16,7 +16,7 @@
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscCanUtil.hpp"
 #include "C_OscUtils.hpp"
 #include "C_PuiSdUtil.hpp"
@@ -25,7 +25,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -413,7 +413,7 @@ const
                   {
                      uint32_t u32_BitrateCounter;
                      bool q_BitrateFound = false;
-                     tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
+                     Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
 
                      for (u32_BitrateCounter = 0U;
                           u32_BitrateCounter < pc_Node->pc_DeviceDefinition->c_SupportedBitrates.size();
@@ -550,7 +550,7 @@ int32_t C_PuiSdHandlerBusLogic::SetAutomaticBusRoutingSettings(const uint32_t ou
    std::vector<uint32_t> c_InterfaceIndexes;
 
    this->mc_CoreDefinition.GetNodeIndexesOfBus(ou32_BusIndex, c_NodeIndexes, c_InterfaceIndexes);
-   tgl_assert(c_NodeIndexes.size() == c_InterfaceIndexes.size());
+   Q_ASSERT(c_NodeIndexes.size() == c_InterfaceIndexes.size());
 
    if (c_NodeIndexes.size() == c_InterfaceIndexes.size())
    {
@@ -686,7 +686,7 @@ void C_PuiSdHandlerBusLogic::AddConnection(const uint32_t ou32_NodeIndex, const 
    const C_OscSystemBus * const pc_Bus = this->GetOscBus(ou32_BusIndex);
    const std::vector<uint32_t> c_Indices = this->GetAllNodeGroupIndicesUsingNodeIndex(ou32_NodeIndex);
 
-   tgl_assert(c_Indices.size() == orc_Properties.size());
+   Q_ASSERT(c_Indices.size() == orc_Properties.size());
    if (c_Indices.size() == orc_Properties.size())
    {
       for (uint32_t u32_ItIndex = 0UL; u32_ItIndex < c_Indices.size(); ++u32_ItIndex)
@@ -707,7 +707,7 @@ void C_PuiSdHandlerBusLogic::AddConnection(const uint32_t ou32_NodeIndex, const 
                   //Adapt IP address
                   c_CurComInterface.u8_NodeId = orc_Properties[u32_ItIndex].u8_NodeId;
 
-                  tgl_assert(orc_Properties[u32_ItIndex].c_Ip.size() == 4UL);
+                  Q_ASSERT(orc_Properties[u32_ItIndex].c_Ip.size() == 4UL);
                   for (uint32_t u32_It = 0UL; u32_It < orc_Properties[u32_ItIndex].c_Ip.size(); ++u32_It)
                   {
                      c_CurComInterface.c_Ip.au8_IpAddress[u32_It] = orc_Properties[u32_ItIndex].c_Ip[u32_It];
@@ -726,7 +726,7 @@ void C_PuiSdHandlerBusLogic::AddConnection(const uint32_t ou32_NodeIndex, const 
                      //Also add corresponding UI element:
                      this->mc_UiNodes[u32_CurIndex].c_UiBusConnections.push_back(c_NewConnection);
                   }
-                  tgl_assert(this->SetAutomaticNodeInterfaceRoutingSettings(ou32_NodeIndex, pc_Bus->e_Type,
+                  Q_ASSERT(this->SetAutomaticNodeInterfaceRoutingSettings(ou32_NodeIndex, pc_Bus->e_Type,
                                                                             ou8_InterfaceNumber) == C_NO_ERR);
                }
             }
@@ -747,7 +747,7 @@ void C_PuiSdHandlerBusLogic::RemoveConnection(const uint32_t ou32_NodeIndex, con
    const std::vector<uint32_t> c_Indices = this->GetAllNodeGroupIndicesUsingNodeIndex(ou32_NodeIndex);
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
 
    for (uint32_t u32_ItIndex = 0UL; u32_ItIndex < c_Indices.size(); ++u32_ItIndex)
    {
@@ -786,7 +786,7 @@ void C_PuiSdHandlerBusLogic::ChangeConnection(const uint32_t ou32_NodeIndex, con
 
    ChangeCompleteConnection(ou32_NodeIndex, c_OrgCopy, c_Tmp, orc_Properties, 0xFFFFFFFFUL, false);
    m_HandleChangeConnectionForCanOpen(ou32_NodeIndex, c_OrgCopy, ou8_NewInterface);
-   tgl_assert(this->SetAutomaticNodeInterfaceRoutingSettings(ou32_NodeIndex, orc_Id.e_InterfaceType,
+   Q_ASSERT(this->SetAutomaticNodeInterfaceRoutingSettings(ou32_NodeIndex, orc_Id.e_InterfaceType,
                                                              ou8_NewInterface) == C_NO_ERR);
    this->m_HandleSyncNodeInterfaceChanged();
 }
@@ -813,8 +813,8 @@ void C_PuiSdHandlerBusLogic::ChangeCompleteConnection(const uint32_t ou32_NodeIn
    const std::vector<uint32_t> c_Indices = this->GetAllNodeGroupIndicesUsingNodeIndex(ou32_NodeIndex);
 
    //Check size & consistency
-   tgl_assert(c_Indices.size() == orc_Properties.size());
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(c_Indices.size() == orc_Properties.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
 
    for (uint32_t u32_ItIndex = 0UL; u32_ItIndex < c_Indices.size(); ++u32_ItIndex)
    {
@@ -858,14 +858,14 @@ void C_PuiSdHandlerBusLogic::ChangeCompleteConnection(const uint32_t ou32_NodeIn
                rc_ComInterface.AddConnection(u32_BusIndex);
                rc_ComInterface.u8_NodeId = orc_Properties[u32_ItIndex].u8_NodeId;
 
-               tgl_assert(orc_Properties[u32_ItIndex].c_Ip.size() == 4UL);
+               Q_ASSERT(orc_Properties[u32_ItIndex].c_Ip.size() == 4UL);
                for (uint32_t u32_It = 0UL; u32_It < orc_Properties[u32_ItIndex].c_Ip.size(); ++u32_It)
                {
                   rc_ComInterface.c_Ip.au8_IpAddress[u32_It] = orc_Properties[u32_ItIndex].c_Ip[u32_It];
                }
             }
          }
-         tgl_assert(this->SetAutomaticNodeInterfaceRoutingSettings(u32_CurIndex, orc_NewId.e_InterfaceType,
+         Q_ASSERT(this->SetAutomaticNodeInterfaceRoutingSettings(u32_CurIndex, orc_NewId.e_InterfaceType,
                                                                    orc_NewId.u8_InterfaceNumber) == C_NO_ERR);
 
          //UI
@@ -1031,7 +1031,7 @@ const C_PuiSdNodeDataPool * C_PuiSdHandlerBusLogic::GetUiCanDataPool(const uint3
 {
    const C_PuiSdNodeDataPool * pc_Retval = NULL;
 
-   tgl_assert(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
+   Q_ASSERT(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       const C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
@@ -1069,7 +1069,7 @@ const C_PuiSdNodeDataPoolList * C_PuiSdHandlerBusLogic::GetUiCanDataPoolList(con
 {
    const C_PuiSdNodeDataPoolList * pc_Retval = NULL;
 
-   tgl_assert(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
+   Q_ASSERT(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
    if (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       const C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -1113,12 +1113,12 @@ const
 {
    const C_PuiSdNodeCanProtocol * pc_Retval = NULL;
 
-   tgl_assert(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
+   Q_ASSERT(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       const C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
       const C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
-      tgl_assert(rc_OscNode.c_ComProtocols.size() == rc_UiNode.c_UiCanProtocols.size());
+      Q_ASSERT(rc_OscNode.c_ComProtocols.size() == rc_UiNode.c_UiCanProtocols.size());
       for (uint32_t u32_ItCanProtocol = 0; u32_ItCanProtocol < rc_OscNode.c_ComProtocols.size(); ++u32_ItCanProtocol)
       {
          const C_OscCanProtocol & rc_CanProtocol = rc_OscNode.c_ComProtocols[u32_ItCanProtocol];
@@ -1730,7 +1730,7 @@ int32_t C_PuiSdHandlerBusLogic::SetCanMessageProperties(const C_OscCanMessageIde
                   for (uint32_t u32_ItSignal = 0; u32_ItSignal < c_UiMessageCopy.c_Signals.size(); ++u32_ItSignal)
                   {
                      const uint32_t u32_TargetIndex = u32_SignalStartIndex + u32_ItSignal;
-                     tgl_assert(u32_TargetIndex < pc_UiDataPoolList->c_DataPoolListElements.size());
+                     Q_ASSERT(u32_TargetIndex < pc_UiDataPoolList->c_DataPoolListElements.size());
                      if (u32_TargetIndex < pc_UiDataPoolList->c_DataPoolListElements.size())
                      {
                         c_UiSignalCommons.push_back(pc_UiDataPoolList->c_DataPoolListElements[u32_TargetIndex]);
@@ -1839,7 +1839,7 @@ int32_t C_PuiSdHandlerBusLogic::SetCanSignal(const C_OscCanMessageIdentification
    int32_t s32_Retval = C_NO_ERR;
 
    //Position
-   tgl_assert(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
+   Q_ASSERT(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
    if (orc_MessageId.u32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[orc_MessageId.u32_NodeIndex];
@@ -1958,7 +1958,7 @@ int32_t C_PuiSdHandlerBusLogic::SetCanSignalMuxValue(const C_OscCanMessageIdenti
    int32_t s32_Retval = C_NO_ERR;
 
    //Position
-   tgl_assert(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
+   Q_ASSERT(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
    if (orc_MessageId.u32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[orc_MessageId.u32_NodeIndex];
@@ -2049,7 +2049,7 @@ int32_t C_PuiSdHandlerBusLogic::InsertCanMessage(const C_OscCanMessageIdentifica
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
+   Q_ASSERT(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
    if (orc_MessageId.u32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[orc_MessageId.u32_NodeIndex];
@@ -2099,7 +2099,7 @@ int32_t C_PuiSdHandlerBusLogic::DeleteCanMessage(const C_OscCanMessageIdentifica
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
+   Q_ASSERT(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
    if (orc_MessageId.u32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       const C_OscCanMessage * const pc_Message = this->GetCanMessage(orc_MessageId);
@@ -2121,7 +2121,7 @@ int32_t C_PuiSdHandlerBusLogic::DeleteCanMessage(const C_OscCanMessageIdentifica
       //Ui part
       s32_Retval = m_DeleteUiCanMessage(orc_MessageId);
       //After deleting signals delete other parts
-      tgl_assert(rc_OscNode.DeleteMessage(orc_MessageId.e_ComProtocol, orc_MessageId.u32_InterfaceIndex,
+      Q_ASSERT(rc_OscNode.DeleteMessage(orc_MessageId.e_ComProtocol, orc_MessageId.u32_InterfaceIndex,
                                           orc_MessageId.u32_DatapoolIndex,
                                           orc_MessageId.q_MessageIsTx,
                                           orc_MessageId.u32_MessageIndex) == C_NO_ERR);
@@ -2188,7 +2188,7 @@ int32_t C_PuiSdHandlerBusLogic::InsertCanSignal(const C_OscCanMessageIdentificat
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
+   Q_ASSERT(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
    if (orc_MessageId.u32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[orc_MessageId.u32_NodeIndex];
@@ -2346,7 +2346,7 @@ int32_t C_PuiSdHandlerBusLogic::DeleteCanSignal(const C_OscCanMessageIdentificat
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   tgl_assert(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
+   Q_ASSERT(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
    if (orc_MessageId.u32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[orc_MessageId.u32_NodeIndex];
@@ -2529,7 +2529,7 @@ void C_PuiSdHandlerBusLogic::ConvertElementIndexToSignalIndex(
          orc_NodeDatapoolListElementId.u32_DataPoolIndex);
       std::vector<C_OscCanMessage> c_Messages; // either tx messages or rx messages
       bool q_IndexFound = false;
-      tgl_assert(pc_MessageContainer != NULL);
+      Q_ASSERT(pc_MessageContainer != NULL);
 
       if (pc_MessageContainer != NULL)
       {
@@ -2701,7 +2701,7 @@ int32_t C_PuiSdHandlerBusLogic::MapBusNameToIndex(const QString & orc_BusName, u
    for (uint32_t u32_ItBus = 0UL; u32_ItBus < this->GetOscBusesSize(); ++u32_ItBus)
    {
       const C_OscSystemBus * const pc_Bus = this->GetOscBus(u32_ItBus);
-      tgl_assert(pc_Bus != NULL);
+      Q_ASSERT(pc_Bus != NULL);
       if (pc_Bus != NULL)
       {
          if (orc_BusName.compare(pc_Bus->c_Name.c_str()) == 0)
@@ -3007,12 +3007,12 @@ C_PuiSdNodeCanProtocol * C_PuiSdHandlerBusLogic::m_GetUiCanProtocol(const uint32
 {
    C_PuiSdNodeCanProtocol * pc_Retval = NULL;
 
-   tgl_assert(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
+   Q_ASSERT(this->mc_CoreDefinition.c_Nodes.size() == this->mc_UiNodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       const C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
-      tgl_assert(rc_OscNode.c_ComProtocols.size() == rc_UiNode.c_UiCanProtocols.size());
+      Q_ASSERT(rc_OscNode.c_ComProtocols.size() == rc_UiNode.c_UiCanProtocols.size());
       for (uint32_t u32_ItCanProtocol = 0; u32_ItCanProtocol < rc_OscNode.c_ComProtocols.size(); ++u32_ItCanProtocol)
       {
          const C_OscCanProtocol & rc_CanProtocol = rc_OscNode.c_ComProtocols[u32_ItCanProtocol];

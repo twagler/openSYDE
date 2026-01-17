@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Model for message generator signals table (implementation)
@@ -15,7 +15,7 @@
 #include <limits>
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_Uti.hpp"
@@ -29,7 +29,7 @@
 #include "C_OscNodeDataPoolContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -146,7 +146,7 @@ QVariant C_CamGenSigTableModel::headerData(const int32_t os32_Section, const Qt:
             c_Retval = "Unit";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -170,7 +170,7 @@ QVariant C_CamGenSigTableModel::headerData(const int32_t os32_Section, const Qt:
             c_Retval = "Unit";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -198,7 +198,7 @@ QVariant C_CamGenSigTableModel::headerData(const int32_t os32_Section, const Qt:
             c_Retval = "CAN message signal unit  (=interpreted/scaled value unit)";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -430,11 +430,11 @@ QVariant C_CamGenSigTableModel::data(const QModelIndex & orc_Index, const int32_
                      break;
                   case eRAW:
                      //handled elsewhere
-                     tgl_assert(false);
+                     Q_ASSERT(false);
                      break;
                   case ePHYSICAL:
                      //handled elsewhere
-                     tgl_assert(false);
+                     Q_ASSERT(false);
                      break;
                   case eUNIT:
                      pc_OsySignalCommon = m_GetSignalInterpretedOsyCommon(u32_Index);
@@ -457,7 +457,7 @@ QVariant C_CamGenSigTableModel::data(const QModelIndex & orc_Index, const int32_
                      }
                      break;
                   default:
-                     tgl_assert(false);
+                     Q_ASSERT(false);
                      break;
                   }
                }
@@ -777,7 +777,7 @@ bool C_CamGenSigTableModel::setData(const QModelIndex & orc_Index, const QVarian
             }
             else
             {
-               tgl_assert(false);
+               Q_ASSERT(false);
             }
             if (c_Signal.e_MultiplexerType == C_OscCanSignal::eMUX_MULTIPLEXER_SIGNAL)
             {
@@ -1865,7 +1865,7 @@ void C_CamGenSigTableModel::mh_SetBoolInContent(C_OscNodeDataPoolContent & orc_V
       }
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }
@@ -2125,7 +2125,7 @@ C_OscNodeDataPoolContent C_CamGenSigTableModel::mh_GetBorderValue(const C_OscNod
          C_OscNodeDataPoolContentUtil::h_SetValueInContent(f64_Base, c_Retval, 0UL);
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -2543,7 +2543,7 @@ void C_CamGenSigTableModel::m_UpdateMultiplexedSignal(const C_OscCanMessage * co
                   // set to zero
                   C_OscNodeDataPoolContent c_InitialValue = mh_GetInitialValue(pc_OsySignalCommon, NULL);
                   C_OscNodeDataPoolContentUtil::h_ZeroContent(c_InitialValue);
-                  tgl_assert(this->m_SetSignalFromOsyValue(rc_Sig, c_InitialValue) == C_NO_ERR);
+                  Q_ASSERT(this->m_SetSignalFromOsyValue(rc_Sig, c_InitialValue) == C_NO_ERR);
                }
             }
             else
@@ -2552,7 +2552,7 @@ void C_CamGenSigTableModel::m_UpdateMultiplexedSignal(const C_OscCanMessage * co
                {
                   // reset to initial value
                   const C_OscNodeDataPoolContent & rc_InitialValue = mh_GetInitialValue(pc_OsySignalCommon, NULL);
-                  tgl_assert(this->m_SetSignalFromOsyValue(rc_Sig, rc_InitialValue) == C_NO_ERR);
+                  Q_ASSERT(this->m_SetSignalFromOsyValue(rc_Sig, rc_InitialValue) == C_NO_ERR);
                }
             }
          }
@@ -2574,7 +2574,7 @@ void C_CamGenSigTableModel::m_UpdateMultiplexedSignal(const C_OscCanMessage * co
                   C_OscNodeDataPoolContent c_InitialValue = mh_GetInitialValue(NULL, pc_DbcSignal);
                   const C_OscCanSignal & rc_OsySig = C_CamGenSigUtil::h_ConvertDbcToOsy(*pc_DbcSignal);
                   C_OscNodeDataPoolContentUtil::h_ZeroContent(c_InitialValue);
-                  tgl_assert(this->m_SetSignalFromOsyValue(rc_OsySig, c_InitialValue) == C_NO_ERR);
+                  Q_ASSERT(this->m_SetSignalFromOsyValue(rc_OsySig, c_InitialValue) == C_NO_ERR);
                }
             }
             else
@@ -2584,7 +2584,7 @@ void C_CamGenSigTableModel::m_UpdateMultiplexedSignal(const C_OscCanMessage * co
                   // reset to initial value
                   const C_OscNodeDataPoolContent & rc_InitialValue = mh_GetInitialValue(NULL, pc_DbcSignal);
                   const C_OscCanSignal & rc_OsySig = C_CamGenSigUtil::h_ConvertDbcToOsy(*pc_DbcSignal);
-                  tgl_assert(this->m_SetSignalFromOsyValue(rc_OsySig, rc_InitialValue) == C_NO_ERR);
+                  Q_ASSERT(this->m_SetSignalFromOsyValue(rc_OsySig, rc_InitialValue) == C_NO_ERR);
                }
             }
          }

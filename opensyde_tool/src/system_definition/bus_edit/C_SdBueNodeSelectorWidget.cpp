@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for selecting nodes (implementation)
@@ -23,7 +23,7 @@
 #include "C_OscNode.hpp"
 #include "C_OscSystemBus.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "C_CieUtil.hpp"
 
@@ -232,7 +232,7 @@ void C_SdBueNodeSelectorWidget::SetProtocol(const C_OscCanProtocol::E_Type oe_Pr
                }
             }
 
-            tgl_assert(c_ItManagerInfo != pc_NodeManager->c_CanOpenManagers.end());
+            Q_ASSERT(c_ItManagerInfo != pc_NodeManager->c_CanOpenManagers.end());
             if (c_ItManagerInfo != pc_NodeManager->c_CanOpenManagers.end())
             {
                const C_OscCanOpenManagerInfo & rc_ManagerInfo = c_ItManagerInfo->second;

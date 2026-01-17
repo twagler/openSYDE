@@ -13,7 +13,7 @@
 
 #include <cstdio> //for "FILE"
 #include "stwtypes.hpp"
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 
 namespace stw
 {
@@ -57,14 +57,14 @@ class C_HexDataDumpBlock
 {
 public:
    uint32_t u32_AddressOffset;
-   stw::scl::C_SclDynamicArray<uint8_t> au8_Data;
+   QList<uint8_t> au8_Data;
 };
 
 ///Array of containers for memory dump data
 class C_HexDataDump
 {
 public:
-   stw::scl::C_SclDynamicArray<C_HexDataDumpBlock> at_Blocks;
+   QList<C_HexDataDumpBlock> at_Blocks;
 };
 
 ///Handles reading and writing of hex files

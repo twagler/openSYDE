@@ -13,7 +13,7 @@
 #include "stwtypes.hpp"
 #include "C_OscCanUtil.hpp"
 #include "C_OscNodeDataPoolContentUtil.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
@@ -177,7 +177,7 @@ void C_OscCanUtil::h_GetSignalValue(const uint8_t (&orau8_CanDb)[8], const C_Osc
                // Iterate through the message bytes in opposite direction
                const uint16_t u16_MessageIndex =
                   static_cast<uint16_t>(static_cast<uint16_t>(u16_LengthInMessage + u16_StartByte) - u16_CurByte) - 1U;
-               tgl_assert(u16_MessageIndex < sizeof(orau8_CanDb));
+               Q_ASSERT(u16_MessageIndex < sizeof(orau8_CanDb));
 
                if (u16_MessageIndex < sizeof(orau8_CanDb))
                {
@@ -422,7 +422,7 @@ void C_OscCanUtil::h_SetSignalValue(uint8_t (&orau8_CanDb)[8], const C_OscCanSig
                // Iterate through the message bytes in opposite direction
                const uint8_t u8_MessageIndex = ((u8_LengthInMessage + u8_StartByte) - u8_CurByte) -
                                                static_cast<uint8_t>(1U);
-               tgl_assert(u8_MessageIndex < sizeof(orau8_CanDb));
+               Q_ASSERT(u8_MessageIndex < sizeof(orau8_CanDb));
 
                // This is the MSB part of the byte, right shifting to get it byte aligned
                orau8_CanDb[u8_MessageIndex] |= static_cast<uint8_t>(c_ValueData[u8_CurByte] << u8_LsbBitOffset);

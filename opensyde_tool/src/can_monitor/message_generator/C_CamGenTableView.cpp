@@ -17,9 +17,10 @@
 #include <QScrollBar>
 #include <QHeaderView>
 #include <QApplication>
+#include <QDateTime>
 
 #include "C_Uti.hpp"
-#include "TglTime.hpp"
+
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_UsHandler.hpp"
@@ -34,7 +35,6 @@
 #include "C_OscNodeDataPoolContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -423,7 +423,7 @@ bool C_CamGenTableView::CheckAndHandleKey(const QString & orc_Input)
                   //Don't stop here as multiple messages can have the same key
                   q_Retval = true;
                   //Trigger sending
-                  Q_EMIT (this->SigSendMessage(u32_ItMessage, TglGetTickCount() + pc_Message->u32_KeyPressOffset));
+                  Q_EMIT (this->SigSendMessage(u32_ItMessage, static_cast<uint32_t>(QDateTime::currentMSecsSinceEpoch()) + pc_Message->u32_KeyPressOffset));
                }
             }
          }
@@ -810,7 +810,7 @@ void C_CamGenTableView::m_HandleLinkClicked(const QModelIndex & orc_Index)
       {
          if (this->mq_CommunicationActive)
          {
-            Q_EMIT (this->SigSendMessage(static_cast<uint32_t>(s32_Row), TglGetTickCount()));
+            Q_EMIT (this->SigSendMessage(static_cast<uint32_t>(s32_Row), static_cast<uint32_t>(QDateTime::currentMSecsSinceEpoch())));
          }
 
          else

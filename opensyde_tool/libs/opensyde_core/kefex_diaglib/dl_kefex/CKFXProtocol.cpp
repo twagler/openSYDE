@@ -24,9 +24,9 @@
 #include "C_CanMonProtocol.hpp"
 #endif
 #include "C_SclString.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
+
+#include <QElapsedTimer>
+#include <QThread>
 #include "C_SclChecksums.hpp"
 
 //---------------------------------------------------------------------------
@@ -36,7 +36,7 @@ using namespace stw::errors;
 using namespace stw::cmon_protocol;
 #endif
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::can;
 using namespace stw::diag_lib;
 
@@ -46,7 +46,7 @@ using namespace stw::diag_lib;
 //Could be named "..Little" as well. But Intel might be quicker to read.
 uint16_t C_KFXProcotolResponse::GetU16FromDataIntel(const uint8_t ou8_StartIndex) const
 {
-   tgl_assert(ou8_StartIndex < (sizeof(au8_Data) - 1));
+   Q_ASSERT(ou8_StartIndex < (sizeof(au8_Data) - 1));
    if (ou8_StartIndex >= (sizeof(au8_Data) - 1))
    {
       return 0U;
@@ -61,7 +61,7 @@ uint16_t C_KFXProcotolResponse::GetU16FromDataIntel(const uint8_t ou8_StartIndex
 //Could be named "..Little" as well. But Intel might be quicker to read.
 uint32_t C_KFXProcotolResponse::GetU32FromDataIntel(const uint8_t ou8_StartIndex) const
 {
-   tgl_assert(ou8_StartIndex < (sizeof(au8_Data) - 3));
+   Q_ASSERT(ou8_StartIndex < (sizeof(au8_Data) - 3));
    if (ou8_StartIndex >= (sizeof(au8_Data) - 3))
    {
       return 0U;
@@ -895,7 +895,7 @@ int32_t C_KFXProtocol::m_EvalResponses(const uint16_t ou16_TimeOut, const uint8_
                                        const bool oq_CheckExpectedService, C_KFXProcotolResponse & orc_Response)
 {
    T_STWCAN_Msg_RX c_MSG;
-   uint32_t u32_OldTime;
+   // u32_OldTime removed
    int32_t s32_Return;
    bool q_SomeResponse = false;
 
@@ -903,7 +903,8 @@ int32_t C_KFXProtocol::m_EvalResponses(const uint16_t ou16_TimeOut, const uint8_
    {
       return C_NOACT;
    }
-   u32_OldTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    while (true)
    {
       (void)mpc_Dispatcher->DispatchIncoming();
@@ -936,14 +937,14 @@ int32_t C_KFXProtocol::m_EvalResponses(const uint16_t ou16_TimeOut, const uint8_
          }
       }
 
-      if ((TglGetTickCount() - u32_OldTime) > static_cast<uint32_t>(ou16_TimeOut))
+      if (c_Timer.hasExpired(static_cast<qint64>(ou16_TimeOut)) == true)
       {
          break;
       }
 
       if (mq_SleepBetweenPolling == true)
       {
-         stw::tgl::TglSleepPolling(); //rescind CPU time to other threads ...
+         QThread::msleep(1UL); //rescind CPU time to other threads ...
       }
    }
    if (q_SomeResponse == false)
@@ -1428,12 +1429,12 @@ int32_t C_KFXProtocol::SegmentedIWRTransfer(const uint16_t ou16_Index, const uin
       }
       if (u8_STMin == 0U)
       {
-         TglHandleSystemMessages();
+         stw::opensyde_core::C_OscUtils::h_HandleSystemMessages();
       }
       for (s32_MsCounter = 0; s32_MsCounter < u8_STMin; s32_MsCounter++)
       {
-         TglHandleSystemMessages();
-         TglDelayUs(1000);
+         stw::opensyde_core::C_OscUtils::h_HandleSystemMessages();
+         QThread::msleep(1);
       }
    }
    return C_NO_ERR;

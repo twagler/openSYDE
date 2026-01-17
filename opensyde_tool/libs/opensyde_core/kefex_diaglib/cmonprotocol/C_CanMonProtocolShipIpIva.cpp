@@ -20,7 +20,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_CanMonProtocolShipIpIva.hpp"
-#include "TglUtils.hpp"
+
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -412,7 +412,7 @@ using namespace stw::can;
 
 /* -- Module Global Variables --------------------------------------------------------------------------------------- */
 bool C_CanMonProtocolShipIpIva::hmq_ServiceTableInitialized = false;
-C_SclDynamicArray<C_CanMonProtocolSipAsaDescription> C_CanMonProtocolShipIpIva::hmc_Services;
+QList<C_CanMonProtocolSipAsaDescription> C_CanMonProtocolShipIpIva::hmc_Services;
 
 /* -- Module Global Function Prototypes ----------------------------------------------------------------------------- */
 
@@ -1520,7 +1520,7 @@ C_SclString C_CanMonProtocolShipIpIva::m_SipGetApplData(const uint8_t ou8_Byte1,
    uint8_t u8_ALIT; //location information type
    uint8_t u8_ALII; //location information index
 
-   C_SclDynamicArray<C_CanMonProtocolSipPayload> * pc_Payload;
+   QList<C_CanMonProtocolSipPayload> * pc_Payload;
    uint8_t u8_NumBytes;
    uint8_t u8_ASH_Byte1;
    const uint8_t * pu8_ASH_Byte2;
@@ -1605,7 +1605,7 @@ C_SclString C_CanMonProtocolShipIpIva::m_SipGetApplData(const uint8_t ou8_Byte1,
             {
                if (u8_NumBytes > 4U) //only if there is data ...
                {
-                  tgl_assert(pc_Payload != NULL);
+                  Q_ASSERT(pc_Payload != NULL);
                   if (pc_Payload == NULL)
                   {
                      c_Text += "<internal error>";
@@ -2243,7 +2243,7 @@ void C_CanMonProtocolSipAsnDescription::Set(const C_SclString & orc_ShortName, c
    c_ShortName = orc_ShortName;
    c_AspPrefix = orc_AspPrefix;
    u16_Length  = ou16_Length;
-   c_Asps.SetLength(ou8_NumAsps);
+   c_Asps.resize(ou8_NumAsps);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2255,14 +2255,14 @@ void C_CanMonProtocolSipAsnDescription::Set(const C_SclString & orc_ShortName, c
 // sure there is no accidental out of bounds indexing.
 void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
 {
-   hmc_Services.SetLength(SIP_ASA_ETHERNET + 1);
+   hmc_Services.resize(SIP_ASA_ETHERNET + 1);
 
    hmc_Services[SIP_ASA_PROTOCOL].c_ShortName = "PROTOCOL";
-   hmc_Services[SIP_ASA_PROTOCOL].c_Asns.SetLength(SIP_ASN_PROT_SERVICE_VERSION + 1);
+   hmc_Services[SIP_ASA_PROTOCOL].c_Asns.resize(SIP_ASN_PROT_SERVICE_VERSION + 1);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_VERSION].Set("VERSION", SIP_ASP_PROT_VERSION_GET + 1);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_VERSION].c_Asps[SIP_ASP_PROT_VERSION_GET].Set("GET",
                                                                                                     SIP_PSIZE_PROT_VERSION_GET);
-   hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_VERSION].c_Asps[SIP_ASP_PROT_VERSION_GET].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_VERSION].c_Asps[SIP_ASP_PROT_VERSION_GET].c_Payload.resize(1);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_VERSION].c_Asps[SIP_ASP_PROT_VERSION_GET].c_Payload[0].Set(
       "VERSION", 2, false);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXBUFFERSIZE].Set("MAXBUFFERSIZE",
@@ -2270,7 +2270,7 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXBUFFERSIZE].c_Asps[SIP_ASP_PROT_MAXBUFFERSIZE_GET].Set("GET",
                                                                                                                 SIP_PSIZE_PROT_MAXBUFFERSIZE_GET);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXBUFFERSIZE].c_Asps[SIP_ASP_PROT_MAXBUFFERSIZE_GET].c_Payload.
-   SetLength(1);
+   resize(1);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXBUFFERSIZE].c_Asps[SIP_ASP_PROT_MAXBUFFERSIZE_GET].c_Payload[0]
    .Set("SIZE", 2, false);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXNUMCYCLICTRANSMISSIONS].Set("MAXNUMCYCLICTRANSMISSIONS",
@@ -2279,7 +2279,7 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXNUMCYCLICTRANSMISSIONS].c_Asps[
       SIP_ASP_PROT_MAXNUMCYCLICTRANSMISSIONS_GET].Set("GET", SIP_PSIZE_PROT_MAXNUMCYCLICTRANSMISSIONS_GET);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXNUMCYCLICTRANSMISSIONS].c_Asps[
-      SIP_ASP_PROT_MAXNUMCYCLICTRANSMISSIONS_GET].c_Payload.SetLength(1);
+      SIP_ASP_PROT_MAXNUMCYCLICTRANSMISSIONS_GET].c_Payload.resize(1);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXNUMCYCLICTRANSMISSIONS].c_Asps[
       SIP_ASP_PROT_MAXNUMCYCLICTRANSMISSIONS_GET].c_Payload[0].Set("NUM", 2, false);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXNUMDYNAMICCONFIGURATIONS].Set("MAXNUMDYNAMICCONFIGURATIONS",
@@ -2288,14 +2288,14 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXNUMDYNAMICCONFIGURATIONS].c_Asps[
       SIP_ASP_PROT_MAXNUMDYNAMICCONFIGURATIONS_GET].Set("GET", SIP_PSIZE_PROT_MAXNUMDYNAMICCONFIGURATIONS_GET);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXNUMDYNAMICCONFIGURATIONS].c_Asps[
-      SIP_ASP_PROT_MAXNUMDYNAMICCONFIGURATIONS_GET].c_Payload.SetLength(1);
+      SIP_ASP_PROT_MAXNUMDYNAMICCONFIGURATIONS_GET].c_Payload.resize(1);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_MAXNUMDYNAMICCONFIGURATIONS].c_Asps[
       SIP_ASP_PROT_MAXNUMDYNAMICCONFIGURATIONS_GET].c_Payload[0].Set("NUM", 2, false);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_PARAMETER].Set("PARAMETER", SIP_ASP_PROT_PARAMETER_BITRATE + 1);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_PARAMETER].c_Asps[SIP_ASP_PROT_PARAMETER_BITRATE].Set("BITRATE",
                                                                                                             SIP_PSIZE_PROT_PARAMETER_BITRATE);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_PARAMETER].c_Asps[SIP_ASP_PROT_PARAMETER_BITRATE].c_Payload.
-   SetLength(1);
+   resize(1);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_PARAMETER].c_Asps[SIP_ASP_PROT_PARAMETER_BITRATE].c_Payload[0].Set(
       "BITRATE", 4, false);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_SERVICE_VERSION].Set("SERVICE_VERSION",
@@ -2303,22 +2303,22 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_SERVICE_VERSION].c_Asps[SIP_ASP_PROT_SERVICE_VERSION_GET].Set(
       "GET", SIP_PSIZE_PROT_SERVICE_VERSION_GET);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_SERVICE_VERSION].c_Asps[SIP_ASP_PROT_SERVICE_VERSION_GET].
-   c_Payload.SetLength(1);
+   c_Payload.resize(1);
    hmc_Services[SIP_ASA_PROTOCOL].c_Asns[SIP_ASN_PROT_SERVICE_VERSION].c_Asps[SIP_ASP_PROT_SERVICE_VERSION_GET].
    c_Payload[0].Set("VERSION", 2, false);
 
    hmc_Services[SIP_ASA_APPLICATION].c_ShortName = "APPLICATION";
-   hmc_Services[SIP_ASA_APPLICATION].c_Asns.SetLength(SIP_ASN_APP_DESTROY + 1);
+   hmc_Services[SIP_ASA_APPLICATION].c_Asns.resize(SIP_ASN_APP_DESTROY + 1);
    hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_VERSION].Set("VERSION", SIP_ASP_APP_VERSION_GET + 1);
    hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_VERSION].c_Asps[SIP_ASP_APP_VERSION_GET].Set("GET",
                                                                                                      SIP_PSIZE_APP_VERSION_GET);
-   hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_VERSION].c_Asps[SIP_ASP_APP_VERSION_GET].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_VERSION].c_Asps[SIP_ASP_APP_VERSION_GET].c_Payload.resize(1);
    hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_VERSION].c_Asps[SIP_ASP_APP_VERSION_GET].c_Payload[0].Set(
       "VERSION", 2, false);
    hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_BIOS].Set("BIOS", SIP_ASP_APP_BIOS_VERSION + 1);
    hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_BIOS].c_Asps[SIP_ASP_APP_BIOS_VERSION].Set("VERSION",
                                                                                                    SIP_PSIZE_APP_BIOS_VERSION);
-   hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_BIOS].c_Asps[SIP_ASP_APP_BIOS_VERSION].c_Payload.SetLength(3);
+   hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_BIOS].c_Asps[SIP_ASP_APP_BIOS_VERSION].c_Payload.resize(3);
    hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_BIOS].c_Asps[SIP_ASP_APP_BIOS_VERSION].c_Payload[0].Set("MA", 1,
                                                                                                                 false);
    hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_BIOS].c_Asps[SIP_ASP_APP_BIOS_VERSION].c_Payload[1].Set("MI", 1,
@@ -2329,44 +2329,44 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_APPLICATION].c_Asns[SIP_ASN_APP_DESTROY].Set("DESTROY", 0, "CH", 0);
 
    hmc_Services[SIP_ASA_SYSTEM].c_ShortName = "SYSTEM";
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns.SetLength(SIP_ASN_SYS_ADC_FILTER + 1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns.resize(SIP_ASN_SYS_ADC_FILTER + 1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].Set("INFO", SIP_ASP_SYS_INFO_STATUS_INIT + 1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_SERIAL_NUMBER].Set("SERIAL_NUM",
                                                                                                     SIP_PSIZE_SYS_INFO_SERIAL_NUMBER);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_SERIAL_NUMBER].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_SERIAL_NUMBER].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_SERIAL_NUMBER].c_Payload[0].Set("SNR",
                                                                                                                  6,
                                                                                                                  false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_ARTICLE_NUMBER].Set("ARTICLE_NUM",
                                                                                                      SIP_PSIZE_SYS_INFO_ARTICLE_NUMBER);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_ARTICLE_NUMBER].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_ARTICLE_NUMBER].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_ARTICLE_NUMBER].c_Payload[0].Set("NUM",
                                                                                                                   4,
                                                                                                                   false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_DEVICE_ID].Set("DEVICE_ID",
                                                                                                 SIP_PSIZE_SYS_INFO_DEVICE_ID);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_DEVICE_ID].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_DEVICE_ID].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_DEVICE_ID].c_Payload[0].Set("ID", 17,
                                                                                                              false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_RAM_SIZE].Set("RAM_SIZE",
                                                                                                SIP_PSIZE_SYS_INFO_RAM_SIZE);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_RAM_SIZE].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_RAM_SIZE].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_RAM_SIZE].c_Payload[0].Set("SIZE_KB",
                                                                                                             4, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_ROM_SIZE].Set("ROM_SIZE",
                                                                                                SIP_PSIZE_SYS_INFO_ROM_SIZE);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_ROM_SIZE].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_ROM_SIZE].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_ROM_SIZE].c_Payload[0].Set("SIZE_KB",
                                                                                                             4, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_EEPROM_SIZE].Set("EEPROM_SIZE",
                                                                                                   SIP_PSIZE_SYS_INFO_EEPROM_SIZE);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_EEPROM_SIZE].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_EEPROM_SIZE].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_EEPROM_SIZE].c_Payload[0].Set("SIZE_B",
                                                                                                                4,
                                                                                                                false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_STATUS_INIT].Set("STATUS_INIT",
                                                                                                   SIP_PSIZE_SYS_INFO_STATUS_INIT);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_STATUS_INIT].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_STATUS_INIT].c_Payload.resize(2);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_INFO].c_Asps[SIP_ASP_SYS_INFO_STATUS_INIT].c_Payload[0].Set("STATUS",
                                                                                                                1,
                                                                                                                false);
@@ -2377,20 +2377,20 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_IGNITION].Set("IGNITION", SIP_ASP_SYS_IGNITION_STATUS + 1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_IGNITION].c_Asps[SIP_ASP_SYS_IGNITION_CONFIG].Set("ONOFF",
                                                                                                      SIP_PSIZE_SYS_IGNITION_CONFIG);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_IGNITION].c_Asps[SIP_ASP_SYS_IGNITION_CONFIG].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_IGNITION].c_Asps[SIP_ASP_SYS_IGNITION_CONFIG].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_IGNITION].c_Asps[SIP_ASP_SYS_IGNITION_CONFIG].c_Payload[0].Set(
       "STATE", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_IGNITION].c_Asps[SIP_ASP_SYS_IGNITION_STATUS].Set("ONOFF",
                                                                                                      SIP_PSIZE_SYS_IGNITION_STATUS);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_IGNITION].c_Asps[SIP_ASP_SYS_IGNITION_STATUS].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_IGNITION].c_Asps[SIP_ASP_SYS_IGNITION_STATUS].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_IGNITION].c_Asps[SIP_ASP_SYS_IGNITION_STATUS].c_Payload[0].Set(
       "STATUS", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_BEEPER].Set("BEEPER", 0, "CH", SIP_PSIZE_SYS_BEEPER);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_BEEPER].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_BEEPER].c_Payload.resize(2);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_BEEPER].c_Payload[0].Set("ONOFF", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_BEEPER].c_Payload[1].Set("FREQU_HZ", 2, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_LED].Set("LED", 0, "CH", SIP_PSIZE_SYS_LED);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_LED].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_LED].c_Payload.resize(2);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_LED].c_Payload[0].Set("ONOFF", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_LED].c_Payload[1].Set("COLOR", 2, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_TEMPERATURE].Set("TEMPERATURE", SIP_ASP_SYS_TEMPERATURE); // ASPE
@@ -2403,59 +2403,59 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_TEMPERATURE].c_Asps[SIP_ASP_SYS_TEMPERATURE_SYSTEM].Set("SYSTEM",
                                                                                                            SIP_PSIZE_SYS_TEMPERATURE_SYSTEM);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_TEMPERATURE].c_Asps[SIP_ASP_SYS_TEMPERATURE_SYSTEM].c_Payload.
-   SetLength(1);
+   resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_TEMPERATURE].c_Asps[SIP_ASP_SYS_TEMPERATURE_SYSTEM].c_Payload[0].Set(
       "TEMPERATURE_1_10_C", 2, true);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_TEMPERATURE].c_Asps[SIP_ASP_SYS_TEMPERATURE_CPU].Set("CPU",
                                                                                                         SIP_PSIZE_SYS_TEMPERATURE_CPU);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_TEMPERATURE].c_Asps[SIP_ASP_SYS_TEMPERATURE_CPU].c_Payload.SetLength(
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_TEMPERATURE].c_Asps[SIP_ASP_SYS_TEMPERATURE_CPU].c_Payload.resize(
       1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_TEMPERATURE].c_Asps[SIP_ASP_SYS_TEMPERATURE_CPU].c_Payload[0].Set(
       "TEMPERATURE_1_10_C", 2, true);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_RELAY].Set("RELAY", 0, "CH", SIP_PSIZE_SYS_RELAY);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_RELAY].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_RELAY].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_RELAY].c_Payload[0].Set("ONOFF", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_SENSOR_SUPPLY].Set("SENSOR_SUPPLY", 0, "CH",
                                                                       SIP_PSIZE_SYS_SENSOR_SUPPLY);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_SENSOR_SUPPLY].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_SENSOR_SUPPLY].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_SENSOR_SUPPLY].c_Payload[0].Set("VOLTAGE_mV", 4, true);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_BUTTON].Set("BUTTON", 0, "CH", SIP_PSIZE_SYS_BUTTON);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_BUTTON].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_BUTTON].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_BUTTON].c_Payload[0].Set("ONOFF", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_VALUE_SCALED_32BIT].Set("ADC_VALUE_SCALED_32BIT", 0, "CH",
                                                                                SIP_PSIZE_SYS_ADC_VALUE_SCALED_32BIT);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_VALUE_SCALED_32BIT].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_VALUE_SCALED_32BIT].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_VALUE_SCALED_32BIT].c_Payload[0].Set("VALUE", 4, true);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].Set("DIAG", SIP_ASP_SYS_DIAG_LAST_RESET_REASON + 1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_VOLTAGE_UNDER].Set("VOLTAGE_UNDER",
                                                                                                     SIP_PSIZE_SYS_DIAG_VOLTAGE_UNDER);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_VOLTAGE_UNDER].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_VOLTAGE_UNDER].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_VOLTAGE_UNDER].c_Payload[0].Set(
       "UNDERVOLTAGE", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_VOLTAGE_OVER].Set("VOLTAGE_OVER",
                                                                                                    SIP_PSIZE_SYS_DIAG_VOLTAGE_OVER);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_VOLTAGE_OVER].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_VOLTAGE_OVER].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_VOLTAGE_OVER].c_Payload[0].Set(
       "OVERVOLTAGE", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_LAST_RESET_REASON].Set(
       "LAST_RESET_REASON", SIP_PSIZE_SYS_DIAG_LAST_RESET_REASON);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_LAST_RESET_REASON].c_Payload.SetLength(
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_LAST_RESET_REASON].c_Payload.resize(
       1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_DIAG].c_Asps[SIP_ASP_SYS_DIAG_LAST_RESET_REASON].c_Payload[0].Set(
       "STATUS", 4, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_CALIBRATION].Set("ADC_CALIBRATION", 0, "CH", 0);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_CALIBRATION_STATE].Set("ADC_CALIBRATION_STATE", 0, "CH",
                                                                               SIP_PSIZE_SYS_ADC_CALIBRATION_STATE);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_CALIBRATION_STATE].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_CALIBRATION_STATE].c_Payload.resize(2);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_CALIBRATION_STATE].c_Payload[0].Set("STATE", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_CALIBRATION_STATE].c_Payload[1].Set("USED", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_VALUE_16BIT].Set("ADC_VALUE_16BIT", 0, "CH",
                                                                         SIP_PSIZE_SYS_ADC_VALUE_16BIT);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_VALUE_16BIT].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_VALUE_16BIT].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_VALUE_16BIT].c_Payload[0].Set("VALUE", 2, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_RELAY_ERROR_COUNTERS].Set("RELAY_ERROR_COUNTERS", 0, "CH",
                                                                              SIP_PSIZE_SYS_RELAY_ERROR_COUNTERS);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_RELAY_ERROR_COUNTERS].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_RELAY_ERROR_COUNTERS].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_RELAY_ERROR_COUNTERS].c_Payload[0].Set("ERROR_COUNTERS", 8, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_RELAY_RESET_ERROR_COUNTERS].Set("RELAY_RESET_ERROR_COUNTERS", 0,
                                                                                    "CH", 0);
@@ -2464,131 +2464,131 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_COMPONENT_COUNT].c_Asps[SIP_ASP_SYS_COMPONENT_COUNT_GET].Set("GET",
                                                                                                                 SIP_PSIZE_SYS_COMPONENT_COUNT_GET);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_COMPONENT_COUNT].c_Asps[SIP_ASP_SYS_COMPONENT_COUNT_GET].c_Payload.
-   SetLength(1);
+   resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_COMPONENT_COUNT].c_Asps[SIP_ASP_SYS_COMPONENT_COUNT_GET].c_Payload[0]
    .Set("NUMBER_OF_COMPONENTS", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_COMPONENT_VERSION].Set("COMPONENT_VERSION", 0, "CH",
                                                                           SIP_PSIZE_SYS_COMPONENT_VERSION);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_COMPONENT_VERSION].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_COMPONENT_VERSION].c_Payload.resize(2);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_COMPONENT_VERSION].c_Payload[0].Set("NAME", 20, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_COMPONENT_VERSION].c_Payload[1].Set("VERSION", 15, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_WAKEUP].Set("WAKEUP", 0, "CH", SIP_PSIZE_SYS_WAKEUP);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_WAKEUP].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_WAKEUP].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_WAKEUP].c_Payload[0].Set("FUNCTION", 1, false);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_CLOSE].Set("CLOSE", SIP_ASP_SYS_CLOSE_EXECUTE + 1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_CLOSE].c_Asps[SIP_ASP_SYS_CLOSE_EXECUTE].Set("EXECUTE", 0);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_FILTER].Set("ADC_FILTER", 0, "CH", SIP_PSIZE_SYS_ADC_FILTER);
-   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_FILTER].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_FILTER].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SYSTEM].c_Asns[SIP_ASN_SYS_ADC_FILTER].c_Payload[0].Set("TIME", 4, false);
 
    hmc_Services[SIP_ASA_INPUT].c_ShortName = "INPUT";
-   hmc_Services[SIP_ASA_INPUT].c_Asns.SetLength(SIP_ASN_I_VALUE_UNSCALED + 1);
+   hmc_Services[SIP_ASA_INPUT].c_Asns.resize(SIP_ASN_I_VALUE_UNSCALED + 1);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_INIT].Set("INIT", 0, "CH", SIP_PSIZE_I_INIT);
-   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_INIT].c_Payload.SetLength(3);
+   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_INIT].c_Payload.resize(3);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_INIT].c_Payload[0].Set("TYPE", 2, false);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_INIT].c_Payload[1].Set("FILTER_PERIOD", 2, false);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_INIT].c_Payload[2].Set("CIRCUIT", 4, false);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_VALUE].Set("VALUE", 0, "CH", SIP_PSIZE_I_VALUE);
-   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_VALUE].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_VALUE].c_Payload.resize(1);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_VALUE].c_Payload[0].Set("VALUE", 4, true);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_COUNTER].Set("COUNTER", 0, "CH", SIP_PSIZE_I_COUNTER);
-   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_COUNTER].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_COUNTER].c_Payload.resize(1);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_COUNTER].c_Payload[0].Set("COUNTER", 4, true);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_DUTY_CYCLE].Set("DUTY_CYCLE", 0, "CH", SIP_PSIZE_I_DUTY_CYCLE);
-   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_DUTY_CYCLE].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_DUTY_CYCLE].c_Payload.resize(1);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_DUTY_CYCLE].c_Payload[0].Set("DUTY_CYCLE_1_1000", 4, false);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_STATE].Set("STATE", 0, "CH", SIP_PSIZE_I_STATE);
-   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_STATE].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_STATE].c_Payload.resize(1);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_STATE].c_Payload[0].Set("ONOFF", 1, false);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_EVENT_COUNTER].Set("EVENT_COUNTER", 0, "CH", SIP_PSIZE_I_EVENT_COUNTER);
-   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_EVENT_COUNTER].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_EVENT_COUNTER].c_Payload.resize(1);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_EVENT_COUNTER].c_Payload[0].Set("VALUE", 2, false);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_TEST_COMPARATOR].Set("TEST_COMPARATOR", 0, "CH",
                                                                      SIP_PSIZE_I_TEST_COMPARATOR);
-   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_TEST_COMPARATOR].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_TEST_COMPARATOR].c_Payload.resize(1);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_TEST_COMPARATOR].c_Payload[0].Set("STATUS", 1, false);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_VALUE_UNSCALED].Set("VALUE", 0, "CH", SIP_PSIZE_I_VALUE_UNSCALED);
-   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_VALUE_UNSCALED].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_VALUE_UNSCALED].c_Payload.resize(1);
    hmc_Services[SIP_ASA_INPUT].c_Asns[SIP_ASN_I_VALUE_UNSCALED].c_Payload[0].Set("VALUE", 2, false);
 
    hmc_Services[SIP_ASA_OUTPUT].c_ShortName = "OUTPUT";
-   hmc_Services[SIP_ASA_OUTPUT].c_Asns.SetLength(SIP_ASN_O_OVERCURRENT_TESTMODE + 1);
+   hmc_Services[SIP_ASA_OUTPUT].c_Asns.resize(SIP_ASN_O_OVERCURRENT_TESTMODE + 1);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_INIT].Set("INIT", 0, "CH", SIP_PSIZE_O_INIT);
-   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_INIT].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_INIT].c_Payload.resize(2);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_INIT].c_Payload[0].Set("TYPE", 2, false);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_INIT].c_Payload[1].Set("CIRCUIT", 4, false);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_VALUE].Set("VALUE", 0, "CH", SIP_PSIZE_O_VALUE);
-   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_VALUE].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_VALUE].c_Payload.resize(1);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_VALUE].c_Payload[0].Set("VALUE", 4, true);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_FREQUENCY].Set("FREQUENCY", 0, "CH", SIP_PSIZE_O_FREQUENCY);
-   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_FREQUENCY].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_FREQUENCY].c_Payload.resize(1);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_FREQUENCY].c_Payload[0].Set("FREQUENCY_mHz", 4, false);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_STATE].Set("STATE", 0, "CH", SIP_PSIZE_O_STATE);
-   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_STATE].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_STATE].c_Payload.resize(2);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_STATE].c_Payload[0].Set("ONOFF", 1, false);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_STATE].c_Payload[1].Set("OVERCURRENT", 1, false);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CURRENT].Set("CURRENT", 0, "CH", SIP_PSIZE_O_CURRENT);
-   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CURRENT].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CURRENT].c_Payload.resize(1);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CURRENT].c_Payload[0].Set("CURRENT_uA", 4, true);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_VOLTAGE].Set("VOLTAGE", 0, "CH", SIP_PSIZE_O_VOLTAGE);
-   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_VOLTAGE].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_VOLTAGE].c_Payload.resize(1);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_VOLTAGE].c_Payload[0].Set("VOLTAGE_mV", 4, true);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CONTROL_PARAMETER].Set("CONTROL_PARAMETER", 0, "CH",
                                                                         SIP_PSIZE_O_CONTROL_PARAMETER);
-   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CONTROL_PARAMETER].c_Payload.SetLength(5);
+   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CONTROL_PARAMETER].c_Payload.resize(5);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CONTROL_PARAMETER].c_Payload[0].Set("SETPOINT", 4, true);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CONTROL_PARAMETER].c_Payload[1].Set("P_VALUE_mKR", 4, true);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CONTROL_PARAMETER].c_Payload[2].Set("I_VALUE_mS", 2, true);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CONTROL_PARAMETER].c_Payload[3].Set("D_VALUE_mS", 2, true);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_CONTROL_PARAMETER].c_Payload[4].Set("SAMPLE_TIME_mS", 2, true);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_EVENT_ERROR].Set("EVENT_ERROR", 0, "CH", SIP_PSIZE_O_EVENT_ERROR);
-   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_EVENT_ERROR].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_EVENT_ERROR].c_Payload.resize(1);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_EVENT_ERROR].c_Payload[0].Set("VALUE", 2, false);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_STATE_RESET].Set("STATE_RESET", 0, "CH", 0);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_OVERCURRENT_TESTMODE].Set("OVERCURRENT_TESTMODE", 0, "CH",
                                                                            SIP_PSIZE_O_OVERCURRENT_TESTMODE);
-   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_OVERCURRENT_TESTMODE].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_OVERCURRENT_TESTMODE].c_Payload.resize(1);
    hmc_Services[SIP_ASA_OUTPUT].c_Asns[SIP_ASN_O_OVERCURRENT_TESTMODE].c_Payload[0].Set("FUNCTION", 1, false);
 
    hmc_Services[SIP_ASA_SERIAL].c_ShortName = "SERIAL";
-   hmc_Services[SIP_ASA_SERIAL].c_Asns.SetLength(SIP_ASN_SER_CLOSE + 1);
+   hmc_Services[SIP_ASA_SERIAL].c_Asns.resize(SIP_ASN_SER_CLOSE + 1);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_INIT].Set("INIT", 0, "CH", SIP_PSIZE_SER_INIT);
-   hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_INIT].c_Payload.SetLength(3);
+   hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_INIT].c_Payload.resize(3);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_INIT].c_Payload[0].Set("BITRATE", 4, false);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_INIT].c_Payload[1].Set("MODE", 2, false);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_INIT].c_Payload[2].Set("STOPBITS", 1, false);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_RX_BUFFER].Set("RX_BUFFER", 0, "CH", SIP_PSIZE_SER_RX_BUFFER);
-   hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_RX_BUFFER].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_RX_BUFFER].c_Payload.resize(2);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_RX_BUFFER].c_Payload[0].Set("NUM_BYTES", 1, false);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_RX_BUFFER].c_Payload[1].Set("DATA", 8, false);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_TX_BUFFER].Set("TX_BUFFER", 0, "CH", SIP_PSIZE_SER_TX_BUFFER);
-   hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_TX_BUFFER].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_TX_BUFFER].c_Payload.resize(2);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_TX_BUFFER].c_Payload[0].Set("NUM_BYTES", 1, false);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_TX_BUFFER].c_Payload[1].Set("DATA", 8, false);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_CLEAR_RX_BUFFER].Set("CLEAR_RX_BUFFER", 0, "CH", 0);
    hmc_Services[SIP_ASA_SERIAL].c_Asns[SIP_ASN_SER_CLOSE].Set("CLOSE", 0, "CH", 0);
 
    hmc_Services[SIP_ASA_CAN].c_ShortName = "CAN";
-   hmc_Services[SIP_ASA_CAN].c_Asns.SetLength(SIP_ASN_CAN_CLOSE + 1);
+   hmc_Services[SIP_ASA_CAN].c_Asns.resize(SIP_ASN_CAN_CLOSE + 1);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_INIT].Set("INIT", 0, "CH", SIP_PSIZE_CAN_INIT);
-   hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_INIT].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_INIT].c_Payload.resize(2);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_INIT].c_Payload[0].Set("BITRATE_bpS", 4, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_BUS_STATE].Set("BUS_STATE", 0, "CH", SIP_PSIZE_CAN_BUS_STATE);
-   hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_BUS_STATE].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_BUS_STATE].c_Payload.resize(1);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_BUS_STATE].c_Payload[0].Set("STATE", 1, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_ID].Set("RX_ID", 0, "CH", SIP_PSIZE_CAN_RX_ID);
-   hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_ID].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_ID].c_Payload.resize(2);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_ID].c_Payload[0].Set("ID", 4, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_ID].c_Payload[1].Set("XTD", 1, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_MESSAGE].Set("RX_MESSAGE", 0, "CH", SIP_PSIZE_CAN_RX_MESSAGE);
-   hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_MESSAGE].c_Payload.SetLength(5);
+   hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_MESSAGE].c_Payload.resize(5);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_MESSAGE].c_Payload[0].Set("VALID", 1, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_MESSAGE].c_Payload[1].Set("ID", 4, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_MESSAGE].c_Payload[2].Set("XTD", 1, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_MESSAGE].c_Payload[3].Set("DLC", 1, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_RX_MESSAGE].c_Payload[4].Set("DATA", 8, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_TX_MESSAGE].Set("TX_MESSAGE", 0, "CH", SIP_PSIZE_CAN_TX_MESSAGE);
-   hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_TX_MESSAGE].c_Payload.SetLength(4);
+   hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_TX_MESSAGE].c_Payload.resize(4);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_TX_MESSAGE].c_Payload[0].Set("ID", 4, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_TX_MESSAGE].c_Payload[1].Set("XTD", 1, false);
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_TX_MESSAGE].c_Payload[2].Set("DLC", 1, false);
@@ -2596,9 +2596,9 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_CAN].c_Asns[SIP_ASN_CAN_CLOSE].Set("CLOSE", 0, "CH", 0);
 
    hmc_Services[SIP_ASA_MEMORY].c_ShortName = "MEMORY";
-   hmc_Services[SIP_ASA_MEMORY].c_Asns.SetLength(SIP_ASN_MEM_TEST_FAILURE_DETAILS + 1);
+   hmc_Services[SIP_ASA_MEMORY].c_Asns.resize(SIP_ASN_MEM_TEST_FAILURE_DETAILS + 1);
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_TEST].Set("TEST", 0, "CH", SIP_PSIZE_MEM_TEST);
-   hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_TEST].c_Payload.SetLength(5);
+   hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_TEST].c_Payload.resize(5);
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_TEST].c_Payload[0].Set("TYPE", 1, false);
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_TEST].c_Payload[1].Set("CONNECTION", 1, false);
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_TEST].c_Payload[2].Set("START", 4, false);
@@ -2608,7 +2608,7 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_INFO].c_Asps[SIP_ASP_MEM_INFO_FLASH_LOADER_VERSION].Set(
       "FLASH_LOADER_VERSION", SIP_PSIZE_MEM_INFO_FLASH_LOADER_VERSION);
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_INFO].c_Asps[SIP_ASP_MEM_INFO_FLASH_LOADER_VERSION].c_Payload.
-   SetLength(4);
+   resize(4);
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_INFO].c_Asps[SIP_ASP_MEM_INFO_FLASH_LOADER_VERSION].c_Payload[0].Set(
       "MAJORVERSION", 1, false);
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_INFO].c_Asps[SIP_ASP_MEM_INFO_FLASH_LOADER_VERSION].c_Payload[1].Set(
@@ -2622,21 +2622,21 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_TEST_FAILURE_DETAILS].c_Asps[SIP_ASP_MEM_TEST_FAILURE_DETAILS_GET].
    Set("GET", SIP_PSIZE_MEM_TEST_FAILURE_DETAILS_GET);
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_TEST_FAILURE_DETAILS].c_Asps[SIP_ASP_MEM_TEST_FAILURE_DETAILS_GET].
-   c_Payload.SetLength(2);
+   c_Payload.resize(2);
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_TEST_FAILURE_DETAILS].c_Asps[SIP_ASP_MEM_TEST_FAILURE_DETAILS_GET].
    c_Payload[0].Set("FAILURE_REASON", 1, false);
    hmc_Services[SIP_ASA_MEMORY].c_Asns[SIP_ASN_MEM_TEST_FAILURE_DETAILS].c_Asps[SIP_ASP_MEM_TEST_FAILURE_DETAILS_GET].
    c_Payload[1].Set("ADDRESS", 4, false);
 
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_ShortName = "IVA";
-   hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns.SetLength(SIP_ASN_IVA_DEFAULTS + 1);
+   hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns.resize(SIP_ASN_IVA_DEFAULTS + 1);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_SERVICE].Set("SERVICE",
                                                                                SIP_ASP_IVA_SERVICE_OBJECT_DICTIONARY_VERSION +
                                                                                1);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_SERVICE].c_Asps[SIP_ASP_IVA_SERVICE_LOGON].Set(
       "LOGON", SIP_PSIZE_IVA_SERVICE_LOGON);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_SERVICE].c_Asps[SIP_ASP_IVA_SERVICE_LOGON].c_Payload.
-   SetLength(3);
+   resize(3);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_SERVICE].c_Asps[SIP_ASP_IVA_SERVICE_LOGON].c_Payload[0
    ].Set("CHECKSUM", 2, false);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_SERVICE].c_Asps[SIP_ASP_IVA_SERVICE_LOGON].c_Payload[1
@@ -2648,44 +2648,44 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_SERVICE].c_Asps[
       SIP_ASP_IVA_SERVICE_OBJECT_DICTIONARY_VERSION].Set("OD_VERSION", SIP_PSIZE_IVA_SERVICE_OBJECT_DICTIONARY_VERSION);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_SERVICE].c_Asps[
-      SIP_ASP_IVA_SERVICE_OBJECT_DICTIONARY_VERSION].c_Payload.SetLength(1);
+      SIP_ASP_IVA_SERVICE_OBJECT_DICTIONARY_VERSION].c_Payload.resize(1);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_SERVICE].c_Asps[
       SIP_ASP_IVA_SERVICE_OBJECT_DICTIONARY_VERSION].c_Payload[0].Set("VERSION", 2, false);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_CHECKSUM_CHECK].Set("CHECKSUM_CHECK", 0, "LIST",
                                                                                       SIP_PSIZE_IVA_CHECKSUM_CHECK);
-   hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_CHECKSUM_CHECK].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_CHECKSUM_CHECK].c_Payload.resize(1);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_CHECKSUM_CHECK].c_Payload[0].Set("OK", 1, false);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_CHECKSUM_UPDATE].Set("CHECKSUM_UPDATE", 0, "LIST", 0);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_DEFAULTS].Set("DEFAULTS", 0, "LIST",
                                                                                 SIP_PSIZE_IVA_DEFAULTS);
-   hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_DEFAULTS].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_DEFAULTS].c_Payload.resize(1);
    hmc_Services[SIP_ASA_INDEX_VARIABLE_ACCESS].c_Asns[SIP_ASN_IVA_DEFAULTS].c_Payload[0].Set("SET_INDEX", 1, false);
 
    hmc_Services[SIP_ASA_TEMPORARY_SERVICE].c_ShortName = "TEMPORARY";
-   hmc_Services[SIP_ASA_TEMPORARY_SERVICE].c_Asns.SetLength(0);
+   hmc_Services[SIP_ASA_TEMPORARY_SERVICE].c_Asns.resize(0);
 
    hmc_Services[SIP_ASA_SUPERVISOR].c_ShortName = "SUPERVISOR";
-   hmc_Services[SIP_ASA_SUPERVISOR].c_Asns.SetLength(SIP_ASN_SSV_ERROR_REACTION + 1);
+   hmc_Services[SIP_ASA_SUPERVISOR].c_Asns.resize(SIP_ASN_SSV_ERROR_REACTION + 1);
    hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_INIT_VOLTAGE].Set("INIT_VOLTAGE", 0, "CH",
                                                                          SIP_PSIZE_SSV_INIT_VOLTAGE);
-   hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_INIT_VOLTAGE].c_Payload.SetLength(3);
+   hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_INIT_VOLTAGE].c_Payload.resize(3);
    hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_INIT_VOLTAGE].c_Payload[0].Set("VOLTAGE_TYPE", 1, false);
    hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_INIT_VOLTAGE].c_Payload[1].Set("VOLTAGE_MAX", 4, false);
    hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_INIT_VOLTAGE].c_Payload[2].Set("VOLTAGE_MIX", 4, false);
    hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_STATUS].Set("STATUS", 0, "CH", SIP_PSIZE_SSV_STATUS);
-   hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_STATUS].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_STATUS].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_STATUS].c_Payload[0].Set("STATUS", 4, false);
    hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_TEST_TIME].Set("TEST_TIME", 0, "CH", 0);
    hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_ERROR_REACTION].Set("ERROR_REACTION", 0, "CH",
                                                                            SIP_PSIZE_SSV_ERROR_REACTION);
-   hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_ERROR_REACTION].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_ERROR_REACTION].c_Payload.resize(1);
    hmc_Services[SIP_ASA_SUPERVISOR].c_Asns[SIP_ASN_SSV_ERROR_REACTION].c_Payload[0].Set("REACTION", 1, false);
 
    hmc_Services[SIP_ASA_REAL_TIME_CLOCK].c_ShortName = "REAL_TIME_CLOCK";
-   hmc_Services[SIP_ASA_REAL_TIME_CLOCK].c_Asns.SetLength(SIP_ASN_RTC_TIME_DATE + 1);
+   hmc_Services[SIP_ASA_REAL_TIME_CLOCK].c_Asns.resize(SIP_ASN_RTC_TIME_DATE + 1);
    hmc_Services[SIP_ASA_REAL_TIME_CLOCK].c_Asns[SIP_ASN_RTC_TIME_DATE].Set("TIME_DATE", 0, "CH",
                                                                            SIP_PSIZE_RTC_TIME_DATE);
-   hmc_Services[SIP_ASA_REAL_TIME_CLOCK].c_Asns[SIP_ASN_RTC_TIME_DATE].c_Payload.SetLength(6);
+   hmc_Services[SIP_ASA_REAL_TIME_CLOCK].c_Asns[SIP_ASN_RTC_TIME_DATE].c_Payload.resize(6);
    hmc_Services[SIP_ASA_REAL_TIME_CLOCK].c_Asns[SIP_ASN_RTC_TIME_DATE].c_Payload[0].Set("SECOND", 1, false);
    hmc_Services[SIP_ASA_REAL_TIME_CLOCK].c_Asns[SIP_ASN_RTC_TIME_DATE].c_Payload[1].Set("MINUTE", 1, false);
    hmc_Services[SIP_ASA_REAL_TIME_CLOCK].c_Asns[SIP_ASN_RTC_TIME_DATE].c_Payload[2].Set("HOUR", 1, false);
@@ -2694,41 +2694,41 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
    hmc_Services[SIP_ASA_REAL_TIME_CLOCK].c_Asns[SIP_ASN_RTC_TIME_DATE].c_Payload[5].Set("YEAR", 1, false);
 
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_ShortName = "BACKGROUND_FUNCTION";
-   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns.SetLength(SIP_ASN_BGF_PARAMETER + 1);
+   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns.resize(SIP_ASN_BGF_PARAMETER + 1);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_START].Set("START", 0, "CH", SIP_PSIZE_BGF_START);
-   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_START].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_START].c_Payload.resize(1);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_START].c_Payload[0].Set("PARAMETER", 12, false);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_STOP].Set("STOP", 0, "CH", SIP_PSIZE_BGF_STOP);
-   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_STOP].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_STOP].c_Payload.resize(2);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_STOP].c_Payload[0].Set("STATUS", 1, false);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_STOP].c_Payload[1].Set("RESULT", 31, false);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_STATUS].Set("STATUS", 0, "CH", SIP_PSIZE_BGF_STATUS);
-   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_STATUS].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_STATUS].c_Payload.resize(1);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_STATUS].c_Payload[0].Set("DATA", 4, false);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_SETUP].Set("SETUP", SIP_ASP_BGF_SETUP_COUNT + 1);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_SETUP].c_Asps[SIP_ASP_BGF_SETUP_COUNT].Set("COUNT",
                                                                                                            SIP_PSIZE_BGF_SETUP_COUNT);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_SETUP].c_Asps[SIP_ASP_BGF_SETUP_COUNT].c_Payload.
-   SetLength(1);
+   resize(1);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_SETUP].c_Asps[SIP_ASP_BGF_SETUP_COUNT].c_Payload[0].Set(
       "COUNT", 1, false);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_NAME].Set("NAME", 0, "CH", SIP_PSIZE_BGF_NAME);
-   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_NAME].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_NAME].c_Payload.resize(1);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_NAME].c_Payload[0].Set("NAME_OF_FUNCTION", 22, false);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_PARAMETER].Set("PARAMETER", 0, "CH",
                                                                                SIP_PSIZE_BGF_PARAMETER);
-   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_PARAMETER].c_Payload.SetLength(1);
+   hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_PARAMETER].c_Payload.resize(1);
    hmc_Services[SIP_ASA_BACKGROUND_FUNCTION].c_Asns[SIP_ASN_BGF_PARAMETER].c_Payload[0].Set("PARAMETERS", 92, false);
 
    hmc_Services[SIP_ASA_ETHERNET].c_ShortName = "ETHERNET";
-   hmc_Services[SIP_ASA_ETHERNET].c_Asns.SetLength(SIP_ASN_ETH_STATE + 1);
+   hmc_Services[SIP_ASA_ETHERNET].c_Asns.resize(SIP_ASN_ETH_STATE + 1);
    hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_INIT].Set("INIT", 0, "CH", SIP_PSIZE_ETH_INIT);
-   hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_INIT].c_Payload.SetLength(2);
+   hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_INIT].c_Payload.resize(2);
    hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_INIT].c_Payload[0].Set("SPEED", 1, false);
    hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_INIT].c_Payload[1].Set("DUPLEX", 1, false);
    hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_CLOSE].Set("CLOSE", 0, "CH", 0);
    hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_STATE].Set("STATE", 0, "CH", SIP_PSIZE_ETH_STATE);
-   hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_STATE].c_Payload.SetLength(4);
+   hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_STATE].c_Payload.resize(4);
    hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_STATE].c_Payload[0].Set("LINK_STATE", 1, false);
    hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_STATE].c_Payload[1].Set("SPEED", 1, false);
    hmc_Services[SIP_ASA_ETHERNET].c_Asns[SIP_ASN_ETH_STATE].c_Payload[2].Set("DUPLEX", 1, false);
@@ -2738,7 +2738,7 @@ void C_CanMonProtocolShipIpIva::hm_InitServiceTable(void)
 //----------------------------------------------------------------------------------------------------------------------
 
 C_SclString C_CanMonProtocolShipIpIva::m_SipDecodeData(
-   const C_SclDynamicArray<C_CanMonProtocolSipPayload> & orc_Payload, const uint8_t ou8_NumBytesInPayload,
+   const QList<C_CanMonProtocolSipPayload> & orc_Payload, const uint8_t ou8_NumBytesInPayload,
    const uint8_t * const opu8_Payload) const
 {
    //decode opu8_Payload
@@ -2746,7 +2746,7 @@ C_SclString C_CanMonProtocolShipIpIva::m_SipDecodeData(
    uint16_t u16_Offset = 0U;
    C_SclString c_Text;
 
-   for (u8_Payload = 0U; u8_Payload < orc_Payload.GetLength(); u8_Payload++)
+   for (u8_Payload = 0U; u8_Payload < orc_Payload.size(); u8_Payload++)
    {
       //do we have enough data ?
       if ((u16_Offset + orc_Payload[u8_Payload].u8_Size) <= ou8_NumBytesInPayload)
@@ -2785,23 +2785,23 @@ C_SclString C_CanMonProtocolShipIpIva::m_SipDecodeData(
 //\param[out] oppc_Payload             address of pointer to payload description
 C_SclString C_CanMonProtocolShipIpIva::m_SipDecodeSfFfReadWriteHeader(const uint8_t ou8_Asa, const uint8_t ou8_Asn,
                                                                       const uint8_t ou8_Asp,
-                                                                      C_SclDynamicArray<C_CanMonProtocolSipPayload> ** const oppc_Payload)
+                                                                      QList<C_CanMonProtocolSipPayload> ** const oppc_Payload)
 const
 {
    C_SclString c_Text;
-   static C_SclDynamicArray<C_CanMonProtocolSipPayload> hc_Dummy; //dummy with no entries
+   static QList<C_CanMonProtocolSipPayload> hc_Dummy; //dummy with no entries
 
    (*oppc_Payload) = &hc_Dummy;
-   if (ou8_Asa < hmc_Services.GetLength())
+   if (ou8_Asa < hmc_Services.size())
    {
       //we know the ASA !
       c_Text = " " + hmc_Services[ou8_Asa].c_ShortName + ".";
-      if (ou8_Asn < hmc_Services[ou8_Asa].c_Asns.GetLength())
+      if (ou8_Asn < hmc_Services[ou8_Asa].c_Asns.size())
       {
          //we even know the ASN !
          c_Text += (hmc_Services[ou8_Asa].c_Asns[ou8_Asn].c_ShortName + ".");
          //are there ASPs ?
-         if (hmc_Services[ou8_Asa].c_Asns[ou8_Asn].c_Asps.GetLength() == 0)
+         if (hmc_Services[ou8_Asa].c_Asns[ou8_Asn].c_Asps.size() == 0)
          {
             //no, just channel numbers:
             c_Text += (hmc_Services[ou8_Asa].c_Asns[ou8_Asn].c_AspPrefix + m_GetByteAsStringFormat(ou8_Asp));
@@ -2810,7 +2810,7 @@ const
          else
          {
             //does the ASP exist ?
-            if (ou8_Asp < hmc_Services[ou8_Asa].c_Asns[ou8_Asn].c_Asps.GetLength())
+            if (ou8_Asp < hmc_Services[ou8_Asa].c_Asns[ou8_Asn].c_Asps.size())
             {
                c_Text += hmc_Services[ou8_Asa].c_Asns[ou8_Asn].c_Asps[ou8_Asp].c_ShortName;
                (*oppc_Payload) = &hmc_Services[ou8_Asa].c_Asns[ou8_Asn].c_Asps[ou8_Asp].c_Payload;

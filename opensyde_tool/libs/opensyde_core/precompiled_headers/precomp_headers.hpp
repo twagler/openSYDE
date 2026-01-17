@@ -38,11 +38,26 @@
 #include <iostream>
 #include <fstream>
 
+#include <QtGlobal>
+#include <QFileInfo>
+#include <QDir>
+#include <QDateTime>
+
 #include "C_SclString.hpp"
 #include "C_OscUtils.hpp"
 
 #endif
 
+#endif
+
+#if __cplusplus >= 201103L //C++11 ?
+#define TGL_UTIL_FUNC_ID __func__
+#else
+#ifdef __BORLANDC__
+#define TGL_UTIL_FUNC_ID __FUNC__
+#else
+#define TGL_UTIL_FUNC_ID __FUNCTION__
+#endif
 #endif
 
 #endif

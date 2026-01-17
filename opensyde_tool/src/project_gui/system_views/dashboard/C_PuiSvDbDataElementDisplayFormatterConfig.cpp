@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Helper class for formatter to have the information about an invalid formatter config on initialization
@@ -11,7 +11,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscUtils.hpp"
 #include "C_SdNdeDpContentUtil.hpp"
 #include "C_PuiSvDbDataElementDisplayFormatterConfig.hpp"
@@ -126,7 +126,7 @@ QString C_PuiSvDbDataElementDisplayFormatterConfig::GetSingleValueContentFormatt
       else
       {
          // String should not happen on single value read element
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
    else if (this->q_IsValid == true)
@@ -167,7 +167,7 @@ QString C_PuiSvDbDataElementDisplayFormatterConfig::GetSingleValueContentFormatt
          break;
       case C_PuiSvDbDataElementDisplayFormatter::eSTRING:
          // String should not happen on single value read element
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       default:
          break;

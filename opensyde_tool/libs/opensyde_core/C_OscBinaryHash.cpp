@@ -13,13 +13,12 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
+#include <QCoreApplication>
 #include "C_OscBinaryHash.hpp"
-#include "TglFile.hpp"
 #include "C_Md5Checksum.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_core;
-using namespace stw::tgl;
 using namespace stw::md5;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -53,7 +52,7 @@ C_OscBinaryHash::C_OscBinaryHash(void)
 //----------------------------------------------------------------------------------------------------------------------
 stw::scl::C_SclString C_OscBinaryHash::h_CreateBinaryHash(void)
 {
-   const stw::scl::C_SclString c_ExePath = stw::tgl::TglGetExePath();
+   const stw::scl::C_SclString c_ExePath = QCoreApplication::applicationFilePath().toStdString();
 
    if (h_GetHashBool() == false)
    {

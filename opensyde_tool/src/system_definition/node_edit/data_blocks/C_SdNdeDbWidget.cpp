@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing an application in the application list (implementation)
@@ -225,7 +225,7 @@ void C_SdNdeDbWidget::CheckProcessIdError(void) const
 
    if (pc_Node != NULL)
    {
-      tgl_assert(pc_Node->CheckApplicationProcessIdValid(this->mu32_ApplicationIndex, q_Valid) == C_NO_ERR);
+      Q_ASSERT(pc_Node->CheckApplicationProcessIdValid(this->mu32_ApplicationIndex, q_Valid) == C_NO_ERR);
       c_Info =
          C_SdUtil::h_InitUsedIdsString(c_UsedIds, pc_Node->c_Properties.c_Name.c_str(), "node");
    }
@@ -386,7 +386,7 @@ void C_SdNdeDbWidget::m_OnEdit(void)
          pc_Dialog->ApplyNewData(c_Copy);
 
          // update application and Datapools
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->SetApplication(this->mu32_NodeIndex, this->mu32_ApplicationIndex,
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetApplication(this->mu32_NodeIndex, this->mu32_ApplicationIndex,
                                                                     c_Copy) == C_NO_ERR);
          pc_Dialog->HandleDataPools(this->mu32_ApplicationIndex);
 
@@ -532,7 +532,7 @@ void C_SdNdeDbWidget::m_UnassignAllAssociatedDataPools(void) const
          if ((rc_DataPool.s32_RelatedDataBlockIndex >= 0) &&
              (static_cast<uint32_t>(rc_DataPool.s32_RelatedDataBlockIndex) == this->mu32_ApplicationIndex))
          {
-            tgl_assert(C_PuiSdHandler::h_GetInstance()->UnassignDataPoolApplication(this->mu32_NodeIndex,
+            Q_ASSERT(C_PuiSdHandler::h_GetInstance()->UnassignDataPoolApplication(this->mu32_NodeIndex,
                                                                                     u32_ItDataPool) == C_NO_ERR);
          }
       }

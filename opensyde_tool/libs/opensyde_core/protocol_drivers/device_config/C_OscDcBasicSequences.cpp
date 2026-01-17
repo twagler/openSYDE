@@ -13,8 +13,9 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
+#include <QElapsedTimer>
+#include <QThread>
 #include "stwerrors.hpp"
-#include "TglTime.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscDcBasicSequences.hpp"
 
@@ -22,7 +23,7 @@
 using namespace stw::opensyde_core;
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -193,7 +194,8 @@ int32_t C_OscDcBasicSequences::ScanEnterFlashloader(const uint32_t ou32_Flashloa
    }
 
    // Always continue with broadcast. If previous steps did not work, user can do the manual reset while we broadcast.
-   const uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
 
    // If no devices answered, give hint about "reset your device NOW"
    if (c_Results.size() == 0)
@@ -222,9 +224,9 @@ int32_t C_OscDcBasicSequences::ScanEnterFlashloader(const uint32_t ou32_Flashloa
          break;
       }
 
-      TglSleep(5);
+      QThread::msleep(5);
    }
-   while (TglGetTickCount() < (u32_WaitTime + u32_StartTime));
+   while (c_Timer.hasExpired(u32_WaitTime) == false);
 
    if (this->mpc_CanDispatcher != NULL)
    {
@@ -344,8 +346,37 @@ int32_t C_OscDcBasicSequences::ScanGetInfo(void)
             c_UniqueIdIndices.push_back(u32_ResultCounter);
          }
       }
+      if (s32_Return == C_NO_ERR)
+      {
+         QElapsedTimer c_Timer;
+         c_Timer.start();
+         uint32_t u32_WaitTime;
 
-      tgl_assert((c_ReadSnResult.size() + c_ReadSnResultExt.size()) == c_DeviceInfoResult.size());
+         // Get the minimum wait time of the concrete routing node
+         Q_ASSERT(this->GetMinimumFlashloaderResetWaitTime(
+                       C_OscComDriverFlash::eNO_CHANGES_CAN,
+                       this->mc_CurrentNode,
+                       u32_WaitTime) == C_NO_ERR);
+
+         do
+         {
+            s32_Return = this->mpc_ComDriver->SendStwSendFlash(this->mc_CurrentNode);
+
+            if (s32_Return != C_NO_ERR)
+            {
+               (void)m_ReportProgress(eACTIVATE_FLASHLOADER_XFL_BC_FLASH_ERROR, s32_Return, 50U,
+                                      mc_CurrentNode,
+                                      "Send \"FLASH\" broadcast failed.");
+               s32_Return = C_COM;
+               break;
+            }
+
+            QThread::msleep(5);
+         }
+         while (c_Timer.hasExpired(u32_WaitTime) == false);
+      }
+
+      Q_ASSERT((c_ReadSnResult.size() + c_ReadSnResultExt.size()) == c_DeviceInfoResult.size());
 
       if (s32_Return == C_NO_ERR)
       {
@@ -376,7 +407,7 @@ int32_t C_OscDcBasicSequences::ScanGetInfo(void)
                const uint32_t u32_ReadSnrResultExtIndex =
                   u32_DeviceInfoIndex - static_cast<uint32_t>(c_ReadSnResult.size());
                // all above must be the extended SNR results
-               tgl_assert(u32_ReadSnrResultExtIndex < c_ReadSnResultExt.size());
+               Q_ASSERT(u32_ReadSnrResultExtIndex < c_ReadSnResultExt.size());
                c_CurSenderId = c_ReadSnResultExt[u32_ReadSnrResultExtIndex].c_SenderId;
             }
 

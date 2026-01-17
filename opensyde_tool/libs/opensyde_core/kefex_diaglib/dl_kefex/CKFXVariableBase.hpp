@@ -2,7 +2,7 @@
 #define CKFXVARIABLEBASEHPP
 
 #include "stwtypes.hpp"
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 #include "C_SclString.hpp"
 #include "DiagLib_config.hpp"
 
@@ -114,8 +114,8 @@ private:
 
    uint8_t m_GetEntryTypeByArrayType(void) const;
 
-   stw::scl::C_SclDynamicArray<uint8_t> mc_MinValue;
-   stw::scl::C_SclDynamicArray<uint8_t> mc_MaxValue;
+   QList<uint8_t> mc_MinValue;
+   QList<uint8_t> mc_MaxValue;
 
 public:
    C_KFXVariableBase(void);
@@ -155,12 +155,12 @@ public:
    void SetNumericMinInArray(const uint32_t ou32_ArrayIndex, const int64_t os64_Min);
    void SetNumericMaxInArray(const uint32_t ou32_ArrayIndex, const int64_t os64_Max);
    //direct access to min/max array:
-   const stw::scl::C_SclDynamicArray<uint8_t> & GetMinReference(void) const;
-   const stw::scl::C_SclDynamicArray<uint8_t> & GetMaxReference(void) const;
-   stw::scl::C_SclDynamicArray<uint8_t> & GetMinReference(void);
-   stw::scl::C_SclDynamicArray<uint8_t> & GetMaxReference(void);
+   const QList<uint8_t> & GetMinReference(void) const;
+   const QList<uint8_t> & GetMaxReference(void) const;
+   QList<uint8_t> & GetMinReference(void);
+   QList<uint8_t> & GetMaxReference(void);
 
-   stw::scl::C_SclDynamicArray<stw::scl::C_SclDynamicArray<uint8_t> > aau8_Defaults;
+   QList<QList<uint8_t> > aau8_Defaults;
 
    uint8_t u8_ScalingDigits;
    int32_t s32_ScalingFactor;

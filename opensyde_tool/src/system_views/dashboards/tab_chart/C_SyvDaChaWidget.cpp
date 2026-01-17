@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing a dashboard with a specific chart
@@ -17,7 +17,7 @@
 
 #include "stwerrors.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_Uti.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_OscLoggingHandler.hpp"
@@ -392,7 +392,7 @@ void C_SyvDaChaWidget::UpdateData(void)
       C_PuiSvDbTabChart c_Box = this->mpc_Ui->pc_ChartWidget->GetData();
       c_Box.e_DisplayStyle = C_PuiSvDbWidgetBase::eOPENSYDE;
 
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                      this->mu32_DashboardIndex,
                                                                      static_cast<uint32_t>(this->ms32_Index),
                                                                      &c_Box, this->me_Type) == C_NO_ERR);
@@ -588,11 +588,11 @@ void C_SyvDaChaWidget::m_LoadChartData(void)
 {
    const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
-   tgl_assert(pc_View != NULL);
+   Q_ASSERT(pc_View != NULL);
    if (pc_View != NULL)
    {
       const C_PuiSvDashboard * const pc_Dashboard = pc_View->GetDashboard(this->mu32_DashboardIndex);
-      tgl_assert(pc_Dashboard != NULL);
+      Q_ASSERT(pc_Dashboard != NULL);
       if (pc_Dashboard != NULL)
       {
          uint32_t u32_ElementConfigCounter;
@@ -738,7 +738,7 @@ void C_SyvDaChaWidget::m_AddNewDataElement(void)
                      c_Scaling.c_Unit = pc_Element->c_Unit.c_str();
                   }
 
-                  tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(
+                  Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(
                                 c_DataElements[u32_Counter]) == C_NO_ERR);
 
                   if (this->mpc_Ui->pc_ChartWidget->AddNewGraph(c_DataElements[u32_Counter], c_Scaling) != C_NO_ERR)
@@ -749,7 +749,7 @@ void C_SyvDaChaWidget::m_AddNewDataElement(void)
                   this->m_RegisterDataElementRail(c_DataElements[u32_Counter]);
 
                   // Apply to the project data
-                  tgl_assert(this->m_SetChangedChartData() == C_NO_ERR);
+                  Q_ASSERT(this->m_SetChangedChartData() == C_NO_ERR);
 
                   this->RegisterDataPoolElement(c_DataElements[u32_Counter], c_Scaling,
                                                 C_PuiSvDbDataElementDisplayFormatter());
@@ -797,7 +797,7 @@ void C_SyvDaChaWidget::m_RemoveDataElement(void)
          const C_PuiSvData * pc_View;
 
          // Apply to the project data
-         tgl_assert(this->m_SetChangedChartData() == C_NO_ERR);
+         Q_ASSERT(this->m_SetChangedChartData() == C_NO_ERR);
 
          this->RemoveDataPoolElement(c_ElementId);
 
@@ -809,7 +809,7 @@ void C_SyvDaChaWidget::m_RemoveDataElement(void)
              (c_ElementId.GetType() == C_PuiSvDbNodeDataPoolListElementId::eDATAPOOL_ELEMENT) &&
              (pc_View->CheckReadUsage(c_ElementId) == false))
          {
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(this->mu32_ViewIndex,
                                                                                c_ElementId) == C_NO_ERR);
          }
 
@@ -844,7 +844,7 @@ void C_SyvDaChaWidget::m_RemoveAllDataElements(void)
              (c_ElementId.GetIsValid() == true) &&
              (pc_View->CheckReadUsage(c_ElementId) == false))
          {
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(this->mu32_ViewIndex,
                                                                                c_ElementId) == C_NO_ERR);
          }
 
@@ -852,7 +852,7 @@ void C_SyvDaChaWidget::m_RemoveAllDataElements(void)
       }
 
       // Apply to the project data
-      tgl_assert(this->m_SetChangedChartData() == C_NO_ERR);
+      Q_ASSERT(this->m_SetChangedChartData() == C_NO_ERR);
 
       this->ClearDataPoolElements();
 
@@ -942,7 +942,7 @@ void C_SyvDaChaWidget::m_CallProperties(void)
             C_PuiSvDbNodeDataElementConfig c_Tmp;
 
             c_Tmp.c_ElementId = c_ElementId;
-            tgl_assert(c_ElementId == pc_Dialog->GetDataElementId());
+            Q_ASSERT(c_ElementId == pc_Dialog->GetDataElementId());
             c_Tmp.c_ElementScaling = pc_Dialog->GetScalingInformation();
             c_Tmp.c_DisplayFormatter = pc_Dialog->GetFormatterInformation();
             c_Tmp.c_DisplayName = pc_Dialog->GetDisplayName();
@@ -986,8 +986,8 @@ void C_SyvDaChaWidget::m_CallProperties(void)
 
             this->mpc_Ui->pc_ChartWidget->SetScaling(u32_ConfigIndex, c_WidgetName, c_Tmp.c_ElementScaling);
 
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            static_cast<uint32_t>(this->ms32_Index),
                                                                            &rc_Box,
@@ -1021,14 +1021,14 @@ int32_t C_SyvDaChaWidget::m_SetChangedChartData(void)
    {
       const C_PuiSvDbTabChart & rc_Data = this->mpc_Ui->pc_ChartWidget->GetData();
 
-      tgl_assert(rc_Data.c_DataPoolElementsActive.size() ==
+      Q_ASSERT(rc_Data.c_DataPoolElementsActive.size() ==
                  rc_Data.c_DataPoolElementsConfig.size());
-      tgl_assert(rc_Data.c_DataPoolElementsActive.size() ==
+      Q_ASSERT(rc_Data.c_DataPoolElementsActive.size() ==
                  rc_Data.c_DataPoolElementsColorIndex.size());
       for (uint32_t u32_ItEl = 0UL; u32_ItEl < rc_Data.c_DataPoolElementsConfig.size(); ++u32_ItEl)
       {
          const C_PuiSvDbNodeDataElementConfig & rc_Config = rc_Data.c_DataPoolElementsConfig[u32_ItEl];
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(rc_Config.c_ElementId) == C_NO_ERR);
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(rc_Config.c_ElementId) == C_NO_ERR);
       }
       s32_Retval = C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex, this->mu32_DashboardIndex,
                                                                        static_cast<uint32_t>(this->ms32_Index),
@@ -1120,7 +1120,7 @@ void C_SyvDaChaWidget::m_ManualRead(void)
 
       const int32_t s32_Return = this->GetDataPoolElementIndex(this->mu32_ManualOperationActionIndex, c_ElementId);
 
-      tgl_assert(s32_Return == C_NO_ERR);
+      Q_ASSERT(s32_Return == C_NO_ERR);
       if (s32_Return == C_NO_ERR)
       {
          //Always iterate to next element!

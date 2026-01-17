@@ -20,11 +20,11 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscParamSetHandler.hpp"
 #include "C_OscParamSetRawNodeFiler.hpp"
@@ -33,7 +33,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -822,7 +822,7 @@ int32_t C_OscDataDealerNvmSafe::NvmSafeReadParameterValues(const std::vector<C_O
                            bool q_DataPoolFound = false;
                            //Case 1: Data pool exists
                            //------------------------
-                           tgl_assert(c_AlreadyUsedDataPoolIndices.size() == c_InterpretedNode.c_DataPools.size());
+                           Q_ASSERT(c_AlreadyUsedDataPoolIndices.size() == c_InterpretedNode.c_DataPools.size());
                            for (uint32_t u32_ItCurrentDataPool = 0;
                                 (u32_ItCurrentDataPool < c_InterpretedNode.c_DataPools.size()) &&
                                 (s32_Retval == C_NO_ERR);
@@ -965,7 +965,7 @@ int32_t C_OscDataDealerNvmSafe::NvmSafeCreateCleanFileWithoutCrc(const C_SclStri
 {
    int32_t s32_Retval;
 
-   if (TglFileExists(orc_Path) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == false)
    {
       if (this->me_ParameterSetFileState == C_OscDataDealerNvmSafe::ePSFS_DATA_RESET)
       {
@@ -1327,7 +1327,7 @@ int32_t C_OscDataDealerNvmSafe::NvmSafeWriteParameterSetFile(const C_SclString &
                //when we get here we can be sure there was data for exactly one node contained in the file
                // as this is checked by NvmSafeReadFileWithCRC
                const C_OscParamSetRawNode * const pc_Node = this->mc_ImageFileHandler.GetRawDataForNode(0U);
-               tgl_assert(pc_Node != NULL);
+               Q_ASSERT(pc_Node != NULL);
                if (pc_Node != NULL)
                {
                   //write the actual values:

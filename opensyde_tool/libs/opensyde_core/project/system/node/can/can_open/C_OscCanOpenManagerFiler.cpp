@@ -11,8 +11,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
-#include "TglFile.hpp"
 #include "stwerrors.hpp"
 #include "C_SclString.hpp"
 #include "C_OscUtils.hpp"
@@ -24,7 +24,7 @@
 #include "C_OscCanOpenManagerFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::scl;
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -70,7 +70,7 @@ int32_t C_OscCanOpenManagerFiler::h_LoadFile(std::map<uint8_t, C_OscCanOpenManag
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading CANopen manager data");
@@ -195,7 +195,7 @@ int32_t C_OscCanOpenManagerFiler::h_LoadData(std::map<uint8_t, C_OscCanOpenManag
                c_NodeName = orc_XmlParser.SelectNodeNext("can-open-manager");
             }
             while ((c_NodeName == "can-open-manager") && (s32_Retval == C_NO_ERR));
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-managers");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-managers");
          }
          if (u32_ExpectedSize != orc_Config.size())
          {
@@ -205,7 +205,7 @@ int32_t C_OscCanOpenManagerFiler::h_LoadData(std::map<uint8_t, C_OscCanOpenManag
             orc_XmlParser.ReportErrorForAttributeContentAppendXmlContext("length", c_Tmp);
          }
       }
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-can-open-managers-config");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-can-open-managers-config");
    }
    return s32_Retval;
 }
@@ -237,21 +237,21 @@ int32_t C_OscCanOpenManagerFiler::h_SaveData(const std::map<uint8_t,
    int32_t s32_Retval = C_NO_ERR;
 
    //File version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
    orc_XmlParser.SetNodeContent(C_SclString::IntToStr(mhu16_FILE_VERSION_1));
    //Return
    orc_XmlParser.SelectNodeParent();
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("can-open-managers") == "can-open-managers");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("can-open-managers") == "can-open-managers");
    orc_XmlParser.SetAttributeUint32("length", static_cast<uint32_t>(orc_Config.size()));
    for (std::map<uint8_t,
                  C_OscCanOpenManagerInfo>::const_iterator c_It = orc_Config.begin();
         (c_It != orc_Config.end()) && (s32_Retval == C_NO_ERR); ++c_It)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("can-open-manager") == "can-open-manager");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("can-open-manager") == "can-open-manager");
       orc_XmlParser.SetAttributeUint32("interface", c_It->first);
       s32_Retval = C_OscCanOpenManagerFiler::mh_SaveManagerData(c_It->second, orc_XmlParser, orc_BasePath,
                                                                 opc_CreatedFiles, orc_NodeIndicesToNameMap);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-managers");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-managers");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -394,7 +394,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerProperties(C_OscCanOpenManagerIn
                                                                                      orc_Config.e_NmtErrorBehaviour);
             if (s32_Retval == C_NO_ERR)
             {
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
             }
             else
             {
@@ -403,7 +403,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerProperties(C_OscCanOpenManagerIn
             }
          }
       }
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-manager");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-manager");
    }
    return s32_Retval;
 }
@@ -432,7 +432,7 @@ void C_OscCanOpenManagerFiler::mh_SaveManagerProperties(const C_OscCanOpenManage
                                  C_OscCanOpenManagerFiler::mh_CanOpenManagerInfoTypeToString(orc_Config.
                                                                                              e_NmtErrorBehaviour));
    C_OscCanOpenManagerFiler::mh_SaveManagerSyncProperties(orc_Config, orc_XmlParser);
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-manager");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-manager");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -464,7 +464,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerSyncProperties(C_OscCanOpenManag
       }
       if (s32_Retval == C_NO_ERR)
       {
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
       }
    }
    else
@@ -490,7 +490,7 @@ void C_OscCanOpenManagerFiler::mh_SaveManagerSyncProperties(const C_OscCanOpenMa
    orc_XmlParser.SetAttributeBool("produce", orc_Config.q_ProduceSyncMessage);
    orc_XmlParser.SetAttributeUint32("cycle-period-us", orc_Config.u32_SyncCyclePeriodUs);
    orc_XmlParser.SetAttributeUint32("window-length-us", orc_Config.u32_SyncWindowLengthUs);
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -538,7 +538,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerSubDevices(std::map<C_OscCanInte
                      {
                         C_OscCanOpenManagerDeviceInfo c_DeviceInfo;
                         c_InterfaceId.u8_InterfaceNumber = static_cast<uint8_t>(u32_Value);
-                        tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-device");
+                        Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-device");
                         s32_Retval = C_OscCanOpenManagerFiler::mh_LoadManagerSubDevice(c_DeviceInfo, orc_XmlParser,
                                                                                        orc_BasePath);
                         if (s32_Retval == C_NO_ERR)
@@ -551,7 +551,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerSubDevices(std::map<C_OscCanInte
                c_NodeName = orc_XmlParser.SelectNodeNext("can-open-device");
             }
             while ((c_NodeName == "can-open-device") && (s32_Retval == C_NO_ERR));
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-devices");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-devices");
          }
          if (u32_ExpectedSize != orc_Config.size())
          {
@@ -561,7 +561,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerSubDevices(std::map<C_OscCanInte
             orc_XmlParser.ReportErrorForAttributeContentAppendXmlContext("length", c_Tmp);
          }
       }
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-manager");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-manager");
    }
    return s32_Retval;
 }
@@ -608,7 +608,7 @@ int32_t C_OscCanOpenManagerFiler::mh_SaveManagerSubDevices(const std::map<C_OscC
       orc_XmlParser.CreateAndSelectNodeChild("interface-id");
       orc_XmlParser.SetAttributeUint32("node-index", c_It->first.u32_NodeIndex);
       orc_XmlParser.SetAttributeUint32("interface-id", static_cast<uint32_t>(c_It->first.u8_InterfaceNumber));
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-device");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-device");
       if (c_FoundName != orc_NodeIndicesToNameMap.end())
       {
          s32_Retval = C_OscCanOpenManagerFiler::mh_SaveManagerSubDevice(c_It->second, orc_XmlParser, orc_BasePath,
@@ -622,9 +622,9 @@ int32_t C_OscCanOpenManagerFiler::mh_SaveManagerSubDevices(const std::map<C_OscC
                              "could not find index " + C_SclString::IntToStr(
                                 c_It->first.u32_NodeIndex) + " in parameter orc_NodeIndicesToNameMap");
       }
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-devices");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-devices");
    }
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-manager");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-manager");
    return s32_Retval;
 }
 
@@ -710,7 +710,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerSubDevice(C_OscCanOpenManagerDev
          s32_Retval = C_OscCanOpenManagerFiler::mh_LoadManagerMappedSignals(orc_Config.c_EdsFileMappableSignals,
                                                                             orc_XmlParser);
       }
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-device");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-device");
    }
    return s32_Retval;
 }
@@ -763,7 +763,7 @@ int32_t C_OscCanOpenManagerFiler::mh_SaveManagerSubDevice(const C_OscCanOpenMana
                                                                          opc_CreatedFiles, orc_NodeName,
                                                                          ou8_InterfaceNumber);
    C_OscCanOpenManagerFiler::mh_SaveManagerMappedSignals(orc_Config.c_EdsFileMappableSignals, orc_XmlParser);
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "can-open-device");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "can-open-device");
    return s32_Retval;
 }
 
@@ -789,7 +789,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerSubDeviceEdsPart(C_OscCanOpenMan
    if (s32_Retval == C_NO_ERR)
    {
       const C_SclString c_EdsFileName = orc_XmlParser.GetNodeContent();
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
 
       if (orc_BasePath.IsEmpty())
       {
@@ -798,8 +798,8 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerSubDeviceEdsPart(C_OscCanOpenMan
          if (s32_Retval == C_NO_ERR)
          {
             //Load EDS from string: not implemented
-            tgl_assert(false);
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+            Q_ASSERT(false);
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
          }
       }
       else
@@ -808,7 +808,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerSubDeviceEdsPart(C_OscCanOpenMan
          //EDS file is only loaded on demand, remember path:
          orc_Config.c_ProjectEdsFilePath = c_CompleteFileName;
 
-         if (TglFileExists(c_CompleteFileName) == false)
+         if ((QFileInfo(QString::fromStdString(*c_CompleteFileName.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_CompleteFileName.AsStdString())).isFile()) == false)
          {
             //Issue a warning if file does not exist. Do not consider a hard error. As long as the content is not needed
             // having the file available is not strictly required.
@@ -823,7 +823,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerSubDeviceEdsPart(C_OscCanOpenMan
       s32_Retval =
          orc_XmlParser.SelectNodeChildError("eds-original-file-name");
       orc_Config.c_OriginalEdsFileName = orc_XmlParser.GetNodeContent();
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
    }
    return s32_Retval;
 }
@@ -937,7 +937,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerMappedSignals(
                c_NodeName = orc_XmlParser.SelectNodeNext("mappable-signal");
             }
             while ((c_NodeName == "mappable-signal") && (s32_Retval == C_NO_ERR));
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "mappable-signals");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "mappable-signals");
          }
          if (u32_ExpectedSize != orc_Config.size())
          {
@@ -947,7 +947,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerMappedSignals(
             orc_XmlParser.ReportErrorForAttributeContentAppendXmlContext("length", c_Tmp);
          }
       }
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
    }
    return s32_Retval;
 }
@@ -970,9 +970,9 @@ void C_OscCanOpenManagerFiler::mh_SaveManagerMappedSignals(
    {
       orc_XmlParser.CreateAndSelectNodeChild("mappable-signal");
       C_OscCanOpenManagerFiler::mh_SaveManagerMappedSignal(*c_It, orc_XmlParser);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "mappable-signals");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "mappable-signals");
    }
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -998,7 +998,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerMappedSignal(C_OscCanOpenManager
       {
          s32_Retval = C_OscNodeCommFiler::h_LoadNodeComSignal(orc_Config.c_SignalData, orc_XmlParser, true);
       }
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "mappable-signal");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "mappable-signal");
    }
    if (s32_Retval == C_NO_ERR)
    {
@@ -1007,7 +1007,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerMappedSignal(C_OscCanOpenManager
       {
          s32_Retval = C_OscNodeDataPoolFiler::h_LoadDataPoolElement(orc_Config.c_DatapoolData, orc_XmlParser);
       }
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "mappable-signal");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "mappable-signal");
    }
    return s32_Retval;
 }
@@ -1025,10 +1025,10 @@ void C_OscCanOpenManagerFiler::mh_SaveManagerMappedSignal(const C_OscCanOpenMana
    orc_XmlParser.SetAttributeBool("is-auto-min-max-used", orc_Config.q_AutoMinMaxUsed);
    orc_XmlParser.CreateAndSelectNodeChild("com-signal");
    C_OscNodeCommFiler::h_SaveNodeComSignal(orc_Config.c_SignalData, orc_XmlParser, C_OscCanProtocol::eCAN_OPEN);
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "mappable-signal");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "mappable-signal");
    orc_XmlParser.CreateAndSelectNodeChild("data-element");
    C_OscNodeDataPoolFiler::h_SaveDataPoolElement(orc_Config.c_DatapoolData, orc_XmlParser, C_OscNodeDataPool::eCOM);
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "mappable-signal");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "mappable-signal");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

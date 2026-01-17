@@ -27,7 +27,7 @@
 #include "stwerrors.hpp"
 #include "C_SyvComPollingThreadDiag.hpp"
 
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
@@ -187,7 +187,7 @@ void C_SyvComPollingThreadDiag::run(void)
       ms32_Result = mpc_Dealer->NvmSafeReadParameterValues(this->mc_ListIds, &mu8_Nrc);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }

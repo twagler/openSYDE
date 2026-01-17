@@ -23,7 +23,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscSecurityEcdsa.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_core;
@@ -108,7 +108,7 @@ int32_t C_OscSecurityEcdsa::C_Ecdsa256Signature::GetAsDerString(C_SclString & or
 
                   //now fill in the data:
                   x_Result = i2d_ECDSA_SIG(pc_Signature, &pu8_Buffer);
-                  tgl_assert(x_Result == x_BufferSize);
+                  Q_ASSERT(x_Result == x_BufferSize);
 
                   //convert to string:
                   for (uint32_t u32_Character = 0U; u32_Character < static_cast<uint32_t>(x_BufferSize);
@@ -190,13 +190,13 @@ int32_t C_OscSecurityEcdsa::C_Ecdsa256Signature::SetFromDerString(const C_SclStr
                //operation successful -> place signature into output array
                int x_Result = BN_bn2bin(pc_SignatureRpart, &this->au8_Rpart[0]); //lint !e970 !e8080 //using type to
                                                                                  // match library interface
-               tgl_assert(x_Result == BN_num_bytes(pc_SignatureRpart));          //we already checked size above; this
+               Q_ASSERT(x_Result == BN_num_bytes(pc_SignatureRpart));          //we already checked size above; this
                                                                                  // would
                                                                                  // be unexpected
                this->u8_NumBytesUsedRpart = static_cast<uint8_t>(x_Result);
 
                x_Result = BN_bn2bin(pc_SignatureSpart, &this->au8_Spart[0]);
-               tgl_assert(x_Result == BN_num_bytes(pc_SignatureSpart)); //we already checked size above; this would
+               Q_ASSERT(x_Result == BN_num_bytes(pc_SignatureSpart)); //we already checked size above; this would
                                                                         // be unexpected
                this->u8_NumBytesUsedSpart = static_cast<uint8_t>(x_Result);
                s32_Return = C_NO_ERR;
@@ -322,9 +322,9 @@ int32_t C_OscSecurityEcdsa::h_ExtractPublicKeyFromX509Certificate(const std::vec
                         {
                            //put x and y into array:
                            x_Result = BN_bn2bin(pc_Xpart, &orau8_Binary[0]);
-                           tgl_assert(x_Result == 32); //size already checked; this would be unexpected
+                           Q_ASSERT(x_Result == 32); //size already checked; this would be unexpected
                            x_Result = BN_bn2bin(pc_Ypart, &orau8_Binary[32]);
-                           tgl_assert(x_Result == 32); //size already checked; this would be unexpected
+                           Q_ASSERT(x_Result == 32); //size already checked; this would be unexpected
                            s32_Result = C_NO_ERR;
                         }
                         BN_clear_free(pc_Xpart);
@@ -418,12 +418,12 @@ int32_t C_OscSecurityEcdsa::h_CalcEcdsaSecp256r1Signature(const uint8_t (&orau8_
                   //operation successful -> place signature into output array
 
                   x_Result = BN_bn2bin(pc_SignatureRpart, &orc_Signature.au8_Rpart[0]);
-                  tgl_assert(x_Result == BN_num_bytes(pc_SignatureRpart)); //we already checked size above; this would
+                  Q_ASSERT(x_Result == BN_num_bytes(pc_SignatureRpart)); //we already checked size above; this would
                                                                            // be unexpected
                   orc_Signature.u8_NumBytesUsedRpart = static_cast<uint8_t>(x_Result);
 
                   x_Result = BN_bn2bin(pc_SignatureSpart, &orc_Signature.au8_Spart[0]);
-                  tgl_assert(x_Result == BN_num_bytes(pc_SignatureSpart)); //we already checked size above; this would
+                  Q_ASSERT(x_Result == BN_num_bytes(pc_SignatureSpart)); //we already checked size above; this would
                                                                            // be unexpected
                   orc_Signature.u8_NumBytesUsedSpart = static_cast<uint8_t>(x_Result);
                   s32_Return = C_NO_ERR;

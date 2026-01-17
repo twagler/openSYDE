@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing message layout
@@ -16,7 +16,7 @@
 
 #include "stwtypes.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_OgeCbxText.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdBueMlvWidget.hpp"
@@ -337,7 +337,7 @@ void C_SdBueMlvWidget::m_UpdateMultiplexerValues(const C_OscCanMessageIdentifica
       this->mpc_Ui->pc_ComboBoxMultiplexer->clear();
       this->mc_MultiplexerValues.clear();
 
-      tgl_assert(pc_Message != NULL);
+      Q_ASSERT(pc_Message != NULL);
       if (pc_Message != NULL)
       {
          uint32_t u32_MultiplexerIndex;
@@ -356,7 +356,7 @@ void C_SdBueMlvWidget::m_UpdateMultiplexerValues(const C_OscCanMessageIdentifica
                stw::opensyde_gui_logic::C_PuiSdHandler::h_GetInstance()->GetOscCanDataPoolListElement(
                   orc_MessageId,
                   u32_MultiplexerIndex);
-            tgl_assert(pc_MultiplexerElement != NULL);
+            Q_ASSERT(pc_MultiplexerElement != NULL);
 
             pc_Message->GetMultiplexerValues(c_MultiplexerValues);
 
@@ -438,7 +438,7 @@ uint16_t C_SdBueMlvWidget::m_GetSelectedMultiplexerValues(void) const
    }
    else
    {
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 
    return u16_Value;

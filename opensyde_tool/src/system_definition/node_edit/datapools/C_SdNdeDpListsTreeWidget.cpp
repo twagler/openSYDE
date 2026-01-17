@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget to store and manage multiple data pool list entries (implementation)
@@ -27,7 +27,7 @@
 #include "C_Uti.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_OscLoggingHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "C_UsHandler.hpp"
 #include "C_OgeWiCustomMessage.hpp"
@@ -37,7 +37,7 @@ using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_core;
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -293,7 +293,7 @@ void C_SdNdeDpListsTreeWidget::Copy(void) const
          c_UiContentVec.resize(c_SelectedIndices.size());
          for (uint32_t u32_ItIndex = 0; u32_ItIndex < c_SelectedIndices.size(); ++u32_ItIndex)
          {
-            tgl_assert(C_PuiSdHandler::h_GetInstance()->GetDataPoolList(this->mu32_NodeIndex, this->mu32_DataPoolIndex,
+            Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetDataPoolList(this->mu32_NodeIndex, this->mu32_DataPoolIndex,
                                                                         c_SelectedIndices[u32_ItIndex],
                                                                         c_OscContentVec[u32_ItIndex],
                                                                         c_UiContentVec[u32_ItIndex]) == C_NO_ERR);
@@ -401,12 +401,12 @@ void C_SdNdeDpListsTreeWidget::Insert(const bool & orq_SetFocus)
          {
             QTreeWidgetItem * const pc_TreeWidgetItem =
                this->itemFromIndex(this->model()->index(static_cast<int32_t>(u32_TargetIndex), 0));
-            tgl_assert(pc_TreeWidgetItem != NULL);
+            Q_ASSERT(pc_TreeWidgetItem != NULL);
             if (pc_TreeWidgetItem != NULL)
             {
                C_SdNdeDpListHeaderWidget * const pc_HeaderWidget =
                   dynamic_cast<C_SdNdeDpListHeaderWidget * >(this->itemWidget(pc_TreeWidgetItem, 0));
-               tgl_assert((pc_HeaderWidget != NULL) && (pc_TreeWidgetItem->isSelected() == true));
+               Q_ASSERT((pc_HeaderWidget != NULL) && (pc_TreeWidgetItem->isSelected() == true));
                if (pc_HeaderWidget != NULL)
                {
                   pc_HeaderWidget->SetEditFocus();
@@ -1261,7 +1261,7 @@ void C_SdNdeDpListsTreeWidget::m_HandleDataSetErrorChange(const uint32_t & oru32
 {
    QTreeWidgetItem * const pc_HeaderItem = this->topLevelItem(oru32_ListIndex);
 
-   tgl_assert((oru32_NodeIndex == this->mu32_NodeIndex) && (oru32_DataPoolIndex == this->mu32_DataPoolIndex));
+   Q_ASSERT((oru32_NodeIndex == this->mu32_NodeIndex) && (oru32_DataPoolIndex == this->mu32_DataPoolIndex));
 
    if (pc_HeaderItem != NULL)
    {

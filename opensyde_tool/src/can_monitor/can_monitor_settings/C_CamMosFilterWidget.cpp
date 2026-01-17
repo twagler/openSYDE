@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for handling CAN Message filter configuration (implementation)
@@ -23,7 +23,7 @@
 #include "C_CamMosFilterPopup.hpp"
 #include "C_CamProHandler.hpp"
 #include "C_Uti.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_UsHandler.hpp"
 #include "C_OgeWiCustomMessage.hpp"
@@ -665,7 +665,7 @@ void C_CamMosFilterWidget::m_RemoveFilter(C_CamMosFilterItemWidget * const opc_I
          this->m_RemoveFilterWidget(opc_ItemWidget);
 
          // update data handling
-         tgl_assert(C_CamProHandler::h_GetInstance()->DeleteFilter(s32_IndexToRemove) == stw::errors::C_NO_ERR);
+         Q_ASSERT(C_CamProHandler::h_GetInstance()->DeleteFilter(s32_IndexToRemove) == stw::errors::C_NO_ERR);
 
          // remove filter items if filter widget is enabled
          if (C_CamProHandler::h_GetInstance()->GetFilterWidgetEnabled() == true)
@@ -682,7 +682,7 @@ void C_CamMosFilterWidget::m_RemoveFilter(C_CamMosFilterItemWidget * const opc_I
       }
 
       // number of filter widgets should now equal number of filters in data handling
-      tgl_assert(C_CamProHandler::h_GetInstance()->GetFilters().size() == mc_Entries.size());
+      Q_ASSERT(C_CamProHandler::h_GetInstance()->GetFilters().size() == mc_Entries.size());
 
       // eventually show "no filter" label
       if (this->mc_Entries.size() == 0)
@@ -708,7 +708,7 @@ void C_CamMosFilterWidget::m_ActivateFilter(const C_CamMosFilterItemWidget * con
    const int32_t s32_IndexToActivate = this->m_GetIndexFromWidget(opc_ItemWidget);
 
    // index is -1 if item widget is NULL which can not happen
-   tgl_assert(s32_IndexToActivate >= 0);
+   Q_ASSERT(s32_IndexToActivate >= 0);
    if (s32_IndexToActivate >= 0)
    {
       // update data handling
@@ -755,7 +755,7 @@ void C_CamMosFilterWidget::m_UpdateFilterConfiguration(const C_CamMosFilterItemW
    const int32_t s32_Index = this->m_GetIndexFromWidget(opc_ItemWidget);
 
    // index is -1 if item widget is NULL which can not happen
-   tgl_assert(s32_Index >= 0);
+   Q_ASSERT(s32_Index >= 0);
    if (s32_Index >= 0)
    {
       C_CamProHandler::h_GetInstance()->SetFilter(s32_Index, orc_FilterNew);

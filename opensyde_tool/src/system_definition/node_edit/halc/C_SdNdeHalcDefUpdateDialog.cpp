@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Dialog for updating an existing HALC definition
@@ -16,7 +16,7 @@
 #include "stwerrors.hpp"
 #include "C_Uti.hpp"
 #include "C_ImpUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeHalcDefUpdateDialog.hpp"
 #include "ui_C_SdNdeHalcDefUpdateDialog.h"
 #include "C_PuiSdHandler.hpp"
@@ -297,7 +297,7 @@ void C_SdNdeHalcDefUpdateDialog::m_UpdateHalcConfiguration(void)
    const C_OscHalcConfig * const pc_CurrentConfig =
       C_PuiSdHandler::h_GetInstance()->GetHalcConfig(this->mu32_NodeIndex);
 
-   tgl_assert(pc_CurrentConfig != NULL);
+   Q_ASSERT(pc_CurrentConfig != NULL);
    if (pc_CurrentConfig != NULL)
    {
       uint32_t u32_UpdatedDomainCounter;
@@ -315,7 +315,7 @@ void C_SdNdeHalcDefUpdateDialog::m_UpdateHalcConfiguration(void)
          const C_OscHalcConfigDomain * const pc_UpdatedDomain = this->mc_UpdatedHalcConfig.GetDomainConfigDataConst(
             u32_UpdatedDomainCounter);
 
-         tgl_assert(pc_UpdatedDomain != NULL);
+         Q_ASSERT(pc_UpdatedDomain != NULL);
          if (pc_UpdatedDomain != NULL)
          {
             bool q_DomainFound = false;
@@ -327,7 +327,7 @@ void C_SdNdeHalcDefUpdateDialog::m_UpdateHalcConfiguration(void)
                const C_OscHalcConfigDomain * const pc_CurrentDomain = pc_CurrentConfig->GetDomainConfigDataConst(
                   u32_CurrentDomainCounter);
 
-               tgl_assert(pc_CurrentDomain != NULL);
+               Q_ASSERT(pc_CurrentDomain != NULL);
                if ((pc_CurrentDomain != NULL) &&
                    (pc_UpdatedDomain->c_Id == pc_CurrentDomain->c_Id))
                {
@@ -359,7 +359,7 @@ void C_SdNdeHalcDefUpdateDialog::m_UpdateHalcConfiguration(void)
          const C_OscHalcConfigDomain * const pc_CurrentDomain = pc_CurrentConfig->GetDomainConfigDataConst(
             u32_CurrentDomainCounter);
 
-         tgl_assert(pc_CurrentDomain != NULL);
+         Q_ASSERT(pc_CurrentDomain != NULL);
          if (pc_CurrentDomain != NULL)
          {
             bool q_CurrentDomainFound = false;
@@ -371,7 +371,7 @@ void C_SdNdeHalcDefUpdateDialog::m_UpdateHalcConfiguration(void)
                const C_OscHalcConfigDomain * const pc_UpdatedDomain =
                   this->mc_UpdatedHalcConfig.GetDomainConfigDataConst(u32_UpdatedDomainCounter);
 
-               tgl_assert(pc_UpdatedDomain != NULL);
+               Q_ASSERT(pc_UpdatedDomain != NULL);
                if ((pc_UpdatedDomain != NULL) &&
                    (pc_UpdatedDomain->c_Id == pc_CurrentDomain->c_Id))
                {
@@ -409,8 +409,8 @@ void C_SdNdeHalcDefUpdateDialog::m_UpdateDomainConfiguration(const C_OscHalcConf
                                                             orc_CurrentConfig.c_Name,
                                                             true);
 
-   tgl_assert(orc_CurrentConfig.c_ChannelConfigs.size() == orc_CurrentConfig.c_Channels.size());
-   tgl_assert(orc_UpdatedConfig.c_ChannelConfigs.size() == orc_UpdatedConfig.c_Channels.size());
+   Q_ASSERT(orc_CurrentConfig.c_ChannelConfigs.size() == orc_CurrentConfig.c_Channels.size());
+   Q_ASSERT(orc_UpdatedConfig.c_ChannelConfigs.size() == orc_UpdatedConfig.c_Channels.size());
 
    // Checking all channels
    for (u32_UpdatedChannelCounter = 0UL; u32_UpdatedChannelCounter < orc_UpdatedConfig.c_ChannelConfigs.size();
@@ -593,8 +593,8 @@ void C_SdNdeHalcDefUpdateDialog::m_UpdateChannelConfiguration(const C_OscHalcCon
       uint32_t u32_UpdatedDefParameterCounter;
       uint32_t u32_CurrentDefParameterCounter;
 
-      tgl_assert(rc_CurrentChannelConfig.c_Parameters.size() == pc_CurrentParametersToCompare->size());
-      tgl_assert(rc_UpdatedChannelConfig.c_Parameters.size() == pc_UpdatedParametersToCompare->size());
+      Q_ASSERT(rc_CurrentChannelConfig.c_Parameters.size() == pc_CurrentParametersToCompare->size());
+      Q_ASSERT(rc_UpdatedChannelConfig.c_Parameters.size() == pc_UpdatedParametersToCompare->size());
 
       // Check for changed parameters
       // Checking all parameters for existence
@@ -746,10 +746,10 @@ void C_SdNdeHalcDefUpdateDialog::m_UpdateSubParameterConfiguration(const C_OscHa
             // Same parameter
             q_ParameterFound = true;
 
-            tgl_assert(
+            Q_ASSERT(
                orc_CurrentParameterConfig.c_ParameterElements.size() ==
                orc_CurrentParameterDef.c_StructElements.size());
-            tgl_assert(
+            Q_ASSERT(
                orc_UpdatedParameterConfig.c_ParameterElements.size() ==
                orc_UpdatedParameterDef.c_StructElements.size());
 

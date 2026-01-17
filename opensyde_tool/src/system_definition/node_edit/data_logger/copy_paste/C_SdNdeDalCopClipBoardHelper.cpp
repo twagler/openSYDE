@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Handle datalogger clipboard load and save
@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_OscDataLoggerJobFiler.hpp"
@@ -21,7 +21,7 @@
 #include "C_PuiSdHandlerDataLoggerLogic.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;
@@ -165,7 +165,7 @@ void C_SdNdeDalCopClipBoardHelper::mh_StoreElementIdGroups(const QMap<C_OscNodeD
    {
       C_SdNdeDalCopClipBoardHelper::mh_StoreElementIdGroup(c_It.key(), c_It.value(), orc_XmlParser);
    }
-   tgl_assert(orc_XmlParser.SelectNodeParent() == orc_GenericTagName.toStdString().c_str());
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_GenericTagName.toStdString().c_str());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -180,13 +180,13 @@ void C_SdNdeDalCopClipBoardHelper::mh_StoreElementIdGroup(const C_OscNodeDataPoo
                                                           const C_SdNdeDalCopElementIdCrcGroup & orc_ElementIdGroup,
                                                           C_OscXmlParserBase & orc_XmlParser)
 {
-   tgl_assert(orc_ElementId == orc_ElementIdGroup.GetElementId());
+   Q_ASSERT(orc_ElementId == orc_ElementIdGroup.GetElementId());
    orc_XmlParser.CreateAndSelectNodeChild("element-id-group");
    orc_XmlParser.CreateAndSelectNodeChild("index");
    C_OscDataLoggerJobFiler::h_SaveDataElementOptArrayId(orc_ElementId, orc_XmlParser);
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "element-id-group");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "element-id-group");
    orc_XmlParser.SetAttributeUint32("crc", orc_ElementIdGroup.GetCrc());
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "element-id-groups");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "element-id-groups");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -271,10 +271,10 @@ int32_t C_SdNdeDalCopClipBoardHelper::mh_LoadElementIdGroups(QMap<C_OscNodeDataP
          }
          while ((c_CurrentGroupNode == "element-id-group") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "element-id-groups");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "element-id-groups");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == orc_GenericTagName.toStdString().c_str());
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_GenericTagName.toStdString().c_str());
    }
    return s32_Retval;
 }
@@ -310,7 +310,7 @@ int32_t C_SdNdeDalCopClipBoardHelper::mh_LoadElementIdGroup(C_OscNodeDataPoolLis
 
          orc_ElementIdGroup.SetElementId(orc_ElementId);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "element-id-group");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "element-id-group");
       }
    }
 
@@ -338,7 +338,7 @@ QMap<C_OscNodeDataPoolListElementOptArrayId,
    {
       C_SdNdeDalCopElementIdCrcGroup c_Tmp;
       c_Tmp.SetElementId(*c_It);
-      tgl_assert(c_Tmp.UpdateCrc() == C_NO_ERR);
+      Q_ASSERT(c_Tmp.UpdateCrc() == C_NO_ERR);
       c_Retval.insert(*c_It, c_Tmp);
    }
    return c_Retval;

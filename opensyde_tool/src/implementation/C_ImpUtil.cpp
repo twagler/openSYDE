@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Class for use case implementation functionality (implementation)
@@ -20,8 +20,7 @@
 #include <QApplication>
 
 #include "C_ImpUtil.hpp"
-#include "TglUtils.hpp"
-#include "TglFile.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_UsHandler.hpp"
@@ -38,7 +37,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;
@@ -103,7 +102,7 @@ void C_ImpUtil::h_ExportCode(const std::vector<uint32_t> & orc_NodeIndices,
    C_OgeWiCustomMessage c_Message(opc_Parent);
 
    // number of nodes must equal number of nodes for that applications were given
-   tgl_assert(orc_NodeIndices.size() == orc_AppIndicesPerNode.size());
+   Q_ASSERT(orc_NodeIndices.size() == orc_AppIndicesPerNode.size());
    if (orc_NodeIndices.size() != orc_AppIndicesPerNode.size())
    {
       q_Continue = false;
@@ -171,7 +170,7 @@ void C_ImpUtil::h_ExportCode(const std::vector<uint32_t> & orc_NodeIndices,
       {
          const C_OscNode * const pc_Node =
             C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(orc_NodeIndices[u32_ItNode]);
-         tgl_assert(pc_Node != NULL);
+         Q_ASSERT(pc_Node != NULL);
          if (pc_Node != NULL)
          {
             for (uint32_t u32_ItApp = 0; u32_ItApp < orc_AppIndicesPerNode[u32_ItNode].size(); ++u32_ItApp)
@@ -179,7 +178,7 @@ void C_ImpUtil::h_ExportCode(const std::vector<uint32_t> & orc_NodeIndices,
                const C_OscNodeApplication * const pc_Application =
                   C_PuiSdHandler::h_GetInstance()->GetApplication(orc_NodeIndices[u32_ItNode],
                                                                   orc_AppIndicesPerNode[u32_ItNode][u32_ItApp]);
-               tgl_assert(pc_Application != NULL);
+               Q_ASSERT(pc_Application != NULL);
                if (pc_Application != NULL)
                {
                   // message for generating
@@ -327,7 +326,7 @@ void C_ImpUtil::h_ExportCodeNodes(const std::vector<uint32_t> & orc_NodeIndices,
    {
       c_ProgAppsNodeIndices.clear();
       const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(orc_NodeIndices[u32_ItInNode]);
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          c_ProgAppsNodeIndices = C_PuiSdHandler::h_GetInstance()->GetFileGenAppIndices(
@@ -400,7 +399,7 @@ int32_t C_ImpUtil::mh_ExportCodeNode(const uint32_t ou32_NodeIndex, const std::v
          {
             const C_OscNodeApplication * const pc_Application =
                C_PuiSdHandler::h_GetInstance()->GetApplication(ou32_NodeIndex, orc_AppIndices[u32_Pos]);
-            tgl_assert(pc_Application != NULL);
+            Q_ASSERT(pc_Application != NULL);
             if (pc_Application != NULL)
             {
                const QString c_CompleteExportFolderName =
@@ -1133,7 +1132,7 @@ int32_t C_ImpUtil::mh_ExecuteCodeGenerator(const QString & orc_NodeName, const Q
 
    // build file list file path from executable (file which contains information which files were generated)
    const QFileInfo c_CodeGenFileInfo(orc_CodeGenerator);
-   tgl_assert(c_CodeGenFileInfo.isAbsolute());
+   Q_ASSERT(c_CodeGenFileInfo.isAbsolute());
    c_FileListFile.setFileName(
       c_CodeGenFileInfo.absolutePath() + "/" + c_CodeGenFileInfo.completeBaseName() + "_file_list.txt");
 

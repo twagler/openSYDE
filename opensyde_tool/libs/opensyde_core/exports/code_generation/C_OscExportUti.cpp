@@ -14,7 +14,6 @@
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglFile.hpp"
 #include "C_OscExportUti.hpp"
 
 #include "C_OscLoggingHandler.hpp"
@@ -23,7 +22,7 @@
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -223,7 +222,7 @@ void C_OscExportUti::h_CollectFilePaths(std::vector<C_SclString> & orc_FilePaths
 {
    C_SclString c_FileName;
 
-   c_FileName = TglFileIncludeTrailingDelimiter(orc_Path) + orc_FileName;
+   c_FileName = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_Path) + orc_FileName;
    if (oq_SourceCode == true)
    {
       orc_FilePaths.push_back(c_FileName + ".h");
@@ -291,7 +290,7 @@ C_SclString C_OscExportUti::h_GetTypePrefix(const C_OscNodeDataPoolContent::E_Ty
       c_Prefix += "f64";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -344,7 +343,7 @@ C_SclString C_OscExportUti::h_GetElementTypeAsString(const C_OscNodeDataPoolCont
       c_Retval += "FLOAT64";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 

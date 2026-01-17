@@ -19,7 +19,7 @@
 #include "C_SclString.hpp"
 
 #include "C_Can.hpp"
-#include "TglTasks.hpp"
+#include <QRecursiveMutex>
 #include "C_OscComSequencesBase.hpp"
 #include "C_OscProtocolSerialNumber.hpp"
 #include "C_OscDcDeviceInformation.hpp"
@@ -199,7 +199,7 @@ private:
    int32_t m_ReadBack(void);
 
    C_SyvComDriverThread * mpc_Thread;
-   stw::tgl::C_TglCriticalSection mc_CriticalSectionRequestEndless;
+   QRecursiveMutex mc_CriticalSectionRequestEndless;
    stw::can::C_Can * mpc_CanDllDispatcher;
    stw::opensyde_core::C_OscIpDispatcherWinSock * mpc_EthernetDispatcher;
    // Sequence execution parameter
@@ -222,7 +222,7 @@ private:
 
    // It is mutable because of the constness of the getter functions. Without the keyword mutable the getter functions
    // must be non const and that is not wanted.
-   mutable stw::tgl::C_TglCriticalSection mc_CriticalSectionCanInitialization;
+   mutable QRecursiveMutex mc_CriticalSectionCanInitialization;
 
    // Result information of several sequences
    std::vector<stw::opensyde_core::C_OscDcDeviceInformation> mc_DeviceInfoResult;

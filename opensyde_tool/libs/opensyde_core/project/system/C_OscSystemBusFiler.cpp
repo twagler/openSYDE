@@ -16,7 +16,7 @@
 #include "stwerrors.hpp"
 #include "C_OscSystemBusFiler.hpp"
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscSystemFilerUtil.hpp"
 #include "C_OscLoggingHandler.hpp"
 
@@ -62,7 +62,7 @@ int32_t C_OscSystemBusFiler::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParserB
    {
       orc_Bus.c_Name = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
    }
    else
    {
@@ -76,7 +76,7 @@ int32_t C_OscSystemBusFiler::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParserB
       {
          orc_Bus.c_Comment = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
       }
       //Type
       if (orc_XmlParser.SelectNodeChild("type") == "type")
@@ -88,7 +88,7 @@ int32_t C_OscSystemBusFiler::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParserB
             s32_Retval = C_CONFIG;
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
       }
       else
       {
@@ -112,7 +112,7 @@ int32_t C_OscSystemBusFiler::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParserB
             s32_Retval = C_CONFIG;
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
       }
       else
       {
@@ -140,7 +140,7 @@ int32_t C_OscSystemBusFiler::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParserB
             s32_Retval = C_CONFIG;
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
       }
       else
       {
@@ -164,7 +164,7 @@ int32_t C_OscSystemBusFiler::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParserB
             s32_Retval = C_CONFIG;
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
       }
       else
       {
@@ -197,33 +197,33 @@ void C_OscSystemBusFiler::h_SaveBus(const C_OscSystemBus & orc_Bus, C_OscXmlPars
    const C_SclString c_RxTimeout(orc_Bus.u16_RxTimeoutOffsetMs);
 
    //Name
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("name") == "name");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("name") == "name");
    orc_XmlParser.SetNodeContent(orc_Bus.c_Name);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
    //Comment
    orc_XmlParser.CreateNodeChild("comment", orc_Bus.c_Comment);
    //Type
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("type") == "type");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("type") == "type");
    orc_XmlParser.SetNodeContent(C_OscSystemFilerUtil::h_BusTypeEnumToString(orc_Bus.e_Type));
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
    //Bitrate
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("bitrate") == "bitrate");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("bitrate") == "bitrate");
    orc_XmlParser.SetAttributeString("number", c_BitRate);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
    mh_SaveCanFdProperties(orc_Bus, orc_XmlParser);
    //Bus id
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("bus-id") == "bus-id");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("bus-id") == "bus-id");
    orc_XmlParser.SetAttributeUint32("number", orc_Bus.u8_BusId);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
    //Bitrate
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("rx-delta-time") == "rx-delta-time");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("rx-delta-time") == "rx-delta-time");
    orc_XmlParser.SetAttributeString("number", c_RxTimeout);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
    //Useable for routing
    orc_XmlParser.SetAttributeBool("useable-for-routing", orc_Bus.q_UseableForRouting);
 }
@@ -253,7 +253,7 @@ int32_t C_OscSystemBusFiler::mh_LoadCanFdProperties(C_OscSystemBus & orc_Bus, C_
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
       }
    }
    else
@@ -274,9 +274,9 @@ int32_t C_OscSystemBusFiler::mh_LoadCanFdProperties(C_OscSystemBus & orc_Bus, C_
 //----------------------------------------------------------------------------------------------------------------------
 void C_OscSystemBusFiler::mh_SaveCanFdProperties(const C_OscSystemBus & orc_Bus, C_OscXmlParserBase & orc_XmlParser)
 {
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("can-fd") == "can-fd");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("can-fd") == "can-fd");
    orc_XmlParser.SetAttributeBool("active", orc_Bus.q_UseCanFd);
    orc_XmlParser.SetAttributeUint64("bitrate", orc_Bus.u64_CanFdBitRate);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
 }

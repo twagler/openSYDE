@@ -18,7 +18,7 @@
 
 #include "stwtypes.hpp"
 
-#include "TglTasks.hpp"
+#include <QRecursiveMutex>
 
 #include "C_PuiSvDbDataElement.hpp"
 #include "C_PuiSvDbWidgetBase.hpp"
@@ -90,7 +90,7 @@ protected:
    virtual int32_t m_GetLastValue(const uint32_t ou32_WidgetDataPoolElementIndex, std::vector<float64_t> & orc_Values,
                                   const bool oq_UseScaling);
    int32_t m_GetAllValues(const uint32_t ou32_WidgetDataPoolElementIndex, QString & orc_ScaledFormattedLastValue,
-                          QVector<float64_t> & orc_ScaledValues, QVector<uint32_t> & orc_Timestamps);
+                          QVector<float64_t> & orc_ScaledValues, QVector<qint64> & orc_Timestamps);
    int32_t m_GetLastNvmValue(const uint32_t ou32_WidgetDataPoolElementIndex,
                              stw::opensyde_core::C_OscNodeDataPoolContent & orc_Value);
    int32_t m_GetTimoutPercentage100(const uint32_t ou32_DataElementIndex, uint8_t & oru8_TimoutPercentage100) const;
@@ -156,7 +156,7 @@ private:
    ///< real calculation
    std::vector<uint32_t> mc_DataPoolElementTimeoutsMs; ///< Timouts for each data
    ///< element
-   std::vector<uint32_t> mc_LastDataPoolElementTimeStampsMs; ///< Time stamp of last received
+   std::vector<qint64> mc_LastDataPoolElementTimeStampsMs; ///< Time stamp of last received
    ///< data
    std::vector<bool> mc_LastDataPoolElementTimeStampsValid; ///< Valid flags for time stamp
    ///< of last received data
@@ -168,7 +168,7 @@ private:
 
    // It is mutable because of the constness of the getter functions. Without the keyword mutable the getter functions
    // must be non const and that is not wanted.
-   mutable stw::tgl::C_TglCriticalSection mc_CriticalSection;
+   mutable QRecursiveMutex mc_CriticalSection;
 
    void m_SetWidgetDataPoolElementCount(const uint32_t ou32_Count);
    static QString mh_GetStringForScaledValue(const float64_t of64_Value,

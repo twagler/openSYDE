@@ -232,7 +232,7 @@ const
    for (u32_Counter = 0U; u32_Counter < this->mc_ActiveNodesIndexes.size(); ++u32_Counter)
    {
       uint32_t u32_NodeWaitTime = 0;
-      tgl_assert(m_GetMinimumFlashloaderResetWaitTime(oe_Type, this->mc_ActiveNodesIndexes[u32_Counter],
+      Q_ASSERT(m_GetMinimumFlashloaderResetWaitTime(oe_Type, this->mc_ActiveNodesIndexes[u32_Counter],
                                                       u32_NodeWaitTime) == C_NO_ERR);
       if (u32_NodeWaitTime > u32_WaitTime)
       {
@@ -2665,7 +2665,7 @@ int32_t C_OscComDriverFlash::SendStwDoFlash(const C_OscProtocolDriverOsyNode & o
       c_Params.c_HexFile = orc_HexFilePath;
       c_Params.c_WakeupConfig.e_WakeupMode = eXFL_WAKEUP_MODE_LID;
       s32_Return = C_XFLActions::CompIDStructToString(this->mc_CompanyId, c_Params.c_WakeupConfig.c_CompanyID);
-      tgl_assert(s32_Return == C_NO_ERR);                  //no plausible reason for this
+      Q_ASSERT(s32_Return == C_NO_ERR);                  //no plausible reason for this
       c_Params.c_WakeupConfig.q_SendFLASHRequired = false; //we are already in flashloader
       c_Params.c_WakeupConfig.q_SendResetRQ = false;       //we are already in flashloader
       c_Params.c_WakeupConfig.u8_LocalID = orc_ServerId.u8_NodeIdentifier;
@@ -3107,12 +3107,12 @@ int32_t C_OscComDriverFlash::m_GetMinimumFlashloaderResetWaitTime(
    {
       const C_OscNode & rc_Node = this->mpc_SysDef->c_Nodes[ou32_NodeIndex];
 
-      tgl_assert(rc_Node.pc_DeviceDefinition != NULL);
+      Q_ASSERT(rc_Node.pc_DeviceDefinition != NULL);
       if (rc_Node.pc_DeviceDefinition != NULL)
       {
          s32_Return = C_NO_ERR;
 
-         tgl_assert(rc_Node.u32_SubDeviceIndex < rc_Node.pc_DeviceDefinition->c_SubDevices.size());
+         Q_ASSERT(rc_Node.u32_SubDeviceIndex < rc_Node.pc_DeviceDefinition->c_SubDevices.size());
          switch (oe_Type)
          {
          case C_OscComDriverFlash::eNO_CHANGES_CAN:
@@ -3146,7 +3146,7 @@ int32_t C_OscComDriverFlash::m_GetMinimumFlashloaderResetWaitTime(
                u32_FlashloaderResetWaitTimeFundamentalChangesEthernet;
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -3168,7 +3168,7 @@ void C_OscComDriverFlash::mh_HandleWaitTime(void * const opv_Instance)
    //lint -e{9079}  This class is the only one which registers itself at the caller of this function. It must match.
    C_OscComDriverFlash * const pc_ComDriver = reinterpret_cast<C_OscComDriverFlash *>(opv_Instance);
 
-   tgl_assert(pc_ComDriver != NULL);
+   Q_ASSERT(pc_ComDriver != NULL);
    if (pc_ComDriver != NULL)
    {
       pc_ComDriver->m_HandleWaitTime();
@@ -3195,7 +3195,7 @@ void C_OscComDriverFlash::m_HandleWaitTime(void)
       {
          const uint32_t u32_ActiveNodeRouter = this->mc_ActiveNodesLastCanRouters[u32_Counter];
 
-         tgl_assert(u32_ActiveNodeRouter < this->mc_OsyProtocols.size());
+         Q_ASSERT(u32_ActiveNodeRouter < this->mc_OsyProtocols.size());
          if (u32_ActiveNodeRouter < this->mc_OsyProtocols.size())
          {
             C_OscProtocolDriverOsy * const pc_ProtocolOsy = this->mc_OsyProtocols[u32_ActiveNodeRouter];

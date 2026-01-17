@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       System view utility class (implementation)
@@ -20,7 +20,7 @@
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
 #include "C_OscSystemBus.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
@@ -209,7 +209,7 @@ int32_t C_SyvUtil::h_GetIndicesFromBusId(const uint8_t ou8_BusIdentifier, const 
          //Node
          C_PuiSdHandler::h_GetInstance()->GetOscSystemDefinitionConst().GetNodeIndexesOfBus(u32_ItBus, c_NodeIndexes,
                                                                                             c_InterfaceIndexes);
-         tgl_assert(c_NodeIndexes.size() == c_InterfaceIndexes.size());
+         Q_ASSERT(c_NodeIndexes.size() == c_InterfaceIndexes.size());
          if (c_NodeIndexes.size() == c_InterfaceIndexes.size())
          {
             for (uint32_t u32_ItNode = 0; u32_ItNode < c_NodeIndexes.size(); ++u32_ItNode)
@@ -304,7 +304,7 @@ QString C_SyvUtil::h_GetUpdateModeDescription(const uint32_t ou32_ViewIndex,
                   break;
                case C_PuiSvReadDataConfiguration::eTM_ON_CHANGE:
                   //Additional text for threshold type
-                  tgl_assert(rc_Content.GetArray() == false);
+                  Q_ASSERT(rc_Content.GetArray() == false);
                   if (rc_Content.GetArray() == false)
                   {
                      switch (rc_Content.GetType())
@@ -350,7 +350,7 @@ QString C_SyvUtil::h_GetUpdateModeDescription(const uint32_t ou32_ViewIndex,
                      c_ThresholdText);
                   break;
                default:
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                   break;
                }
                c_Retval = c_Text;
@@ -402,7 +402,7 @@ QString C_SyvUtil::h_GetUpdateModeDescription(const uint32_t ou32_ViewIndex,
                      arg(static_cast<QChar>(0x2265)).arg(static_cast<QChar>(0x2264));
                   break;
                default:
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                   break;
                }
             }

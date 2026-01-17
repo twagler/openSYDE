@@ -15,7 +15,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscHalcMagicianDatapoolListHandler.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
@@ -907,7 +907,7 @@ int32_t C_OscHalcMagicianDatapoolListHandler::mh_GetSubElementIndex(const uint32
       //Current struct
       for (uint32_t u32_ItEl = 0UL; u32_ItEl < ou32_ElementIndex; ++u32_ItEl)
       {
-         tgl_assert(u32_ItEl < orc_Values[ou32_Index].c_StructElements.size());
+         Q_ASSERT(u32_ItEl < orc_Values[ou32_Index].c_StructElements.size());
          if (u32_ItEl < orc_Values[ou32_Index].c_StructElements.size())
          {
             const C_OscHalcDefElement & rc_CurEl = orc_Values[ou32_Index].c_StructElements[u32_ItEl];
@@ -919,7 +919,7 @@ int32_t C_OscHalcMagicianDatapoolListHandler::mh_GetSubElementIndex(const uint32
       //Current element
       if (orc_Values[ou32_Index].c_StructElements.size() > 0UL)
       {
-         tgl_assert(ou32_ElementIndex < orc_Values[ou32_Index].c_StructElements.size());
+         Q_ASSERT(ou32_ElementIndex < orc_Values[ou32_Index].c_StructElements.size());
          if (ou32_ElementIndex < orc_Values[ou32_Index].c_StructElements.size())
          {
             C_OscHalcMagicianDatapoolListHandler::mh_GetSubDefElementIndex(orc_Values[ou32_Index].c_StructElements[

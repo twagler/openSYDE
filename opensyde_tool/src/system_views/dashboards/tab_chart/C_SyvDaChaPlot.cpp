@@ -14,7 +14,7 @@
 
 #include "stwtypes.hpp"
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 
 #include "C_SyvDaChaPlot.hpp"
 
@@ -505,7 +505,7 @@ void C_SyvDaChaPlot::RegisterCursorItem(C_SyvDaChaPlotCursorItem * const opc_Cur
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDaChaPlot::RemoveCursorItem(C_SyvDaChaPlotCursorItem * const opc_CursorItem)
 {
-   tgl_assert(this->mc_RegisteredCursorItems.removeOne(opc_CursorItem) == true);
+   Q_ASSERT(this->mc_RegisteredCursorItems.removeOne(opc_CursorItem) == true);
    this->removeItem(opc_CursorItem);
 }
 

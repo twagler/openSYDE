@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for handling the configuration of a specific device on a specific interface of the CANopen Manager
@@ -16,7 +16,7 @@
 #include "ui_C_SdNdeCoDeviceConfigWidget.h"
 #include "constants.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_OscImportEdsDcf.hpp"
@@ -30,7 +30,7 @@ using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -287,13 +287,13 @@ void C_SdNdeCoDeviceConfigWidget::m_HandleSameAsOpensydeNodeIdState(void) const
       const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNode(
          this->mc_DeviceInterfaceId.u32_NodeIndex);
 
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          const C_OscNodeComInterfaceSettings * const pc_ComInterface = pc_Node->c_Properties.GetComInterface(
             C_OscSystemBus::eCAN, this->mc_DeviceInterfaceId.u8_InterfaceNumber);
 
-         tgl_assert(pc_ComInterface != NULL);
+         Q_ASSERT(pc_ComInterface != NULL);
          if (pc_ComInterface != NULL)
          {
             this->mpc_Ui->pc_SpinBoxCanOpenId->setValue(static_cast<int32_t>(pc_ComInterface->u8_NodeId));
@@ -360,7 +360,7 @@ void C_SdNdeCoDeviceConfigWidget::m_CheckCoNodeId(void) const
                                                                                      &q_NodeIdConflict,
                                                                                      &q_NodeIdInvalid, true);
 
-      tgl_assert(s32_FuncReturn == C_NO_ERR);
+      Q_ASSERT(s32_FuncReturn == C_NO_ERR);
       if (s32_FuncReturn == C_NO_ERR)
       {
          const bool q_NoConflict = (q_NodeIdConflict == false) && (q_NodeIdInvalid == false);
@@ -470,7 +470,7 @@ void C_SdNdeCoDeviceConfigWidget::m_CheckHeartbeatConsumerTime(void) const
       const int32_t s32_FuncReturn = pc_CanOpenManagerInfo->CheckErrorDeviceHeartbeat(this->mc_DeviceInterfaceId,
                                                                                       &q_TimeError);
 
-      tgl_assert(s32_FuncReturn == C_NO_ERR);
+      Q_ASSERT(s32_FuncReturn == C_NO_ERR);
       if (s32_FuncReturn == C_NO_ERR)
       {
          C_OgeWiUtil::h_ApplyStylesheetProperty(this->mpc_Ui->pc_SpinBoxConsumerTime, "Valid", (q_TimeError == false));
@@ -571,7 +571,7 @@ void C_SdNdeCoDeviceConfigWidget::m_LoadFromData(void)
    disconnect(this->mpc_Ui->pc_CheckBoxEnableHeartbeatConsuming, &QCheckBox::stateChanged, this,
               &C_SdNdeCoDeviceConfigWidget::m_OnHeartbeatConsumingEnableChanged);
 
-   tgl_assert(pc_CanOpenDeviceInfo != NULL);
+   Q_ASSERT(pc_CanOpenDeviceInfo != NULL);
 
    if (pc_CanOpenDeviceInfo != NULL)
    {
@@ -674,7 +674,7 @@ void C_SdNdeCoDeviceConfigWidget::m_LoadFromData(void)
          //supported
          // check for read-only
          bool q_HbProducerRo = true;
-         tgl_assert(rc_EdsFileContent.IsHeartbeatProducerRo(q_HbProducerRo) == C_NO_ERR);
+         Q_ASSERT(rc_EdsFileContent.IsHeartbeatProducerRo(q_HbProducerRo) == C_NO_ERR);
          this->mpc_Ui->pc_CheckBoxEnableHeartbeatProducing->setEnabled(!q_HbProducerRo);
 
          this->mpc_Ui->pc_CheckBoxEnableHeartbeatProducing->setChecked(pc_CanOpenDeviceInfo->q_EnableHeartbeatProducing);
@@ -693,7 +693,7 @@ void C_SdNdeCoDeviceConfigWidget::m_LoadFromData(void)
          //supported
          // check for read-only
          bool q_HbConsumerRo = true;
-         tgl_assert(rc_EdsFileContent.IsHeartbeatConsumerRo(q_HbConsumerRo) == C_NO_ERR);
+         Q_ASSERT(rc_EdsFileContent.IsHeartbeatConsumerRo(q_HbConsumerRo) == C_NO_ERR);
 
          this->mpc_Ui->pc_CheckBoxEnableHeartbeatConsuming->setEnabled(!q_HbConsumerRo);
 

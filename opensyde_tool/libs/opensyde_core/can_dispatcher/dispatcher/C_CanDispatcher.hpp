@@ -16,11 +16,11 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include <deque>
+#include <QRecursiveMutex>
 #include "stwtypes.hpp"
 #include "C_CanBase.hpp"
-#include "TglTasks.hpp"
 #include "stw_can.hpp"
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 
 namespace stw
 {
@@ -92,12 +92,12 @@ class C_CanDispatcher :
    public C_CanBase
 {
 private:
-   stw::scl::C_SclDynamicArray<C_CanDispatchClient *> mc_ClientsByHandle;
-   stw::scl::C_SclDynamicArray<C_CanDispatchClient> mc_InstalledClients;
+   QList<C_CanDispatchClient *> mc_ClientsByHandle;
+   QList<C_CanDispatchClient> mc_InstalledClients;
 
    void m_ResyncShortcutPointers(void);
 
-   stw::tgl::C_TglCriticalSection mc_CriticalSection;
+   QRecursiveMutex mc_CriticalSection;
 
 protected:
    //-----------------------------------------------------------------------------

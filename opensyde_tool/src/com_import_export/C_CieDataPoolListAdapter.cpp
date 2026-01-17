@@ -16,7 +16,7 @@
 #include "precomp_headers.hpp"
 
 #include <vector>
-#include "TglUtils.hpp"
+
 #include "C_CieDataPoolListAdapter.hpp"
 #include "C_CieDataPoolListStructure.hpp"
 #include "C_CieConverter.hpp"
@@ -30,7 +30,7 @@
 #include "C_OscLoggingHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 using namespace stw::errors;
 using namespace stw::scl;
@@ -113,13 +113,13 @@ C_CieDataPoolListStructure C_CieDataPoolListAdapter::h_GetStructureFromDcfAndEds
    c_Retval.c_Core.c_EdsOscTxMessageIsSrdo = orc_OscTxMessageData.c_MessageIsSrdo;
 
    //Check the flags
-   tgl_assert(orc_OscRxMessageData.c_SignalDefaultMinMaxValuesUsed.size() ==
+   Q_ASSERT(orc_OscRxMessageData.c_SignalDefaultMinMaxValuesUsed.size() ==
               orc_OscRxMessageData.c_OscSignalData.size());
-   tgl_assert(orc_OscTxMessageData.c_SignalDefaultMinMaxValuesUsed.size() ==
+   Q_ASSERT(orc_OscTxMessageData.c_SignalDefaultMinMaxValuesUsed.size() ==
               orc_OscTxMessageData.c_OscSignalData.size());
 
    //Handle messages
-   tgl_assert(orc_InfoMessagesPerMessage.size() ==
+   Q_ASSERT(orc_InfoMessagesPerMessage.size() ==
               (orc_OscRxMessageData.c_OscMessageData.size() + orc_OscTxMessageData.c_OscMessageData.size()));
    if (orc_InfoMessagesPerMessage.size() ==
        (orc_OscRxMessageData.c_OscMessageData.size() + orc_OscTxMessageData.c_OscMessageData.size()))
@@ -404,9 +404,9 @@ void C_CieDataPoolListAdapter::mh_FillUpUiStructure(C_CieDataPoolListStructure &
       orc_DataPoolListStructure.c_Ui.c_UiTxMessageData.push_back(c_UiMessage);
    }
 
-   tgl_assert(orc_DataPoolListStructure.c_Ui.c_UiRxSignalData.size() ==
+   Q_ASSERT(orc_DataPoolListStructure.c_Ui.c_UiRxSignalData.size() ==
               orc_DataPoolListStructure.c_Core.c_OscRxSignalData.size());
-   tgl_assert(orc_DataPoolListStructure.c_Ui.c_UiTxSignalData.size() ==
+   Q_ASSERT(orc_DataPoolListStructure.c_Ui.c_UiTxSignalData.size() ==
               orc_DataPoolListStructure.c_Core.c_OscTxSignalData.size());
 }
 

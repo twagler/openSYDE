@@ -11,10 +11,11 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QDateTime>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscProject.hpp"
 #include "C_SclChecksums.hpp"
 
@@ -44,13 +45,13 @@ using namespace stw::errors;
 */
 //----------------------------------------------------------------------------------------------------------------------
 C_OscProject::C_OscProject(void) :
-   c_CreationTime(C_SclDateTime::Now()),
-   c_ModificationTime(C_SclDateTime::Now()),
+   c_CreationTime(QDateTime::currentDateTime()),
+   c_ModificationTime(QDateTime::currentDateTime()),
    c_OpenSydeVersion("0.01r0"),
    c_Template("Empty project"),
    c_Version("0.01r0b0")
 {
-   stw::tgl::TglGetSystemUserName(c_Author);
+   stw::opensyde_core::C_OscUtils::h_GetSystemUserName(c_Author);
    c_Editor = c_Author;
 }
 
@@ -90,12 +91,10 @@ void C_OscProject::CalcHash(uint32_t & oru32_HashValue) const
    Formatted date
 */
 //----------------------------------------------------------------------------------------------------------------------
-C_SclString C_OscProject::h_GetTimeFormatted(const C_SclDateTime & orc_Time)
+C_SclString C_OscProject::h_GetTimeFormatted(const QDateTime & orc_Time)
 {
-   const C_SclString c_StrTime = orc_Time.DateTimeToString();
-
-   //Remove seconds
-   return c_StrTime.SubString(1, 16);
+   const C_SclString c_StrTime = orc_Time.toString("dd.MM.yyyy HH:mm").toStdString();
+   return c_StrTime;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -112,24 +111,28 @@ C_SclString C_OscProject::h_GetTimeFormatted(const C_SclDateTime & orc_Time)
    Time (current time of orc_Str is invalid)
 */
 //----------------------------------------------------------------------------------------------------------------------
-C_SclDateTime C_OscProject::h_GetTimeOfString(const C_SclString & orc_Str)
+QDateTime C_OscProject::h_GetTimeOfString(const C_SclString & orc_Str)
 {
-   C_SclDateTime c_Retval;
+   QDateTime c_Retval;
    bool q_Err = true;
 
-   C_SclDynamicArray<C_SclString> c_Dyn;
+   QList<C_SclString> c_Dyn;
    orc_Str.Tokenize(". :", c_Dyn);
-   if (c_Dyn.GetLength() == 5)
+   if (c_Dyn.size() == 5)
    {
       try
       {
-         c_Retval.mu16_Day   = static_cast<uint16_t>(c_Dyn[0].ToInt());
-         c_Retval.mu16_Month = static_cast<uint16_t>(c_Dyn[1].ToInt());
-         c_Retval.mu16_Year  = static_cast<uint16_t>(c_Dyn[2].ToInt());
-         c_Retval.mu16_Hour  = static_cast<uint16_t>(c_Dyn[3].ToInt());
-         c_Retval.mu16_Minute = static_cast<uint16_t>(c_Dyn[4].ToInt());
-         c_Retval.mu16_Second = 0U;
-         q_Err = false;
+         const int s32_Day = c_Dyn[0].ToInt();
+         const int s32_Month = c_Dyn[1].ToInt();
+         const int s32_Year = c_Dyn[2].ToInt();
+         const int s32_Hour = c_Dyn[3].ToInt();
+         const int s32_Minute = c_Dyn[4].ToInt();
+         
+         c_Retval = QDateTime(QDate(s32_Year, s32_Month, s32_Day), QTime(s32_Hour, s32_Minute));
+         if (c_Retval.isValid())
+         {
+            q_Err = false;
+         }
       }
       catch (...)
       {
@@ -138,7 +141,7 @@ C_SclDateTime C_OscProject::h_GetTimeOfString(const C_SclString & orc_Str)
    }
    if (q_Err == true)
    {
-      c_Retval = C_SclDateTime::Now();
+      c_Retval = QDateTime::currentDateTime();
    }
    return c_Retval;
 }

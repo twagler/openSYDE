@@ -12,12 +12,12 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SdNdeCoDeviceWidget.hpp"
 #include "ui_C_SdNdeCoDeviceWidget.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
 
@@ -108,7 +108,7 @@ void C_SdNdeCoDeviceWidget::SetDeviceUseCase(const uint32_t ou32_ManagerNodeInde
       break;
    default:
       //Should not happen
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    this->mpc_Ui->pc_DevConfigWidget->setVisible(q_ConfigWidgetVisibility);

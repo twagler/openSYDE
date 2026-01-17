@@ -11,8 +11,9 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
+#include <QDir>
 
-#include "TglFile.hpp"
 #include "stwerrors.hpp"
 #include "C_SclStringList.hpp"
 #include "C_OscSecurityPem.hpp"
@@ -20,7 +21,7 @@
 #include "C_OscSecurityPemDatabase.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -130,7 +131,7 @@ int32_t C_OscSecurityPemDatabase::AddLevel7PemFile(const std::string & orc_Path)
 {
    int32_t s32_Retval;
 
-   if (TglFileExists(orc_Path))
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()))
    {
       s32_Retval = C_OscSecurityPemDatabase::m_TryAddKeyFromPath(orc_Path, false);
    }
@@ -158,13 +159,13 @@ int32_t C_OscSecurityPemDatabase::ParseFolder(const std::string & orc_FolderPath
    int32_t s32_Retval = C_NO_ERR;
 
    const stw::scl::C_SclString c_SclFolderPathWithDelimiter =
-      stw::tgl::TglFileIncludeTrailingDelimiter(orc_FolderPath);
+      stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_FolderPath);
    const std::string c_FolderPathWithDelimiter = c_SclFolderPathWithDelimiter.c_str();
 
    // Remove previous results
    this->mc_StoredPemFiles.clear();
 
-   if (TglDirectoryExists(c_FolderPathWithDelimiter))
+   if (QFileInfo(QString::fromStdString(*c_FolderPathWithDelimiter.AsStdString())).isDir())
    {
       const std::vector<std::string> c_Files = C_OscSecurityPemDatabase::mh_GetPemFiles(c_FolderPathWithDelimiter);
       for (uint32_t u32_It = 0UL; u32_It < c_Files.size(); ++u32_It)
@@ -284,18 +285,16 @@ int32_t C_OscSecurityPemDatabase::m_TryAddKey(const C_OscSecurityPemKeyInfo & or
 std::vector<std::string> C_OscSecurityPemDatabase::mh_GetPemFiles(const std::string & orc_FolderPath)
 {
    std::vector<std::string> c_Retval;
-   stw::scl::C_SclDynamicArray<C_TglFileSearchRecord> c_FilesScl;
-
-   TglFileFind(orc_FolderPath + "*", c_FilesScl);
-   for (int32_t s32_It = 0; s32_It < c_FilesScl.GetLength(); ++s32_It)
+   
+   QDir c_QDir(QString::fromStdString(orc_FolderPath));
+   QStringList c_Filter;
+   c_Filter << "*.pem";
+   
+   QFileInfoList c_InfoList = c_QDir.entryInfoList(c_Filter, QDir::Files | QDir::NoDotAndDotDot);
+   
+   for (int i = 0; i < c_InfoList.count(); ++i)
    {
-      const C_TglFileSearchRecord & rc_FileRecord = c_FilesScl[s32_It];
-      const stw::scl::C_SclString c_FileNameScl = rc_FileRecord.c_FileName;
-      const stw::scl::C_SclString c_Extension = TglExtractFileExtension(c_FileNameScl);
-      if (c_Extension == ".pem")
-      {
-         c_Retval.push_back(orc_FolderPath + c_FileNameScl.c_str());
-      }
+      c_Retval.push_back((c_QDir.path() + "/" + c_InfoList.at(i).fileName()).toStdString());
    }
    return c_Retval;
 }

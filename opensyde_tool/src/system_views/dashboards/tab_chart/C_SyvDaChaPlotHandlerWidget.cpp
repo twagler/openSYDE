@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget which shows the QCustomplot and handles its chart functionality
@@ -19,9 +19,8 @@
 
 #include "constants.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
-#include "TglFile.hpp"
+
+#include <QDateTime>
 #include "C_OgeWiUtil.hpp"
 #include "C_OscUtils.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -42,7 +41,6 @@ using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::scl;
-using namespace stw::tgl;
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -375,8 +373,8 @@ void C_SyvDaChaPlotHandlerWidget::Init(const uint32_t ou32_MaximumDataElements)
 void C_SyvDaChaPlotHandlerWidget::SetData(const C_PuiSvDbTabChart & orc_Data, const uint32_t ou32_ViewIndex)
 {
    this->mc_Data = orc_Data;
-   tgl_assert(this->mc_Data.c_DataPoolElementsActive.size() == this->mc_Data.c_DataPoolElementsConfig.size());
-   tgl_assert(this->mc_Data.c_DataPoolElementsColorIndex.size() == this->mc_Data.c_DataPoolElementsConfig.size());
+   Q_ASSERT(this->mc_Data.c_DataPoolElementsActive.size() == this->mc_Data.c_DataPoolElementsConfig.size());
+   Q_ASSERT(this->mc_Data.c_DataPoolElementsColorIndex.size() == this->mc_Data.c_DataPoolElementsConfig.size());
 
    // Adapt UI
    this->mpc_Ui->pc_PushButtonPause->setChecked(this->mc_Data.q_IsPaused);
@@ -460,7 +458,7 @@ void C_SyvDaChaPlotHandlerWidget::SetData(const C_PuiSvDbTabChart & orc_Data, co
             ou32_ViewIndex,
             c_NodeActiveFlags);
 
-         tgl_assert(s32_Retval == C_NO_ERR);
+         Q_ASSERT(s32_Retval == C_NO_ERR);
          if (s32_Retval == C_NO_ERR)
          {
             if (rc_Config.c_ElementId.u32_NodeIndex < c_NodeActiveFlags.size())
@@ -475,7 +473,7 @@ void C_SyvDaChaPlotHandlerWidget::SetData(const C_PuiSvDbTabChart & orc_Data, co
                else
                {
                   // Check for further warning reason
-                  tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckViewNodeDashboardRoutingError(
+                  Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckViewNodeDashboardRoutingError(
                                 ou32_ViewIndex,
                                 rc_Config.c_ElementId.u32_NodeIndex,
                                 q_Warning) == C_NO_ERR);
@@ -502,7 +500,7 @@ void C_SyvDaChaPlotHandlerWidget::SetData(const C_PuiSvDbTabChart & orc_Data, co
                        c_ToolTipErrorTextHeading, c_ToolTipErrorText);
    }
 
-   tgl_assert(this->mc_Data.c_DataPoolElementsActive.size() == this->mc_DataPoolElementContentMin.size());
+   Q_ASSERT(this->mc_Data.c_DataPoolElementsActive.size() == this->mc_DataPoolElementContentMin.size());
 
    this->m_UpdateElementCounter();
    this->m_ConfigureZoomMode(this->mc_Data.e_SettingZoomMode);
@@ -704,7 +702,7 @@ void C_SyvDaChaPlotHandlerWidget::ConnectionActiveChanged(const bool oq_Active)
    if (oq_Active == true)
    {
       this->m_ResetChart();
-      this->mu32_TimeStampOfStart = stw::tgl::TglGetTickCount();
+      this->ms64_TimeStampOfStart = QDateTime::currentMSecsSinceEpoch();
       //Reset window
       this->mpc_Ui->pc_Plot->xAxis->setRange(0.0, this->mpc_Ui->pc_Plot->xAxis->range().size(), Qt::AlignLeft);
       if (this->mq_PauseState == false)
@@ -742,9 +740,9 @@ int32_t C_SyvDaChaPlotHandlerWidget::AddNewGraph(const C_PuiSvDbNodeDataPoolList
 {
    int32_t s32_Return = C_RANGE;
 
-   tgl_assert(this->mq_Initialized == true);
-   tgl_assert(this->mc_Data.c_DataPoolElementsConfig.size() == this->mc_Data.c_DataPoolElementsActive.size());
-   tgl_assert(this->mc_Data.c_DataPoolElementsConfig.size() == this->mc_Data.c_DataPoolElementsColorIndex.size());
+   Q_ASSERT(this->mq_Initialized == true);
+   Q_ASSERT(this->mc_Data.c_DataPoolElementsConfig.size() == this->mc_Data.c_DataPoolElementsActive.size());
+   Q_ASSERT(this->mc_Data.c_DataPoolElementsConfig.size() == this->mc_Data.c_DataPoolElementsColorIndex.size());
 
    if (this->mc_Data.c_DataPoolElementsConfig.size() < this->mu32_MaximumDataElements)
    {
@@ -870,7 +868,7 @@ bool C_SyvDaChaPlotHandlerWidget::RemoveSpecificGraph(const uint32_t ou32_DataPo
          }
 
          // Remove configuration itself
-         tgl_assert(this->mc_Data.RemoveElement(ou32_DataPoolElementConfigIndex) == C_NO_ERR);
+         Q_ASSERT(this->mc_Data.RemoveElement(ou32_DataPoolElementConfigIndex) == C_NO_ERR);
          this->mc_DataPoolElementContentMin.erase(
             this->mc_DataPoolElementContentMin.begin() + ou32_DataPoolElementConfigIndex);
          this->mc_DataPoolElementDisplayFormatter.erase(
@@ -957,7 +955,7 @@ void C_SyvDaChaPlotHandlerWidget::SelectGraph(const uint32_t ou32_DataPoolElemen
       {
          int32_t s32_CounterTracers;
 
-         tgl_assert(static_cast<int32_t>(ou32_DataPoolElementConfigIndex) < this->mc_ItemTracers.size());
+         Q_ASSERT(static_cast<int32_t>(ou32_DataPoolElementConfigIndex) < this->mc_ItemTracers.size());
 
          for (s32_CounterTracers = 0; s32_CounterTracers < this->mc_ItemTracers.size(); ++s32_CounterTracers)
          {
@@ -982,7 +980,7 @@ void C_SyvDaChaPlotHandlerWidget::SelectGraph(const uint32_t ou32_DataPoolElemen
    }
    else
    {
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 
    this->m_RedrawGraph();
@@ -1030,7 +1028,7 @@ bool C_SyvDaChaPlotHandlerWidget::IsAnyDataSerieOnPosition(const QPoint & orc_Po
 void C_SyvDaChaPlotHandlerWidget::AddGraphContent(const C_PuiSvDbNodeDataPoolListElementId & orc_DataPoolElementId,
                                                   const QString & orc_FormattedLastValue,
                                                   const QVector<float64_t> & orc_Values,
-                                                  const QVector<uint32_t> & orc_Timestamps)
+                                                  const QVector<qint64> & orc_Timestamps)
 {
    // Find the correct data series
    if (orc_Values.size() > 0)
@@ -1052,18 +1050,18 @@ void C_SyvDaChaPlotHandlerWidget::AddGraphContent(const C_PuiSvDbNodeDataPoolLis
                int32_t s32_ValueCounter;
                float64_t f64_Value;
 
-               tgl_assert(orc_Values.size() == orc_Timestamps.size());
+               Q_ASSERT(orc_Values.size() == orc_Timestamps.size());
 
                for (s32_ValueCounter = 0U; s32_ValueCounter < orc_Values.size(); ++s32_ValueCounter)
                {
                   // Start time must be zero, adapt the read timestamp
-                  const uint32_t u32_TimeStamp = orc_Timestamps[s32_ValueCounter];
+                  const qint64 s64_TimeStamp = orc_Timestamps[s32_ValueCounter];
                   float64_t f64_Timestamp;
 
-                  if (u32_TimeStamp > this->mu32_TimeStampOfStart)
+                  if (s64_TimeStamp > this->ms64_TimeStampOfStart)
                   {
-                     f64_Timestamp = static_cast<float64_t>(u32_TimeStamp);
-                     f64_Timestamp -= static_cast<float64_t>(this->mu32_TimeStampOfStart);
+                     f64_Timestamp = static_cast<float64_t>(s64_TimeStamp);
+                     f64_Timestamp -= static_cast<float64_t>(this->ms64_TimeStampOfStart);
                   }
                   else
                   {
@@ -1371,8 +1369,8 @@ void C_SyvDaChaPlotHandlerWidget::m_AddGraph(const uint32_t ou32_DataPoolElement
    QPen c_Pen;
 
    // Get the Y axis for the new graph and if the axis does not exist yet, add it
-   tgl_assert(static_cast<int32_t>(ou32_DataPoolElementConfigIndex) == s32_GraphNumber);
-   tgl_assert(pc_AxisRect != NULL);
+   Q_ASSERT(static_cast<int32_t>(ou32_DataPoolElementConfigIndex) == s32_GraphNumber);
+   Q_ASSERT(pc_AxisRect != NULL);
    if (pc_AxisRect != NULL)
    {
       if (pc_AxisRect->axisCount(QCPAxis::atLeft) <= s32_GraphNumber)
@@ -1436,7 +1434,7 @@ void C_SyvDaChaPlotHandlerWidget::m_AddGraph(const uint32_t ou32_DataPoolElement
    pc_Graph->setPen(c_Pen);
    pc_Graph->setScatterStyle(QCPScatterStyle::ssDisc);
 
-   tgl_assert(pc_VerticalAxis != NULL);
+   Q_ASSERT(pc_VerticalAxis != NULL);
    if (pc_VerticalAxis != NULL)
    {
       // Configure axis
@@ -1618,7 +1616,7 @@ void C_SyvDaChaPlotHandlerWidget::m_OnSplitterMoved(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDaChaPlotHandlerWidget::m_CyclicUpdateHorizontalAxis(void)
 {
-   const uint32_t u32_CurTime = stw::tgl::TglGetTickCount() - this->mu32_TimeStampOfStart;
+   const uint32_t u32_CurTime = QDateTime::currentMSecsSinceEpoch() - this->mu32_TimeStampOfStart;
 
    if (static_cast<float64_t>(u32_CurTime) > this->mpc_Ui->pc_Plot->xAxis->range().upper)
    {
@@ -1835,7 +1833,7 @@ uint8_t C_SyvDaChaPlotHandlerWidget::m_GetNextNotUsedColor(void)
    bool q_RandomColorFound = false;
    uint8_t u8_ColorIndex = 0U;
 
-   srand(stw::tgl::TglGetTickCount());
+   srand(QDateTime::currentMSecsSinceEpoch());
 
    // Check for a free color in the already existing sections
    // Use the oldest section, if a free color is available
@@ -1862,7 +1860,7 @@ uint8_t C_SyvDaChaPlotHandlerWidget::m_GetNextNotUsedColor(void)
       this->m_PrepareNextColorSection();
 
       // u32_SectionNumber must be match with new added section
-      tgl_assert(u32_SectionNumber < this->mc_DataColorsUsed.size());
+      Q_ASSERT(u32_SectionNumber < this->mc_DataColorsUsed.size());
    }
 
    // search a not used color with a random number in a section with at least one free entry
@@ -1918,13 +1916,13 @@ void C_SyvDaChaPlotHandlerWidget::m_SetConcreteColorAsUsed(const uint8_t ou8_Ind
          this->m_PrepareNextColorSection();
 
          // u32_SectionNumber must be match with new added section
-         tgl_assert(u32_SectionCounter < this->mc_DataColorsUsed.size());
+         Q_ASSERT(u32_SectionCounter < this->mc_DataColorsUsed.size());
          this->mc_DataColorsUsed[u32_SectionCounter][ou8_Index] = true;
       }
    }
    else
    {
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 }
 
@@ -2017,7 +2015,7 @@ QCPAxis * C_SyvDaChaPlotHandlerWidget::m_GetVerticalAxis(const uint32_t ou32_Dat
    QCPAxis * pc_VerticalAxis = NULL;
    QCPAxisRect * const pc_AxisRect = this->mpc_Ui->pc_Plot->axisRect();
 
-   tgl_assert(pc_AxisRect != NULL);
+   Q_ASSERT(pc_AxisRect != NULL);
    if (pc_AxisRect != NULL)
    {
       pc_VerticalAxis = pc_AxisRect->axis(QCPAxis::atLeft, ou32_DataPoolElementConfigIndex);
@@ -2395,7 +2393,7 @@ void C_SyvDaChaPlotHandlerWidget::m_CursorItemMovedOnHorizontalAxis(
    }
    else
    {
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 
    // If the second cursor exist, the difference is available and possible
@@ -2484,7 +2482,7 @@ void C_SyvDaChaPlotHandlerWidget::m_Zoom(const bool oq_ZoomIn)
 {
    QCPAxisRect * const pc_AxisRect = this->mpc_Ui->pc_Plot->axisRect();
 
-   tgl_assert(pc_AxisRect != NULL);
+   Q_ASSERT(pc_AxisRect != NULL);
    if (pc_AxisRect != NULL)
    {
       float64_t f64_Factor;
@@ -2676,7 +2674,7 @@ void C_SyvDaChaPlotHandlerWidget::m_ConfigureZoomMode(const C_PuiSvDbTabChart::E
 {
    QCPAxisRect * const pc_AxisRect = this->mpc_Ui->pc_Plot->axisRect();
 
-   tgl_assert(pc_AxisRect != NULL);
+   Q_ASSERT(pc_AxisRect != NULL);
    if (pc_AxisRect != NULL)
    {
       switch (oe_SettingZoomMode)
@@ -2705,7 +2703,7 @@ void C_SyvDaChaPlotHandlerWidget::m_UpdateDragAxesConfiguration(void)
 {
    QCPAxisRect * const pc_AxisRect = this->mpc_Ui->pc_Plot->axisRect();
 
-   tgl_assert(pc_AxisRect != NULL);
+   Q_ASSERT(pc_AxisRect != NULL);
    if (pc_AxisRect != NULL)
    {
       pc_AxisRect->setRangeDragAxes(pc_AxisRect->axes(QCPAxis::atBottom), pc_AxisRect->axes(QCPAxis::atLeft));
@@ -2786,7 +2784,7 @@ void C_SyvDaChaPlotHandlerWidget::m_ConfigureVerticalAxisMode(
 {
    QCPAxisRect * const pc_AxisRect = this->mpc_Ui->pc_Plot->axisRect();
 
-   tgl_assert(pc_AxisRect != NULL);
+   Q_ASSERT(pc_AxisRect != NULL);
    if (pc_AxisRect != NULL)
    {
       // Adapt all Y axes
@@ -2796,7 +2794,7 @@ void C_SyvDaChaPlotHandlerWidget::m_ConfigureVerticalAxisMode(
       if (this->mpc_Ui->pc_ChartSelectorWidget->GetCurrentDataSerie(u32_CurrentElement) == true)
       {
          int32_t s32_CounterVerticalAxis;
-         tgl_assert(c_ListAxes.size() == static_cast<int32_t>(this->mc_Data.c_DataPoolElementsActive.size()));
+         Q_ASSERT(c_ListAxes.size() == static_cast<int32_t>(this->mc_Data.c_DataPoolElementsActive.size()));
 
          for (s32_CounterVerticalAxis = 0; s32_CounterVerticalAxis < c_ListAxes.size(); ++s32_CounterVerticalAxis)
          {

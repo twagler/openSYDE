@@ -13,14 +13,14 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
 #include "C_GiSvNodeData.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -87,7 +87,7 @@ void C_GiSvNodeData::Init(const uint32_t ou32_ViewIndex, const uint32_t ou32_Nod
             ou32_ViewIndex,
             c_NodeActiveFlags);
 
-         tgl_assert(s32_Retval == C_NO_ERR);
+         Q_ASSERT(s32_Retval == C_NO_ERR);
          if (s32_Retval == C_NO_ERR)
          {
             std::vector<uint32_t>::const_iterator c_ItSubNodeIndices;
@@ -96,7 +96,7 @@ void C_GiSvNodeData::Init(const uint32_t ou32_ViewIndex, const uint32_t ou32_Nod
                  ++c_ItSubNodeIndices)
             {
                const uint32_t u32_SubNodeIndex = *c_ItSubNodeIndices;
-               tgl_assert(u32_SubNodeIndex < c_NodeActiveFlags.size());
+               Q_ASSERT(u32_SubNodeIndex < c_NodeActiveFlags.size());
                if (u32_SubNodeIndex < c_NodeActiveFlags.size())
                {
                   const C_GiSvSubNodeData c_SubNode(ou32_ViewIndex, u32_SubNodeIndex);
@@ -305,7 +305,7 @@ void C_GiSvNodeData::UpdateInitialPackageStatus(const C_SyvUpDeviceInfo & orc_De
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvNodeData::CopyInitialStatus(C_GiSvNodeData & orc_NodeData) const
 {
-   tgl_assert(this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size());
+   Q_ASSERT(this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size());
    if (this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size())
    {
       for (uint32_t u32_It = 0UL; u32_It < this->mc_SubNodes.size(); ++u32_It)
@@ -323,7 +323,7 @@ void C_GiSvNodeData::CopyInitialStatus(C_GiSvNodeData & orc_NodeData) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvNodeData::CopyUpdateStatus(C_GiSvNodeData & orc_NodeData) const
 {
-   tgl_assert(this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size());
+   Q_ASSERT(this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size());
    if (this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size())
    {
       for (uint32_t u32_It = 0UL; u32_It < this->mc_SubNodes.size(); ++u32_It)
@@ -341,7 +341,7 @@ void C_GiSvNodeData::CopyUpdateStatus(C_GiSvNodeData & orc_NodeData) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvNodeData::CopyStwDeviceInfo(C_GiSvNodeData & orc_NodeData) const
 {
-   tgl_assert(this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size());
+   Q_ASSERT(this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size());
    if (this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size())
    {
       for (uint32_t u32_It = 0UL; u32_It < this->mc_SubNodes.size(); ++u32_It)
@@ -359,7 +359,7 @@ void C_GiSvNodeData::CopyStwDeviceInfo(C_GiSvNodeData & orc_NodeData) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvNodeData::CopyOsyDeviceInfo(C_GiSvNodeData & orc_NodeData) const
 {
-   tgl_assert(this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size());
+   Q_ASSERT(this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size());
    if (this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size())
    {
       for (uint32_t u32_It = 0UL; u32_It < this->mc_SubNodes.size(); ++u32_It)
@@ -377,7 +377,7 @@ void C_GiSvNodeData::CopyOsyDeviceInfo(C_GiSvNodeData & orc_NodeData) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiSvNodeData::CopyDiscardedStatus(C_GiSvNodeData & orc_NodeData) const
 {
-   tgl_assert(this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size());
+   Q_ASSERT(this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size());
    if (this->mc_SubNodes.size() == orc_NodeData.mc_SubNodes.size())
    {
       for (uint32_t u32_It = 0UL; u32_It < this->mc_SubNodes.size(); ++u32_It)

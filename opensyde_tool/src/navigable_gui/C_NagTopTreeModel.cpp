@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Model for topology item navigation tree (implementation)
@@ -11,7 +11,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdUtil.hpp"
@@ -21,7 +21,7 @@
 #include "C_NagTopTreeModel.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
 
@@ -131,7 +131,7 @@ void C_NagTopTreeModel::SetContent(const std::vector<QString> & orc_Content,
 
    if (orc_SubContent.empty() == false)
    {
-      tgl_assert(orc_Content.size() == orc_SubContent.size());
+      Q_ASSERT(orc_Content.size() == orc_SubContent.size());
    }
 
    // clean up

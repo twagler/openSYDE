@@ -11,7 +11,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 
 #include "C_SyvDaDashboardWidget.hpp"
 #include "ui_C_SyvDaDashboardWidget.h"
@@ -63,11 +63,11 @@ C_SyvDaDashboardWidget::C_SyvDaDashboardWidget(const uint32_t ou32_ViewIndex, co
 
    this->mpc_Ui->setupUi(this);
 
-   tgl_assert(pc_View != NULL);
+   Q_ASSERT(pc_View != NULL);
    if (pc_View != NULL)
    {
       const C_PuiSvDashboard * const pc_Dashboard = pc_View->GetDashboard(this->mu32_DashboardIndex);
-      tgl_assert(pc_Dashboard != NULL);
+      Q_ASSERT(pc_Dashboard != NULL);
       if (pc_Dashboard != NULL)
       {
          if (pc_Dashboard->GetType() == C_PuiSvDashboard::eCHART)

@@ -28,11 +28,11 @@
 #include "C_GiTextElementBus.hpp"
 #include "C_SdTopologyScene.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace std;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -489,7 +489,7 @@ void C_SdManUnoTopologyAddDeleteBaseCommand::m_SaveToData(void)
       C_PuiSdTextElementBus & rc_BusTextElement = this->mc_DataBackup.c_BusTextElements[u32_ItBusTextElement];
       rc_BusTextElement.u32_BusIndex = c_MapOldIndexToNewIndex.value(rc_BusTextElement.u32_BusIndex,
                                                                      std::numeric_limits<uint32_t>::max());
-      tgl_assert(rc_BusTextElement.u32_BusIndex != std::numeric_limits<uint32_t>::max());
+      Q_ASSERT(rc_BusTextElement.u32_BusIndex != std::numeric_limits<uint32_t>::max());
    }
 }
 
@@ -731,7 +731,7 @@ void C_SdManUnoTopologyAddDeleteBaseCommand::m_HandleCanOpenManagerBeforeDelete(
       for (uint32_t u32_ItDelete = 0UL; u32_ItDelete < c_Tmp.size(); ++u32_ItDelete)
       {
          bool q_Tmp;
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManager(ou32_Index,
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManager(ou32_Index,
                                                                           c_Tmp[u32_ItDelete], true,
                                                                           q_Tmp) == C_NO_ERR);
       }
@@ -767,7 +767,7 @@ void C_SdManUnoTopologyAddDeleteBaseCommand::m_HandleCanOpenDeviceBeforeDelete(c
             }
             for (uint32_t u32_ItDelete = 0UL; u32_ItDelete < c_Tmp.size(); ++u32_ItDelete)
             {
-               tgl_assert(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManagerDevice(u32_ItNode, c_ItManager->first,
+               Q_ASSERT(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManagerDevice(u32_ItNode, c_ItManager->first,
                                                                                       c_Tmp[u32_ItDelete]) == C_NO_ERR);
             }
          }
@@ -793,14 +793,14 @@ void C_SdManUnoTopologyAddDeleteBaseCommand::m_HandleCanOpenBusBeforeDelete(cons
          std::vector<uint32_t> c_InterfaceIndexes;
          C_PuiSdHandler::h_GetInstance()->GetOscSystemDefinitionConst().GetNodeIndexesOfBus(ou32_Index, c_NodeIndexes,
                                                                                             c_InterfaceIndexes);
-         tgl_assert(c_NodeIndexes.size() == c_InterfaceIndexes.size());
+         Q_ASSERT(c_NodeIndexes.size() == c_InterfaceIndexes.size());
          if (c_NodeIndexes.size() == c_InterfaceIndexes.size())
          {
             for (uint32_t u32_ItNode = 0UL; u32_ItNode < c_NodeIndexes.size(); ++u32_ItNode)
             {
                bool q_Tmp;
                uint8_t u8_InterfaceNumber;
-               tgl_assert(C_PuiSdHandler::h_GetInstance()->TranslateCanInterfaceIndexToId(c_NodeIndexes[u32_ItNode],
+               Q_ASSERT(C_PuiSdHandler::h_GetInstance()->TranslateCanInterfaceIndexToId(c_NodeIndexes[u32_ItNode],
                                                                                           c_InterfaceIndexes[u32_ItNode],
                                                                                           u8_InterfaceNumber) ==
                           C_NO_ERR);
@@ -880,7 +880,7 @@ void C_SdManUnoTopologyAddDeleteBaseCommand::m_HandleCanOpenDeviceNodeBusConnect
             }
             for (uint32_t u32_ItDelete = 0UL; u32_ItDelete < c_Tmp.size(); ++u32_ItDelete)
             {
-               tgl_assert(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManagerDevice(u32_ItNode, c_ItManager->first,
+               Q_ASSERT(C_PuiSdHandler::h_GetInstance()->DeleteCanOpenManagerDevice(u32_ItNode, c_ItManager->first,
                                                                                       c_Tmp[u32_ItDelete]) == C_NO_ERR);
             }
          }

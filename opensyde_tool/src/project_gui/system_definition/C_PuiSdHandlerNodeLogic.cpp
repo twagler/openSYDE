@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Node logic part of UI system definition
@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_PuiSdUtil.hpp"
@@ -21,7 +21,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -287,7 +287,7 @@ int32_t C_PuiSdHandlerNodeLogic::GetSortedOscNodeConst(const uint32_t & oru32_In
    int32_t s32_Retval = C_NO_ERR;
    C_PuiSdNode c_UiNode;
 
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size())
    {
       if (oru32_Index < this->mc_CoreDefinition.c_Nodes.size())
@@ -484,7 +484,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetOscNodePropertyXappSupport(const uint32_t ou
          else
          {
             // as the vector gets smaller, we just remove the first element that is not programmable, till it'sempty
-            tgl_assert(this->RemoveApplication(ou32_NodeIndex, u32_NonProgrammableCounter) == C_NO_ERR);
+            Q_ASSERT(this->RemoveApplication(ou32_NodeIndex, u32_NonProgrammableCounter) == C_NO_ERR);
          }
       }
 
@@ -671,9 +671,9 @@ uint32_t C_PuiSdHandlerNodeLogic::AddNodeSquadAndSort(std::vector<C_OscNode> & o
       c_NodeNames.emplace_back(orc_NodeNames[u32_ItNode].toStdString().c_str());
    }
 
-   tgl_assert(orc_OscNodes.size() > 0);
-   tgl_assert(orc_OscNodes.size() == orc_UiNodes.size());
-   tgl_assert(orc_OscNodes.size() == orc_NodeNames.size());
+   Q_ASSERT(orc_OscNodes.size() > 0);
+   Q_ASSERT(orc_OscNodes.size() == orc_UiNodes.size());
+   Q_ASSERT(orc_OscNodes.size() == orc_NodeNames.size());
    if (orc_OscNodes.size() > 0)
    {
       // The device name of the first node is enough. Must be identical on all sub nodes
@@ -695,7 +695,7 @@ uint32_t C_PuiSdHandlerNodeLogic::AddNodeSquadAndSort(std::vector<C_OscNode> & o
                                                                                                           // set device
    // definition pointer
 
-   tgl_assert(u32_NodeSquadIndex < mc_CoreDefinition.c_NodeSquads.size());
+   Q_ASSERT(u32_NodeSquadIndex < mc_CoreDefinition.c_NodeSquads.size());
    this->mc_CoreDefinition.c_NodeSquads[u32_NodeSquadIndex].SetBaseName(this->mc_CoreDefinition.c_Nodes,
                                                                         c_Name);
 
@@ -739,7 +739,7 @@ void C_PuiSdHandlerNodeLogic::RemoveNode(const uint32_t ou32_NodeIndex)
       this->m_HandleSyncNodeAboutToBeDeleted(c_AllNodeIndexToRemove[static_cast<uint32_t>(s32_NodeIndexCounter)]);
    }
 
-   tgl_assert(this->mc_CoreDefinition.DeleteNode(ou32_NodeIndex) == C_NO_ERR);
+   Q_ASSERT(this->mc_CoreDefinition.DeleteNode(ou32_NodeIndex) == C_NO_ERR);
 
    for (s32_NodeIndexCounter = (static_cast<int32_t>(c_AllNodeIndexToRemove.size()) - 1); s32_NodeIndexCounter >= 0;
         --s32_NodeIndexCounter)
@@ -896,7 +896,7 @@ void C_PuiSdHandlerNodeLogic::GetSupportedCanBitrates(const std::vector<uint32_t
          uint32_t u32_SupportedBitrateCounter;
          std::vector<uint32_t> c_TempBitrates;
 
-         tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
+         Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
 
          // Search common bitrates by comparing previously found bitrates with the bitrates of the current device
          for (u32_SupportedBitrateCounter = 0U; u32_SupportedBitrateCounter < orc_Bitrates.size();
@@ -967,7 +967,7 @@ void C_PuiSdHandlerNodeLogic::GetSupportedCanFdBitrates(const std::vector<uint32
          uint32_t u32_SupportedBitrateCounter;
          std::vector<uint32_t> c_TempBitrates;
 
-         tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
+         Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
 
          // Search common bitrates by comparing previously found bitrates with the bitrates of the current device
          for (u32_SupportedBitrateCounter = 0U; u32_SupportedBitrateCounter < orc_Bitrates.size();
@@ -1302,7 +1302,7 @@ int32_t C_PuiSdHandlerNodeLogic::MapNodeNameToIndex(const QString & orc_NodeName
    for (uint32_t u32_ItNode = 0UL; u32_ItNode < this->GetOscNodesSize(); ++u32_ItNode)
    {
       const C_OscNode * const pc_Node = this->GetOscNodeConst(u32_ItNode);
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          if (orc_NodeName.compare(pc_Node->c_Properties.c_Name.c_str()) == 0)
@@ -1364,10 +1364,10 @@ bool C_PuiSdHandlerNodeLogic::HasNodeAnAvailableFlashloader(const uint32_t ou32_
    {
       const C_OscDeviceDefinition * const pc_Device = pc_Node->pc_DeviceDefinition;
       const uint32_t u32_SubDeviceIndex = pc_Node->u32_SubDeviceIndex;
-      tgl_assert(pc_Device != NULL);
+      Q_ASSERT(pc_Device != NULL);
       if (pc_Device != NULL)
       {
-         tgl_assert(u32_SubDeviceIndex < pc_Device->c_SubDevices.size());
+         Q_ASSERT(u32_SubDeviceIndex < pc_Device->c_SubDevices.size());
          if (u32_SubDeviceIndex < pc_Device->c_SubDevices.size())
          {
             if (((pc_Device->c_SubDevices[u32_SubDeviceIndex].q_FlashloaderStwCan == false) &&
@@ -1469,7 +1469,7 @@ int32_t C_PuiSdHandlerNodeLogic::AddDataPool(const uint32_t & oru32_NodeIndex, c
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_UiNodes.size())
    {
       const C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
@@ -1522,7 +1522,7 @@ int32_t C_PuiSdHandlerNodeLogic::AddDataPool(const uint32_t & oru32_NodeIndex, c
       }
 
       //Insert
-      tgl_assert(this->InsertDataPool(oru32_NodeIndex, u32_ItTargetIndex, orc_OscContent, orc_UiContent,
+      Q_ASSERT(this->InsertDataPool(oru32_NodeIndex, u32_ItTargetIndex, orc_OscContent, orc_UiContent,
                                       ore_ComProtocolType, orq_AllowNameAdaptation,
                                       orq_AllowDataAdaptation) == C_NO_ERR);
    }
@@ -1602,7 +1602,7 @@ int32_t C_PuiSdHandlerNodeLogic::InsertDataPool(const uint32_t & oru32_NodeIndex
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_UiNodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
@@ -1614,7 +1614,7 @@ int32_t C_PuiSdHandlerNodeLogic::InsertDataPool(const uint32_t & oru32_NodeIndex
          c_NodeDataPool.c_Name = this->GetUniqueDataPoolName(oru32_NodeIndex, c_NodeDataPool.c_Name);
       }
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex <= rc_UiNode.c_UiDataPools.size())
       {
          rc_UiNode.c_UiDataPools.insert(rc_UiNode.c_UiDataPools.begin() + oru32_DataPoolIndex, orc_UiContent);
@@ -1660,13 +1660,13 @@ int32_t C_PuiSdHandlerNodeLogic::RemoveDataPool(const uint32_t & oru32_NodeIndex
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_UiNodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_UiNode.c_UiDataPools.size())
       {
          if (oq_SuppressSyncSignal == false)
@@ -1721,14 +1721,14 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPool(const uint32_t & oru32_NodeIndex, c
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_UiNodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_UiNode.c_UiDataPools.size())
       {
          if (orc_OscContent.c_Lists.size() == orc_UiContent.c_DataPoolLists.size())
@@ -2069,7 +2069,7 @@ int32_t C_PuiSdHandlerNodeLogic::MoveDataPool(const uint32_t ou32_NodeIndex, con
    int32_t s32_Retval = C_RANGE;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (ou32_NodeIndex < this->mc_UiNodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[ou32_NodeIndex];
@@ -2124,7 +2124,7 @@ int32_t C_PuiSdHandlerNodeLogic::GetDataPoolIndex(const uint32_t ou32_NodeIndex,
    int32_t s32_Return = -1;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (ou32_NodeIndex < this->mc_UiNodes.size())
    {
       const C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -2151,7 +2151,7 @@ int32_t C_PuiSdHandlerNodeLogic::GetDataPoolTypeIndex(const uint32_t ou32_NodeIn
    int32_t s32_Return = -1;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (ou32_NodeIndex < this->mc_UiNodes.size())
    {
       const C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -2177,7 +2177,7 @@ int32_t C_PuiSdHandlerNodeLogic::GetDataPoolCount(const uint32_t ou32_NodeIndex,
    int32_t s32_Return = -1;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (ou32_NodeIndex < this->mc_UiNodes.size())
    {
       const C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -2488,7 +2488,7 @@ int32_t C_PuiSdHandlerNodeLogic::AddApplication(const uint32_t ou32_NodeIndex, C
    if (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       const C_OscNode & rc_Node = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
-      tgl_assert(this->InsertApplication(ou32_NodeIndex, rc_Node.c_Applications.size(), orc_OscContent) == C_NO_ERR);
+      Q_ASSERT(this->InsertApplication(ou32_NodeIndex, rc_Node.c_Applications.size(), orc_OscContent) == C_NO_ERR);
    }
    else
    {
@@ -2979,21 +2979,21 @@ int32_t C_PuiSdHandlerNodeLogic::InsertDataPoolList(const uint32_t & oru32_NodeI
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex <= rc_OscDataPool.c_Lists.size())
          {
             //Unique name
@@ -3037,7 +3037,7 @@ int32_t C_PuiSdHandlerNodeLogic::InsertDataPoolList(const uint32_t & oru32_NodeI
                   {
                      const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                      // No error expected. The Datapools must have the same conditions
-                     tgl_assert(this->InsertDataPoolList(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                     Q_ASSERT(this->InsertDataPoolList(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                          oru32_DataPoolListIndex,
                                                          orc_OscContent, orc_UiContent, false) == C_NO_ERR);
                   }
@@ -3083,21 +3083,21 @@ int32_t C_PuiSdHandlerNodeLogic::RemoveDataPoolList(const uint32_t & oru32_NodeI
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             //Synchronization engine (First!)
@@ -3123,7 +3123,7 @@ int32_t C_PuiSdHandlerNodeLogic::RemoveDataPoolList(const uint32_t & oru32_NodeI
                   {
                      const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                      // No error expected. The Datapools must have the same conditions
-                     tgl_assert(this->RemoveDataPoolList(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                     Q_ASSERT(this->RemoveDataPoolList(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                          oru32_DataPoolListIndex, false) == C_NO_ERR);
                   }
                }
@@ -3172,21 +3172,21 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolList(const uint32_t & oru32_NodeInde
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             if (orc_UiContent.c_DataPoolListElements.size() == orc_OscContent.c_Elements.size())
@@ -3258,21 +3258,21 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListName(const uint32_t & oru32_Node
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             C_OscNodeDataPoolList & rc_OscList = rc_OscDataPool.c_Lists[oru32_DataPoolListIndex];
@@ -3296,7 +3296,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListName(const uint32_t & oru32_Node
                   {
                      const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                      // No error expected. The Datapools must have the same conditions
-                     tgl_assert(this->SetDataPoolListName(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                     Q_ASSERT(this->SetDataPoolListName(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                           oru32_DataPoolListIndex, orc_Value,
                                                           false) == C_NO_ERR);
                   }
@@ -3343,21 +3343,21 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListComment(const uint32_t & oru32_N
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             C_OscNodeDataPoolList & rc_OscList = rc_OscDataPool.c_Lists[oru32_DataPoolListIndex];
@@ -3381,7 +3381,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListComment(const uint32_t & oru32_N
                   {
                      const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                      // No error expected. The Datapools must have the same conditions
-                     tgl_assert(this->SetDataPoolListComment(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                     Q_ASSERT(this->SetDataPoolListComment(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                              oru32_DataPoolListIndex, orc_Value,
                                                              false) == C_NO_ERR);
                   }
@@ -3428,21 +3428,21 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListNvmSize(const uint32_t & oru32_N
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             C_OscNodeDataPoolList & rc_OscList = rc_OscDataPool.c_Lists[oru32_DataPoolListIndex];
@@ -3466,7 +3466,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListNvmSize(const uint32_t & oru32_N
                   {
                      const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                      // No error expected. The Datapools must have the same conditions
-                     tgl_assert(this->SetDataPoolListNvmSize(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                     Q_ASSERT(this->SetDataPoolListNvmSize(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                              oru32_DataPoolListIndex, ou32_Value,
                                                              false) == C_NO_ERR);
                   }
@@ -3512,21 +3512,21 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListNvmCrc(const uint32_t & oru32_No
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             C_OscNodeDataPoolList & rc_OscList = rc_OscDataPool.c_Lists[oru32_DataPoolListIndex];
@@ -3760,7 +3760,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetOscNodeDataPoolDataSet(const uint32_t & oru3
                      {
                         const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                         // No error expected. The Datapools must have the same conditions
-                        tgl_assert(this->SetOscNodeDataPoolDataSet(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                        Q_ASSERT(this->SetOscNodeDataPoolDataSet(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                                    oru32_DataPoolListIndex,
                                                                    oru32_DataPoolListDataSetIndex,
                                                                    orc_OscContent, false) == C_NO_ERR);
@@ -3851,7 +3851,7 @@ int32_t C_PuiSdHandlerNodeLogic::InsertDataPoolListDataSet(const uint32_t & oru3
                s32_Retval = C_RANGE;
             }
             //Values
-            tgl_assert(rc_OscList.c_Elements.size() == orc_OscValues.size());
+            Q_ASSERT(rc_OscList.c_Elements.size() == orc_OscValues.size());
             for (uint32_t u32_ItDataElement = 0; u32_ItDataElement < rc_OscList.c_Elements.size();
                  ++u32_ItDataElement)
             {
@@ -3889,7 +3889,7 @@ int32_t C_PuiSdHandlerNodeLogic::InsertDataPoolListDataSet(const uint32_t & oru3
                   {
                      const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                      // No error expected. The Datapools must have the same conditions
-                     tgl_assert(this->InsertDataPoolListDataSet(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                     Q_ASSERT(this->InsertDataPoolListDataSet(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                                 oru32_DataPoolListIndex, oru32_DataPoolListDataSetIndex,
                                                                 orc_OscName, orc_OscValues, false) == C_NO_ERR);
                   }
@@ -3996,7 +3996,7 @@ int32_t C_PuiSdHandlerNodeLogic::RemoveDataPoolListDataSet(const uint32_t & oru3
                   {
                      const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                      // No error expected. The Datapools must have the same conditions
-                     tgl_assert(this->RemoveDataPoolListDataSet(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                     Q_ASSERT(this->RemoveDataPoolListDataSet(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                                 oru32_DataPoolListIndex,
                                                                 oru32_DataPoolListDataSetIndex, false) == C_NO_ERR);
                   }
@@ -4117,7 +4117,7 @@ int32_t C_PuiSdHandlerNodeLogic::MoveDataPoolListDataSet(const uint32_t & oru32_
                   {
                      const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                      // No error expected. The Datapools must have the same conditions
-                     tgl_assert(this->MoveDataPoolListDataSet(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                     Q_ASSERT(this->MoveDataPoolListDataSet(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                               oru32_DataPoolListIndex,
                                                               oru32_SourceIndex, oru32_TargetIndex, false) == C_NO_ERR);
                   }
@@ -4226,14 +4226,14 @@ int32_t C_PuiSdHandlerNodeLogic::MoveDataPoolList(const uint32_t & oru32_NodeInd
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
@@ -4268,7 +4268,7 @@ int32_t C_PuiSdHandlerNodeLogic::MoveDataPoolList(const uint32_t & oru32_NodeInd
                   {
                      const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                      // No error expected. The Datapools must have the same conditions
-                     tgl_assert(this->MoveDataPoolList(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                     Q_ASSERT(this->MoveDataPoolList(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                        oru32_SourceIndex, oru32_TargetIndex, false) == C_NO_ERR);
                   }
                }
@@ -4412,21 +4412,21 @@ int32_t C_PuiSdHandlerNodeLogic::ReserveDataPoolListElements(const uint32_t & or
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             C_PuiSdNodeDataPoolList & rc_UiList = rc_UiDataPool.c_DataPoolLists[oru32_DataPoolListIndex];
@@ -4459,7 +4459,7 @@ int32_t C_PuiSdHandlerNodeLogic::ReserveDataPoolListElements(const uint32_t & or
                   {
                      const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                      // No error expected. The Datapools must have the same conditions
-                     tgl_assert(this->ReserveDataPoolListElements(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                     Q_ASSERT(this->ReserveDataPoolListElements(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                                   oru32_DataPoolListIndex,
                                                                   oru32_AdditionalElements, false) == C_NO_ERR);
                   }
@@ -4512,28 +4512,28 @@ int32_t C_PuiSdHandlerNodeLogic::InsertDataPoolListElement(const uint32_t & oru3
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             C_PuiSdNodeDataPoolList & rc_UiList = rc_UiDataPool.c_DataPoolLists[oru32_DataPoolListIndex];
             C_OscNodeDataPoolList & rc_OscList = rc_OscDataPool.c_Lists[oru32_DataPoolListIndex];
 
             //Check size & consistency
-            tgl_assert(rc_UiList.c_DataPoolListElements.size() == rc_OscList.c_Elements.size());
+            Q_ASSERT(rc_UiList.c_DataPoolListElements.size() == rc_OscList.c_Elements.size());
             if (oru32_DataPoolListElementIndex <= rc_UiList.c_DataPoolListElements.size())
             {
                //Unique name
@@ -4578,7 +4578,7 @@ int32_t C_PuiSdHandlerNodeLogic::InsertDataPoolListElement(const uint32_t & oru3
                      {
                         const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                         // No error expected. The Datapools must have the same conditions
-                        tgl_assert(this->InsertDataPoolListElement(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                        Q_ASSERT(this->InsertDataPoolListElement(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                                    oru32_DataPoolListIndex,
                                                                    oru32_DataPoolListElementIndex,
                                                                    orc_OscContent, orc_UiContent, false) == C_NO_ERR);
@@ -4632,28 +4632,28 @@ int32_t C_PuiSdHandlerNodeLogic::RemoveDataPoolListElement(const uint32_t & oru3
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             C_PuiSdNodeDataPoolList & rc_UiList = rc_UiDataPool.c_DataPoolLists[oru32_DataPoolListIndex];
             C_OscNodeDataPoolList & rc_OscList = rc_OscDataPool.c_Lists[oru32_DataPoolListIndex];
 
             //Check size & consistency
-            tgl_assert(rc_UiList.c_DataPoolListElements.size() == rc_OscList.c_Elements.size());
+            Q_ASSERT(rc_UiList.c_DataPoolListElements.size() == rc_OscList.c_Elements.size());
             if (oru32_DataPoolListElementIndex < rc_UiList.c_DataPoolListElements.size())
             {
                //Synchronization engine (First!)
@@ -4682,7 +4682,7 @@ int32_t C_PuiSdHandlerNodeLogic::RemoveDataPoolListElement(const uint32_t & oru3
                      {
                         const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                         // No error expected. The Datapools must have the same conditions
-                        tgl_assert(this->RemoveDataPoolListElement(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                        Q_ASSERT(this->RemoveDataPoolListElement(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                                    oru32_DataPoolListIndex,
                                                                    oru32_DataPoolListElementIndex,
                                                                    false) == C_NO_ERR);
@@ -4740,28 +4740,28 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListElement(const uint32_t & oru32_N
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             C_PuiSdNodeDataPoolList & rc_UiList = rc_UiDataPool.c_DataPoolLists[oru32_DataPoolListIndex];
             C_OscNodeDataPoolList & rc_OscList = rc_OscDataPool.c_Lists[oru32_DataPoolListIndex];
 
             //Check size & consistency
-            tgl_assert(rc_UiList.c_DataPoolListElements.size() == rc_OscList.c_Elements.size());
+            Q_ASSERT(rc_UiList.c_DataPoolListElements.size() == rc_OscList.c_Elements.size());
             if (oru32_DataPoolListElementIndex < rc_UiList.c_DataPoolListElements.size())
             {
                C_OscNodeDataPoolListElement & rc_OscDataElement = rc_OscList.c_Elements[oru32_DataPoolListElementIndex];
@@ -5002,8 +5002,8 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListElementMinArray(const uint32_t &
                if (oru32_ArrayIndex < rc_Element.GetArraySize())
                {
                   //Check input correct
-                  tgl_assert(orc_OscContent.GetType() == rc_Element.GetType());
-                  tgl_assert(orc_OscContent.GetArray() == false);
+                  Q_ASSERT(orc_OscContent.GetType() == rc_Element.GetType());
+                  Q_ASSERT(orc_OscContent.GetArray() == false);
                   switch (orc_OscContent.GetType())
                   {
                   case C_OscNodeDataPoolContent::eUINT8:
@@ -5037,7 +5037,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListElementMinArray(const uint32_t &
                      rc_Element.c_MinValue.SetValueArrF64Element(orc_OscContent.GetValueF64(), oru32_ArrayIndex);
                      break;
                   default:
-                     tgl_assert(false);
+                     Q_ASSERT(false);
                      break;
                   }
 
@@ -5057,7 +5057,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListElementMinArray(const uint32_t &
                         {
                            const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                            // No error expected. The Datapools must have the same conditions
-                           tgl_assert(this->SetDataPoolListElementMinArray(rc_DpId.u32_NodeIndex,
+                           Q_ASSERT(this->SetDataPoolListElementMinArray(rc_DpId.u32_NodeIndex,
                                                                            rc_DpId.u32_DataPoolIndex,
                                                                            oru32_DataPoolListIndex,
                                                                            oru32_DataPoolListElementIndex,
@@ -5143,8 +5143,8 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListElementMaxArray(const uint32_t &
                if (oru32_ArrayIndex < rc_Element.GetArraySize())
                {
                   //Check input correct
-                  tgl_assert(orc_OscContent.GetType() == rc_Element.GetType());
-                  tgl_assert(orc_OscContent.GetArray() == false);
+                  Q_ASSERT(orc_OscContent.GetType() == rc_Element.GetType());
+                  Q_ASSERT(orc_OscContent.GetArray() == false);
                   switch (orc_OscContent.GetType())
                   {
                   case C_OscNodeDataPoolContent::eUINT8:
@@ -5178,7 +5178,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListElementMaxArray(const uint32_t &
                      rc_Element.c_MaxValue.SetValueArrF64Element(orc_OscContent.GetValueF64(), oru32_ArrayIndex);
                      break;
                   default:
-                     tgl_assert(false);
+                     Q_ASSERT(false);
                      break;
                   }
 
@@ -5198,7 +5198,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListElementMaxArray(const uint32_t &
                         {
                            const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                            // No error expected. The Datapools must have the same conditions
-                           tgl_assert(this->SetDataPoolListElementMaxArray(rc_DpId.u32_NodeIndex,
+                           Q_ASSERT(this->SetDataPoolListElementMaxArray(rc_DpId.u32_NodeIndex,
                                                                            rc_DpId.u32_DataPoolIndex,
                                                                            oru32_DataPoolListIndex,
                                                                            oru32_DataPoolListElementIndex,
@@ -5289,8 +5289,8 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListElementDataSetArray(const uint32
                   if (oru32_ArrayIndex < rc_DataSet.GetArraySize())
                   {
                      //Check input correct
-                     tgl_assert(orc_OscContent.GetType() == rc_Element.GetType());
-                     tgl_assert(orc_OscContent.GetArray() == false);
+                     Q_ASSERT(orc_OscContent.GetType() == rc_Element.GetType());
+                     Q_ASSERT(orc_OscContent.GetArray() == false);
                      switch (orc_OscContent.GetType())
                      {
                      case C_OscNodeDataPoolContent::eUINT8:
@@ -5324,7 +5324,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListElementDataSetArray(const uint32
                         rc_DataSet.SetValueArrF64Element(orc_OscContent.GetValueF64(), oru32_ArrayIndex);
                         break;
                      default:
-                        tgl_assert(false);
+                        Q_ASSERT(false);
                         break;
                      }
 
@@ -5344,7 +5344,7 @@ int32_t C_PuiSdHandlerNodeLogic::SetDataPoolListElementDataSetArray(const uint32
                            {
                               const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                               // No error expected. The Datapools must have the same conditions
-                              tgl_assert(this->SetDataPoolListElementDataSetArray(rc_DpId.u32_NodeIndex,
+                              Q_ASSERT(this->SetDataPoolListElementDataSetArray(rc_DpId.u32_NodeIndex,
                                                                                   rc_DpId.u32_DataPoolIndex,
                                                                                   oru32_DataPoolListIndex,
                                                                                   oru32_DataPoolListElementIndex,
@@ -5629,28 +5629,28 @@ int32_t C_PuiSdHandlerNodeLogic::MoveDataPoolListElement(const uint32_t & oru32_
    int32_t s32_Retval = C_NO_ERR;
 
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
 
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_PuiSdNodeDataPool & rc_UiDataPool = rc_UiNode.c_UiDataPools[oru32_DataPoolIndex];
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
 
          //Check size & consistency
-         tgl_assert(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
+         Q_ASSERT(rc_UiDataPool.c_DataPoolLists.size() == rc_OscDataPool.c_Lists.size());
          if (oru32_DataPoolListIndex < rc_OscDataPool.c_Lists.size())
          {
             C_PuiSdNodeDataPoolList & rc_UiList = rc_UiDataPool.c_DataPoolLists[oru32_DataPoolListIndex];
             C_OscNodeDataPoolList & rc_OscList = rc_OscDataPool.c_Lists[oru32_DataPoolListIndex];
 
             //Check size & consistency
-            tgl_assert(rc_UiList.c_DataPoolListElements.size() == rc_OscList.c_Elements.size());
+            Q_ASSERT(rc_UiList.c_DataPoolListElements.size() == rc_OscList.c_Elements.size());
             if ((oru32_SourceIndex < rc_UiList.c_DataPoolListElements.size()) &&
                 (oru32_TargetIndex < rc_UiList.c_DataPoolListElements.size()))
             {
@@ -5685,7 +5685,7 @@ int32_t C_PuiSdHandlerNodeLogic::MoveDataPoolListElement(const uint32_t & oru32_
                      {
                         const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
                         // No error expected. The Datapools must have the same conditions
-                        tgl_assert(this->MoveDataPoolListElement(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+                        Q_ASSERT(this->MoveDataPoolListElement(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                                  oru32_DataPoolListIndex,
                                                                  oru32_SourceIndex, oru32_TargetIndex,
                                                                  false) == C_NO_ERR);
@@ -5809,7 +5809,7 @@ std::map<C_SclString, bool> C_PuiSdHandlerNodeLogic::m_GetExistingNodeNames(void
       if (C_OscNodeSquad::h_CheckIsMultiDevice(u32_ItNode, this->mc_CoreDefinition.c_NodeSquads, &u32_GroupIndex))
       {
          // Squad sub node. Only use base name
-         tgl_assert(u32_GroupIndex < this->mc_CoreDefinition.c_NodeSquads.size());
+         Q_ASSERT(u32_GroupIndex < this->mc_CoreDefinition.c_NodeSquads.size());
          if (u32_GroupIndex < this->mc_CoreDefinition.c_NodeSquads.size())
          {
             const C_SclString & rc_CurrentName = this->mc_CoreDefinition.c_NodeSquads[u32_GroupIndex].c_BaseName;
@@ -6209,13 +6209,13 @@ void C_PuiSdHandlerNodeLogic::m_SetUpComDataPool(const uint32_t & oru32_NodeInde
                                                  const C_OscCanProtocol::E_Type & ore_ComProtocolType)
 {
    //Check size & consistency
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_UiNodes.size())
    {
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
       //Check size & consistency
-      tgl_assert(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
+      Q_ASSERT(rc_UiNode.c_UiDataPools.size() == rc_OscNode.c_DataPools.size());
       if (oru32_DataPoolIndex < rc_OscNode.c_DataPools.size())
       {
          C_OscNodeDataPool & rc_OscDataPool = rc_OscNode.c_DataPools[oru32_DataPoolIndex];
@@ -6344,12 +6344,12 @@ void C_PuiSdHandlerNodeLogic::m_CleanUpComDataPool(const uint32_t & oru32_NodeIn
                                                    const uint32_t & oru32_DataPoolIndex)
 {
    //Clean up com protocol
-   tgl_assert(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(this->mc_UiNodes.size() == this->mc_CoreDefinition.c_Nodes.size());
    if (oru32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_Node = this->mc_CoreDefinition.c_Nodes[oru32_NodeIndex];
       C_PuiSdNode & rc_UiNode = this->mc_UiNodes[oru32_NodeIndex];
-      tgl_assert(rc_Node.c_ComProtocols.size() == rc_UiNode.c_UiCanProtocols.size());
+      Q_ASSERT(rc_Node.c_ComProtocols.size() == rc_UiNode.c_UiCanProtocols.size());
       for (uint32_t u32_ItProtocol = rc_Node.c_ComProtocols.size(); u32_ItProtocol > 0UL; --u32_ItProtocol)
       {
          const uint32_t u32_Index = u32_ItProtocol - 1UL;
@@ -6639,7 +6639,7 @@ void C_PuiSdHandlerNodeLogic::mh_MergeNvmDataPoolAreas(
 //----------------------------------------------------------------------------------------------------------------------
 void C_PuiSdHandlerNodeLogic::m_SetOscNodeIds(const uint32_t ou32_NodeIndex, const std::vector<uint8_t> & orc_NodeIds)
 {
-   tgl_assert(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
    if (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
@@ -6663,11 +6663,11 @@ void C_PuiSdHandlerNodeLogic::m_SetOscNodeIds(const uint32_t ou32_NodeIndex, con
 void C_PuiSdHandlerNodeLogic::m_SetOscNodeId(const uint32_t ou32_NodeIndex, const uint32_t ou32_InterfaceIndex,
                                              const uint8_t ou8_NodeId)
 {
-   tgl_assert(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
+   Q_ASSERT(ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size());
    if (ou32_NodeIndex < this->mc_CoreDefinition.c_Nodes.size())
    {
       C_OscNode & rc_OscNode = this->mc_CoreDefinition.c_Nodes[ou32_NodeIndex];
-      tgl_assert(ou32_InterfaceIndex < rc_OscNode.c_Properties.c_ComInterfaces.size());
+      Q_ASSERT(ou32_InterfaceIndex < rc_OscNode.c_Properties.c_ComInterfaces.size());
       if (ou32_InterfaceIndex < rc_OscNode.c_Properties.c_ComInterfaces.size())
       {
          C_OscNodeComInterfaceSettings & rc_Interface = rc_OscNode.c_Properties.c_ComInterfaces[ou32_InterfaceIndex];
@@ -6713,7 +6713,7 @@ void C_PuiSdHandlerNodeLogic::m_SetDataPoolListSharedSync(const uint32_t & oru32
             const C_OscNodeDataPoolList * const pc_List = this->GetOscDataPoolList(rc_DpId.u32_NodeIndex,
                                                                                    rc_DpId.u32_DataPoolIndex,
                                                                                    oru32_DataPoolListIndex);
-            tgl_assert((pc_Datapool != NULL) && (pc_List != NULL));
+            Q_ASSERT((pc_Datapool != NULL) && (pc_List != NULL));
             if ((pc_Datapool != NULL) && (pc_List != NULL))
             {
                C_OscNodeDataPoolList c_NewValue = orc_OscContent;
@@ -6721,7 +6721,7 @@ void C_PuiSdHandlerNodeLogic::m_SetDataPoolListSharedSync(const uint32_t & oru32
                if ((!pc_Datapool->q_IsSafety) && (pc_DatapoolOrg->q_IsSafety))
                {
                   c_NewValue.q_NvmCrcActive = pc_List->q_NvmCrcActive;
-                  tgl_assert(pc_List->c_Elements.size() == c_NewValue.c_Elements.size());
+                  Q_ASSERT(pc_List->c_Elements.size() == c_NewValue.c_Elements.size());
                   if (pc_List->c_Elements.size() == c_NewValue.c_Elements.size())
                   {
                      for (uint32_t u32_ItEl = 0UL; u32_ItEl < pc_List->c_Elements.size(); ++u32_ItEl)
@@ -6731,7 +6731,7 @@ void C_PuiSdHandlerNodeLogic::m_SetDataPoolListSharedSync(const uint32_t & oru32
                   }
                }
                // No error expected. The Datapools must have the same conditions
-               tgl_assert(this->SetDataPoolList(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+               Q_ASSERT(this->SetDataPoolList(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                 oru32_DataPoolListIndex, c_NewValue, orc_UiContent,
                                                 false) == C_NO_ERR);
             }
@@ -6767,7 +6767,7 @@ void C_PuiSdHandlerNodeLogic::m_SetDataPoolListNvmCrcSharedSync(const uint32_t &
       {
          const C_OscNodeDataPoolId & rc_DpId = c_SharedDatapools[u32_SharedDpCounter];
          // No error expected. The Datapools must have the same conditions
-         tgl_assert(this->SetDataPoolListNvmCrc(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+         Q_ASSERT(this->SetDataPoolListNvmCrc(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                 oru32_DataPoolListIndex, oq_Value,
                                                 false) == C_NO_ERR);
       }
@@ -6813,7 +6813,7 @@ void C_PuiSdHandlerNodeLogic::m_SetDataPoolListElementSharedSync(const uint32_t 
                rc_DpId.u32_NodeIndex,
                rc_DpId.u32_DataPoolIndex, oru32_DataPoolListIndex,
                oru32_DataPoolListElementIndex);
-            tgl_assert((pc_Datapool != NULL) && (pc_Element != NULL));
+            Q_ASSERT((pc_Datapool != NULL) && (pc_Element != NULL));
             if ((pc_Datapool != NULL) && (pc_Element != NULL))
             {
                C_OscNodeDataPoolListElement c_NewElement = orc_OscContent;
@@ -6823,7 +6823,7 @@ void C_PuiSdHandlerNodeLogic::m_SetDataPoolListElementSharedSync(const uint32_t 
                   c_NewElement.e_Access = pc_Element->e_Access;
                }
                // No error expected. The Datapools must have the same conditions
-               tgl_assert(this->SetDataPoolListElement(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
+               Q_ASSERT(this->SetDataPoolListElement(rc_DpId.u32_NodeIndex, rc_DpId.u32_DataPoolIndex,
                                                        oru32_DataPoolListIndex,
                                                        oru32_DataPoolListElementIndex, c_NewElement,
                                                        orc_UiContent,

@@ -40,7 +40,7 @@ C_SCLResourceStrings::C_SCLResourceStrings(void) :
 
 void C_SCLResourceStrings::Clear(void)
 {
-   mac_Strings.SetLength(0);
+   mac_Strings.resize(0);
    mq_Dirty = true;
 }
 
@@ -58,7 +58,7 @@ C_SclString C_SCLResourceStrings::LoadStr(const uint16_t ou16_Index)
    }
 
    u16_First = 0U;
-   u16_Last  = static_cast<uint16_t>(mac_Strings.GetHigh());
+   u16_Last  = static_cast<uint16_t>((mac_Strings.size() > 0 ? mac_Strings.size() - 1 : 0));
 
    while (u16_First <= u16_Last)
    {
@@ -84,9 +84,9 @@ C_SclString C_SCLResourceStrings::LoadStr(const uint16_t ou16_Index)
 
 void C_SCLResourceStrings::AddString(const uint16_t ou16_Index, const C_SclString & orc_Text)
 {
-   mac_Strings.IncLength();
-   mac_Strings[mac_Strings.GetHigh()].u16_Index = ou16_Index;
-   mac_Strings[mac_Strings.GetHigh()].c_Text    = orc_Text;
+   mac_Strings.resize(mac_Strings.size() + 1);
+   mac_Strings[(mac_Strings.size() > 0 ? mac_Strings.size() - 1 : 0)].u16_Index = ou16_Index;
+   mac_Strings[(mac_Strings.size() > 0 ? mac_Strings.size() - 1 : 0)].c_Text    = orc_Text;
    mq_Dirty = true;
 }
 
@@ -98,7 +98,7 @@ void C_SCLResourceStrings::SortByIndex(void)
    int32_t s32_Position; //needs to be signed !
    C_SclResourceString t_Key;
 
-   for (s32_Index = 1; s32_Index < static_cast<int32_t>(mac_Strings.GetLength()); s32_Index++)
+   for (s32_Index = 1; s32_Index < static_cast<int32_t>(mac_Strings.size()); s32_Index++)
    {
       t_Key = mac_Strings[s32_Index];
       s32_Position = s32_Index - 1;
@@ -120,7 +120,7 @@ void C_SCLResourceStrings::SetStringTable(const C_SclResourceString * const opc_
 
    try
    {
-      mac_Strings.SetLength(ou16_NumStrings);
+      mac_Strings.resize(ou16_NumStrings);
    }
    catch (...)
    {

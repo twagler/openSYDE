@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Thread for C_SyvComDriverDiag connect steps
@@ -13,8 +13,8 @@
 #include "precomp_headers.hpp"
 
 #include "C_Uti.hpp"
-#include "TglTime.hpp"
-#include "TglUtils.hpp"
+#include <QDateTime>
+
 #include "stwerrors.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSdUtil.hpp"
@@ -22,7 +22,7 @@
 #include "C_OscLoggingHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -48,7 +48,7 @@ using namespace stw::opensyde_gui_logic;
 //----------------------------------------------------------------------------------------------------------------------
 C_SyvComDriverDiagConnect::C_SyvComDriverDiagConnect(QObject * const opc_Parent) :
    QThread(opc_Parent),
-   mu32_DisconnectTime(0UL),
+   ms64_DisconnectTime(0),
    me_ConnectState(eCDCS_UNINITIALIZED),
    mpc_ComDriverDiag(NULL),
    ms32_OperationResult(0)
@@ -73,9 +73,9 @@ C_SyvComDriverDiagConnect::E_ConnectState C_SyvComDriverDiagConnect::GetStep(voi
    \param[in] ou32_DisconnectTime Last known disconnect time
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_SyvComDriverDiagConnect::SetWaitingStepParameters(const uint32_t ou32_DisconnectTime)
+void C_SyvComDriverDiagConnect::SetWaitingStepParameters(const qint64 os64_DisconnectTime)
 {
-   this->mu32_DisconnectTime = ou32_DisconnectTime;
+   this->ms64_DisconnectTime = os64_DisconnectTime;
    //Update status
    this->me_ConnectState = eCDCS_WAITING;
 }
@@ -149,7 +149,7 @@ void C_SyvComDriverDiagConnect::run(void)
    else
    {
       //Nothing to do
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 }
 
@@ -164,11 +164,11 @@ void C_SyvComDriverDiagConnect::m_RunWaitingStep(void)
    this->mc_ErrorMessageDetails = "";
    this->ms32_OperationResult = C_NO_ERR;
    // Is a new connect already possible
-   if ((this->mu32_DisconnectTime + 5100U) > TglGetTickCount())
+   if ((this->ms64_DisconnectTime + 5100) > QDateTime::currentMSecsSinceEpoch())
    {
-      QThread::usleep(static_cast<uint32_t>((this->mu32_DisconnectTime + 5100U) - TglGetTickCount()));
+      QThread::msleep((this->ms64_DisconnectTime + 5100) - QDateTime::currentMSecsSinceEpoch());
    }
-   while ((this->mu32_DisconnectTime + 5100U) > TglGetTickCount())
+   while ((this->ms64_DisconnectTime + 5100) > QDateTime::currentMSecsSinceEpoch())
    {
       // Wait till it is possible
    }
@@ -183,7 +183,7 @@ void C_SyvComDriverDiagConnect::m_RunSetDiagnosticMode(void)
    this->mc_ErrorMessage = "";
    this->mc_ErrorMessageDetails = "";
 
-   tgl_assert(this->mpc_ComDriverDiag != NULL);
+   Q_ASSERT(this->mpc_ComDriverDiag != NULL);
    if (this->mpc_ComDriverDiag != NULL)
    {
       QString c_ErrorDetails;
@@ -277,7 +277,7 @@ void C_SyvComDriverDiagConnect::m_RunSetUpCyclicTransmissions(void)
 {
    this->mc_ErrorMessage = "";
    this->mc_ErrorMessageDetails = "";
-   tgl_assert(this->mpc_ComDriverDiag != NULL);
+   Q_ASSERT(this->mpc_ComDriverDiag != NULL);
    if (this->mpc_ComDriverDiag != NULL)
    {
       QString c_ErrorDetails;

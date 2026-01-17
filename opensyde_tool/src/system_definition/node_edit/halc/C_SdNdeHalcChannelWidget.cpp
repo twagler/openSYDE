@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for displaying and editing hardware configuration of a specific channel
@@ -18,7 +18,7 @@
 #include "ui_C_SdNdeHalcChannelWidget.h"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscUtils.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -27,7 +27,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -257,7 +257,7 @@ void C_SdNdeHalcChannelWidget::m_OnNameEdited(void)
    s32_Return =  C_PuiSdHandler::h_GetInstance()->SetHalcDomainChannelConfigName(mu32_NodeIndex, mu32_DomainIndex,
                                                                                  mu32_ChannelIndex, mq_UseChannelIndex,
                                                                                  c_NewName);
-   tgl_assert(s32_Return == C_NO_ERR);
+   Q_ASSERT(s32_Return == C_NO_ERR);
 
    // inform about update
    this->m_EmitUpdateSignal();
@@ -277,7 +277,7 @@ void C_SdNdeHalcChannelWidget::m_OnCommentEdited(void)
                                                                                    mu32_ChannelIndex,
                                                                                    mq_UseChannelIndex, c_NewComment);
 
-   tgl_assert(s32_Return == C_NO_ERR);
+   Q_ASSERT(s32_Return == C_NO_ERR);
 
    // inform about update
    this->m_EmitUpdateSignal();
@@ -297,7 +297,7 @@ void C_SdNdeHalcChannelWidget::m_OnSafetyToggled(const bool oq_Checked) const
    s32_Return = C_PuiSdHandler::h_GetInstance()->SetHalcDomainChannelConfigSafety(mu32_NodeIndex, mu32_DomainIndex,
                                                                                   mu32_ChannelIndex, mq_UseChannelIndex,
                                                                                   oq_Checked);
-   tgl_assert(s32_Return == C_NO_ERR);
+   Q_ASSERT(s32_Return == C_NO_ERR);
 
    // no update of any other GUI element necessary here
 }
@@ -361,14 +361,14 @@ void C_SdNdeHalcChannelWidget::m_OnUseCaseChanged(const int32_t os32_NewIndex)
                                                                           this->mu32_ChannelIndex, true, q_IsLinkedOld,
                                                                           &c_LinkedChannelNamesOld,
                                                                           &c_LinkedChannelIndicesOld);
-         tgl_assert(s32_Result == C_NO_ERR);
+         Q_ASSERT(s32_Result == C_NO_ERR);
          s32_Result =
             C_PuiSdHandler::h_GetInstance()->CheckHalcDomainChannelLinked(this->mu32_NodeIndex, this->mu32_DomainIndex,
                                                                           this->mu32_ChannelIndex, true, q_IsLinkedNew,
                                                                           &c_LinkedChannelNamesNew,
                                                                           &c_LinkedChannelIndicesNew,
                                                                           &u32_UseCaseIndexNew);
-         tgl_assert(s32_Result == C_NO_ERR);
+         Q_ASSERT(s32_Result == C_NO_ERR);
          if (this->m_AskUserToContinueLinkingIfNecessary(q_IsLinkedOld, q_IsLinkedNew,
                                                          c_LinkedChannelNamesOld, c_LinkedChannelNamesNew,
                                                          u32_UseCaseIndexNew) == true)
@@ -380,7 +380,7 @@ void C_SdNdeHalcChannelWidget::m_OnUseCaseChanged(const int32_t os32_NewIndex)
                                                                                   this->mu32_ChannelIndex,
                                                                                   this->mq_UseChannelIndex,
                                                                                   u32_UseCaseIndexNew);
-            tgl_assert(s32_Result == C_NO_ERR);
+            Q_ASSERT(s32_Result == C_NO_ERR);
 
             // update linked channels
             s32_Result =
@@ -390,7 +390,7 @@ void C_SdNdeHalcChannelWidget::m_OnUseCaseChanged(const int32_t os32_NewIndex)
                                                                                            this->mq_UseChannelIndex,
                                                                                            u32_UseCaseIndexOld,
                                                                                            u32_UseCaseIndexNew);
-            tgl_assert(s32_Result == C_NO_ERR);
+            Q_ASSERT(s32_Result == C_NO_ERR);
 
             // update icon & link of linked channel
             this->m_SetLinkedSymbolAndChannel(q_IsLinkedNew, c_LinkedChannelIndicesNew);
@@ -475,7 +475,7 @@ void C_SdNdeHalcChannelWidget::m_OnViewDatapoolDetailsClicked(void)
    // Make sure HALC magician did its work
    const int32_t s32_Result = C_PuiSdHandler::h_GetInstance()->HalcGenerateDatapools(this->mu32_NodeIndex);
 
-   tgl_assert((s32_Result == C_NO_ERR) || (s32_Result == C_NOACT));
+   Q_ASSERT((s32_Result == C_NO_ERR) || (s32_Result == C_NOACT));
 
    const QPointer<C_OgePopUpDialog> c_New = new C_OgePopUpDialog(this, this);
    new C_SdNdeHalcChannelDpPreviewPopUp(*c_New,

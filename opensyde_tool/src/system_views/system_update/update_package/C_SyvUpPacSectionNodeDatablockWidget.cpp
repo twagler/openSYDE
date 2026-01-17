@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for listing and handling datablock files
@@ -14,7 +14,7 @@
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_Uti.hpp"
 #include "C_PuiUtil.hpp"
 
@@ -87,12 +87,12 @@ void C_SyvUpPacSectionNodeDatablockWidget::AdaptFile(const QString & orc_File,
 
          C_SyvUpPacSectionNodeWidget::AdaptFile(orc_File, opc_App);
 
-         tgl_assert(pc_ParamSetWidget != NULL);
+         Q_ASSERT(pc_ParamSetWidget != NULL);
          if (pc_ParamSetWidget != NULL)
          {
             pc_ParamSetWidget->SetParamInfo(c_ParamFileInfo);
 
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationParamInfo(
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationParamInfo(
                           this->mu32_ViewIndex,
                           this->mu32_NodeIndex,
                           pc_ParamSetWidget->GetAppNumber(),
@@ -222,7 +222,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::AdaptFile(const QString & orc_File,
    {
       C_SyvUpPacSectionNodeWidget::AdaptFile(orc_File, opc_App);
 
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPath(this->mu32_ViewIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPath(this->mu32_ViewIndex,
                                                                                this->mu32_NodeIndex,
                                                                                this->mu32_DataBlockPathNumber,
                                                                                orc_File,
@@ -248,7 +248,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::SetSkipOfUpdateFile(const bool oq_Ski
       if (opc_App->GetType() == mu32_UPDATE_PACKAGE_NODE_SECTION_TYPE_DATABLOCK)
       {
          // In this case section number equals the path number
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationSkipUpdateOfPath(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationSkipUpdateOfPath(
                        this->mu32_ViewIndex,
                        this->mu32_NodeIndex,
                        this->mu32_DataBlockPathNumber, oq_Skip,
@@ -257,7 +257,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::SetSkipOfUpdateFile(const bool oq_Ski
       else
       {
          // In this case only one NVM HALC Datablock can exist, so the app number equals the param set file number
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationSkipUpdateOfParamInfo(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationSkipUpdateOfParamInfo(
                        this->mu32_ViewIndex,
                        this->mu32_NodeIndex,
                        opc_App->GetAppNumber(), oq_Skip) == C_NO_ERR);
@@ -283,7 +283,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::RevertFile(C_SyvUpPacListNodeItemWidg
       if (pc_Node != NULL)
       {
          // only revert if default application path is not empty
-         tgl_assert(u32_AppNumber < pc_Node->c_Applications[this->mu32_SectionNumber].c_ResultPaths.size());
+         Q_ASSERT(u32_AppNumber < pc_Node->c_Applications[this->mu32_SectionNumber].c_ResultPaths.size());
          if (pc_Node->c_Applications[this->mu32_SectionNumber].c_ResultPaths[u32_AppNumber] != "")
          {
             // Restore the default path
@@ -301,7 +301,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::RevertFile(C_SyvUpPacListNodeItemWidg
                if (this->me_Type != C_OscNodeApplication::ePARAMETER_SET_HALC)
                {
                   // Remove the view specific path
-                  tgl_assert(C_PuiSvHandler::h_GetInstance()->
+                  Q_ASSERT(C_PuiSvHandler::h_GetInstance()->
                              SetNodeUpdateInformationPath(this->mu32_ViewIndex, this->mu32_NodeIndex,
                                                           this->mu32_DataBlockPathNumber, "",
                                                           C_OscViewNodeUpdate::eFTP_DATA_BLOCK) == C_NO_ERR);
@@ -310,7 +310,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::RevertFile(C_SyvUpPacListNodeItemWidg
                {
                   const C_OscViewNodeUpdateParamInfo c_ParamInfo;
                   // Remove the view specific path
-                  tgl_assert(C_PuiSvHandler::h_GetInstance()->
+                  Q_ASSERT(C_PuiSvHandler::h_GetInstance()->
                              SetNodeUpdateInformationParamInfo(this->mu32_ViewIndex, this->mu32_NodeIndex,
                                                                u32_AppNumber, c_ParamInfo) == C_NO_ERR);
                }
@@ -503,7 +503,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::UpdateDeviceInformation(const C_SyvUp
    }
    else if (orc_DeviceInformation.pc_StwDevice != NULL)
    {
-      u32_AppCountOnTarget = orc_DeviceInformation.pc_StwDevice->c_BasicInformation.c_DeviceInfoBlocks.GetLength();
+      u32_AppCountOnTarget = orc_DeviceInformation.pc_StwDevice->c_BasicInformation.c_DeviceInfoBlocks.size();
    }
    else
    {
@@ -682,7 +682,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::m_InitSpecificItem(const stw::opensyd
                                                               const stw::opensyde_core::C_OscViewNodeUpdate & orc_UpdateInfo)
 {
    // mu32_SectionNumber equals in case of datablock widget the index of the datablock
-   tgl_assert(this->mu32_SectionNumber < orc_Node.c_Applications.size());
+   Q_ASSERT(this->mu32_SectionNumber < orc_Node.c_Applications.size());
 
    if (this->mu32_SectionNumber < orc_Node.c_Applications.size())
    {
@@ -698,8 +698,8 @@ void C_SyvUpPacSectionNodeDatablockWidget::m_InitSpecificItem(const stw::opensyd
                                                       this->mc_DeviceType,
                                                       this->mq_FileBased, this->mq_StwFlashloader, this);
 
-         tgl_assert(rc_Datablock.c_ResultPaths.size() == 1);
-         tgl_assert(this->mu32_DataBlockPathNumber < c_ViewDatablockPaths.size());
+         Q_ASSERT(rc_Datablock.c_ResultPaths.size() == 1);
+         Q_ASSERT(this->mu32_DataBlockPathNumber < c_ViewDatablockPaths.size());
 
          this->mc_SectionName = rc_Datablock.c_Name.c_str();
          this->me_Type = rc_Datablock.e_Type;
@@ -767,7 +767,7 @@ void C_SyvUpPacSectionNodeDatablockWidget::m_InitSpecificItem(const stw::opensyd
                c_ViewParamSetSkipFlags.resize(c_ViewParamsetPaths.size(), false);
             }
 
-            tgl_assert(u32_ParamSetFileCounter < c_ViewParamsetPaths.size());
+            Q_ASSERT(u32_ParamSetFileCounter < c_ViewParamsetPaths.size());
             if (u32_ParamSetFileCounter < c_ViewParamsetPaths.size())
             {
                // Get the view specific configuration

@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for system view dashboard widget properties (implementation)
@@ -13,7 +13,7 @@
 #include <climits>
 #include <QVBoxLayout>
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_SyvUtil.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -28,7 +28,7 @@
 #include "ui_C_SyvDaPeBase.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -889,7 +889,7 @@ void C_SyvDaPeBase::m_OkClicked(void)
                                                                     this->mc_DataElement.u32_ListIndex,
                                                                     this->mc_DataElement.u32_ElementIndex);
 
-      tgl_assert(pc_Element != NULL);
+      Q_ASSERT(pc_Element != NULL);
       if (pc_Element != NULL)
       {
          if (c_FormatterConfig.IsFormatterCompatible(
@@ -929,13 +929,13 @@ void C_SyvDaPeBase::m_CancelClicked(void)
    //Clean up last config if necessary
    if (this->mq_NewConfigAdded == true)
    {
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(this->mu32_ViewIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(this->mu32_ViewIndex,
                                                                          this->mc_DataElement) == C_NO_ERR);
    }
    //Restore initial configuration
    if (this->mq_ConfigRestorationNecessary == true)
    {
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->AddViewReadRailItem(this->mu32_ViewIndex, this->mc_OriginalConfigId,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddViewReadRailItem(this->mu32_ViewIndex, this->mc_OriginalConfigId,
                                                                       this->mc_OriginalConfigData) == C_NO_ERR);
    }
    if (this->mpc_ParentDialog != NULL)
@@ -1058,7 +1058,7 @@ void C_SyvDaPeBase::m_ClearDataElement()
       if (this->mq_NewConfigAdded == true)
       {
          this->mq_NewConfigAdded = false;
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(this->mu32_ViewIndex,
                                                                             this->mc_DataElement) == C_NO_ERR);
       }
       else
@@ -1070,13 +1070,13 @@ void C_SyvDaPeBase::m_ClearDataElement()
             const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
             //Save initial configuration
             this->mc_OriginalConfigId = this->mc_DataElement;
-            tgl_assert(pc_View != NULL);
+            Q_ASSERT(pc_View != NULL);
             if (pc_View != NULL)
             {
                const QMap<C_OscNodeDataPoolListElementId,
                           C_PuiSvReadDataConfiguration>::const_iterator c_ItResult =
                   pc_View->GetReadRailAssignments().find(this->mc_OriginalConfigId);
-               tgl_assert(c_ItResult != pc_View->GetReadRailAssignments().end());
+               Q_ASSERT(c_ItResult != pc_View->GetReadRailAssignments().end());
                if (c_ItResult != pc_View->GetReadRailAssignments().end())
                {
                   this->mc_OriginalConfigData = c_ItResult.value();
@@ -1131,14 +1131,14 @@ void C_SyvDaPeBase::m_Configuration(void) const
             const C_PuiSvDashboard * const pc_Dashboard = pc_View->GetDashboard(this->mu32_DashboardIndex);
             if (pc_Dashboard != NULL)
             {
-               tgl_assert(pc_Dashboard->GetLabels().size() > 0UL);
+               Q_ASSERT(pc_Dashboard->GetLabels().size() > 0UL);
                u32_LabelIndex = static_cast<uint32_t>(pc_Dashboard->GetLabels().size()) - 1UL;
             }
          }
       }
       else
       {
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
 
@@ -1165,7 +1165,7 @@ void C_SyvDaPeBase::m_Configuration(void) const
    //Clean up
    if (this->mq_NewConfigAdded == true)
    {
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex, this->mu32_DashboardIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex, this->mu32_DashboardIndex,
                                                                         u32_LabelIndex, e_TYPE) == C_NO_ERR);
    }
 
@@ -1321,7 +1321,7 @@ void C_SyvDaPeBase::m_CheckFormatterString(void) const
                                                                     this->mc_DataElement.u32_ListIndex,
                                                                     this->mc_DataElement.u32_ElementIndex);
 
-      tgl_assert(pc_Element != NULL);
+      Q_ASSERT(pc_Element != NULL);
 
       // Check if the format is valid and compatible. If not, font color is changed to red and a tool tip is
       // displayed to indicate the error

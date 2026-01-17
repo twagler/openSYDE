@@ -16,7 +16,7 @@
 #include "constants.hpp"
 #include "C_TblDelegateUtil.hpp"
 #include "C_CamGenTableDelegate.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
@@ -80,6 +80,6 @@ void C_CamGenTableDelegate::paint(QPainter * const opc_Painter, const QStyleOpti
                                             C_CamGenTableDelegate::mhc_HIGHLIGHT_FONT, 19, 25) == true)
    {
       // to make sure text is not painted twice
-      tgl_assert(orc_Index.data(static_cast<int32_t>(Qt::DisplayRole)).toString().isEmpty());
+      Q_ASSERT(orc_Index.data(static_cast<int32_t>(Qt::DisplayRole)).toString().isEmpty());
    }
 }

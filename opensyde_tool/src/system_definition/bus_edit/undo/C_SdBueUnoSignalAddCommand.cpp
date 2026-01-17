@@ -13,13 +13,13 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_SdBueUnoSignalAddCommand.hpp"
 #include "C_SdUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -75,7 +75,7 @@ C_SdBueUnoSignalAddCommand::C_SdBueUnoSignalAddCommand(
       else
       {
          //Unexpected default values
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
 }
@@ -100,14 +100,14 @@ void C_SdBueUnoSignalAddCommand::SetInitialData(const std::vector<C_OscCanSignal
    this->mc_OscSignalCommon = orc_OscSignalCommon;
    this->mc_UiSignalCommon = orc_UiSignalCommon;
    this->mc_UiSignal = orc_UiSignal;
-   tgl_assert(this->mc_Signal.size() == this->mc_UniqueId.size());
+   Q_ASSERT(this->mc_Signal.size() == this->mc_UniqueId.size());
    if (this->mc_Signal.size() == this->mc_UniqueId.size())
    {
       for (uint32_t u32_ItStep = 0UL; u32_ItStep < this->mc_UniqueId.size(); ++u32_ItStep)
       {
          this->mc_UiSignal[u32_ItStep].u8_ColorIndex = 0U;
 
-         tgl_assert(this->mc_Signal.size() == this->mc_OscSignalCommon.size());
+         Q_ASSERT(this->mc_Signal.size() == this->mc_OscSignalCommon.size());
          if (this->mc_Signal.size() == this->mc_OscSignalCommon.size())
          {
             //Reinitialize index as current index is not related to data handling
@@ -125,7 +125,7 @@ void C_SdBueUnoSignalAddCommand::SetInitialData(const std::vector<C_OscCanSignal
          }
       }
    }
-   tgl_assert(this->m_CheckSignalsSortedAscending());
+   Q_ASSERT(this->m_CheckSignalsSortedAscending());
 }
 
 //----------------------------------------------------------------------------------------------------------------------

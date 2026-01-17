@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Parameter table model (implementation)
@@ -15,7 +15,7 @@
 #include <QSvgRenderer>
 #include <QEvent>
 
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "C_OgeCbxParam.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -25,7 +25,7 @@
 #include "C_SyvDaItPaTreeDelegate.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;
@@ -223,7 +223,7 @@ void C_SyvDaItPaTreeDelegate::setEditorData(QWidget * const opc_Editor, const QM
                {
                   bool q_Ok;
                   pc_ComboBox->setCurrentIndex(orc_Index.data(static_cast<int32_t>(Qt::EditRole)).toInt(&q_Ok));
-                  tgl_assert(q_Ok == true);
+                  Q_ASSERT(q_Ok == true);
                }
             }
             else

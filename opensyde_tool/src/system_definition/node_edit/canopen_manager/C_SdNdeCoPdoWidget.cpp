@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing the PDO configuration of a specific device on a specific interface of the CANopen Manager
@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SdNdeCoPdoWidget.hpp"
 #include "ui_C_SdNdeCoPdoWidget.h"
 #include "C_OscCanInterfaceId.hpp"
@@ -243,7 +243,7 @@ void C_SdNdeCoPdoWidget::m_OnLinkSwitchToBusProtocolMessage(
       if (rc_ComInterface.GetBusConnected() == true)
       {
          const C_OscSystemBus * const pc_Bus = C_PuiSdHandler::h_GetInstance()->GetOscBus(rc_ComInterface.u32_BusIndex);
-         tgl_assert(pc_Bus != NULL);
+         Q_ASSERT(pc_Bus != NULL);
          if (pc_Bus != NULL)
          {
             Q_EMIT (this->SigSwitchToBusProtocolMessage(rc_ComInterface.u32_BusIndex,

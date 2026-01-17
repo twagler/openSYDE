@@ -1,6 +1,7 @@
 //Note: for multiple data sets there is no matching of data set names. It is the job of the application to care for
 // consistency.
 #include "precomp_headers.hpp" //pre-compiled headers
+#include <QFileInfo>
 
 #include "DiagLib_config.hpp" //diaglib configuration
 
@@ -12,12 +13,11 @@
 #include "CKFXDATFile.hpp"
 #include "C_OscZipData.hpp"
 #include "C_SclString.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::diag_lib;
 using namespace stw::opensyde_core;
 
@@ -60,7 +60,7 @@ static const uint16_t KFX_DAT_FILE_BLOCK_0101 = 0x0101U;
 
 int32_t C_KFXDATFile::LoadDATAllLists(const C_SclString & orc_FileName, const C_SclString & orc_DeviceName,
                                       C_KFXVariableLists & orc_VariableLists,
-                                      C_SclDynamicArray<uint8_t> * const opc_ListsLoaded)
+                                      QList<uint8_t> * const opc_ListsLoaded)
 {
    return LoadDATList(orc_FileName, orc_DeviceName, orc_VariableLists, -1, opc_ListsLoaded);
 }
@@ -133,7 +133,7 @@ void C_KFXDATFile::m_GetStringFromBuffer(C_SclString & orc_String, const uint8_t
 //-----------------------------------------------------------------------------
 int32_t C_KFXDATFile::LoadDATList(const C_SclString & orc_FileName, const C_SclString & orc_DeviceName,
                                   C_KFXVariableLists & orc_VariableLists, const int32_t os32_ListIndex,
-                                  C_SclDynamicArray<uint8_t> * const opc_ListsLoaded)
+                                  QList<uint8_t> * const opc_ListsLoaded)
 {
    std::FILE * pt_FileHandle;
    int32_t s32_NumBytes;
@@ -149,12 +149,12 @@ int32_t C_KFXDATFile::LoadDATList(const C_SclString & orc_FileName, const C_SclS
    uint16_t u16_NumLists;
    uint8_t au8_Buffer[sizeof(uint32_t)];
 
-   if ((os32_ListIndex != -1) && (os32_ListIndex > orc_VariableLists.GetHigh()))
+   if ((os32_ListIndex != -1) && (os32_ListIndex > (orc_VariableLists.size() > 0 ? orc_VariableLists.size() - 1 : 0)))
    {
       return C_RANGE;
    }
 
-   s32_NumBytes = TglFileSize(orc_FileName.c_str());
+   s32_NumBytes = static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_FileName.c_str(.AsStdString())).size()));
 
    pt_FileHandle = std::fopen(orc_FileName.c_str(), "rb");
    if (pt_FileHandle == NULL)
@@ -255,7 +255,7 @@ int32_t C_KFXDATFile::LoadDATList(const C_SclString & orc_FileName, const C_SclS
 int32_t C_KFXDATFile::m_BufferToLists(const uint8_t * const opu8_Buffer, C_KFXVariableLists & orc_VariableLists,
                                       const uint16_t ou16_NumListsInDat, const uint32_t ou32_NumBytesTotal,
                                       const bool oq_SingleList, const uint16_t ou16_SingleListIndex,
-                                      C_SclDynamicArray<uint8_t> * const opc_ListsLoaded)
+                                      QList<uint8_t> * const opc_ListsLoaded)
 {
    C_SclString c_List;
    C_SclString c_Var;
@@ -276,13 +276,13 @@ int32_t C_KFXDATFile::m_BufferToLists(const uint8_t * const opu8_Buffer, C_KFXVa
    C_KFXVariableBase * pc_Variable;
    const uint8_t * pu8_Data = opu8_Buffer;
 
-   C_SclDynamicArray<C_SclDynamicArray<C_KFXVariableBase *> > aapc_IndexMapping;
+   QList<QList<C_KFXVariableBase *> > aapc_IndexMapping;
    bool q_AtLeastOneMissing = false;
 
    if (opc_ListsLoaded != NULL)
    {
-      (*opc_ListsLoaded).SetLength(orc_VariableLists.GetLength());
-      for (s32_List = 0; s32_List < (*opc_ListsLoaded).GetLength(); s32_List++)
+      (*opc_ListsLoaded).resize(orc_VariableLists.size());
+      for (s32_List = 0; s32_List < (*opc_ListsLoaded).size(); s32_List++)
       {
          (*opc_ListsLoaded)[s32_List] = 0;
       }
@@ -291,7 +291,7 @@ int32_t C_KFXDATFile::m_BufferToLists(const uint8_t * const opu8_Buffer, C_KFXVa
    //First clear all Defaultvalues of the Device
    if (oq_SingleList == true)
    {
-      for (s32_Variable = 0; s32_Variable < orc_VariableLists[ou16_SingleListIndex].VariableList.GetLength();
+      for (s32_Variable = 0; s32_Variable < orc_VariableLists[ou16_SingleListIndex].VariableList.size();
            s32_Variable++)
       {
          orc_VariableLists[ou16_SingleListIndex].VariableList[s32_Variable].ClearAllDefaults();
@@ -301,7 +301,7 @@ int32_t C_KFXDATFile::m_BufferToLists(const uint8_t * const opu8_Buffer, C_KFXVa
    {
       orc_VariableLists.ClearDefaults();
    }
-   aapc_IndexMapping.SetLength(ou16_NumListsInDat); //remember mappings, so we do not need to reparse following blocks
+   aapc_IndexMapping.resize(ou16_NumListsInDat); //remember mappings, so we do not need to reparse following blocks
 
    for (i = 0; i < ou16_NumListsInDat; i++)
    {
@@ -319,7 +319,7 @@ int32_t C_KFXDATFile::m_BufferToLists(const uint8_t * const opu8_Buffer, C_KFXVa
       }
       else
       {
-         for (s32_List = 0; s32_List < orc_VariableLists.GetLength(); s32_List++)
+         for (s32_List = 0; s32_List < orc_VariableLists.size(); s32_List++)
          {
             if (orc_VariableLists[s32_List].c_ListName.UpperCase() == c_List.UpperCase())
             {
@@ -340,7 +340,7 @@ int32_t C_KFXDATFile::m_BufferToLists(const uint8_t * const opu8_Buffer, C_KFXVa
 
       m_GetWordFromBuffer(&u16_NumVars, &pu8_Data); //number of variables for that list
 
-      aapc_IndexMapping[i].SetLength(u16_NumVars);
+      aapc_IndexMapping[i].resize(u16_NumVars);
       for (j = 0; j < u16_NumVars; j++)
       {
          m_GetStringFromBuffer(c_Var, &pu8_Data); //get variable name
@@ -349,7 +349,7 @@ int32_t C_KFXDATFile::m_BufferToLists(const uint8_t * const opu8_Buffer, C_KFXVa
          {
             //try to find variable within the list:
             q_Found = false;
-            for (s32_k = 0; s32_k < orc_VariableLists[u16_ListIndex].VariableList.GetLength(); s32_k++)
+            for (s32_k = 0; s32_k < orc_VariableLists[u16_ListIndex].VariableList.size(); s32_k++)
             {
                if (orc_VariableLists[u16_ListIndex].VariableList[s32_k].c_Name.UpperCase() == c_Var.UpperCase())
                {
@@ -377,7 +377,7 @@ int32_t C_KFXDATFile::m_BufferToLists(const uint8_t * const opu8_Buffer, C_KFXVa
       }
    }
 
-   tgl_assert(pu8_Data >= opu8_Buffer);
+   Q_ASSERT(pu8_Data >= opu8_Buffer);
 
    u32_NumBytesLeft = ou32_NumBytesTotal - static_cast<uint32_t>(pu8_Data - opu8_Buffer);
    while (u32_NumBytesLeft > (sizeof(uint32_t) + sizeof(uint16_t))) //looks like there is an additional block !
@@ -388,20 +388,20 @@ int32_t C_KFXDATFile::m_BufferToLists(const uint8_t * const opu8_Buffer, C_KFXVa
       switch (u16_Value)
       {
       case KFX_DAT_FILE_BLOCK_0101:
-         tgl_assert(u32_NumBytesLeft > sizeof(uint16_t));
+         Q_ASSERT(u32_NumBytesLeft > sizeof(uint16_t));
          m_GetWordFromBuffer(&u16_Value, &pu8_Data);  //number of lists !
-         tgl_assert(ou16_NumListsInDat == u16_Value); //must match the one from the first block
+         Q_ASSERT(ou16_NumListsInDat == u16_Value); //must match the one from the first block
          u32_NumBytesLeft -= sizeof(uint16_t);
          for (i = 0; i < ou16_NumListsInDat; i++)
          {
             m_GetWordFromBuffer(&u16_Value, &pu8_Data); //number of variables !
             u32_NumBytesLeft -= sizeof(uint16_t);
-            tgl_assert(u16_Value == static_cast<uint16_t>(aapc_IndexMapping[i].GetLength()));
+            Q_ASSERT(u16_Value == static_cast<uint16_t>(aapc_IndexMapping[i].size()));
 
             m_GetWordFromBuffer(&u16_NumDefaults, &pu8_Data); //number of default sets !
             u32_NumBytesLeft -= sizeof(uint16_t);
 
-            for (j = 0; j < aapc_IndexMapping[i].GetLength(); j++)
+            for (j = 0; j < aapc_IndexMapping[i].size(); j++)
             {
                m_GetDWordFromBuffer(&u32_Value, &pu8_Data); //variable size
                u32_NumBytesLeft -= sizeof(uint32_t);

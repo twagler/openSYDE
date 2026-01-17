@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Parameter set file comparison description storage
@@ -9,7 +9,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SyvUpPacParamSetFileInfoComparisonDescription.hpp"
 using namespace stw::opensyde_gui_logic;
 
@@ -60,7 +60,7 @@ QString C_SyvUpPacParamSetFileInfoComparisonDescription::GetResultText(void) con
       c_Retval = "-";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 

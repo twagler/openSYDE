@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget with current CANopen settings of Manager for a specific interface
@@ -17,7 +17,7 @@
 
 #include "stwerrors.hpp"
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_OscCanOpenManagerInfo.hpp"
@@ -28,7 +28,7 @@ using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -254,7 +254,7 @@ void C_SdNdeCoManagerIntfWidget::SaveToData(void) const
    else
    {
       //unknown state
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 
    C_PuiSdHandler::h_GetInstance()->SetCanOpenManagerCommonProperties(
@@ -404,12 +404,12 @@ void C_SdNdeCoManagerIntfWidget::m_HandleSameAsOpensydeNodeIdState(void) const
    {
       //get current node ID of node interface
       const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNode(this->mu32_NodeIndex);
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          const C_OscNodeComInterfaceSettings * const pc_ComInterface = pc_Node->c_Properties.GetComInterface(
             C_OscSystemBus::eCAN, this->mu8_InterfaceId);
-         tgl_assert(pc_ComInterface != NULL);
+         Q_ASSERT(pc_ComInterface != NULL);
          if (pc_ComInterface != NULL)
          {
             this->mpc_Ui->pc_SpinBoxCanOpenId->setValue(static_cast<int32_t>(pc_ComInterface->u8_NodeId));
@@ -625,7 +625,7 @@ void C_SdNdeCoManagerIntfWidget::m_LoadFromData(void)
       else
       {
          //unknown state
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
 
       // SYNC PDO

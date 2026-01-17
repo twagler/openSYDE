@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       short description (implementation)
@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeSfoResetMessageTableModel.hpp"
@@ -488,7 +488,7 @@ QVariant C_SdNdeSfoResetMessageTableModel::data(const QModelIndex & orc_Index, c
                }
                break;
             default:
-               tgl_assert(false);
+               Q_ASSERT(false);
                break;
             }
          }
@@ -595,7 +595,7 @@ QVariant C_SdNdeSfoResetMessageTableModel::data(const QModelIndex & orc_Index, c
                   }
                   break;
                default:
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                   break;
                }
             }

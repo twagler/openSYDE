@@ -12,13 +12,13 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_SclChecksums.hpp"
 #include "C_PuiSvDbWidgetBase.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui_logic;
 
@@ -129,7 +129,7 @@ void C_PuiSvDbWidgetBase::RemoveAllReferencesToElementId(const C_PuiSvDbNodeData
       const C_PuiSvDbNodeDataElementConfig & rc_Config = this->c_DataPoolElementsConfig[u32_It];
       if (rc_Config.c_ElementId == orc_DataElementId)
       {
-         tgl_assert(this->RemoveElement(u32_It) == C_NO_ERR);
+         Q_ASSERT(this->RemoveElement(u32_It) == C_NO_ERR);
       }
       else
       {

@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Dialog shows settings for creating a Service Project
@@ -22,7 +22,6 @@
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiProject.hpp"
 #include "C_OgeWiCustomMessage.hpp"
-#include "TglFile.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OgeWiUtil.hpp"
 
@@ -43,7 +42,7 @@ using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_core;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */

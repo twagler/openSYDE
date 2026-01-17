@@ -11,10 +11,10 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <QDir>
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
@@ -28,7 +28,7 @@
 #include "C_SclChecksums.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
@@ -662,7 +662,7 @@ int32_t C_CamProHandler::MoveMessage(const uint32_t ou32_StartIndex, const uint3
    {
       const C_CamProMessageData c_Copy = this->mc_Messages[ou32_StartIndex];
       s32_Retval = C_NO_ERR;
-      tgl_assert(this->DeleteMessage(ou32_StartIndex) == C_NO_ERR);
+      Q_ASSERT(this->DeleteMessage(ou32_StartIndex) == C_NO_ERR);
       this->InsertMessage(ou32_TargetIndex, c_Copy, false);
    }
    else
@@ -970,7 +970,7 @@ int32_t C_CamProHandler::LoadFromFile(const stw::scl::C_SclString & orc_Path)
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscXmlParser c_XmlParser;
 
@@ -1048,7 +1048,7 @@ int32_t C_CamProHandler::SaveToFile(const stw::scl::C_SclString & orc_Path)
    }
    if (s32_Return == C_NO_ERR)
    {
-      if (TglFileExists(orc_Path) == true)
+      if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
       {
          //erase it:
          int32_t s32_ReturnRemove;

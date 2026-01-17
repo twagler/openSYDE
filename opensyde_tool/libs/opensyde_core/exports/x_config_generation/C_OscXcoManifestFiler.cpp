@@ -11,8 +11,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscXmlParserLog.hpp"
@@ -21,7 +21,7 @@
 #include "C_OscXcoManifestFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -58,7 +58,7 @@ int32_t C_OscXcoManifestFiler::h_LoadFile(C_OscXcoManifest & orc_Config, const s
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading manifest data");
@@ -193,19 +193,19 @@ int32_t C_OscXcoManifestFiler::h_LoadData(C_OscXcoManifest & orc_Config, C_OscXm
 void C_OscXcoManifestFiler::h_SaveData(const C_OscXcoManifest & orc_Config, C_OscXmlParserBase & orc_XmlParser)
 {
    //File version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
    orc_XmlParser.SetNodeContent(stw::scl::C_SclString::IntToStr(mhu16_FILE_VERSION_1));
    //Return
    orc_XmlParser.SelectNodeParent();
    //Package
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("package") == "package");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("package") == "package");
    orc_XmlParser.SetAttributeString("types", "x-app-config");
    //Return
    orc_XmlParser.SelectNodeParent();
    //Config
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("x-app-config") == "x-app-config");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("x-app-config") == "x-app-config");
    orc_XmlParser.CreateNodeChild("package-version", stw::scl::C_SclString::IntToStr(mhu16_PACKAGE_VERSION_1));
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("x-app-node") == "x-app-node");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("x-app-node") == "x-app-node");
    orc_XmlParser.SetAttributeString("name", orc_Config.c_NodeName);
    //Return
    orc_XmlParser.SelectNodeParent();

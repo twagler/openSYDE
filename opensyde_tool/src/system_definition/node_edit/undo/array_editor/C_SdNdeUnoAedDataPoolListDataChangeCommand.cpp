@@ -15,7 +15,7 @@
 #include <limits>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeUnoAedDataPoolListDataChangeCommand.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_OscNodeDataPoolDataSet.hpp"
@@ -141,7 +141,7 @@ void C_SdNdeUnoAedDataPoolListDataChangeCommand::m_Change(QVariant & orc_Previou
          }
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
       //Copy new value
@@ -171,7 +171,7 @@ void C_SdNdeUnoAedDataPoolListDataChangeCommand::m_Change(QVariant & orc_Previou
                                                                              this->mu32_ItemIndex, c_Generic);
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
       //Adapt data set values to min/max changes (only if necessary)

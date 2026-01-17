@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       GUI communication driver for diagnostics (implementation)
@@ -18,9 +18,10 @@
 
 #include "C_SyvComDriverDiag.hpp"
 #include "C_PuiSvHandler.hpp"
+#include <QThread>
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvData.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 #include "C_Uti.hpp"
 #include "C_SyvComDriverUtil.hpp"
@@ -423,9 +424,9 @@ int32_t C_SyvComDriverDiag::SetUpCyclicTransmissions(QString & orc_ErrorDetails,
             const uint32_t u32_ActiveNodeIndex = this->mc_ActiveDiagNodes[u32_ActiveDiagNodeIndex];
             uint8_t u8_NegResponseCode = 0;
             //check for valid value ranges (node index is checked in "GetActiveIndex" function)
-            tgl_assert(c_It.key().u32_DataPoolIndex <= 0xFFU);
-            tgl_assert(c_It.key().u32_ListIndex <= 0xFFFFU);
-            tgl_assert(c_It.key().u32_ElementIndex <= 0xFFFFU);
+            Q_ASSERT(c_It.key().u32_DataPoolIndex <= 0xFFU);
+            Q_ASSERT(c_It.key().u32_ListIndex <= 0xFFFFU);
+            Q_ASSERT(c_It.key().u32_ElementIndex <= 0xFFFFU);
 
             if ((c_It.value().e_TransmissionMode == C_PuiSvReadDataConfiguration::eTM_CYCLIC) ||
                 (c_It.value().e_TransmissionMode == C_PuiSvReadDataConfiguration::eTM_ON_CHANGE))
@@ -455,7 +456,7 @@ int32_t C_SyvComDriverDiag::SetUpCyclicTransmissions(QString & orc_ErrorDetails,
                uint32_t u32_Threshold;
                c_It.value().c_ChangeThreshold.GetValueAsLittleEndianBlob(c_Threshold);
                //defensive measure: as element may only be up to 32bit the threshold may also not be > 32bit
-               tgl_assert(c_Threshold.size() <= 4);
+               Q_ASSERT(c_Threshold.size() <= 4);
                //fill up to 4 bytes with zeroes
                c_Threshold.resize(4, 0U);
                //finally compose the uint32_t:
@@ -685,7 +686,7 @@ int32_t C_SyvComDriverDiag::StartCycling(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvComDriverDiag::StopCycling(void)
 {
-   tgl_assert(this->mpc_AsyncThread != NULL);
+   Q_ASSERT(this->mpc_AsyncThread != NULL);
    if (this->mpc_AsyncThread != NULL)
    {
       this->mpc_AsyncThread->requestInterruption();
@@ -1370,7 +1371,7 @@ void C_SyvComDriverDiag::RegisterWidget(C_PuiSvDbDataElementHandler * const opc_
                      }
 
                      // A multiplexer signal must exist if at least one multiplexed signal is present
-                     tgl_assert(q_MultiplexerSignalFound == true);
+                     Q_ASSERT(q_MultiplexerSignalFound == true);
                   }
 
                   c_WidgetRegistration.pc_Handler = opc_Widget;
@@ -1630,7 +1631,7 @@ void C_SyvComDriverDiag::m_HandleCanMessage(const T_STWCAN_Msg_RX & orc_Msg, con
                   else
                   {
                      // May not happen
-                     tgl_assert(false);
+                     Q_ASSERT(false);
                      u16_MultiplexerValue = 0;
                   }
 
@@ -1979,12 +1980,12 @@ int32_t C_SyvComDriverDiag::m_StartRoutingDiag(QString & orc_ErrorDetails, std::
          const C_OscNode * const pc_Node =
             C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mc_ActiveNodesIndexes[u32_ActiveNode]);
 
-         tgl_assert(pc_Node != NULL);
+         Q_ASSERT(pc_Node != NULL);
          if (pc_Node != NULL)
          {
             s32_Return = this->m_StartRouting(u32_ActiveNode, &u32_ErrorActiveNodeIndex);
 
-            tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
+            Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
             // Reconnect is only supported by openSYDE nodes
             if ((pc_Node->c_Properties.e_DiagnosticServer == C_OscNodeProperties::eDS_OPEN_SYDE) &&
                 (s32_Return == C_NO_ERR) &&
@@ -2519,7 +2520,7 @@ uint32_t C_SyvComDriverDiag::m_GetActiveDiagIndex(const uint32_t ou32_NodeIndex,
    }
    else
    {
-      tgl_assert(q_Found == true);
+      Q_ASSERT(q_Found == true);
    }
 
    return u32_DiagNodeIndex;
@@ -2657,7 +2658,7 @@ void C_SyvComDriverDiag::mh_ThreadFunc(void * const opv_Instance)
    //lint -e{9079}  This class is the only one which registers itself at the caller of this function. It must match.
    C_SyvComDriverDiag * const pc_ComDriver = reinterpret_cast<C_SyvComDriverDiag *>(opv_Instance);
 
-   tgl_assert(pc_ComDriver != NULL);
+   Q_ASSERT(pc_ComDriver != NULL);
    if (pc_ComDriver != NULL)
    {
       pc_ComDriver->m_ThreadFunc();
@@ -2677,11 +2678,11 @@ void C_SyvComDriverDiag::m_ThreadFunc(void)
    if (hu32_LastSentTesterPresent == 0U)
    {
       // Initialize the time scheduling
-      hu32_LastSentTesterPresent = stw::tgl::TglGetTickCount();
+      hu32_LastSentTesterPresent = QDateTime::currentMSecsSinceEpoch();
       hu32_LastSentDebugTest = hu32_LastSentTesterPresent;
    }
 
-   u32_CurrentTime = stw::tgl::TglGetTickCount();
+   u32_CurrentTime = QDateTime::currentMSecsSinceEpoch();
 
    if (u32_CurrentTime > (hu32_LastSentTesterPresent + 1000U))
    {
@@ -2705,7 +2706,7 @@ void C_SyvComDriverDiag::m_ThreadFunc(void)
    this->DistributeMessages();
 
    //rescind CPU time to other threads ...
-   stw::tgl::TglSleep(1);
+    QThread::msleep(1);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2717,8 +2718,8 @@ void C_SyvComDriverDiag::m_HandlePollingFinished(void)
    int32_t s32_Result;
    uint8_t u8_Nrc;
 
-   tgl_assert(this->mc_PollingThread.GetResults(s32_Result) == C_NO_ERR);
-   tgl_assert(this->mc_PollingThread.GetNegativeResponseCode(u8_Nrc) == C_NO_ERR);
+   Q_ASSERT(this->mc_PollingThread.GetResults(s32_Result) == C_NO_ERR);
+   Q_ASSERT(this->mc_PollingThread.GetNegativeResponseCode(u8_Nrc) == C_NO_ERR);
    //Start with next one
    this->mc_PollingThread.AcceptNextRequest();
    Q_EMIT this->SigPollingFinished(s32_Result, u8_Nrc);
@@ -2747,7 +2748,7 @@ void C_SyvComDriverDiag::m_GetRoutingErrorDetails(QString & orc_ErrorDetails, st
          C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mc_ActiveNodesIndexes[ou32_ActiveNode]);
 
       orc_ErrorActiveNodes.insert(ou32_ActiveNode);
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          orc_ErrorDetails += static_cast<QString>("\"") + pc_Node->c_Properties.c_Name.c_str() + "\"\n";
@@ -2760,7 +2761,7 @@ void C_SyvComDriverDiag::m_GetRoutingErrorDetails(QString & orc_ErrorDetails, st
          C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mc_ActiveNodesIndexes[ou32_ErrorActiveNodeIndex]);
 
       orc_ErrorActiveNodes.insert(ou32_ErrorActiveNodeIndex);
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          orc_ErrorDetails += static_cast<QString>("\"") + pc_Node->c_Properties.c_Name.c_str() + "\"\n";

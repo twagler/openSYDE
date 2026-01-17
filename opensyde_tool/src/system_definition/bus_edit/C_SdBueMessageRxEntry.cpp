@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       One message receiver edit entry (implementation)
@@ -11,7 +11,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 
-#include "TglUtils.hpp"
+
 #include "C_Uti.hpp"
 #include "C_SdUtil.hpp"
 #include "C_SdBueMessageRxEntry.hpp"
@@ -142,10 +142,10 @@ void C_SdBueMessageRxEntry::Init(const QString & orc_EntryName, const uint32_t o
 {
    const uint32_t u32_NumEntries = orc_DatapoolIndexes.size();
 
-   tgl_assert(orc_DatapoolIndexes.size() > 0);
-   tgl_assert(orc_DatapoolIndexes.size() == orc_ReceiveTimeoutValues.size());
-   tgl_assert(orc_DatapoolIndexes.size() == orc_ReceiveTimeoutModes.size());
-   tgl_assert(orc_DatapoolIndexes.size() == orc_DatapoolNames.size());
+   Q_ASSERT(orc_DatapoolIndexes.size() > 0);
+   Q_ASSERT(orc_DatapoolIndexes.size() == orc_ReceiveTimeoutValues.size());
+   Q_ASSERT(orc_DatapoolIndexes.size() == orc_ReceiveTimeoutModes.size());
+   Q_ASSERT(orc_DatapoolIndexes.size() == orc_DatapoolNames.size());
 
    this->mpc_Ui->pc_CheckBoxActive->setEnabled(!oq_ReadOnly);
    this->mpc_Ui->pc_RadioButtonActive->setEnabled(!oq_ReadOnly);
@@ -185,7 +185,7 @@ void C_SdBueMessageRxEntry::Init(const QString & orc_EntryName, const uint32_t o
       uint32_t u32_ItEntry;
 
       // The Datapool layer can not have sub entries
-      tgl_assert(this->mq_NodeLayer == true);
+      Q_ASSERT(this->mq_NodeLayer == true);
       this->mq_HasChildren = true;
 
       // Create for each Datapool an own sub entry
@@ -561,7 +561,7 @@ void C_SdBueMessageRxEntry::m_OnCheckBoxStateChanged(const int32_t os32_CheckSta
             this->m_ToggleSubItems(true);
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }

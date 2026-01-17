@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget base for parameterization widget.
@@ -14,7 +14,7 @@
 #include "ui_C_SyvDaItPaWidgetNew.h"
 
 #include "C_Uti.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -34,7 +34,7 @@
 #include "C_OgeWiCustomMessage.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -217,7 +217,7 @@ bool C_SyvDaItPaWidgetNew::HandleManualOperationFinished(const int32_t os32_Resu
             if (s32_Result == C_CHECKSUM)
             {
                //Should be the last read list
-               tgl_assert((this->mu32_ListCounter - 1UL) < this->mc_ListIds.size());
+               Q_ASSERT((this->mu32_ListCounter - 1UL) < this->mc_ListIds.size());
                if ((this->mu32_ListCounter - 1UL) < this->mc_ListIds.size())
                {
                   this->mc_ListsWithCrcError.push_back(
@@ -230,7 +230,7 @@ bool C_SyvDaItPaWidgetNew::HandleManualOperationFinished(const int32_t os32_Resu
             else if (s32_Result == C_NO_ERR)
             {
                //Should be the last read list
-               tgl_assert((this->mu32_ListCounter - 1UL) < this->mc_ListIds.size());
+               Q_ASSERT((this->mu32_ListCounter - 1UL) < this->mc_ListIds.size());
                if ((this->mu32_ListCounter - 1UL) < this->mc_ListIds.size())
                {
                   //Signal CRC OK
@@ -467,7 +467,7 @@ void C_SyvDaItPaWidgetNew::ButtonAddClicked(void)
                }
                if (q_Found == false)
                {
-                  tgl_assert(pc_ParamWidget->AddParamItemDataElement(rc_NewId, NULL) == C_NO_ERR);
+                  Q_ASSERT(pc_ParamWidget->AddParamItemDataElement(rc_NewId, NULL) == C_NO_ERR);
                }
             }
          }
@@ -845,7 +845,7 @@ void C_SyvDaItPaWidgetNew::m_WriteElements(const std::vector<C_OscNodeDataPoolLi
             this->mpc_Ui->pc_TreeView->PrepareChangedValues(c_InterestingChangedElements);
 
             //Should only be possible if online
-            tgl_assert(this->mpc_ComDriver != NULL);
+            Q_ASSERT(this->mpc_ComDriver != NULL);
             if (this->mpc_ComDriver != NULL)
             {
                //Step 4: Write process dialog
@@ -1040,7 +1040,7 @@ void C_SyvDaItPaWidgetNew::m_LoadElements(const std::vector<C_OscNodeDataPoolLis
                               }
                            }
                         }
-                        tgl_assert(pc_ParamWidget->SetParamItem(c_Copy) == C_NO_ERR);
+                        Q_ASSERT(pc_ParamWidget->SetParamItem(c_Copy) == C_NO_ERR);
                         // Reload the widget with the new configuration
                         this->mpc_Ui->pc_TreeView->ReloadSetValues();
                      }
@@ -1126,7 +1126,7 @@ void C_SyvDaItPaWidgetNew::m_SaveElements(const std::vector<C_OscNodeDataPoolLis
             std::vector<C_OscNodeDataPoolContent> c_ListValues;
 
             // Was the node already added
-            tgl_assert(c_UsedNodeIndices.size() == c_IntNodes.size());
+            Q_ASSERT(c_UsedNodeIndices.size() == c_IntNodes.size());
             for (u32_CurIntNodeIndex = 0U; u32_CurIntNodeIndex < c_UsedNodeIndices.size(); ++u32_CurIntNodeIndex)
             {
                if (c_UsedNodeIndices[u32_CurIntNodeIndex] == rc_CurElementId.u32_NodeIndex)
@@ -1150,14 +1150,14 @@ void C_SyvDaItPaWidgetNew::m_SaveElements(const std::vector<C_OscNodeDataPoolLis
                pc_CurIntNode->c_Name = pc_SdNode->c_Properties.c_Name;
             }
 
-            tgl_assert(pc_CurIntNode != NULL);
+            Q_ASSERT(pc_CurIntNode != NULL);
             if (pc_CurIntNode != NULL)
             {
                uint32_t u32_CurIntDataPoolIndex;
                bool q_DataPoolFound = false;
                C_OscParamSetInterpretedDataPool * pc_CurIntDataPool = NULL;
                // Was the datapool already added
-               tgl_assert(c_UsedDataPoolIndices.size() == c_IntNodes.size());
+               Q_ASSERT(c_UsedDataPoolIndices.size() == c_IntNodes.size());
                for (u32_CurIntDataPoolIndex = 0U;
                     u32_CurIntDataPoolIndex < c_UsedDataPoolIndices[u32_CurIntNodeIndex].size();
                     ++u32_CurIntDataPoolIndex)
@@ -1165,7 +1165,7 @@ void C_SyvDaItPaWidgetNew::m_SaveElements(const std::vector<C_OscNodeDataPoolLis
                   if (c_UsedDataPoolIndices[u32_CurIntNodeIndex][u32_CurIntDataPoolIndex] ==
                       rc_CurElementId.u32_DataPoolIndex)
                   {
-                     tgl_assert(u32_CurIntDataPoolIndex < c_IntNodes[u32_CurIntNodeIndex].c_DataPools.size());
+                     Q_ASSERT(u32_CurIntDataPoolIndex < c_IntNodes[u32_CurIntNodeIndex].c_DataPools.size());
                      pc_CurIntDataPool = &c_IntNodes[u32_CurIntNodeIndex].c_DataPools[u32_CurIntDataPoolIndex];
                      q_DataPoolFound = true;
                      break;
@@ -1192,7 +1192,7 @@ void C_SyvDaItPaWidgetNew::m_SaveElements(const std::vector<C_OscNodeDataPoolLis
                // Get the current values of the list for each element
                this->mpc_Ui->pc_TreeView->GetListSetValues(orc_ListIds[u32_ListCounter], c_ListValues);
 
-               tgl_assert(c_ListValues.size() == rc_SdList.c_Elements.size());
+               Q_ASSERT(c_ListValues.size() == rc_SdList.c_Elements.size());
                if (c_ListValues.size() == rc_SdList.c_Elements.size())
                {
                   uint32_t u32_ElementCounter;
@@ -1211,7 +1211,7 @@ void C_SyvDaItPaWidgetNew::m_SaveElements(const std::vector<C_OscNodeDataPoolLis
                   }
 
                   // Add the list
-                  tgl_assert(pc_CurIntDataPool != NULL);
+                  Q_ASSERT(pc_CurIntDataPool != NULL);
                   if (pc_CurIntDataPool != NULL)
                   {
                      pc_CurIntDataPool->c_Lists.push_back(c_NewIntList);
@@ -1377,7 +1377,7 @@ void C_SyvDaItPaWidgetNew::m_RecordElements(const std::vector<C_OscNodeDataPoolL
       const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
       //Should only be possible if online
-      tgl_assert(this->mpc_ComDriver != NULL);
+      Q_ASSERT(this->mpc_ComDriver != NULL);
       if ((pc_View != NULL) && (this->mpc_ComDriver != NULL))
       {
          const QPointer<C_OgePopUpDialog> c_New = new C_OgePopUpDialog(
@@ -1692,7 +1692,7 @@ void C_SyvDaItPaWidgetNew::m_InformUserFloatRangeCheck(
    const std::vector<C_OscNodeDataPoolListElementId> & orc_InvalidValueIds,
    const std::vector<QString> & orc_InvalidValues, const std::vector<QString> & orc_NewValues) const
 {
-   tgl_assert((orc_InvalidValueIds.size() == orc_InvalidValues.size()) &&
+   Q_ASSERT((orc_InvalidValueIds.size() == orc_InvalidValues.size()) &&
               (orc_InvalidValueIds.size() == orc_NewValues.size()));
    if ((orc_InvalidValueIds.size() == orc_InvalidValues.size()) && (orc_InvalidValueIds.size() == orc_NewValues.size()))
    {

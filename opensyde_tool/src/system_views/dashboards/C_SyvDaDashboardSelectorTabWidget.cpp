@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for selecting and managing dashboards (implementation)
@@ -11,7 +11,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 #include "C_SyvDaDashboardSelectorTabWidget.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -30,7 +30,7 @@
 #include "C_SyvDaDashboardScreenshot.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -246,7 +246,7 @@ void C_SyvDaDashboardSelectorTabWidget::SetViewIndex(const uint32_t ou32_Value)
          for (uint32_t u32_ItDashboard = 0; u32_ItDashboard < c_Iteration.size(); ++u32_ItDashboard)
          {
             //Check index
-            tgl_assert(c_Iteration[u32_ItDashboard] < rc_Dashboards.size());
+            Q_ASSERT(c_Iteration[u32_ItDashboard] < rc_Dashboards.size());
             if (c_Iteration[u32_ItDashboard] < rc_Dashboards.size())
             {
                const C_PuiSvDashboard & rc_CurDashboard = rc_Dashboards[c_Iteration[u32_ItDashboard]];
@@ -1005,7 +1005,7 @@ void C_SyvDaDashboardSelectorTabWidget::m_AddSpecificTab(const uint32_t ou32_Dat
          if ((os32_TabIndex >= 0) && (os32_TabIndex <= this->count()))
          {
             s32_Index = this->insertTab(os32_TabIndex, pc_Widget, "");
-            tgl_assert(s32_Index == os32_TabIndex);
+            Q_ASSERT(s32_Index == os32_TabIndex);
          }
          else
          {
@@ -1443,7 +1443,7 @@ void C_SyvDaDashboardSelectorTabWidget::m_DeleteTab(const int32_t os32_TabIndex)
          }
          else
          {
-            tgl_assert(false);
+            Q_ASSERT(false);
          }
       }
    }

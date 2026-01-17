@@ -53,14 +53,14 @@ void C_CamProHandlerFiler::h_Save(const C_CamProHandler & orc_Handler, C_OscXmlP
    orc_XmlParser.CreateAndSelectNodeChild("settings");
    h_SaveSettings(orc_Handler, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-can-monitor-configuration");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-can-monitor-configuration");
 
    // messages
    orc_XmlParser.CreateAndSelectNodeChild("messages");
    orc_XmlParser.SetAttributeBool("cyclic-active", orc_Handler.GetCyclicMessageTransmitActive());
    h_SaveMessages(orc_Handler.GetMessages(), orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-can-monitor-configuration");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-can-monitor-configuration");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ int32_t C_CamProHandlerFiler::h_Load(C_CamProHandler & orc_Handler, C_OscXmlPars
       {
          s32_Retval = h_LoadSettings(orc_Handler, orc_XmlParser);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-can-monitor-configuration");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-can-monitor-configuration");
       }
 
       // load messages
@@ -103,7 +103,7 @@ int32_t C_CamProHandlerFiler::h_Load(C_CamProHandler & orc_Handler, C_OscXmlPars
          s32_Retval = h_LoadMessages(c_Messages, orc_XmlParser);
          orc_Handler.SetMessages(c_Messages);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-can-monitor-configuration");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-can-monitor-configuration");
       }
    }
 
@@ -376,7 +376,7 @@ int32_t C_CamProHandlerFiler::h_LoadMessage(C_CamProMessageData & orc_Message, C
    {
       orc_Message.c_Name = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "message");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "message");
    }
    else
    {
@@ -386,7 +386,7 @@ int32_t C_CamProHandlerFiler::h_LoadMessage(C_CamProMessageData & orc_Message, C
    {
       orc_Message.c_Key = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "message");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "message");
    }
    else
    {
@@ -396,7 +396,7 @@ int32_t C_CamProHandlerFiler::h_LoadMessage(C_CamProMessageData & orc_Message, C
    {
       orc_Message.c_DataBaseFilePath = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "message");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "message");
    }
    else
    {
@@ -691,7 +691,7 @@ int32_t C_CamProHandlerFiler::h_LoadFilter(C_CamProFilterData & orc_Filter, C_Os
    {
       orc_Filter.c_Name = orc_XmlParser.GetNodeContent().c_str();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "filter");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "filter");
    }
    else
    {
@@ -702,7 +702,7 @@ int32_t C_CamProHandlerFiler::h_LoadFilter(C_CamProFilterData & orc_Filter, C_Os
    {
       orc_Filter.c_Comment = orc_XmlParser.GetNodeContent().c_str();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "filter");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "filter");
    }
    else
    {
@@ -736,7 +736,7 @@ int32_t C_CamProHandlerFiler::h_LoadFilter(C_CamProFilterData & orc_Filter, C_Os
          orc_XmlParser.SelectNodeParent();
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "filter");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "filter");
    }
    else
    {
@@ -961,7 +961,7 @@ int32_t C_CamProHandlerFiler::h_LoadDatabase(C_CamProDatabaseData & orc_Database
    {
       orc_Database.c_Name = orc_XmlParser.GetNodeContent().c_str();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "database");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "database");
    }
    else
    {
@@ -1038,7 +1038,7 @@ int32_t C_CamProHandlerFiler::h_LoadLoggingConfig(C_CamProLoggingData & orc_Logg
    {
       orc_LoggingData.c_Directory = orc_XmlParser.GetNodeContent().c_str();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "logging");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "logging");
    }
    else
    {
@@ -1049,7 +1049,7 @@ int32_t C_CamProHandlerFiler::h_LoadLoggingConfig(C_CamProLoggingData & orc_Logg
    {
       orc_LoggingData.c_FileName = orc_XmlParser.GetNodeContent().c_str();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "logging");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "logging");
    }
    else
    {

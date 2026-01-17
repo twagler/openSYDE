@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Handle most parts of copy paste implementation for scene (implementation)
@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "gitypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_PuiSvDashboard.hpp"
@@ -36,7 +36,7 @@
 #include "C_PuiSvHandler.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -198,7 +198,7 @@ void C_SyvDaCopyPasteManager::CopyFromSceneToManager(const QList<QGraphicsItem *
                         {
                            C_PuiSvDbLabel c_Tmp = *pc_LabelData;
                            C_SebBaseCopyPasteManager::mh_HandleZetValueBox(*c_ItItem, orc_NormalizedZetValues, c_Tmp);
-                           tgl_assert(c_Snapshot.AddWidget(&c_Tmp, C_PuiSvDbDataElement::eLABEL) == C_NO_ERR);
+                           Q_ASSERT(c_Snapshot.AddWidget(&c_Tmp, C_PuiSvDbDataElement::eLABEL) == C_NO_ERR);
                         }
                      }
                      else if (pc_Param != NULL)
@@ -209,7 +209,7 @@ void C_SyvDaCopyPasteManager::CopyFromSceneToManager(const QList<QGraphicsItem *
                         {
                            C_PuiSvDbParam c_Tmp = *pc_ParamData;
                            C_SebBaseCopyPasteManager::mh_HandleZetValueBox(*c_ItItem, orc_NormalizedZetValues, c_Tmp);
-                           tgl_assert(c_Snapshot.AddWidget(&c_Tmp, C_PuiSvDbDataElement::ePARAM) == C_NO_ERR);
+                           Q_ASSERT(c_Snapshot.AddWidget(&c_Tmp, C_PuiSvDbDataElement::ePARAM) == C_NO_ERR);
                         }
                      }
                      else if (pc_PieChart != NULL)
@@ -220,7 +220,7 @@ void C_SyvDaCopyPasteManager::CopyFromSceneToManager(const QList<QGraphicsItem *
                         {
                            C_PuiSvDbPieChart c_Tmp = *pc_PieChartData;
                            C_SebBaseCopyPasteManager::mh_HandleZetValueBox(*c_ItItem, orc_NormalizedZetValues, c_Tmp);
-                           tgl_assert(c_Snapshot.AddWidget(&c_Tmp,
+                           Q_ASSERT(c_Snapshot.AddWidget(&c_Tmp,
                                                            C_PuiSvDbDataElement::ePIE_CHART) == C_NO_ERR);
                         }
                      }
@@ -232,7 +232,7 @@ void C_SyvDaCopyPasteManager::CopyFromSceneToManager(const QList<QGraphicsItem *
                         {
                            C_PuiSvDbProgressBar c_Tmp = *pc_ProgressBarData;
                            C_SebBaseCopyPasteManager::mh_HandleZetValueBox(*c_ItItem, orc_NormalizedZetValues, c_Tmp);
-                           tgl_assert(c_Snapshot.AddWidget(&c_Tmp,
+                           Q_ASSERT(c_Snapshot.AddWidget(&c_Tmp,
                                                            C_PuiSvDbDataElement::ePROGRESS_BAR) == C_NO_ERR);
                         }
                      }
@@ -244,7 +244,7 @@ void C_SyvDaCopyPasteManager::CopyFromSceneToManager(const QList<QGraphicsItem *
                         {
                            C_PuiSvDbSlider c_Tmp = *pc_SliderData;
                            C_SebBaseCopyPasteManager::mh_HandleZetValueBox(*c_ItItem, orc_NormalizedZetValues, c_Tmp);
-                           tgl_assert(c_Snapshot.AddWidget(&c_Tmp, C_PuiSvDbDataElement::eSLIDER) == C_NO_ERR);
+                           Q_ASSERT(c_Snapshot.AddWidget(&c_Tmp, C_PuiSvDbDataElement::eSLIDER) == C_NO_ERR);
                         }
                      }
                      else if (pc_SpinBox != NULL)
@@ -255,7 +255,7 @@ void C_SyvDaCopyPasteManager::CopyFromSceneToManager(const QList<QGraphicsItem *
                         {
                            C_PuiSvDbSpinBox c_Tmp = *pc_SpinBoxData;
                            C_SebBaseCopyPasteManager::mh_HandleZetValueBox(*c_ItItem, orc_NormalizedZetValues, c_Tmp);
-                           tgl_assert(c_Snapshot.AddWidget(&c_Tmp,
+                           Q_ASSERT(c_Snapshot.AddWidget(&c_Tmp,
                                                            C_PuiSvDbDataElement::eSPIN_BOX) == C_NO_ERR);
                         }
                      }
@@ -267,7 +267,7 @@ void C_SyvDaCopyPasteManager::CopyFromSceneToManager(const QList<QGraphicsItem *
                         {
                            C_PuiSvDbTable c_Tmp = *pc_TableData;
                            C_SebBaseCopyPasteManager::mh_HandleZetValueBox(*c_ItItem, orc_NormalizedZetValues, c_Tmp);
-                           tgl_assert(c_Snapshot.AddWidget(&c_Tmp, C_PuiSvDbDataElement::eTABLE) == C_NO_ERR);
+                           Q_ASSERT(c_Snapshot.AddWidget(&c_Tmp, C_PuiSvDbDataElement::eTABLE) == C_NO_ERR);
                         }
                      }
                      else if (pc_Toggle != NULL)
@@ -278,7 +278,7 @@ void C_SyvDaCopyPasteManager::CopyFromSceneToManager(const QList<QGraphicsItem *
                         {
                            C_PuiSvDbToggle c_Tmp = *pc_ToggleData;
                            C_SebBaseCopyPasteManager::mh_HandleZetValueBox(*c_ItItem, orc_NormalizedZetValues, c_Tmp);
-                           tgl_assert(c_Snapshot.AddWidget(&c_Tmp, C_PuiSvDbDataElement::eTOGGLE) == C_NO_ERR);
+                           Q_ASSERT(c_Snapshot.AddWidget(&c_Tmp, C_PuiSvDbDataElement::eTOGGLE) == C_NO_ERR);
                         }
                      }
                      else

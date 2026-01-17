@@ -29,14 +29,14 @@
 
 #include "gitypes.hpp"
 #include "C_SebUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSdUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -298,7 +298,7 @@ void C_SdManTopologyCopyPasteManager::CopyFromSceneToManager(const QList<QGraphi
       //Replace
       rc_BusTextElement.u32_BusIndex = c_MapOldIndexToNewIndex.value(rc_BusTextElement.u32_BusIndex,
                                                                      std::numeric_limits<uint32_t>::max());
-      tgl_assert(rc_BusTextElement.u32_BusIndex != std::numeric_limits<uint32_t>::max());
+      Q_ASSERT(rc_BusTextElement.u32_BusIndex != std::numeric_limits<uint32_t>::max());
       if (rc_BusTextElement.u32_BusIndex == std::numeric_limits<uint32_t>::max())
       {
          c_Snapshot.c_BusTextElements.erase(c_Snapshot.c_BusTextElements.begin() + u32_ItBusTextElement);
@@ -481,7 +481,7 @@ void C_SdManTopologyCopyPasteManager::mh_CopyFromSceneToManagerHandleMultiNode(c
                                                                                             1UL)]);
                }
             }
-            tgl_assert(c_Group.c_SubNodeIndexes.size() == pc_Group->c_SubNodeIndexes.size());
+            Q_ASSERT(c_Group.c_SubNodeIndexes.size() == pc_Group->c_SubNodeIndexes.size());
             orc_Snapshot.c_OscNodeGroups.push_back(c_Group);
          }
       }
@@ -523,7 +523,7 @@ void C_SdManTopologyCopyPasteManager::mh_RemoveConnection(C_SdTopologyDataSnapsh
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdManTopologyCopyPasteManager::mh_RemoveCanOpenInformation(C_SdTopologyDataSnapshot & orc_Data)
 {
-   tgl_assert(orc_Data.c_OscNodes.size() == orc_Data.c_UiNodes.size());
+   Q_ASSERT(orc_Data.c_OscNodes.size() == orc_Data.c_UiNodes.size());
    if (orc_Data.c_OscNodes.size() == orc_Data.c_UiNodes.size())
    {
       for (uint32_t u32_ItNode = 0UL; u32_ItNode < orc_Data.c_OscNodes.size(); ++u32_ItNode)
@@ -534,7 +534,7 @@ void C_SdManTopologyCopyPasteManager::mh_RemoveCanOpenInformation(C_SdTopologyDa
          //CANopen
          rc_OscNode.c_CanOpenManagers.clear();
 
-         tgl_assert(rc_OscNode.c_ComProtocols.size() == rc_UiNode.c_UiCanProtocols.size());
+         Q_ASSERT(rc_OscNode.c_ComProtocols.size() == rc_UiNode.c_UiCanProtocols.size());
          if (rc_OscNode.c_ComProtocols.size() == rc_UiNode.c_UiCanProtocols.size())
          {
             for (uint32_t u32_ItProt = 0UL; u32_ItProt < rc_OscNode.c_ComProtocols.size();)
@@ -543,7 +543,7 @@ void C_SdManTopologyCopyPasteManager::mh_RemoveCanOpenInformation(C_SdTopologyDa
                if (rc_OscProtocol.e_Type == C_OscCanProtocol::eCAN_OPEN)
                {
                   //DP
-                  tgl_assert(rc_OscNode.c_DataPools.size() == rc_UiNode.c_UiDataPools.size());
+                  Q_ASSERT(rc_OscNode.c_DataPools.size() == rc_UiNode.c_UiDataPools.size());
                   if (rc_OscNode.c_DataPools.size() == rc_UiNode.c_UiDataPools.size())
                   {
                      rc_OscNode.c_DataPools.erase(rc_OscNode.c_DataPools.begin() + rc_OscProtocol.u32_DataPoolIndex);

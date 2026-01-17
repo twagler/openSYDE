@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget to display one data pool list header (implementation)
@@ -28,7 +28,7 @@
 #include "C_OgeWiUtil.hpp"
 #include "C_OscUtils.hpp"
 #include "C_SdNdeDpListPopUp.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeDpListCommentDialog.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -36,7 +36,7 @@ using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_core;
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -540,7 +540,7 @@ void C_SdNdeDpListHeaderWidget::m_UpdateUi(void)
    this->mq_InitActive = true;
 
    //List or data pool may not exist on first calls
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if ((pc_Node != NULL) && ((pc_List != NULL) && (pc_DataPool != NULL)))
    {
       // name and comment
@@ -577,10 +577,10 @@ void C_SdNdeDpListHeaderWidget::m_UpdateUi(void)
          this->mpc_Ui->pc_GroupBoxSize->setVisible(true);
 
          //Size max
-         tgl_assert(pc_Device != NULL);
+         Q_ASSERT(pc_Device != NULL);
          if (pc_Device != NULL)
          {
-            tgl_assert(u32_SubDeviceIndex < pc_Device->c_SubDevices.size());
+            Q_ASSERT(u32_SubDeviceIndex < pc_Device->c_SubDevices.size());
             if (u32_SubDeviceIndex < pc_Device->c_SubDevices.size())
             {
                const uint32_t u32_Maximum = pc_Device->c_SubDevices[u32_SubDeviceIndex].u32_UserEepromSizeBytes;

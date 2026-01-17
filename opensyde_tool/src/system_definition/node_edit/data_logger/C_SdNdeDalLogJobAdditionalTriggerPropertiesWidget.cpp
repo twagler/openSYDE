@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for log job additional trigger properties configuration
@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_PuiSdUtil.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -22,7 +22,7 @@
 #include "ui_C_SdNdeDalLogJobAdditionalTriggerPropertiesWidget.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -435,7 +435,7 @@ const
    {
       const QVariant c_VariantValue = this->mpc_Ui->pc_WidgetThreshold->GetValue();
 
-      tgl_assert(C_SdNdeDpContentUtil::h_SimpleConvertFromVariant(c_VariantValue, orc_Content) == C_NO_ERR);
+      Q_ASSERT(C_SdNdeDpContentUtil::h_SimpleConvertFromVariant(c_VariantValue, orc_Content) == C_NO_ERR);
    }
 }
 

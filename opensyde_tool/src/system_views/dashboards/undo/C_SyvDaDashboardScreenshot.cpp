@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Short description
@@ -14,7 +14,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 #include "C_SyvDaDashboardSelectorTabWidget.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -34,7 +34,7 @@
 #include "C_SyvDaDashboardScreenshot.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -296,7 +296,7 @@ void C_SyvDaDashboardScreenshot::m_SaveScreenshot(QPixmap oc_CurrentTabPixmap, c
 
    if (!c_ScreenshotFileName.isEmpty())
    {
-      tgl_assert(oc_CurrentTabPixmap.save(c_ScreenshotFileName, c_ScreenshotFormat.toLatin1().constData()));
+      Q_ASSERT(oc_CurrentTabPixmap.save(c_ScreenshotFileName, c_ScreenshotFormat.toLatin1().constData()));
    }
 
    if ((this->mpc_GifLabel != NULL) && (this->mpc_Movie != NULL))

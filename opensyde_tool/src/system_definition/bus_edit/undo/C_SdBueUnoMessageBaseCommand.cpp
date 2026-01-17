@@ -12,11 +12,11 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SdBueUnoMessageBaseCommand.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -99,7 +99,7 @@ bool C_SdBueUnoMessageBaseCommand::m_CheckMessagesSortedAscendingWithDirection(c
 {
    bool q_Sorted = true;
 
-   tgl_assert(this->mpc_MessageSyncManager != NULL);
+   Q_ASSERT(this->mpc_MessageSyncManager != NULL);
    if (this->mpc_MessageSyncManager != NULL)
    {
       C_OscCanMessageIdentificationIndices c_PrevId;

@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing a specific node with its applications and data blocks as list item
@@ -27,7 +27,7 @@
 #include "C_OscNode.hpp"
 #include "C_PuiProject.hpp"
 #include "C_PuiSvData.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscHexFile.hpp"
 #include "C_OgeWiCustomMessage.hpp"
@@ -1302,12 +1302,12 @@ void C_SyvUpPacSectionNodeWidget::m_AdaptParamSetFile(const QString & orc_File,
 
       C_SyvUpPacSectionNodeWidget::AdaptFile(orc_File, opc_App);
 
-      tgl_assert(pc_ParamSetWidget != NULL);
+      Q_ASSERT(pc_ParamSetWidget != NULL);
       if (pc_ParamSetWidget != NULL)
       {
          pc_ParamSetWidget->SetParamInfo(c_ParamFileInfo);
 
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationParamInfo(
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationParamInfo(
                        this->mu32_ViewIndex,
                        this->mu32_NodeIndex,
                        pc_ParamSetWidget->GetAppNumber(),
@@ -1512,15 +1512,15 @@ void C_SyvUpPacSectionNodeWidget::m_InitItems(void)
 {
    const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_NodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
       this->mc_DeviceType = pc_Node->c_DeviceType.c_str();
 
-      tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
-      tgl_assert(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
+      Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
+      Q_ASSERT(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
       this->mq_FileBased =
          pc_Node->pc_DeviceDefinition->c_SubDevices[pc_Node->u32_SubDeviceIndex].q_FlashloaderOpenSydeIsFileBased;
       this->mq_StwFlashloader = (pc_Node->c_Properties.e_FlashLoader == C_OscNodeProperties::eFL_STW);
@@ -1529,7 +1529,7 @@ void C_SyvUpPacSectionNodeWidget::m_InitItems(void)
       {
          const C_OscViewNodeUpdate * const pc_UpdateInfo = pc_View->GetNodeUpdateInformation(this->mu32_NodeIndex);
 
-         tgl_assert(pc_UpdateInfo != NULL);
+         Q_ASSERT(pc_UpdateInfo != NULL);
          if (pc_UpdateInfo != NULL)
          {
             this->m_InitSpecificItem(*pc_Node, *pc_UpdateInfo);
@@ -1638,7 +1638,7 @@ uint32_t C_SyvUpPacSectionNodeWidget::m_GetFirstNotFinishedApplication(void) con
          break;
       default:
          // Should not happen
-         tgl_assert(false);
+         Q_ASSERT(false);
          u32_ExpectedType = mu32_UPDATE_PACKAGE_NODE_SECTION_TYPE_DATABLOCK;
          break;
       }
@@ -1754,7 +1754,7 @@ void C_SyvUpPacSectionNodeWidget::mh_FillDoFlashWithPemStates(const C_SyvUpPacLi
    const C_SyvUpPacListNodeItemPemFileWidget * const pc_PemApp =
       dynamic_cast<const C_SyvUpPacListNodeItemPemFileWidget *>(opc_App);
 
-   tgl_assert(pc_PemApp != NULL);
+   Q_ASSERT(pc_PemApp != NULL);
    if (pc_PemApp != NULL)
    {
       C_OscViewNodeUpdate::E_StateSecurity e_StateSecurity;

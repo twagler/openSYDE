@@ -12,7 +12,6 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglFile.hpp"
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OscXcoCreate.hpp"
@@ -22,7 +21,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -101,8 +100,8 @@ int32_t C_OscXcoCreate::h_CreatePackage(const stw::scl::C_SclString & orc_Packag
                                                            // relative file paths for zip
                                                            // archive
    // fill with constant file names
-   c_XcfgFiles.insert(TglFileIncludeTrailingDelimiter(hc_INI_DEV_FOLDER) + hc_INI_DEV);
-   c_XcfgFiles.insert(TglFileIncludeTrailingDelimiter(hc_XCFG_SYSDEF_FOLDER) + hc_XCFG_SYSDEF);
+   c_XcfgFiles.insert(stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(hc_INI_DEV_FOLDER) + hc_INI_DEV);
+   c_XcfgFiles.insert(stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(hc_XCFG_SYSDEF_FOLDER) + hc_XCFG_SYSDEF);
    c_XcfgFiles.insert(C_OscXcoManifestFiler::hc_FILE_NAME);
    // precondition checks
    s32_Return = mh_CheckParamsToCreatePackage(orc_PackagePath, orc_SystemDefinition, orc_Manifest);
@@ -141,24 +140,24 @@ int32_t C_OscXcoCreate::h_CreatePackage(const stw::scl::C_SclString & orc_Packag
    // * system definition file
    if (s32_Return == C_NO_ERR)
    {
-      const stw::scl::C_SclString c_SysDefPath = TglFileIncludeTrailingDelimiter(
+      const stw::scl::C_SclString c_SysDefPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(
          c_PackagePathTmp + hc_XCFG_SYSDEF_FOLDER);
 
       s32_Return = C_OscSpaServicePackageCreateUtil::h_SaveSystemDefinition(orc_SystemDefinition,
                                                                             hc_XCFG_SYSDEF,
                                                                             mhc_USE_CASE,
-                                                                            c_SysDefPath, TglFileIncludeTrailingDelimiter(
+                                                                            c_SysDefPath, stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(
                                                                                hc_XCFG_SYSDEF_FOLDER), c_XcfgFiles,
                                                                             mhc_ErrorMessage);
    }
    // device.ini and device definition files
    if (s32_Return == C_NO_ERR)
    {
-      const stw::scl::C_SclString c_DevDefPath = TglFileIncludeTrailingDelimiter(c_PackagePathTmp + hc_INI_DEV_FOLDER);
+      const stw::scl::C_SclString c_DevDefPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(c_PackagePathTmp + hc_INI_DEV_FOLDER);
 
       s32_Return = C_OscSpaServicePackageCreateUtil::h_SaveDeviceDefinitionsAndIni(
          orc_SystemDefinition, mhc_USE_CASE,
-         c_DevDefPath, TglFileIncludeTrailingDelimiter(hc_INI_DEV_FOLDER), c_XcfgFiles, mhc_ErrorMessage);
+         c_DevDefPath, stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(hc_INI_DEV_FOLDER), c_XcfgFiles, mhc_ErrorMessage);
    }
    // package temporary result folder to zip file
    if ((s32_Return == C_NO_ERR) || (s32_Return == C_WARN))

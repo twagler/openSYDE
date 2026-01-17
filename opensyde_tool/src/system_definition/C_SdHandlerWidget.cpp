@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for system definition user
@@ -20,7 +20,7 @@
 #include "C_OscNode.hpp"
 
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 #include "C_HeHandler.hpp"
 #include "C_UsHandler.hpp"
 #include "C_ImpUtil.hpp"
@@ -41,7 +41,7 @@
 #include "C_PopSaveAsDialogWidget.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
@@ -813,7 +813,7 @@ void C_SdHandlerWidget::m_GenerateCode(void) const
       {
          std::vector<uint32_t> c_Indices;
          const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_Index);
-         tgl_assert(pc_Node != NULL);
+         Q_ASSERT(pc_Node != NULL);
          c_Indices.push_back(this->mu32_Index);
          pc_CodeGenerationDialog->PrepareDialog(c_Indices);
       }
@@ -829,7 +829,7 @@ void C_SdHandlerWidget::m_GenerateCode(void) const
          {
             const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(c_NodeIndexes
                                                                                                .at(u32_Counter));
-            tgl_assert(pc_Node != NULL);
+            Q_ASSERT(pc_Node != NULL);
             c_Indices.push_back(c_NodeIndexes.at(u32_Counter));
          }
          pc_CodeGenerationDialog->PrepareDialog(c_Indices);
@@ -837,7 +837,7 @@ void C_SdHandlerWidget::m_GenerateCode(void) const
       else
       {
          //Unexpected
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
 
       if (c_PopUpDialog->exec() == static_cast<int32_t>(QDialog::Accepted))
@@ -864,7 +864,7 @@ void C_SdHandlerWidget::m_Export(void)
    std::set<uint32_t> c_CanMessageIds; // to count CAN messages
    std::set<C_OscCanMessageUniqueId> c_CanMessageIdsWithExtended;
 
-   tgl_assert(this->mpc_ActBusEdit != NULL);
+   Q_ASSERT(this->mpc_ActBusEdit != NULL);
    if (this->mpc_ActBusEdit != NULL)
    {
       // Is it Possible to Use a dbc for Ethernet Configuration?
@@ -906,8 +906,8 @@ void C_SdHandlerWidget::m_Export(void)
                c_DatapoolIndexes);
 
             // for each node there must be an interface index and a Datapool index therefore same size is guaranteed
-            tgl_assert(c_NodeIndexes.size() == c_InterfaceIndexes.size());
-            tgl_assert(c_NodeIndexes.size() == c_DatapoolIndexes.size());
+            Q_ASSERT(c_NodeIndexes.size() == c_InterfaceIndexes.size());
+            Q_ASSERT(c_NodeIndexes.size() == c_DatapoolIndexes.size());
 
             C_CieConverter::C_CieCommDefinition c_CommDef; // data structure for DBC file export
             c_CommDef.c_Bus.c_Name = pc_Bus->c_Name;
@@ -920,7 +920,7 @@ void C_SdHandlerWidget::m_Export(void)
                const uint32_t u32_DatapoolIndex = c_DatapoolIndexes[u32_Pos];
                C_OscCanProtocol::E_Type e_ComType;
 
-               tgl_assert(C_PuiSdHandler::h_GetInstance()->GetCanProtocolType(u32_NodeIndex,
+               Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetCanProtocolType(u32_NodeIndex,
                                                                               u32_DatapoolIndex,
                                                                               e_ComType) == C_NO_ERR);
                const C_OscCanMessageContainer * const pc_CanMessageContainer =
@@ -1094,7 +1094,7 @@ void C_SdHandlerWidget::m_TriggerImport(void)
       //Node
       const C_OscSystemBus * const pc_Bus = C_PuiSdHandler::h_GetInstance()->GetOscBus(mu32_Index);
 
-      tgl_assert((pc_Bus != NULL) && (mpc_ActBusEdit != NULL));
+      Q_ASSERT((pc_Bus != NULL) && (mpc_ActBusEdit != NULL));
       if ((pc_Bus != NULL) && (mpc_ActBusEdit != NULL))
       {
          const stw::scl::C_SclString c_BusName = pc_Bus->c_Name;
@@ -1301,7 +1301,7 @@ C_OgeWiCustomMessage * C_SdHandlerWidget::m_ShowWarningUnstoredProjectPopupMessa
 void C_SdHandlerWidget::m_SwitchProtocolTab(const C_OscCanProtocol::E_Type & ore_Protocol) const
 {
    // only available on bus edit
-   tgl_assert(this->mpc_ActBusEdit != NULL);
+   Q_ASSERT(this->mpc_ActBusEdit != NULL);
 
    if (this->mpc_ActBusEdit != NULL)
    {
@@ -1316,7 +1316,7 @@ void C_SdHandlerWidget::m_SwitchProtocolTab(const C_OscCanProtocol::E_Type & ore
 void C_SdHandlerWidget::m_Import()
 {
    // only available on bus edit
-   tgl_assert(this->mpc_ActBusEdit != NULL);
+   Q_ASSERT(this->mpc_ActBusEdit != NULL);
 
    if (this->mpc_ActBusEdit != NULL)
    {
@@ -1442,7 +1442,7 @@ void C_SdHandlerWidget::m_GenerateHalcDatapools(void) const
    {
       const int32_t s32_Result = C_PuiSdHandler::h_GetInstance()->HalcGenerateDatapools(this->mu32_Index);
 
-      tgl_assert((s32_Result == C_NO_ERR) || (s32_Result == C_NOACT));
+      Q_ASSERT((s32_Result == C_NO_ERR) || (s32_Result == C_NOACT));
    }
 }
 

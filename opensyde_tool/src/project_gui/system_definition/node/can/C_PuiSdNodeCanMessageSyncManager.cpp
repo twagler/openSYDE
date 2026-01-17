@@ -28,7 +28,7 @@
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSdNodeCanMessageSyncManager.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_OscUtils.hpp"
@@ -37,7 +37,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::scl;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -108,7 +108,7 @@ void C_PuiSdNodeCanMessageSyncManager::Init(const uint32_t & oru32_BusIndex,
          this->mc_OtherProtocols.push_back(C_OscCanProtocol::hc_ALL_PROTOCOLS[u32_ItProt]);
       }
    }
-   tgl_assert(this->mc_OtherProtocols.size() == this->mc_MessageMatchesForOtherProtocols.size());
+   Q_ASSERT(this->mc_OtherProtocols.size() == this->mc_MessageMatchesForOtherProtocols.size());
    if (this->mc_OtherProtocols.size() == this->mc_MessageMatchesForOtherProtocols.size())
    {
       for (uint32_t u32_ItProt = 0UL; u32_ItProt < this->mc_OtherProtocols.size(); ++u32_ItProt)
@@ -158,7 +158,7 @@ void C_PuiSdNodeCanMessageSyncManager::Init(const uint32_t & oru32_NodeIndex, co
          this->mc_OtherProtocols.push_back(C_OscCanProtocol::hc_ALL_PROTOCOLS[u32_ItProt]);
       }
    }
-   tgl_assert(this->mc_OtherProtocols.size() == this->mc_MessageMatchesForOtherProtocols.size());
+   Q_ASSERT(this->mc_OtherProtocols.size() == this->mc_MessageMatchesForOtherProtocols.size());
    if (this->mc_OtherProtocols.size() == this->mc_MessageMatchesForOtherProtocols.size())
    {
       for (uint32_t u32_ItProt = 0UL; u32_ItProt < this->mc_OtherProtocols.size(); ++u32_ItProt)
@@ -835,11 +835,11 @@ int32_t C_PuiSdNodeCanMessageSyncManager::ChangeCanMessageTx(const C_OscCanMessa
       }
 
       //Get complete message
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->GetCanMessageComplete(orc_MessageId, c_Message, c_OscSignalCommons,
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetCanMessageComplete(orc_MessageId, c_Message, c_OscSignalCommons,
                                                                         c_UiSignalCommons,
                                                                         c_UiMessage) == C_NO_ERR);
       //Add without register
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->InsertCanMessage(c_NewId, c_Message, c_OscSignalCommons,
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->InsertCanMessage(c_NewId, c_Message, c_OscSignalCommons,
                                                                    c_UiSignalCommons,
                                                                    c_UiMessage, false) == C_NO_ERR);
       //Delete existing Tx and matching Rx
@@ -875,7 +875,7 @@ int32_t C_PuiSdNodeCanMessageSyncManager::ChangeCanMessageTx(const C_OscCanMessa
             //Revert iterator step (new item at current position)
             --u32_ItMessageId;
          }
-         tgl_assert(s32_Retval == C_NO_ERR);
+         Q_ASSERT(s32_Retval == C_NO_ERR);
       }
       //Append new transmitter
       c_MatchingMessageIds.push_back(c_NewId);
@@ -939,11 +939,11 @@ int32_t C_PuiSdNodeCanMessageSyncManager::AddCanMessageRx(const C_OscCanMessageI
       C_PuiSdNodeCanMessage c_UiMessage;
 
       //Get complete message
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->GetCanMessageComplete(orc_MessageId, c_Message, c_OscSignalCommons,
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetCanMessageComplete(orc_MessageId, c_Message, c_OscSignalCommons,
                                                                         c_UiSignalCommons,
                                                                         c_UiMessage) == C_NO_ERR);
       //Add without register
-      tgl_assert(C_PuiSdHandler::h_GetInstance()->InsertCanMessage(c_NewId, c_Message, c_OscSignalCommons,
+      Q_ASSERT(C_PuiSdHandler::h_GetInstance()->InsertCanMessage(c_NewId, c_Message, c_OscSignalCommons,
                                                                    c_UiSignalCommons,
                                                                    c_UiMessage, false) == C_NO_ERR);
       //Append to matching messages
@@ -1833,7 +1833,7 @@ bool C_PuiSdNodeCanMessageSyncManager::RecheckCriticalMessage(
                                 c_ToBeDeleted.begin(); c_ItDelteMessage != c_ToBeDeleted.end();
                              ++c_ItDelteMessage)
                         {
-                           tgl_assert(DeleteCanMessageRx(c_Alternative, c_ItDelteMessage->u32_NodeIndex,
+                           Q_ASSERT(DeleteCanMessageRx(c_Alternative, c_ItDelteMessage->u32_NodeIndex,
                                                          c_ItDelteMessage->u32_InterfaceIndex,
                                                          c_ItDelteMessage->u32_DatapoolIndex) == C_NO_ERR);
                            //Check if message matches current message ID and set alternative as new
@@ -1877,7 +1877,7 @@ uint64_t C_PuiSdNodeCanMessageSyncManager::GetUniqueId(const C_OscCanMessageIden
 {
    uint64_t u64_Retval = 0ULL;
 
-   tgl_assert(this->mc_MessageMatches.size() == this->mc_MessageMatchUniqueIds.size());
+   Q_ASSERT(this->mc_MessageMatches.size() == this->mc_MessageMatchUniqueIds.size());
    if (this->mc_MessageMatches.size() == this->mc_MessageMatchUniqueIds.size())
    {
       const uint32_t u32_Index = this->m_GetMatchingMessageVectorIndex(orc_MessageId);
@@ -1905,7 +1905,7 @@ C_OscCanMessageIdentificationIndices C_PuiSdNodeCanMessageSyncManager::GetMessag
 {
    C_OscCanMessageIdentificationIndices c_Retval;
 
-   tgl_assert(this->mc_MessageMatches.size() == this->mc_MessageMatchUniqueIds.size());
+   Q_ASSERT(this->mc_MessageMatches.size() == this->mc_MessageMatchUniqueIds.size());
    if (this->mc_MessageMatches.size() == this->mc_MessageMatchUniqueIds.size())
    {
       for (uint32_t u32_ItUniqueId = 0; u32_ItUniqueId < this->mc_MessageMatchUniqueIds.size(); ++u32_ItUniqueId)
@@ -2090,7 +2090,7 @@ void C_PuiSdNodeCanMessageSyncManager::mh_RegisterIfNecessary(
       if (s32_Result == C_NO_ERR)
       {
          //Should always include itself
-         tgl_assert(c_MatchingMessageIds.size() > 0);
+         Q_ASSERT(c_MatchingMessageIds.size() > 0);
          orc_Output.push_back(c_MatchingMessageIds);
          if (opc_OutputUniqueIds != NULL)
          {
@@ -2197,7 +2197,7 @@ int32_t C_PuiSdNodeCanMessageSyncManager::mh_GetNodeIndexesMatchingForMessage(
    C_PuiSdNodeCanMessageSyncManager::mh_ReportCanOpenUsage(orc_MessageId.e_ComProtocol, TGL_UTIL_FUNC_ID);
 
    //Setp 1: Find connected bus
-   tgl_assert(pc_OrgNode != NULL);
+   Q_ASSERT(pc_OrgNode != NULL);
    if (pc_OrgNode != NULL)
    {
       const C_OscCanMessageContainer * const pc_MessageContainer =
@@ -2205,7 +2205,7 @@ int32_t C_PuiSdNodeCanMessageSyncManager::mh_GetNodeIndexesMatchingForMessage(
                                                                          orc_MessageId.e_ComProtocol,
                                                                          orc_MessageId.u32_InterfaceIndex,
                                                                          orc_MessageId.u32_DatapoolIndex);
-      tgl_assert(orc_MessageId.u32_InterfaceIndex < pc_OrgNode->c_Properties.c_ComInterfaces.size());
+      Q_ASSERT(orc_MessageId.u32_InterfaceIndex < pc_OrgNode->c_Properties.c_ComInterfaces.size());
       if ((orc_MessageId.u32_InterfaceIndex < pc_OrgNode->c_Properties.c_ComInterfaces.size()) &&
           (pc_MessageContainer != NULL))
       {
@@ -2232,7 +2232,7 @@ int32_t C_PuiSdNodeCanMessageSyncManager::mh_GetNodeIndexesMatchingForMessage(
             {
                const C_OscCanProtocol & rc_Prot =  pc_OrgNode->c_ComProtocols[u32_ProtCounter];
 
-               tgl_assert(orc_MessageId.u32_InterfaceIndex < rc_Prot.c_ComMessages.size());
+               Q_ASSERT(orc_MessageId.u32_InterfaceIndex < rc_Prot.c_ComMessages.size());
                if (rc_Prot.e_Type == orc_MessageId.e_ComProtocol)
                {
                   c_NodeIndices.push_back(orc_MessageId.u32_NodeIndex);
@@ -2710,7 +2710,7 @@ void C_PuiSdNodeCanMessageSyncManager::mh_HandleMessageComparison(
       *opq_CriticalMatchFound = false;
    }
    //Compare members with Tx check active
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->CheckMessageMatch(orc_MessageIdReference,
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->CheckMessageMatch(orc_MessageIdReference,
                                                                  orc_MessageIdNew,
                                                                  q_Match) == C_NO_ERR);
    if (q_Match == true)
@@ -2741,7 +2741,7 @@ void C_PuiSdNodeCanMessageSyncManager::mh_HandleMessageComparison(
           ((orc_MessageIdNew == orc_MessageIdReference) == false))
       {
          //Detailed comparison
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->CheckMessageMatch(orc_MessageIdReference,
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->CheckMessageMatch(orc_MessageIdReference,
                                                                        orc_MessageIdNew,
                                                                        q_Match,
                                                                        true) ==
@@ -2880,6 +2880,6 @@ void C_PuiSdNodeCanMessageSyncManager::mh_ReportCanOpenUsage(const C_OscCanProto
    {
       std::cout << "Invalid call of function \"" << orc_Function.toStdString() << "\" in CANopen protocol use case" <<
          std::endl;
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 }

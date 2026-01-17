@@ -16,7 +16,7 @@
 
 #include "gitypes.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SyvSeScene.hpp"
 #include "C_GiSvNodeSyvSetup.hpp"
 #include "C_SdNdeNodeEditWidget.hpp"
@@ -28,7 +28,7 @@
 #include "C_PuiSvHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;

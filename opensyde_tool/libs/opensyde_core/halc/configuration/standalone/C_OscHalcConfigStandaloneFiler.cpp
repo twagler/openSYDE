@@ -11,8 +11,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscXmlParserLog.hpp"
@@ -21,7 +21,7 @@
 #include "C_OscHalcConfigStandaloneFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -64,7 +64,7 @@ int32_t C_OscHalcConfigStandaloneFiler::h_LoadFileStandalone(C_OscHalcConfigStan
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading IO standalone data");
@@ -121,7 +121,7 @@ int32_t C_OscHalcConfigStandaloneFiler::h_SaveFileStandalone(const C_OscHalcConf
    {
       C_OscXmlParser c_XmlParser;
       c_XmlParser.CreateNodeChild("opensyde-node-io-config-standalone");
-      tgl_assert(c_XmlParser.SelectRoot() == "opensyde-node-io-config-standalone");
+      Q_ASSERT(c_XmlParser.SelectRoot() == "opensyde-node-io-config-standalone");
       s32_Retval = h_SaveDataStandalone(orc_IoData, c_XmlParser);
       if (s32_Retval == C_NO_ERR)
       {
@@ -341,34 +341,34 @@ int32_t C_OscHalcConfigStandaloneFiler::h_SaveDataStandalone(const C_OscHalcConf
    uint32_t u32_DomainCounter;
 
    // Device Type
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("definition-content-version") == "definition-content-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("definition-content-version") == "definition-content-version");
    orc_XmlParser.SetNodeContent(stw::scl::C_SclString::IntToStr(orc_IoData.u32_DefinitionContentVersion));
    //Return
    orc_XmlParser.SelectNodeParent();
 
    // Definition content version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("device-type") == "device-type");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("device-type") == "device-type");
    orc_XmlParser.SetNodeContent(orc_IoData.c_DeviceType);
    //Return
    orc_XmlParser.SelectNodeParent();
 
    // Domains
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("domains") == "domains");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("domains") == "domains");
 
    for (u32_DomainCounter = 0U; u32_DomainCounter < orc_IoData.c_Domains.size(); ++u32_DomainCounter)
    {
       const C_OscHalcConfigStandaloneDomain & rc_Domain = orc_IoData.c_Domains[u32_DomainCounter];
 
       // Vector size must be identical
-      tgl_assert(rc_Domain.c_ChannelConfigs.size() == rc_Domain.c_StandaloneChannels.size());
-      tgl_assert(rc_Domain.c_Channels.size() == rc_Domain.c_StandaloneChannels.size());
+      Q_ASSERT(rc_Domain.c_ChannelConfigs.size() == rc_Domain.c_StandaloneChannels.size());
+      Q_ASSERT(rc_Domain.c_Channels.size() == rc_Domain.c_StandaloneChannels.size());
 
       // Save the default not stand alone part
       s32_Retval = C_OscHalcConfigFiler::h_SaveIoDomain(rc_Domain, orc_XmlParser);
       // Still in "domain"
 
       // Save the stand alone part of domain
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("domain-id") == "domain-id");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("domain-id") == "domain-id");
       orc_XmlParser.SetNodeContent(rc_Domain.c_Id);
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -378,40 +378,40 @@ int32_t C_OscHalcConfigStandaloneFiler::h_SaveDataStandalone(const C_OscHalcConf
          // Save the channel ids as stand alone part
          uint32_t u32_ChannelCounter;
 
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("channel-names") == "channel-names");
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("channel-names") == "channel-names");
 
          for (u32_ChannelCounter = 0U; u32_ChannelCounter < rc_Domain.c_StandaloneChannels.size(); ++u32_ChannelCounter)
          {
             const C_OscHalcConfigStandaloneChannel & rc_ChannelId = rc_Domain.c_StandaloneChannels[u32_ChannelCounter];
             uint32_t u32_ParameterCounter;
 
-            tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("channel-name") == "channel-name");
+            Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("channel-name") == "channel-name");
             orc_XmlParser.CreateNodeChild("name", rc_Domain.c_Channels[u32_ChannelCounter].c_Name);
 
             // Parameter Ids of channel
-            tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("parameter-ids") == "parameter-ids");
+            Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("parameter-ids") == "parameter-ids");
 
             for (u32_ParameterCounter = 0U; u32_ParameterCounter < rc_ChannelId.c_ParameterIds.size();
                  ++u32_ParameterCounter)
             {
-               tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("parameter-id") == "parameter-id");
+               Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("parameter-id") == "parameter-id");
                orc_XmlParser.SetNodeContent(rc_ChannelId.c_ParameterIds[u32_ParameterCounter]);
                //Return
                orc_XmlParser.SelectNodeParent();
             }
 
             //Return "channel-name""
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "channel-name");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "channel-name");
 
             //Return "channel-names"
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "channel-names");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "channel-names");
          }
 
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
 
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "domains");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domains");
       }
    }
 

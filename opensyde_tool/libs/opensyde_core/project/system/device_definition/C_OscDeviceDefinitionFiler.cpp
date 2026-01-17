@@ -11,12 +11,13 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
+#include <QDir>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_SclString.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscUtils.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
 #include "C_OscDeviceDefinitionFilerV1.hpp"
@@ -27,7 +28,7 @@
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -194,8 +195,8 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
       }
       //expand the potentially relative image path to an absolute path
       // we will need it later to open the image in the UI
-      orc_DeviceDefinition.c_ImagePath = TglExpandFileName(orc_DeviceDefinition.c_ImagePath,
-                                                           TglExtractFilePath(orc_Path));
+      const QString c_BasePath = QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).absolutePath() + "/";
+      orc_DeviceDefinition.c_ImagePath = QDir(c_BasePath).absoluteFilePath(QString::fromStdString(*orc_DeviceDefinition.c_ImagePath.AsStdString())).toStdString();
       // also store file path
       // it is needed for creating service update package (see #24474)
       orc_DeviceDefinition.c_FilePath = orc_Path;
@@ -258,7 +259,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
             orc_Parser.SelectNodeParent(); //back to parent of parent ...
          }
          c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-         tgl_assert(c_Text == "global");
+         Q_ASSERT(c_Text == "global");
       }
       if (s32_Return == C_NO_ERR)
       {
@@ -281,7 +282,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
                   orc_DeviceDefinition.u8_ManufacturerId = 0U;
                }
                c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-               tgl_assert(c_Text == "manufacturer-string");
+               Q_ASSERT(c_Text == "manufacturer-string");
             }
             if (s32_Return == C_NO_ERR)
             {
@@ -290,7 +291,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
                {
                   orc_DeviceDefinition.c_ManufacturerDisplayValue = orc_Parser.GetNodeContent();
                   c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-                  tgl_assert(c_Text == "manufacturer-string");
+                  Q_ASSERT(c_Text == "manufacturer-string");
                }
             }
             if (s32_Return == C_NO_ERR)
@@ -308,10 +309,10 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
                   orc_DeviceDefinition.c_ToolboxIcon = orc_Parser.GetNodeContent();
                   //expand the potentially relative image path to an absolute path
                   // we will need it later to open the image in the UI
-                  orc_DeviceDefinition.c_ToolboxIcon = TglExpandFileName(orc_DeviceDefinition.c_ToolboxIcon,
-                                                                         TglExtractFilePath(orc_Path));
+                  const QString c_BasePath = QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).absolutePath() + "/";
+                  orc_DeviceDefinition.c_ToolboxIcon = QDir(c_BasePath).absoluteFilePath(QString::fromStdString(*orc_DeviceDefinition.c_ToolboxIcon.AsStdString())).toStdString();
                   c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-                  tgl_assert(c_Text == "manufacturer-string");
+                  Q_ASSERT(c_Text == "manufacturer-string");
                }
                if (orc_Parser.SelectNodeChild("company-logo") != "company-logo")
                {
@@ -322,10 +323,10 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
                   orc_DeviceDefinition.c_CompanyLogoLink = orc_Parser.GetNodeContent();
                   //expand the potentially relative image path to an absolute path
                   // we will need it later to open the image in the UI
-                  orc_DeviceDefinition.c_CompanyLogoLink = TglExpandFileName(orc_DeviceDefinition.c_CompanyLogoLink,
-                                                                             TglExtractFilePath(orc_Path));
+                  const QString c_BasePath = QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).absolutePath() + "/";
+                  orc_DeviceDefinition.c_CompanyLogoLink = QDir(c_BasePath).absoluteFilePath(QString::fromStdString(*orc_DeviceDefinition.c_CompanyLogoLink.AsStdString())).toStdString();
                   c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-                  tgl_assert(c_Text == "manufacturer-string");
+                  Q_ASSERT(c_Text == "manufacturer-string");
                }
                if (orc_Parser.SelectNodeChild("web-link") != "web-link")
                {
@@ -335,11 +336,11 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
                {
                   orc_DeviceDefinition.c_ProductPageLink = orc_Parser.GetNodeContent();
                   c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-                  tgl_assert(c_Text == "manufacturer-string");
+                  Q_ASSERT(c_Text == "manufacturer-string");
                }
             }
             c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-            tgl_assert(c_Text == "global");
+            Q_ASSERT(c_Text == "global");
          }
          if (orc_DeviceDefinition.u8_ManufacturerId == 0U)
          {
@@ -351,7 +352,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
    if (s32_Return == C_NO_ERR)
    {
       c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-      tgl_assert(c_Text == "opensyde-device-definition");
+      Q_ASSERT(c_Text == "opensyde-device-definition");
       s32_Return = orc_Parser.SelectNodeChildError("sub-devices");
       if (s32_Return == C_NO_ERR)
       {
@@ -401,7 +402,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
    {
       orc_SubDeviceDefinition.c_SubDeviceName = orc_Parser.GetNodeContent();
       c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-      tgl_assert(c_Text == "sub-device");
+      Q_ASSERT(c_Text == "sub-device");
    }
    orc_SubDeviceDefinition.c_ConnectedInterfaces.clear();
    if (orc_Parser.SelectNodeChild("connected-interfaces") == "connected-interfaces")
@@ -425,10 +426,10 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
          }
          while ((c_Text == "interface") && (s32_Return == C_NO_ERR));
          c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-         tgl_assert(c_Text == "connected-interfaces");
+         Q_ASSERT(c_Text == "connected-interfaces");
       }
       c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-      tgl_assert(c_Text == "sub-device");
+      Q_ASSERT(c_Text == "sub-device");
    }
 
    if (orc_Parser.SelectNodeChild("other-accepted-names") == "other-accepted-names")
@@ -494,7 +495,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
             }
          }
          c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-         tgl_assert(c_Text == "protocols-diagnostics");
+         Q_ASSERT(c_Text == "protocols-diagnostics");
       }
       c_Text = orc_Parser.SelectNodeChild("opensyde");
       if (c_Text != "opensyde")
@@ -507,10 +508,10 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
                                       orc_SubDeviceDefinition.q_DiagnosticProtocolOpenSydeEthernet);
 
          c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-         tgl_assert(c_Text == "protocols-diagnostics");
+         Q_ASSERT(c_Text == "protocols-diagnostics");
       }
       c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-      tgl_assert(c_Text == "sub-device");
+      Q_ASSERT(c_Text == "sub-device");
    }
 
    c_Text = orc_Parser.SelectNodeChild("protocols-flashloader");
@@ -552,7 +553,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
                                " ms) for XML file \"" + orc_Path + "\".");
 
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "protocols-flashloader");
+            Q_ASSERT(c_Text == "protocols-flashloader");
          }
       }
       else
@@ -564,7 +565,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
             orc_SubDeviceDefinition.u32_FlashloaderResetWaitTimeNoChangesCan =
                orc_Parser.GetAttributeUint32("value");
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "flashloader-reset-wait-times");
+            Q_ASSERT(c_Text == "flashloader-reset-wait-times");
          }
          else
          {
@@ -585,7 +586,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
             orc_SubDeviceDefinition.u32_FlashloaderResetWaitTimeNoChangesEthernet = orc_Parser.GetAttributeUint32(
                "value");
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "flashloader-reset-wait-times");
+            Q_ASSERT(c_Text == "flashloader-reset-wait-times");
          }
          else
          {
@@ -606,7 +607,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
             orc_SubDeviceDefinition.u32_FlashloaderResetWaitTimeNoFundamentalChangesCan =
                orc_Parser.GetAttributeUint32("value");
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "flashloader-reset-wait-times");
+            Q_ASSERT(c_Text == "flashloader-reset-wait-times");
          }
          else
          {
@@ -627,7 +628,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
             orc_SubDeviceDefinition.u32_FlashloaderResetWaitTimeNoFundamentalChangesEthernet =
                orc_Parser.GetAttributeUint32("value");
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "flashloader-reset-wait-times");
+            Q_ASSERT(c_Text == "flashloader-reset-wait-times");
          }
          else
          {
@@ -649,7 +650,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
                orc_Parser.GetAttributeUint32(
                   "value");
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "flashloader-reset-wait-times");
+            Q_ASSERT(c_Text == "flashloader-reset-wait-times");
          }
          else
          {
@@ -670,7 +671,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
             orc_SubDeviceDefinition.u32_FlashloaderResetWaitTimeFundamentalChangesEthernet =
                orc_Parser.GetAttributeUint32("value");
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "flashloader-reset-wait-times");
+            Q_ASSERT(c_Text == "flashloader-reset-wait-times");
          }
          else
          {
@@ -686,7 +687,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
          }
 
          c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-         tgl_assert(c_Text == "protocols-flashloader");
+         Q_ASSERT(c_Text == "protocols-flashloader");
       }
 
       //get sub-node
@@ -699,7 +700,7 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
       {
          mh_ParseStwFlashloaderAvailability(orc_Parser, orc_SubDeviceDefinition.q_FlashloaderStwCan);
          c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-         tgl_assert(c_Text == "protocols-flashloader");
+         Q_ASSERT(c_Text == "protocols-flashloader");
       }
       c_Text = orc_Parser.SelectNodeChild("opensyde");
       if (c_Text != "opensyde")
@@ -717,10 +718,10 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
                                               orc_SubDeviceDefinition.q_FlashloaderOpenSydeIsFileBased);
 
          c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-         tgl_assert(c_Text == "protocols-flashloader");
+         Q_ASSERT(c_Text == "protocols-flashloader");
       }
       c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-      tgl_assert(c_Text == "sub-device");
+      Q_ASSERT(c_Text == "sub-device");
    }
 
    c_Text = orc_Parser.SelectNodeChild("memory");
@@ -740,9 +741,9 @@ int32_t C_OscDeviceDefinitionFiler::mh_LoadSubDevice(C_OscSubDeviceDefinition & 
          orc_SubDeviceDefinition.u32_UserEepromSizeBytes = orc_Parser.GetAttributeUint32("sizebytes");
       }
       c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-      tgl_assert(c_Text == "memory");
+      Q_ASSERT(c_Text == "memory");
       c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-      tgl_assert(c_Text == "sub-device");
+      Q_ASSERT(c_Text == "sub-device");
    }
 
    return s32_Return;
@@ -1279,7 +1280,7 @@ int32_t C_OscDeviceDefinitionFiler::h_Load(C_OscDeviceDefinition & orc_DeviceDef
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == false)
    {
       osc_write_log_error("Loading device definition", "File not found: \"" + orc_Path + "\".");
       s32_Return = C_RANGE;
@@ -1386,7 +1387,7 @@ int32_t C_OscDeviceDefinitionFiler::h_Save(const C_OscDeviceDefinition & orc_Dev
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       //erase it:
       int x_Return; //lint !e970 !e8080  //using type to match library interface

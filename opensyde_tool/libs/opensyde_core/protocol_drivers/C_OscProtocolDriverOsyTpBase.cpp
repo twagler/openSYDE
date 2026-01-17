@@ -13,6 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include <iostream>
+#include <QMutexLocker>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscProtocolDriverOsyTpBase.hpp"
@@ -166,7 +167,7 @@ int32_t C_OscProtocolDriverOsyTpBase::m_AddToTxQueue(const C_OscProtocolDriverOs
    }
    else
    {
-      mc_CsTxQueue.Acquire();
+      QMutexLocker c_Lock(&mc_CsTxQueue);
       if (mc_TxQueue.size() >= mu16_MaxServiceQueueSize)
       {
          s32_Return = C_OVERFLOW;
@@ -182,7 +183,6 @@ int32_t C_OscProtocolDriverOsyTpBase::m_AddToTxQueue(const C_OscProtocolDriverOs
             s32_Return = C_NOACT; //probably out of memory
          }
       }
-      mc_CsTxQueue.Release();
    }
    return s32_Return;
 }
@@ -212,7 +212,7 @@ int32_t C_OscProtocolDriverOsyTpBase::m_AddToRxQueue(const C_OscProtocolDriverOs
    }
    else
    {
-      mc_CsRxQueue.Acquire();
+      QMutexLocker c_Lock(&mc_CsRxQueue);
       if (mc_RxQueue.size() >= mu16_MaxServiceQueueSize)
       {
          s32_Return = C_OVERFLOW;
@@ -228,7 +228,6 @@ int32_t C_OscProtocolDriverOsyTpBase::m_AddToRxQueue(const C_OscProtocolDriverOs
             s32_Return = C_NOACT; //probably out of memory
          }
       }
-      mc_CsRxQueue.Release();
    }
    return s32_Return;
 }
@@ -250,17 +249,18 @@ int32_t C_OscProtocolDriverOsyTpBase::m_GetFromTxQueue(C_OscProtocolDriverOsySer
 {
    int32_t s32_Return = C_NO_ERR;
 
-   mc_CsTxQueue.Acquire();
-   if (mc_TxQueue.size() < 1U)
    {
-      s32_Return = C_NOACT;
+      QMutexLocker c_Lock(&mc_CsTxQueue);
+      if (mc_TxQueue.size() < 1U)
+      {
+         s32_Return = C_NOACT;
+      }
+      else
+      {
+         orc_Service = mc_TxQueue.front(); //get element from queue
+         mc_TxQueue.pop_front();           //delete element from queue
+      }
    }
-   else
-   {
-      orc_Service = mc_TxQueue.front(); //get element from queue
-      mc_TxQueue.pop_front();           //delete element from queue
-   }
-   mc_CsTxQueue.Release();
    return s32_Return;
 }
 
@@ -281,17 +281,18 @@ int32_t C_OscProtocolDriverOsyTpBase::m_GetFromRxQueue(C_OscProtocolDriverOsySer
 {
    int32_t s32_Return = C_NO_ERR;
 
-   mc_CsRxQueue.Acquire();
-   if (mc_RxQueue.size() < 1U)
    {
-      s32_Return = C_NOACT;
+      QMutexLocker c_Lock(&mc_CsRxQueue);
+      if (mc_RxQueue.size() < 1U)
+      {
+         s32_Return = C_NOACT;
+      }
+      else
+      {
+         orc_Service = mc_RxQueue.front(); //get element from queue
+         mc_RxQueue.pop_front();           //delete element from queue
+      }
    }
-   else
-   {
-      orc_Service = mc_RxQueue.front(); //get element from queue
-      mc_RxQueue.pop_front();           //delete element from queue
-   }
-   mc_CsRxQueue.Release();
    return s32_Return;
 }
 
@@ -304,12 +305,14 @@ int32_t C_OscProtocolDriverOsyTpBase::m_GetFromRxQueue(C_OscProtocolDriverOsySer
 //----------------------------------------------------------------------------------------------------------------------
 void C_OscProtocolDriverOsyTpBase::ClearServiceQueues(void)
 {
-   mc_CsRxQueue.Acquire();
-   mc_RxQueue.clear();
-   mc_CsRxQueue.Release();
-   mc_CsTxQueue.Acquire();
-   mc_TxQueue.clear();
-   mc_CsTxQueue.Release();
+   {
+      QMutexLocker c_Lock(&mc_CsRxQueue);
+      mc_RxQueue.clear();
+   }
+   {
+      QMutexLocker c_Lock(&mc_CsTxQueue);
+      mc_TxQueue.clear();
+   }
 }
 
 //----------------------------------------------------------------------------------------------------------------------

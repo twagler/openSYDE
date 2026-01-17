@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       List edit pop up widget
@@ -15,12 +15,12 @@
 #include "ui_C_SdNdeDpListPopUp.h"
 #include "C_PuiProject.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_GiSyColorSelectWidget.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;
@@ -160,7 +160,7 @@ void C_SdNdeDpListPopUp::InitText(void) const
       this->mu32_NodeIndex,
       this->mu32_DataPoolIndex);
 
-   tgl_assert(pc_DataPool != NULL);
+   Q_ASSERT(pc_DataPool != NULL);
    if (pc_DataPool != NULL)
    {
       //Generic tooltips are used.
@@ -368,8 +368,8 @@ void C_SdNdeDpListPopUp::m_HandleSelection(const uint32_t & oru32_ListIndex, con
       this->mu32_NodeIndex,
       this->mu32_DataPoolIndex);
 
-   tgl_assert(oru32_ListIndex == this->mu32_ListIndex);
-   tgl_assert(pc_DataPool != NULL);
+   Q_ASSERT(oru32_ListIndex == this->mu32_ListIndex);
+   Q_ASSERT(pc_DataPool != NULL);
    if (pc_DataPool != NULL)
    {
       bool q_Visible = true;

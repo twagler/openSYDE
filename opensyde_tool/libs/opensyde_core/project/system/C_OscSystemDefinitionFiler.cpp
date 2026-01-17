@@ -11,6 +11,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
+#include <QDir>
 
 #include <cstdio>
 #include "stwtypes.hpp"
@@ -19,8 +21,7 @@
 #include "C_OscSystemFilerUtil.hpp"
 #include "C_OscSystemDefinitionFilerV2.hpp"
 #include "C_OscSystemDefinitionFiler.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscNodeSquadFiler.hpp"
 #include "C_OscLoggingHandler.hpp"
 
@@ -28,7 +29,7 @@
 using namespace stw::opensyde_core;
 
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::scl;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -92,7 +93,7 @@ int32_t C_OscSystemDefinitionFiler::h_LoadSystemDefinitionFile(C_OscSystemDefini
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_PathSystemDefinition) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_PathSystemDefinition.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PathSystemDefinition.AsStdString())).isFile()) == true)
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading System Definition");
@@ -142,7 +143,7 @@ int32_t C_OscSystemDefinitionFiler::h_SaveSystemDefinitionFile(const C_OscSystem
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       //erase it:
       int x_Return; //lint !e970 !e8080  //using type to match library interface
@@ -155,10 +156,10 @@ int32_t C_OscSystemDefinitionFiler::h_SaveSystemDefinitionFile(const C_OscSystem
    }
    if (s32_Return == C_NO_ERR)
    {
-      const C_SclString c_Folder = TglExtractFilePath(orc_Path);
-      if (TglDirectoryExists(c_Folder) == false)
+      const C_SclString c_Folder = (QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).absolutePath() + "/").toStdString();
+      if (QFileInfo(QString::fromStdString(*c_Folder.AsStdString())).isDir() == false)
       {
-         if (TglCreateDirectory(c_Folder) != 0)
+         if ((QDir().mkpath(QString::fromStdString(*c_Folder.AsStdString())) ? 0 : -1) != 0)
          {
             osc_write_log_error("Saving System Definition", "Could not create folder \"" + c_Folder + "\".");
             s32_Return = C_RD_WR;
@@ -262,8 +263,8 @@ int32_t C_OscSystemDefinitionFiler::h_LoadNodes(std::vector<C_OscNode> & orc_Nod
                if ((opc_ExpectedNodeName != NULL) && ((*opc_ExpectedNodeName) != ""))
                {
                   // get current node and compare with expected node name
-                  const uint32_t u32_BasePathLength = TglExtractFilePath(orc_BasePath).Length();
-                  C_SclString c_LastFolderName = TglExtractFilePath(c_FileName);
+                  const uint32_t u32_BasePathLength = (QFileInfo(QString::fromStdString(*orc_BasePath.AsStdString())).absolutePath() + "/").toStdString().length();
+                  C_SclString c_LastFolderName = (QFileInfo(QString::fromStdString(*c_FileName.AsStdString())).absolutePath() + "/").toStdString();
                   c_LastFolderName = c_LastFolderName.Delete(1, u32_BasePathLength);
                   c_LastFolderName = c_LastFolderName.Delete(c_LastFolderName.Length(), 1); // remove trailing delim
                   C_SclString c_ExpectedFolder = "node_" + (*opc_ExpectedNodeName);
@@ -474,7 +475,7 @@ int32_t C_OscSystemDefinitionFiler::h_SaveNodes(const std::vector<C_OscNode> & o
    for (uint32_t u32_Index = 0U; (u32_Index < orc_Nodes.size()) && (s32_Retval == C_NO_ERR); u32_Index++)
    {
       const C_OscNode & rc_Node = orc_Nodes[u32_Index];
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("node") == "node");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("node") == "node");
       if (orc_BasePath.IsEmpty())
       {
          //To string
@@ -489,7 +490,7 @@ int32_t C_OscSystemDefinitionFiler::h_SaveNodes(const std::vector<C_OscNode> & o
          const C_SclString c_CombinedFolderName = C_OscSystemFilerUtil::h_CombinePaths(orc_BasePath, c_FolderName);
          const C_SclString c_CombinedFileName = C_OscSystemFilerUtil::h_CombinePaths(orc_BasePath, c_FileName);
          //Create folder
-         if (TglCreateDirectory(c_CombinedFolderName) != 0)
+         if ((QDir().mkpath(QString::fromStdString(*c_CombinedFolderName.AsStdString())) ? 0 : -1) != 0)
          {
             osc_write_log_error("Saving node definition",
                                 "Could not create directory \"" + c_CombinedFolderName + "\"");
@@ -533,7 +534,7 @@ void C_OscSystemDefinitionFiler::h_SaveBuses(const std::vector<C_OscSystemBus> &
    orc_XmlParser.SetAttributeUint32("length", static_cast<uint32_t>(orc_Buses.size()));
    for (uint32_t u32_Index = 0U; u32_Index < orc_Buses.size(); u32_Index++)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("bus") == "bus");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("bus") == "bus");
       C_OscSystemBusFiler::h_SaveBus(orc_Buses[u32_Index], orc_XmlParser);
       //Return (don't check to allow reuse)
       orc_XmlParser.SelectNodeParent();
@@ -638,7 +639,7 @@ int32_t C_OscSystemDefinitionFiler::h_LoadSystemDefinition(C_OscSystemDefinition
          }
 
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
       }
       else
       {
@@ -651,7 +652,7 @@ int32_t C_OscSystemDefinitionFiler::h_LoadSystemDefinition(C_OscSystemDefinition
          if (q_UseV2Filer)
          {
             //Unselect root
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "");
             //Completely rely on V2 loader
             s32_Retval = C_OscSystemDefinitionFilerV2::h_LoadSystemDefinition(orc_SystemDefinition, orc_XmlParser,
                                                                               orc_PathDeviceDefinitions,
@@ -685,7 +686,7 @@ int32_t C_OscSystemDefinitionFiler::h_LoadSystemDefinition(C_OscSystemDefinition
                   if (s32_Retval == C_NO_ERR)
                   {
                      //Return
-                     tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+                     Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
                   }
                }
                else
@@ -705,7 +706,7 @@ int32_t C_OscSystemDefinitionFiler::h_LoadSystemDefinition(C_OscSystemDefinition
                   if (s32_Retval == C_NO_ERR)
                   {
                      //Return
-                     tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+                     Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
                   }
                }
                else
@@ -749,27 +750,27 @@ int32_t C_OscSystemDefinitionFiler::h_SaveSystemDefinition(const C_OscSystemDefi
    int32_t s32_Return;
 
    orc_XmlParser.CreateNodeChild("opensyde-system-definition");
-   tgl_assert(orc_XmlParser.SelectRoot() == "opensyde-system-definition");
+   Q_ASSERT(orc_XmlParser.SelectRoot() == "opensyde-system-definition");
    //File version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
    orc_XmlParser.SetNodeContent(C_SclString::IntToStr(hu16_FILE_VERSION_LATEST));
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
    mh_SaveSystemDefinitionProperties(orc_SystemDefinition, orc_XmlParser);
    C_OscNodeSquadFiler::h_SaveNodeGroups(orc_SystemDefinition.c_NodeSquads, orc_XmlParser);
    //Node
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("nodes") == "nodes");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("nodes") == "nodes");
    s32_Return = h_SaveNodes(orc_SystemDefinition.c_Nodes, orc_XmlParser, orc_BasePath, opc_CreatedFiles);
    if (s32_Return == C_NO_ERR)
    {
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
 
       //Bus
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("buses") == "buses");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("buses") == "buses");
       h_SaveBuses(orc_SystemDefinition.c_Buses, orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
    }
    return s32_Return;
 }
@@ -844,7 +845,7 @@ int32_t C_OscSystemDefinitionFiler::mh_LoadSystemDefinitionProperties(C_OscSyste
       s32_Retval = orc_XmlParser.GetAttributeUint32Error("name-max-char-limit",
                                                          orc_SystemDefinition.u32_NameMaxCharLimit);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
    }
    else
    {
@@ -866,5 +867,5 @@ void C_OscSystemDefinitionFiler::mh_SaveSystemDefinitionProperties(const C_OscSy
    orc_XmlParser.CreateAndSelectNodeChild("properties");
    orc_XmlParser.SetAttributeUint32("name-max-char-limit", orc_SystemDefinition.u32_NameMaxCharLimit);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
 }

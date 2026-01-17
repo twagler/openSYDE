@@ -14,7 +14,7 @@ namespace diag_lib
 //---------------------------------------------------------------------------
 
 class C_KFXVariableLists :
-   public stw::scl::C_SclDynamicArray<C_KFXVariableListBase>
+   public QList<C_KFXVariableListBase>
 {
 private:
 public:
@@ -44,7 +44,7 @@ public:
 
    uint16_t u16_CRCOverCRCsServer;                                     ///< last EEPROM value CRC over CRCs read from
                                                                        // ECU
-   stw::scl::C_SclDynamicArray<stw::scl::C_SclString> ac_DefaultNames; //names of default sets
+   QList<stw::scl::C_SclString> ac_DefaultNames; //names of default sets
 };
 
 //---------------------------------------------------------------------------

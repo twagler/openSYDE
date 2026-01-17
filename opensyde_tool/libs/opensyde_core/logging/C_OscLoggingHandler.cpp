@@ -16,13 +16,16 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include "TglFile.hpp"
+#include <QMutexLocker>
+#include <QDateTime>
+#include <QFileInfo>
+#include <QDir>
 #include "C_OscLoggingHandler.hpp"
 #include "stwerrors.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -39,10 +42,10 @@ bool C_OscLoggingHandler::mhq_AutoFlushWarningsAndErrorsFile = false;
 bool C_OscLoggingHandler::mhq_WriteToConsole = true;
 bool C_OscLoggingHandler::mhq_MeasureTime = false;
 bool C_OscLoggingHandler::mhq_LogInitErrorsToConsole = false;
-std::map<uint16_t, uint32_t> C_OscLoggingHandler::mhc_StartTimes = std::map<uint16_t, uint32_t> ();
+std::map<uint16_t, qint64> C_OscLoggingHandler::mhc_StartTimes = std::map<uint16_t, qint64> ();
 C_SclString C_OscLoggingHandler::mhc_FileName = "";
-C_TglCriticalSection C_OscLoggingHandler::mhc_ConsoleCriticalSection;
-C_TglCriticalSection C_OscLoggingHandler::mhc_FileCriticalSection;
+QRecursiveMutex C_OscLoggingHandler::mhc_ConsoleCriticalSection;
+QRecursiveMutex C_OscLoggingHandler::mhc_FileCriticalSection;
 std::ofstream C_OscLoggingHandler::mhc_File;
 
 /* -- Module Global Function Prototypes ----------------------------------------------------------------------------- */
@@ -186,12 +189,12 @@ void C_OscLoggingHandler::h_WriteLogPerformance(const uint16_t ou16_TimerId, con
 {
    if (mhq_MeasureTime == true)
    {
-      const std::map< uint16_t, uint32_t >::iterator c_StartTime = mhc_StartTimes.find(ou16_TimerId);
+      const auto c_StartTime = mhc_StartTimes.find(ou16_TimerId);
       if (c_StartTime != mhc_StartTimes.end())
       {
          C_OscLoggingHandler::mh_WriteLog(
             "INFO", "Performance measurement",
-            orc_Message + " time: " + C_SclString::IntToStr(stw::tgl::TglGetTickCount() - c_StartTime->second) + " ms",
+            orc_Message + " time: " + C_SclString::IntToStr(static_cast<int32_t>(QDateTime::currentMSecsSinceEpoch() - c_StartTime->second)) + " ms",
             opcn_Class, opcn_Function);
 
          // update log file
@@ -214,7 +217,7 @@ uint16_t C_OscLoggingHandler::h_StartPerformanceTimer(void)
 {
    const uint16_t u16_Id = static_cast< uint16_t > (rand());
 
-   mhc_StartTimes[u16_Id] = stw::tgl::TglGetTickCount();
+   mhc_StartTimes[u16_Id] = QDateTime::currentMSecsSinceEpoch();
 
    return u16_Id;
 }
@@ -287,21 +290,15 @@ void C_OscLoggingHandler::h_Flush(void)
 {
    if (C_OscLoggingHandler::mhq_WriteToConsole == true)
    {
-      //Critical section
-      C_OscLoggingHandler::mhc_ConsoleCriticalSection.Acquire();
+      QMutexLocker c_Locker(&C_OscLoggingHandler::mhc_ConsoleCriticalSection);
       std::cout << &std::flush;
-      //Critical section
-      C_OscLoggingHandler::mhc_ConsoleCriticalSection.Release();
    }
 
    //File
    if ((C_OscLoggingHandler::mhq_WriteToFile == true) && (C_OscLoggingHandler::mhc_File.is_open() == true))
    {
-      //Critical section
-      C_OscLoggingHandler::mhc_FileCriticalSection.Acquire();
+      QMutexLocker c_Locker(&C_OscLoggingHandler::mhc_FileCriticalSection);
       C_OscLoggingHandler::mhc_File.flush();
-      //Critical section
-      C_OscLoggingHandler::mhc_FileCriticalSection.Release();
    }
 }
 
@@ -316,23 +313,9 @@ void C_OscLoggingHandler::h_Flush(void)
    Formatted string
 */
 //----------------------------------------------------------------------------------------------------------------------
-std::string C_OscLoggingHandler::h_UtilConvertDateTimeToString(const C_TglDateTime & orc_DateTime)
+std::string C_OscLoggingHandler::h_UtilConvertDateTimeToString(const QDateTime & orc_DateTime)
 {
-   std::stringstream c_Stream;
-
-   c_Stream << &std::right << std::setw(4) << std::setfill('0') << orc_DateTime.mu16_Year << "-";
-   c_Stream << &std::right << std::setw(2) << std::setfill('0') << static_cast< uint16_t > (orc_DateTime.mu8_Month) <<
-      "-";
-   c_Stream << &std::right << std::setw(2) << std::setfill('0') << static_cast< uint16_t > (orc_DateTime.mu8_Day) <<
-      " ";
-   c_Stream << &std::right << std::setw(2) << std::setfill('0') << static_cast< uint16_t > (orc_DateTime.mu8_Hour) <<
-      ":";
-   c_Stream << &std::right << std::setw(2) << std::setfill('0') << static_cast< uint16_t > (orc_DateTime.mu8_Minute) <<
-      ":";
-   c_Stream << &std::right << std::setw(2) << std::setfill('0') << static_cast< uint16_t > (orc_DateTime.mu8_Second) <<
-      ".";
-   c_Stream << &std::right << std::setw(3) << std::setfill('0') << orc_DateTime.mu16_MilliSeconds;
-   return c_Stream.str();
+   return orc_DateTime.toString("yyyy-MM-dd HH:mm:ss.zzz").toStdString();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -351,14 +334,17 @@ void C_OscLoggingHandler::mh_WriteLog(const C_SclString & orc_Type, const C_SclS
                                       const char_t * const opcn_Function)
 {
    std::string c_DateTimeFormatted;
-   C_TglDateTime c_DateTime;
+   // C_TglDateTime removed
    std::stringstream c_LogEntryStream;
    C_SclString c_Class;
    C_SclString c_Function;
    C_SclString c_CombinedClassAndFunction;
    if (opcn_Class != NULL)
    {
-      c_Class = TglChangeFileExtension(TglExtractFileName(opcn_Class), "");
+      const QString c_QClass = QString::fromStdString(opcn_Class);
+      const QFileInfo c_FileInfo(c_QClass);
+      const QString c_BaseName = c_FileInfo.completeBaseName();
+      c_Class = c_BaseName.toStdString();
    }
    else
    {
@@ -387,7 +373,7 @@ void C_OscLoggingHandler::mh_WriteLog(const C_SclString & orc_Type, const C_SclS
 
    c_CombinedClassAndFunction = c_Class + c_Function;
 
-   TglGetDateTimeNow(c_DateTime);
+   QDateTime c_DateTime = QDateTime::currentDateTime();
    c_DateTimeFormatted = C_OscLoggingHandler::h_UtilConvertDateTimeToString(c_DateTime);
 
    //Format:
@@ -405,21 +391,16 @@ void C_OscLoggingHandler::mh_WriteLog(const C_SclString & orc_Type, const C_SclS
    //Console
    if (C_OscLoggingHandler::mhq_WriteToConsole == true)
    {
-      //Critical section
-      C_OscLoggingHandler::mhc_ConsoleCriticalSection.Acquire();
+      QMutexLocker c_Locker(&C_OscLoggingHandler::mhc_ConsoleCriticalSection);
       std::cout << c_LogEntryStream.str();
-      //Critical section
-      C_OscLoggingHandler::mhc_ConsoleCriticalSection.Release();
    }
 
    //File
    if ((C_OscLoggingHandler::mhq_WriteToFile == true) && (C_OscLoggingHandler::mhc_File.is_open() == true))
    {
       const std::string c_Message = c_LogEntryStream.str();
-      //Critical section
-      C_OscLoggingHandler::mhc_FileCriticalSection.Acquire();
+      QMutexLocker c_Locker(&C_OscLoggingHandler::mhc_FileCriticalSection);
 
-      //TGL critical section -> file
       C_OscLoggingHandler::mhc_File.write(c_Message.c_str(), c_Message.size());
       if ((mhq_AutoFlushAllFile == true) ||
           ((C_OscLoggingHandler::mhq_AutoFlushWarningsAndErrorsFile == true) &&
@@ -427,9 +408,6 @@ void C_OscLoggingHandler::mh_WriteLog(const C_SclString & orc_Type, const C_SclS
       {
          C_OscLoggingHandler::mhc_File.flush();
       }
-
-      //Critical section
-      C_OscLoggingHandler::mhc_FileCriticalSection.Release();
    }
 }
 
@@ -442,11 +420,14 @@ void C_OscLoggingHandler::mh_OpenFile(void)
    if (((C_OscLoggingHandler::mhc_FileName != "") && (C_OscLoggingHandler::mhq_WriteToFile == true)) &&
        (C_OscLoggingHandler::mhc_File.is_open() == false))
    {
-      const C_SclString c_FilePath = TglExtractFilePath(C_OscLoggingHandler::mhc_FileName);
+      const QString c_QFileName = QString::fromStdString(*C_OscLoggingHandler::mhc_FileName.AsStdString());
+      const QFileInfo c_FileInfo(c_QFileName);
+      const QString c_QFilePath = c_FileInfo.absolutePath() + "/";
+      const C_SclString c_FilePath = c_QFilePath.toStdString();
       //Folder
-      if (TglDirectoryExists(c_FilePath) == false)
+      if (!QFileInfo(c_QFilePath).isDir())
       {
-         TglCreateDirectory(c_FilePath);
+         QDir().mkpath(c_QFilePath);
       }
 
       C_OscLoggingHandler::mhc_File.open(C_OscLoggingHandler::mhc_FileName.c_str(), std::ios::app);

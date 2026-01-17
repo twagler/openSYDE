@@ -13,7 +13,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "stw_can.hpp"
-#include "TglTasks.hpp"
+#include <QRecursiveMutex>
 #include "C_OscCanProtocol.hpp"
 
 #include "C_OscComDriverBase.hpp"
@@ -61,7 +61,7 @@ public:
 private:
    // It is mutable because of the constness of the getter functions. Without the keyword mutable the getter functions
    // must be non const and that is not wanted.
-   mutable stw::tgl::C_TglCriticalSection mc_CriticalSectionMsg;
+   mutable QRecursiveMutex mc_CriticalSectionMsg;
 };
 
 /* -- Extern Global Variables --------------------------------------------------------------------------------------- */

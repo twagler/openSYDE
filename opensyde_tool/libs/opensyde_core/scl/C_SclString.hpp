@@ -36,7 +36,7 @@
 #include <iostream>
 #include <sstream>
 #include "stwtypes.hpp"
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 
 /* -- Namespace ----------------------------------------------------------------------------------------------------- */
 namespace stw
@@ -181,7 +181,7 @@ public:
    static C_SclString FloatToStr(const float64_t of64_Value);
    static C_SclString FloatToStr(const float64_t of64_Value, const int32_t os32_Digits);
 
-   void Tokenize(const C_SclString & orc_Delimiters, C_SclDynamicArray<C_SclString> & orc_TokenizedData) const;
+   void Tokenize(const C_SclString & orc_Delimiters, QList<C_SclString> & orc_TokenizedData) const;
 };
 
 //----------------------------------------------------------------------------------------------------------------------

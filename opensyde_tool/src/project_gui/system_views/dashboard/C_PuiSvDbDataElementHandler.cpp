@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Base functions and data storing for datapool elements and its content (implementation)
@@ -19,15 +19,15 @@
 #include "C_PuiSvHandler.hpp"
 #include "C_PuiSvData.hpp"
 #include "C_OscUtils.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
+
+#include <QDateTime>
 #include "C_PuiSdUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeDpContentUtil.hpp"
 #include "C_OscNodeDataPoolContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -100,7 +100,7 @@ int32_t C_PuiSvDbDataElementHandler::RegisterDataPoolElement(
 
       c_ItItem = this->mc_MappingDpElementToDataSerie.find(orc_WidgetDataPoolElementId);
 
-      this->mc_CriticalSection.Acquire();
+      this->mc_CriticalSection.lock();
 
       if (c_ItItem == this->mc_MappingDpElementToDataSerie.end())
       {
@@ -135,7 +135,7 @@ int32_t C_PuiSvDbDataElementHandler::RegisterDataPoolElement(
          s32_Return = C_NOACT;
       }
 
-      this->mc_CriticalSection.Release();
+      this->mc_CriticalSection.unlock();
    }
 
    return s32_Return;
@@ -172,7 +172,7 @@ void C_PuiSvDbDataElementHandler::RemoveDataPoolElement(
    QMap<C_PuiSvDbNodeDataPoolListElementId, uint32_t>::iterator c_ItItemDataSerie;
    QMap<C_PuiSvDbNodeDataPoolListElementId, C_DpElementConfig>::iterator c_ItItemScaling;
 
-   this->mc_CriticalSection.Acquire();
+   this->mc_CriticalSection.lock();
 
    c_ItItemDataSerie = this->mc_MappingDpElementToDataSerie.find(orc_WidgetDataPoolElementId);
 
@@ -214,7 +214,7 @@ void C_PuiSvDbDataElementHandler::RemoveDataPoolElement(
       this->mc_MappingDpElementToConfig.erase(c_ItItemScaling);
    }
 
-   this->mc_CriticalSection.Release();
+   this->mc_CriticalSection.unlock();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -225,11 +225,11 @@ void C_PuiSvDbDataElementHandler::RemoveDataPoolElement(
 //----------------------------------------------------------------------------------------------------------------------
 void C_PuiSvDbDataElementHandler::ClearDataPoolElements(void)
 {
-   this->mc_CriticalSection.Acquire();
+   this->mc_CriticalSection.lock();
    this->mc_MappingDpElementToDataSerie.clear();
    this->mc_MappingDpElementToConfig.clear();
    this->m_SetWidgetDataPoolElementCount(this->mc_MappingDpElementToDataSerie.size());
-   this->mc_CriticalSection.Release();
+   this->mc_CriticalSection.unlock();
 
    this->m_DataPoolElementsChanged();
 }
@@ -253,9 +253,9 @@ void C_PuiSvDbDataElementHandler::UpdateElementTransmissionConfiguration(void)
    //Reregister all data elements
    for (uint32_t u32_It = 0; u32_It < u32_Count; ++u32_It)
    {
-      tgl_assert(this->GetDataPoolElementIndex(u32_It, c_Ids[u32_It]) == C_NO_ERR);
-      tgl_assert(this->GetDataPoolElementScaling(u32_It, c_Scalings[u32_It]) == C_NO_ERR);
-      tgl_assert(this->GetDataPoolElementFormatter(u32_It, c_FormatterConfis[u32_It]) == C_NO_ERR);
+      Q_ASSERT(this->GetDataPoolElementIndex(u32_It, c_Ids[u32_It]) == C_NO_ERR);
+      Q_ASSERT(this->GetDataPoolElementScaling(u32_It, c_Scalings[u32_It]) == C_NO_ERR);
+      Q_ASSERT(this->GetDataPoolElementFormatter(u32_It, c_FormatterConfis[u32_It]) == C_NO_ERR);
    }
    this->ClearDataPoolElements();
    for (uint32_t u32_It = 0; u32_It < u32_Count; ++u32_It)
@@ -508,9 +508,9 @@ void C_PuiSvDbDataElementHandler::InsertNewValueIntoQueue(
          const uint32_t u32_DataSerieIndex = c_ItItem.value();
          if (static_cast<int32_t>(u32_DataSerieIndex) < this->mc_VecDataValues.size())
          {
-            this->mc_CriticalSection.Acquire();
+            this->mc_CriticalSection.lock();
             this->mc_VecDataValues[u32_DataSerieIndex].push_back(orc_NewValue);
-            this->mc_CriticalSection.Release();
+            this->mc_CriticalSection.unlock();
          }
          //Don't stop as there might be multiple matches
       }
@@ -542,10 +542,10 @@ void C_PuiSvDbDataElementHandler::AddNewNvmValueIntoQueue(
       if ((static_cast<int32_t>(u32_DataSerieIndex) < this->mc_VecNvmValue.size()) &&
           (static_cast<int32_t>(u32_DataSerieIndex) < this->mc_VecNvmValueReceived.size()))
       {
-         this->mc_CriticalSection.Acquire();
+         this->mc_CriticalSection.lock();
          this->mc_VecNvmValue[u32_DataSerieIndex] = orc_NewValue;
          this->mc_VecNvmValueReceived[u32_DataSerieIndex] = true;
-         this->mc_CriticalSection.Release();
+         this->mc_CriticalSection.unlock();
       }
    }
 }
@@ -694,7 +694,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetLastValue(const uint32_t ou32_WidgetDa
         (ou32_WidgetDataPoolElementIndex < this->mc_UsedConfig.size())) && (
           this->GetDataPoolElementIndex(ou32_WidgetDataPoolElementIndex, c_Id) == C_NO_ERR))
    {
-      this->mc_CriticalSection.Acquire();
+      this->mc_CriticalSection.lock();
       if (this->mc_VecDataValues[ou32_WidgetDataPoolElementIndex].size() > 0)
       {
          const int32_t s32_LastIndex = this->mc_VecDataValues[ou32_WidgetDataPoolElementIndex].size() - 1;
@@ -714,7 +714,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetLastValue(const uint32_t ou32_WidgetDa
       {
          s32_Return = C_NOACT;
       }
-      this->mc_CriticalSection.Release();
+      this->mc_CriticalSection.unlock();
    }
 
    return s32_Return;
@@ -756,7 +756,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetLastValue(const uint32_t ou32_WidgetDa
    if ((static_cast<int32_t>(ou32_WidgetDataPoolElementIndex) < this->mc_VecDataValues.size()) &&
        (ou32_WidgetDataPoolElementIndex < this->mc_UsedConfig.size()))
    {
-      this->mc_CriticalSection.Acquire();
+      this->mc_CriticalSection.lock();
       if (this->mc_VecDataValues[ou32_WidgetDataPoolElementIndex].size() > 0)
       {
          const int32_t s32_LastIndex = this->mc_VecDataValues[ou32_WidgetDataPoolElementIndex].size() - 1;
@@ -776,7 +776,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetLastValue(const uint32_t ou32_WidgetDa
       {
          s32_Return = C_NOACT;
       }
-      this->mc_CriticalSection.Release();
+      this->mc_CriticalSection.unlock();
    }
 
    return s32_Return;
@@ -813,7 +813,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetLastValue(const uint32_t ou32_WidgetDa
    if ((static_cast<int32_t>(ou32_WidgetDataPoolElementIndex) < this->mc_VecDataValues.size()) &&
        ((ou32_WidgetDataPoolElementIndex < this->mc_UsedConfig.size()) || (oq_UseScaling == false)))
    {
-      this->mc_CriticalSection.Acquire();
+      this->mc_CriticalSection.lock();
       if (this->mc_VecDataValues[ou32_WidgetDataPoolElementIndex].size() > 0)
       {
          const int32_t s32_LastIndex = this->mc_VecDataValues[ou32_WidgetDataPoolElementIndex].size() - 1;
@@ -847,7 +847,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetLastValue(const uint32_t ou32_WidgetDa
       {
          s32_Return = C_NOACT;
       }
-      this->mc_CriticalSection.Release();
+      this->mc_CriticalSection.unlock();
    }
 
    return s32_Return;
@@ -872,7 +872,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetLastValue(const uint32_t ou32_WidgetDa
 int32_t C_PuiSvDbDataElementHandler::m_GetAllValues(const uint32_t ou32_WidgetDataPoolElementIndex,
                                                     QString & orc_ScaledFormattedLastValue,
                                                     QVector<float64_t> & orc_ScaledValues,
-                                                    QVector<uint32_t> & orc_Timestamps)
+                                                    QVector<qint64> & orc_Timestamps)
 {
    int32_t s32_Return = C_RANGE;
    C_PuiSvDbNodeDataPoolListElementId c_Id;
@@ -881,7 +881,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetAllValues(const uint32_t ou32_WidgetDa
        (ou32_WidgetDataPoolElementIndex < this->mc_UsedConfig.size()) &&
        (this->GetDataPoolElementIndex(ou32_WidgetDataPoolElementIndex, c_Id) == C_NO_ERR))
    {
-      this->mc_CriticalSection.Acquire();
+      this->mc_CriticalSection.lock();
       if (this->mc_VecDataValues[ou32_WidgetDataPoolElementIndex].size() > 0)
       {
          uint32_t u32_Counter = 0U;
@@ -934,7 +934,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetAllValues(const uint32_t ou32_WidgetDa
       {
          s32_Return = C_NOACT;
       }
-      this->mc_CriticalSection.Release();
+      this->mc_CriticalSection.unlock();
    }
    return s32_Return;
 }
@@ -967,7 +967,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetLastNvmValue(const uint32_t ou32_Widge
        (static_cast<int32_t>(ou32_WidgetDataPoolElementIndex) < this->mc_VecNvmValueReceived.size()) &&
        (ou32_WidgetDataPoolElementIndex < this->mc_UsedConfig.size()))
    {
-      this->mc_CriticalSection.Acquire();
+      this->mc_CriticalSection.lock();
 
       if (this->mc_VecNvmValueReceived[ou32_WidgetDataPoolElementIndex] == true)
       {
@@ -983,7 +983,7 @@ int32_t C_PuiSvDbDataElementHandler::m_GetLastNvmValue(const uint32_t ou32_Widge
          s32_Return = C_NOACT;
       }
 
-      this->mc_CriticalSection.Release();
+      this->mc_CriticalSection.unlock();
    }
 
    return s32_Return;
@@ -1017,11 +1017,11 @@ int32_t C_PuiSvDbDataElementHandler::m_GetTimoutPercentage100(const uint32_t ou3
       if ((this->mc_LastDataPoolElementTimeStampsValid[ou32_DataElementIndex] == true) &&
           (this->mc_DataPoolElementValid[ou32_DataElementIndex] == true))
       {
-         const uint32_t u32_TimeStampMs = this->mc_LastDataPoolElementTimeStampsMs[ou32_DataElementIndex];
-         const uint32_t u32_TimeoutMs = this->mc_DataPoolElementTimeoutsMs[ou32_DataElementIndex];
-         const uint32_t u32_CurrentTimeMs = TglGetTickCount();
+         const qint64 s64_TimeStampMs = this->mc_LastDataPoolElementTimeStampsMs[ou32_DataElementIndex];
+         const qint64 s64_TimeoutMs = static_cast<qint64>(this->mc_DataPoolElementTimeoutsMs[ou32_DataElementIndex]);
+         const qint64 s64_CurrentTimeMs = QDateTime::currentMSecsSinceEpoch();
          const uint32_t u32_Percentage =
-            (std::min((u32_CurrentTimeMs - u32_TimeStampMs), u32_TimeoutMs) * 100U) / u32_TimeoutMs;
+            static_cast<uint32_t>((std::min(std::max((s64_CurrentTimeMs - s64_TimeStampMs), 0LL), s64_TimeoutMs) * 100LL) / (s64_TimeoutMs > 0 ? s64_TimeoutMs : 1));
          //Attempt to reduce the jumpy nature of gray out engine -> only use multiples of 10
          oru8_TimoutPercentage100 = static_cast<uint8_t>(((u32_Percentage + 5UL) / 10UL) * 10UL);
          oru8_TimoutPercentage100 = static_cast<uint8_t>(std::min(static_cast<int32_t>(oru8_TimoutPercentage100), 100));
@@ -1110,13 +1110,13 @@ void C_PuiSvDbDataElementHandler::m_UpdateDataPoolElementTimeoutAndValidFlag(
 {
    const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
-   tgl_assert(pc_View != NULL);
+   Q_ASSERT(pc_View != NULL);
    if (pc_View != NULL)
    {
       const QMap<C_PuiSvDbNodeDataPoolListElementId,
                  uint32_t>::const_iterator c_ItItem = this->mc_MappingDpElementToDataSerie.constFind(orc_Id);
 
-      tgl_assert(c_ItItem != this->mc_MappingDpElementToDataSerie.cend());
+      Q_ASSERT(c_ItItem != this->mc_MappingDpElementToDataSerie.cend());
       if (c_ItItem != this->mc_MappingDpElementToDataSerie.cend())
       {
          const C_PuiSvDbNodeDataPoolListElementId & rc_ElementId = c_ItItem.key();
@@ -1155,7 +1155,7 @@ void C_PuiSvDbDataElementHandler::m_UpdateDataPoolElementTimeoutAndValidFlag(
                      rc_ElementId.u32_ListIndex,
                      rc_ElementId.u32_ElementIndex);
 
-                  tgl_assert(pc_OscContent != NULL);
+                  Q_ASSERT(pc_OscContent != NULL);
                   if (pc_OscContent != NULL)
                   {
                      // Scaling
@@ -1184,7 +1184,7 @@ void C_PuiSvDbDataElementHandler::m_UpdateDataPoolElementTimeoutAndValidFlag(
                else
                {
                   //Should not happen
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                }
             }
 
@@ -1198,7 +1198,7 @@ void C_PuiSvDbDataElementHandler::m_UpdateDataPoolElementTimeoutAndValidFlag(
                                                                              rc_ElementId.u32_ListIndex,
                                                                              rc_ElementId.u32_ElementIndex);
 
-               tgl_assert(pc_OscContent != NULL);
+               Q_ASSERT(pc_OscContent != NULL);
                if (pc_OscContent != NULL)
                {
                   std::vector<stw::opensyde_core::C_OscNodeDataPoolContent::E_Type> c_Types;
@@ -1355,7 +1355,7 @@ bool C_PuiSvDbDataElementHandler::m_CheckHasAnyRequiredNodesValidDashboardRoutin
       if (rc_ElementId.GetIsValid() == true)
       {
          bool q_Error = false;
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckViewNodeDashboardRoutingError(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckViewNodeDashboardRoutingError(this->mu32_ViewIndex,
                                                                                         rc_ElementId.u32_NodeIndex,
                                                                                         q_Error) ==
                     C_NO_ERR);
@@ -1506,7 +1506,7 @@ bool C_PuiSvDbDataElementHandler::m_CheckNodeHasAnyRequiredValidDashboardRouting
    bool q_Valid;
    bool q_Error = false;
 
-   tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckViewNodeDashboardRoutingError(this->mu32_ViewIndex,
+   Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckViewNodeDashboardRoutingError(this->mu32_ViewIndex,
                                                                                   ou32_NodeIndex,
                                                                                   q_Error) ==
               C_NO_ERR);
@@ -1862,7 +1862,7 @@ QString C_PuiSvDbDataElementHandler::mh_GetStringForScaledValue(const float64_t 
       c_Retval = QString::number(of64_Value);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    return c_Retval;

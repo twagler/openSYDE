@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Bus edit widget (note: main module description should be in .cpp file)
@@ -15,12 +15,12 @@
 #include "C_SdBueBusEditWidget.hpp"
 #include "ui_C_SdBueBusEditWidget.h"
 
-#include "TglUtils.hpp"
+
 #include "C_PuiSdHandler.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_OscSystemBus.hpp"
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -132,7 +132,7 @@ int32_t C_SdBueBusEditWidget::GetTabIndex(void) const
 C_OscCanProtocol::E_Type C_SdBueBusEditWidget::GetActProtocol(void) const
 {
    C_OscCanProtocol::E_Type e_Type = C_OscCanProtocol::eLAYER2;
-   tgl_assert(this->mpc_WidgetComIfDescr != NULL);
+   Q_ASSERT(this->mpc_WidgetComIfDescr != NULL);
    if (this->mpc_WidgetComIfDescr != NULL)
    {
       e_Type = this->mpc_WidgetComIfDescr->GetActProtocol();
@@ -148,7 +148,7 @@ void C_SdBueBusEditWidget::ImportMessages(void)
 {
    // Change to COMM tab
    this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_COMM);
-   tgl_assert(this->mpc_WidgetComIfDescr != NULL);
+   Q_ASSERT(this->mpc_WidgetComIfDescr != NULL);
    if (this->mpc_WidgetComIfDescr != NULL)
    {
       this->mpc_WidgetComIfDescr->ImportMessages();
@@ -229,7 +229,7 @@ void C_SdBueBusEditWidget::SetFlag(const uint32_t ou32_Flag) const
 
       if (ou32_Flag == mu32_FLAG_EDIT_NAME)
       {
-         tgl_assert(this->mpc_BusPropertiesWidget != NULL);
+         Q_ASSERT(this->mpc_BusPropertiesWidget != NULL);
          if (this->mpc_BusPropertiesWidget != NULL)
          {
             this->mpc_BusPropertiesWidget->SelectName();
@@ -249,7 +249,7 @@ void C_SdBueBusEditWidget::SetFlag(const uint32_t ou32_Flag) const
       const C_OscCanProtocol::E_Type e_ProtocolType =
          static_cast<C_OscCanProtocol::E_Type>(ou32_Flag & (~mu32_FLAG_OPEN_SYSDEF_BUS_COMIFDESCR_PROTOCOL));
       this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_COMM);
-      tgl_assert(this->mpc_WidgetComIfDescr != NULL);
+      Q_ASSERT(this->mpc_WidgetComIfDescr != NULL);
       if (this->mpc_WidgetComIfDescr != NULL)
       {
          this->mpc_WidgetComIfDescr->SetProtocol(e_ProtocolType);
@@ -283,7 +283,7 @@ void C_SdBueBusEditWidget::OpenDetail(const int32_t os32_NodeIndex, const int32_
    {
       // open the interface description widget
       this->mpc_Ui->pc_TabWidgetPageNavi->setCurrentIndex(hs32_TAB_INDEX_COMM);
-      tgl_assert(this->mpc_WidgetComIfDescr != NULL);
+      Q_ASSERT(this->mpc_WidgetComIfDescr != NULL);
       if (this->mpc_WidgetComIfDescr != NULL)
       {
          if (os32_Flag == 1)
@@ -350,7 +350,7 @@ void C_SdBueBusEditWidget::m_TabChanged(const int32_t os32_Index)
 
    if (os32_Index == hs32_TAB_INDEX_COMM)
    {
-      tgl_assert(this->mpc_WidgetComIfDescr != NULL);
+      Q_ASSERT(this->mpc_WidgetComIfDescr != NULL);
       if (this->mpc_WidgetComIfDescr != NULL)
       {
          this->mpc_WidgetComIfDescr->SetInitialFocus();

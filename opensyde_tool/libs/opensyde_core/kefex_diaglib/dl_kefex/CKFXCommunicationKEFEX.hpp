@@ -22,7 +22,7 @@ class C_KFXCommunicationKEFEX :
    public C_KFXCommunicationBase
 {
 private:
-   stw::tgl::C_TglCriticalSection * m_apcLocks[KFX_NUM_LOCKS];
+   QRecursiveMutex * m_apcLocks[KFX_NUM_LOCKS];
    uint32_t m_adwNumLocked[KFX_NUM_LOCKS];
 
    void m_Lock(const uint8_t ou8_Index);

@@ -11,8 +11,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
-#include "TglFile.hpp"
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OscXceCreate.hpp"
@@ -21,7 +21,7 @@
 #include "C_OscSpaServicePackageCreateUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -100,8 +100,8 @@ int32_t C_OscXceCreate::h_CreatePackage(const stw::scl::C_SclString & orc_Packag
    std::vector<C_OscXceUpdatePackageParameters> c_UpdatePackageParameters = orc_UpdatePackageParameters;
    // fill with constant file names
    c_XcertFiles.insert(C_OscXceManifestFiler::hc_FILE_NAME);
-   c_XcertFiles.insert(TglFileIncludeTrailingDelimiter(mhc_CERTIFICATES_FOLDER));
-   c_XcertFiles.insert(TglFileIncludeTrailingDelimiter(mhc_UPDATE_PACKAGE_PARAMETERS_FOLDER));
+   c_XcertFiles.insert(stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(mhc_CERTIFICATES_FOLDER));
+   c_XcertFiles.insert(stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(mhc_UPDATE_PACKAGE_PARAMETERS_FOLDER));
 
    // precondition checks
    s32_Return = mh_CheckParamsToCreatePackage(orc_PackagePath, orc_CertificatesPath, orc_UpdatePackageParameters);
@@ -226,7 +226,7 @@ int32_t C_OscXceCreate::mh_CheckFileExists(const stw::scl::C_SclString & orc_Pat
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == false)
    {
       mhc_ErrorMessage = "File \"" + orc_Path + "\" not found.";
       osc_write_log_error(mhc_USE_CASE, mhc_ErrorMessage);
@@ -257,7 +257,7 @@ C_OscXceManifest C_OscXceCreate::mh_CreateManifest(
       const C_OscXceUpdatePackageParameters & rc_In = orc_UpdatePackageParameters[u32_It];
       c_Out.c_Password = rc_In.c_Password;
       c_Out.c_AuthenticationKeyPath = rc_In.c_AuthenticationKeyPath;
-      //Apply linux path handling
+      //Apply universal path handling (ensure slashes for cross-platform compatibility)
       c_Out.c_AuthenticationKeyPath.ReplaceAll("\\", "/");
 
       c_Manifest.c_UpdatePackageParameters.push_back(c_Out);
@@ -323,8 +323,8 @@ int32_t C_OscXceCreate::mh_PrepareCertFiles(const stw::scl::C_SclString & orc_Tm
 stw::scl::C_SclString C_OscXceCreate::mh_GenOutFilePathPart(const stw::scl::C_SclString & orc_InPath,
                                                             const stw::scl::C_SclString & orc_TargetFolder)
 {
-   const stw::scl::C_SclString c_FileName = TglExtractFileName(orc_InPath);
-   const stw::scl::C_SclString c_Retval = TglFileIncludeTrailingDelimiter(orc_TargetFolder) + c_FileName;
+   const stw::scl::C_SclString c_FileName = QFileInfo(QString::fromStdString(*orc_InPath.AsStdString())).fileName().toStdString();
+   const stw::scl::C_SclString c_Retval = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_TargetFolder) + c_FileName;
 
    return c_Retval;
 }
@@ -389,7 +389,7 @@ stw::scl::C_SclString C_OscXceCreate::mh_GetUniqueFileName(const stw::scl::C_Scl
                                                            const stw::scl::C_SclString & orc_OutFolder,
                                                            std::map<stw::scl::C_SclString, bool> & orc_ExistingFiles)
 {
-   const stw::scl::C_SclString c_Extension = TglExtractFileExtension(orc_InPath);
+   const stw::scl::C_SclString c_Extension = ("." + QFileInfo(QString::fromStdString(*orc_InPath.AsStdString())).suffix()).toStdString();
    const stw::scl::C_SclString c_OutPart = C_OscXceCreate::mh_GenOutFilePathPart(orc_InPath,
                                                                                  orc_OutFolder);
    const stw::scl::C_SclString c_OutPartWithoutExt =

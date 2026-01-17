@@ -12,12 +12,12 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SclChecksums.hpp"
 #include "C_OscHalcDefBase.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 
 using namespace stw::opensyde_core;
 
@@ -76,7 +76,7 @@ bool C_OscHalcDefBase::CheckIdsUnique(std::vector<stw::scl::C_SclString> & orc_D
    for (uint32_t u32_ItDomain = 0UL; u32_ItDomain < this->GetDomainSize(); ++u32_ItDomain)
    {
       const C_OscHalcDefDomain * const pc_Domain = this->GetDomainDefDataConst(u32_ItDomain);
-      tgl_assert(pc_Domain != NULL);
+      Q_ASSERT(pc_Domain != NULL);
       if (pc_Domain != NULL)
       {
          c_AllIds.push_back(pc_Domain->c_Id);

@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Pop up dialog widget for adding a device in can open manager.
@@ -17,7 +17,7 @@
 #include <QFileDialog>
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeCoAddDeviceDialog.hpp"
 #include "ui_C_SdNdeCoAddDeviceDialog.h"
 #include "C_PuiSdHandler.hpp"
@@ -351,14 +351,14 @@ void C_SdNdeCoAddDeviceDialog::m_FillUpComboBox(const uint32_t ou32_BusIndex, co
    const std::map<C_OscCanInterfaceId,
                   C_OscCanOpenManagerDeviceInfo> & rc_Devices = pc_CanOpenManagerInfo->c_CanOpenDevices;
 
-   tgl_assert(this->mc_NodeIndexes.size() == this->mc_InterfaceIndexes.size());
+   Q_ASSERT(this->mc_NodeIndexes.size() == this->mc_InterfaceIndexes.size());
 
    if (this->mc_NodeIndexes.size() == this->mc_InterfaceIndexes.size())
    {
       for (uint32_t u32_Counter = 0; u32_Counter < this->mc_NodeIndexes.size(); u32_Counter++)
       {
          uint8_t u8_InterfaceId;
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->TranslateCanInterfaceIndexToId(this->mc_NodeIndexes[u32_Counter],
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->TranslateCanInterfaceIndexToId(this->mc_NodeIndexes[u32_Counter],
                                                                                     this->mc_InterfaceIndexes[
                                                                                        u32_Counter],
                                                                                     u8_InterfaceId) == C_NO_ERR);
@@ -381,7 +381,7 @@ void C_SdNdeCoAddDeviceDialog::m_FillUpComboBox(const uint32_t ou32_BusIndex, co
    // cleanup
    this->mpc_Ui->pc_CbxNode->clear();
 
-   tgl_assert(C_SdUtil::h_GetNames(c_NotExistNodeIndexes, c_NotExistInterfaceIndexes, c_NotExistNames,
+   Q_ASSERT(C_SdUtil::h_GetNames(c_NotExistNodeIndexes, c_NotExistInterfaceIndexes, c_NotExistNames,
                                    false) == C_NO_ERR);
 
    for (std::vector<QString>::const_iterator c_NodeIt = c_NotExistNames.begin();
@@ -394,7 +394,7 @@ void C_SdNdeCoAddDeviceDialog::m_FillUpComboBox(const uint32_t ou32_BusIndex, co
    }
 
    this->mc_NodeIndexes = c_NotExistNodeIndexes;
-   tgl_assert((static_cast<int32_t>(this->mc_NodeIndexes.size())) == this->mpc_Ui->pc_CbxNode->count());
+   Q_ASSERT((static_cast<int32_t>(this->mc_NodeIndexes.size())) == this->mpc_Ui->pc_CbxNode->count());
    this->mc_InterfaceIndexes = c_NotExistInterfaceIndexes;
 
    if (this->mpc_Ui->pc_CbxNode->count() == 0)

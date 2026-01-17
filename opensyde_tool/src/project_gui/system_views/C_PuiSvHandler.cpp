@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       System views data manager (implementation)
@@ -20,8 +20,7 @@
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_Uti.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclChecksums.hpp"
 #include "C_OscXmlParser.hpp"
 #include "C_OscXmlParserLog.hpp"
@@ -38,7 +37,7 @@
 #include "C_PuiSdNodeDataPoolListElementIdSyncUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -97,7 +96,7 @@ int32_t C_PuiSvHandler::SaveToFile(const QString & orc_Path, const bool oq_UseDe
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_Path.toStdString().c_str()) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.toStdString(.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.toStdString(.AsStdString())).isFile()).c_str()) == true)
    {
       //erase it:
       s32_Return = std::remove(orc_Path.toStdString().c_str());
@@ -128,7 +127,7 @@ int32_t C_PuiSvHandler::SaveToFile(const QString & orc_Path, const bool oq_UseDe
             c_XmlParser.CreateNodeChild("file-version", "2");
             if (this->mq_IsServiceModeActive)
             {
-               tgl_assert(c_XmlParser.CreateAndSelectNodeChild("service-mode") == "service-mode");
+               Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("service-mode") == "service-mode");
                c_XmlParser.SetAttributeBool("active", this->mq_IsServiceModeActive);
                c_XmlParser.SelectNodeParent();
             }
@@ -318,7 +317,7 @@ int32_t C_PuiSvHandler::GetNodeActiveFlagsWithSquadAdaptions(const uint32_t ou32
                   if (orc_ActiveFlags[u32_NodeIndex] != 0U)
                   {
                      const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(u32_NodeIndex);
-                     tgl_assert(pc_Node != NULL);
+                     Q_ASSERT(pc_Node != NULL);
                      if (pc_Node != NULL)
                      {
                         // Check for connected interfaces
@@ -1493,7 +1492,7 @@ int32_t C_PuiSvHandler::SetNodeUpdateInformationParamInfoContent(const uint32_t 
 //----------------------------------------------------------------------------------------------------------------------
 void C_PuiSvHandler::AddView(const C_PuiSvData & orc_View, const bool oq_AutoAdaptName, const bool oq_AutoAdaptContent)
 {
-   tgl_assert(this->InsertView(this->mc_Views.size(), orc_View, oq_AutoAdaptName, oq_AutoAdaptContent) == C_NO_ERR);
+   Q_ASSERT(this->InsertView(this->mc_Views.size(), orc_View, oq_AutoAdaptName, oq_AutoAdaptContent) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2603,7 +2602,7 @@ int32_t C_PuiSvHandler::CheckViewError(const uint32_t ou32_Index, bool * const o
          //Check PC connected
          c_Details.q_PcNotConnected = !rc_CheckedData.GetOscPcData().GetConnected();
          //Check all routing details
-         tgl_assert(this->m_CheckRouting(ou32_Index, c_NodeActiveFlags, c_SetupWarningMessage, c_ErrorMessages,
+         Q_ASSERT(this->m_CheckRouting(ou32_Index, c_NodeActiveFlags, c_SetupWarningMessage, c_ErrorMessages,
                                          c_NodesWithDashboardRoutingError,
                                          c_NodesRelevantForDashboardRouting) == C_NO_ERR);
          c_Details.c_RoutingErrorMessages = c_ErrorMessages;
@@ -3369,7 +3368,7 @@ int32_t C_PuiSvHandler::m_LoadFromFile(const QString & orc_Path,
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path.toStdString().c_str()) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.toStdString(.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.toStdString(.AsStdString())).isFile()).c_str()) == true)
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading views");
@@ -3405,7 +3404,7 @@ int32_t C_PuiSvHandler::m_LoadFromFile(const QString & orc_Path,
 
                if (s32_Retval == C_NO_ERR)
                {
-                  tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-views");
+                  Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-views");
                   if (s32_FileVersion == 1)
                   {
                      s32_Retval = C_PuiSvHandlerFilerV1::h_LoadViews(this->mc_Views, c_XmlParser);
@@ -3424,7 +3423,7 @@ int32_t C_PuiSvHandler::m_LoadFromFile(const QString & orc_Path,
                            osc_write_log_error("Loading views",
                                                "Attribute \"active\" not found in node \"service-mode\".");
                         }
-                        tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-views");
+                        Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-views");
                      }
                      else
                      {

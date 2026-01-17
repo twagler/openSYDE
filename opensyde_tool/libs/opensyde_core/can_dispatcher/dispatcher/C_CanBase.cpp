@@ -15,15 +15,15 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_CanBase.hpp"
-#include "C_SclDynamicArray.hpp"
-#include "TglTime.hpp"
+#include <QList>
+#include <QThread>
 
 //----------------------------------------------------------------------------------------------------------------------
 
 using namespace stw::errors;
 using namespace stw::can;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 /* -- Defines ------------------------------------------------------------------------------------------------------- */
 
@@ -95,7 +95,7 @@ void C_CanBase::WaitForRxFrame(const uint32_t ou32_MaxWaitTimeMs)
    (void)ou32_MaxWaitTimeMs;
    //Give some CPU time to other threads.
    //How efficient this approach is in not burning too much CPU time depends on the used OS.
-   TglSleep(0);
+   QThread::yieldCurrentThread();
 }
 
 //----------------------------------------------------------------------------------------------------------------------

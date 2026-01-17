@@ -1,4 +1,5 @@
 #include "precomp_headers.hpp" //pre-compiled headers
+#include <QFileInfo>
 
 #include <cstring>
 #include "C_CanMonProtocolTarget.hpp"
@@ -17,15 +18,14 @@
 
 #include "C_SclString.hpp"
 #include "C_SclIniFile.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 
 //---------------------------------------------------------------------------
 
 using namespace stw::errors;
 using namespace stw::cmon_protocol;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::can;
 
 //---------------------------------------------------------------------------
@@ -299,7 +299,7 @@ const
    int32_t s32_Return;
    int32_t s32_Loop;
 
-   if (TglFileExists(orc_FileName) == false)
+   if ((QFileInfo(QString::fromStdString(*orc_FileName.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FileName.AsStdString())).isFile()) == false)
    {
       s32_Return = C_RD_WR;
    }

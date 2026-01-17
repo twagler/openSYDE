@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Main graphics scene for system topology (implementation)
@@ -39,7 +39,7 @@
 #include "C_PuiSdUtil.hpp"
 #include "C_SebUtil.hpp"
 #include "C_SdUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgePopUpDialog.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_SdNodeComIfSetupWidget.hpp"
@@ -55,7 +55,7 @@ using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::opensyde_core;
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -794,7 +794,7 @@ void C_SdTopologyScene::CopyFromSnapshotToScene(const stw::opensyde_gui_logic::C
       C_PuiSdTextElementBus c_BusElement = orc_Snapshot.c_BusTextElements[u32_ItElem];
       c_BusElement.u32_BusIndex =
          c_MapOldBusIndexToNewBusIndex.value(c_BusElement.u32_BusIndex, std::numeric_limits<uint32_t>::max());
-      tgl_assert(c_BusElement.u32_BusIndex != std::numeric_limits<uint32_t>::max());
+      Q_ASSERT(c_BusElement.u32_BusIndex != std::numeric_limits<uint32_t>::max());
       C_PuiSdHandler::h_GetInstance()->c_BusTextElements.push_back(c_BusElement);
    }
    for (u32_ItElem = 0; u32_ItElem < orc_Snapshot.c_LineArrows.size(); ++u32_ItElem)
@@ -1985,7 +1985,7 @@ uint32_t C_SdTopologyScene::mh_CopyFromSnapshotToSceneHandleNodesAddNewNodes(
                     ++u32_ItCurSubDevice)
                {
                   const uint32_t u32_CurIndex = rc_Group.c_SubNodeIndexes[u32_ItCurSubDevice];
-                  tgl_assert((u32_CurIndex < orc_Snapshot.c_OscNodes.size()) &&
+                  Q_ASSERT((u32_CurIndex < orc_Snapshot.c_OscNodes.size()) &&
                              (u32_CurIndex < orc_Snapshot.c_UiNodes.size()));
                   if ((u32_CurIndex < orc_Snapshot.c_OscNodes.size()) &&
                       (u32_CurIndex < orc_Snapshot.c_UiNodes.size()))
@@ -2004,7 +2004,7 @@ uint32_t C_SdTopologyScene::mh_CopyFromSnapshotToSceneHandleNodesAddNewNodes(
             }
          }
       }
-      tgl_assert(c_MainDeviceName.IsEmpty() == false);
+      Q_ASSERT(c_MainDeviceName.IsEmpty() == false);
       u32_DataIndex = C_PuiSdHandler::h_GetInstance()->AddNodeSquadAndSort(c_OscNodes, c_UiNodes, c_SubDevices,
                                                                            c_MainDeviceName.c_str(), c_NameProposal);
    }
@@ -2067,7 +2067,7 @@ void C_SdTopologyScene::mh_CopyFromSnapshotToSceneHandleNodesAdaptConnections(co
                      u32_BusIndex = rc_ComInt.u32_BusIndex;
                      u32_BusIndex =
                         orc_MapOldBusIndexToNewBusIndex.value(u32_BusIndex, std::numeric_limits<uint32_t>::max());
-                     tgl_assert(u32_BusIndex != std::numeric_limits<uint32_t>::max());
+                     Q_ASSERT(u32_BusIndex != std::numeric_limits<uint32_t>::max());
                      rc_ComInt.u32_BusIndex = u32_BusIndex;
                   }
                }
@@ -3046,7 +3046,7 @@ void C_SdTopologyScene::m_ShowNewConnectionPopUp(const C_GiNode * const opc_Node
             c_ContainerIp = this->m_AssignNodeProperty(c_NodeIndices, pc_Bus->e_Type,
                                                        opc_Bus->GetIndex(), c_InterfaceIndices, true, false);
 
-            tgl_assert(c_ContainerId[0].size() == c_ContainerIp[0].size());
+            Q_ASSERT(c_ContainerId[0].size() == c_ContainerIp[0].size());
             c_Properties.reserve(c_ContainerId[0].size());
 
             for (uint32_t u32_It = 0UL; u32_It < c_ContainerId[0].size(); ++u32_It)
@@ -3153,7 +3153,7 @@ void C_SdTopologyScene::m_ShowNewNodeToNodeConnectionPopUp(const C_GiNode * cons
                                                           pc_ComIfWidget->GetBusType(), pc_ComIfWidget->GetBusIndex(),
                                                           c_InterfaceIndices, false, false);
 
-               tgl_assert(c_ContainerId[0].size() == c_ContainerIp[0].size());
+               Q_ASSERT(c_ContainerId[0].size() == c_ContainerIp[0].size());
                c_Node1Properties.reserve(c_ContainerId[0].size());
                for (uint32_t u32_It = 0UL; u32_It < c_ContainerId[0].size(); ++u32_It)
                {
@@ -3163,7 +3163,7 @@ void C_SdTopologyScene::m_ShowNewNodeToNodeConnectionPopUp(const C_GiNode * cons
                   c_Node1Properties.push_back(c_Property);
                }
 
-               tgl_assert(c_ContainerId[1].size() == c_ContainerIp[1].size());
+               Q_ASSERT(c_ContainerId[1].size() == c_ContainerIp[1].size());
                c_Node2Properties.reserve(c_ContainerId[1].size());
                for (uint32_t u32_It = 0UL; u32_It < c_ContainerId[1].size(); ++u32_It)
                {
@@ -3226,7 +3226,7 @@ void C_SdTopologyScene::m_ShowNewNodeToNodeConnectionPopUp(const C_GiNode * cons
                                                           pc_ComIfWidget->GetBusIndex(),
                                                           c_InterfaceIndices, true, false);
 
-               tgl_assert(c_ContainerId[0].size() == c_ContainerIp[0].size());
+               Q_ASSERT(c_ContainerId[0].size() == c_ContainerIp[0].size());
                c_Properties.reserve(c_ContainerId[0].size());
                for (uint32_t u32_It = 0UL; u32_It < c_ContainerId[0].size(); ++u32_It)
                {
@@ -3817,10 +3817,10 @@ void C_SdTopologyScene::m_InitNodeData(C_OscNode & orc_OscNode, const QString & 
       C_OscSystemDefinition::hc_Devices.LookForDevice(
          orc_NodeType.toStdString().c_str(), orc_MainDevice.toStdString().c_str(), u32_SubDeviceIndex);
    orc_OscNode.u32_SubDeviceIndex = u32_SubDeviceIndex;
-   tgl_assert(orc_OscNode.pc_DeviceDefinition != NULL);
+   Q_ASSERT(orc_OscNode.pc_DeviceDefinition != NULL);
    if (orc_OscNode.pc_DeviceDefinition != NULL)
    {
-      tgl_assert(orc_OscNode.u32_SubDeviceIndex < orc_OscNode.pc_DeviceDefinition->c_SubDevices.size());
+      Q_ASSERT(orc_OscNode.u32_SubDeviceIndex < orc_OscNode.pc_DeviceDefinition->c_SubDevices.size());
       if (orc_OscNode.u32_SubDeviceIndex < orc_OscNode.pc_DeviceDefinition->c_SubDevices.size())
       {
          //default name: same as device type
@@ -3880,12 +3880,12 @@ void C_SdTopologyScene::m_InitNodeComIfSettings(C_OscNode & orc_OscNode, const Q
                                                       orc_MainDevice.toStdString().c_str(),
                                                       u32_SubDeviceIndex);
 
-   tgl_assert(pc_DeviceDefinition != NULL);
+   Q_ASSERT(pc_DeviceDefinition != NULL);
 
    //create interfaces
    if (pc_DeviceDefinition != NULL)
    {
-      tgl_assert(u32_SubDeviceIndex < pc_DeviceDefinition->c_SubDevices.size());
+      Q_ASSERT(u32_SubDeviceIndex < pc_DeviceDefinition->c_SubDevices.size());
       if (u32_SubDeviceIndex < pc_DeviceDefinition->c_SubDevices.size())
       {
          orc_OscNode.c_Properties.CreateComInterfaces(*(pc_DeviceDefinition), u32_SubDeviceIndex);

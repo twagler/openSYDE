@@ -11,20 +11,20 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <cstdio>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscSystemDefinitionFilerV2.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_core;
 
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::scl;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -73,7 +73,7 @@ int32_t C_OscSystemDefinitionFilerV2::h_LoadSystemDefinitionFile(C_OscSystemDefi
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_PathSystemDefinition) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_PathSystemDefinition.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PathSystemDefinition.AsStdString())).isFile()) == true)
    {
       C_OscXmlParser c_XmlParser;
       s32_Retval = c_XmlParser.LoadFromFile(orc_PathSystemDefinition);
@@ -118,7 +118,7 @@ int32_t C_OscSystemDefinitionFilerV2::h_SaveSystemDefinitionFile(const C_OscSyst
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       //erase it:
       int x_Return; //lint !e970 !e8080  //using type to match library interface
@@ -275,7 +275,7 @@ int32_t C_OscSystemDefinitionFilerV2::h_LoadNodes(const uint16_t ou16_XmlFormatV
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "nodes");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "nodes");
       }
    }
    //Compare length
@@ -374,7 +374,7 @@ int32_t C_OscSystemDefinitionFilerV2::h_LoadBuses(std::vector<C_OscSystemBus> & 
       }
       while (c_SelectedNode == "bus");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "buses");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "buses");
    }
    //Compare length
    if ((s32_Retval == C_NO_ERR) && (q_ExpectedSizeHere == true))
@@ -406,10 +406,10 @@ void C_OscSystemDefinitionFilerV2::h_SaveNodes(const std::vector<C_OscNode> & or
    orc_XmlParser.SetAttributeUint32("length", static_cast<uint32_t>(orc_Nodes.size()));
    for (uint32_t u32_Index = 0U; u32_Index < orc_Nodes.size(); u32_Index++)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("node") == "node");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("node") == "node");
       C_OscNodeFilerV2::h_SaveNode(orc_Nodes[u32_Index], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "nodes");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "nodes");
    }
 }
 
@@ -429,10 +429,10 @@ void C_OscSystemDefinitionFilerV2::h_SaveBuses(const std::vector<C_OscSystemBus>
    orc_XmlParser.SetAttributeUint32("length", static_cast<uint32_t>(orc_Buses.size()));
    for (uint32_t u32_Index = 0U; u32_Index < orc_Buses.size(); u32_Index++)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("bus") == "bus");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("bus") == "bus");
       C_OscSystemBusFilerV2::h_SaveBus(orc_Buses[u32_Index], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "buses");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "buses");
    }
 }
 
@@ -507,7 +507,7 @@ int32_t C_OscSystemDefinitionFilerV2::h_LoadSystemDefinition(C_OscSystemDefiniti
          }
 
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
       }
       else
       {
@@ -526,7 +526,7 @@ int32_t C_OscSystemDefinitionFilerV2::h_LoadSystemDefinition(C_OscSystemDefiniti
             if (s32_Retval == C_NO_ERR)
             {
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
             }
          }
          else
@@ -546,7 +546,7 @@ int32_t C_OscSystemDefinitionFilerV2::h_LoadSystemDefinition(C_OscSystemDefiniti
             if (s32_Retval == C_NO_ERR)
             {
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
             }
          }
          else
@@ -578,21 +578,21 @@ void C_OscSystemDefinitionFilerV2::h_SaveSystemDefinition(const C_OscSystemDefin
                                                           C_OscXmlParserBase & orc_XmlParser)
 {
    orc_XmlParser.CreateNodeChild("opensyde-system-definition");
-   tgl_assert(orc_XmlParser.SelectRoot() == "opensyde-system-definition");
+   Q_ASSERT(orc_XmlParser.SelectRoot() == "opensyde-system-definition");
    //File version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
    orc_XmlParser.SetNodeContent(C_SclString::IntToStr(hu16_FILE_VERSION_LATEST));
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
    //Node
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("nodes") == "nodes");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("nodes") == "nodes");
    h_SaveNodes(orc_SystemDefinition.c_Nodes, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
 
    //Bus
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("buses") == "buses");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("buses") == "buses");
    h_SaveBuses(orc_SystemDefinition.c_Buses, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-definition");
 }

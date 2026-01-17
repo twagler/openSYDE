@@ -13,11 +13,11 @@
 #include "precomp_headers.hpp"
 
 #include <cstdio>
+#include <QDateTime>
+#include <QFileInfo>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "C_SclDateTime.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscProjectFiler.hpp"
 #include "C_OscXmlParser.hpp"
 #include "C_OscLoggingHandler.hpp"
@@ -27,7 +27,7 @@ using namespace stw::opensyde_core;
 using namespace stw::scl;
 
 using namespace stw::errors;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -77,7 +77,8 @@ int32_t C_OscProjectFiler::h_Save(C_OscProject & orc_Project, const C_SclString 
    {
       bool q_NewFile = true;
       //erase file if it already exists:
-      if (TglFileExists(orc_Path) == true)
+      const QFileInfo c_FileInfo(QString::fromStdString(*orc_Path.AsStdString()));
+      if (c_FileInfo.exists() && c_FileInfo.isFile())
       {
          //erase it:
          int x_Return; //lint !e970 !e8080  //using type to match library interface
@@ -123,7 +124,8 @@ int32_t C_OscProjectFiler::h_Load(C_OscProject & orc_Project, const C_SclString 
 {
    int32_t s32_Retval;
 
-   if (TglFileExists(orc_Path) == true)
+   const QFileInfo c_FileInfo(QString::fromStdString(*orc_Path.AsStdString()));
+   if (c_FileInfo.exists() && c_FileInfo.isFile())
    {
       C_SclString c_Tmp;
       //Open file
@@ -138,7 +140,7 @@ int32_t C_OscProjectFiler::h_Load(C_OscProject & orc_Project, const C_SclString 
             c_Tmp = c_Xml.GetAttributeString("author");
             if (c_Tmp == "")
             {
-               stw::tgl::TglGetSystemUserName(c_Tmp);
+               stw::opensyde_core::C_OscUtils::h_GetSystemUserName(c_Tmp);
             }
             orc_Project.c_Author = c_Tmp;
             c_Tmp = c_Xml.GetAttributeString("editor");
@@ -225,25 +227,25 @@ int32_t C_OscProjectFiler::mh_SaveInternal(C_OscProject & orc_Project, const C_S
    //author
    if (oq_New == true)
    {
-      stw::tgl::TglGetSystemUserName(c_Tmp);
+      stw::opensyde_core::C_OscUtils::h_GetSystemUserName(c_Tmp);
       orc_Project.c_Author = c_Tmp;
    }
    c_Xml.SetAttributeString("author", orc_Project.c_Author);
 
    //editor
-   stw::tgl::TglGetSystemUserName(c_Tmp);
+   stw::opensyde_core::C_OscUtils::h_GetSystemUserName(c_Tmp);
    orc_Project.c_Editor = c_Tmp;
    c_Xml.SetAttributeString("editor", orc_Project.c_Editor);
 
    //Creation
    if (oq_New == true)
    {
-      orc_Project.c_CreationTime = C_SclDateTime::Now();
+      orc_Project.c_CreationTime = QDateTime::currentDateTime();
    }
    c_Xml.SetAttributeString("creation_time", C_OscProject::h_GetTimeFormatted(orc_Project.c_CreationTime));
 
    //modification
-   orc_Project.c_ModificationTime = C_SclDateTime::Now();
+   orc_Project.c_ModificationTime = QDateTime::currentDateTime();
    c_Xml.SetAttributeString("modification_time", C_OscProject::h_GetTimeFormatted(orc_Project.c_ModificationTime));
 
    //openSYDE version

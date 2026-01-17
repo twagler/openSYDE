@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Model component for message generator table (implementation)
@@ -15,7 +15,7 @@
 #include <QBitArray>
 
 #include "C_Uti.hpp"
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "stwerrors.hpp"
 #include "cam_constants.hpp"
@@ -27,7 +27,7 @@
 #include "C_OscCanProtocol.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -198,7 +198,7 @@ QVariant C_CamGenTableModel::headerData(const int32_t os32_Section, const Qt::Or
             c_Header = "Auto Protocol";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
          //Add spacing for sorting arrow
@@ -243,7 +243,7 @@ QVariant C_CamGenTableModel::headerData(const int32_t os32_Section, const Qt::Or
             c_Retval = "Auto ECeS/ECoS Protocol Support";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -293,7 +293,7 @@ QVariant C_CamGenTableModel::headerData(const int32_t os32_Section, const Qt::Or
                                               "immediately after the first frame gets sent.";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
          c_Retval = c_Header;
@@ -440,7 +440,7 @@ QVariant C_CamGenTableModel::data(const QModelIndex & orc_Index, const int32_t o
                }
                break;
             default:
-               tgl_assert(false);
+               Q_ASSERT(false);
                break;
             }
          }
@@ -656,7 +656,7 @@ QVariant C_CamGenTableModel::data(const QModelIndex & orc_Index, const int32_t o
                c_Retval = mh_GetBoolAsCheckStateVariant(pc_Message->q_SetAutoSupportMode);
                break;
             default:
-               tgl_assert(false);
+               Q_ASSERT(false);
                break;
             }
          }
@@ -709,7 +709,7 @@ bool C_CamGenTableModel::setData(const QModelIndex & orc_Index, const QVariant &
             switch (e_Col)
             {
             case eNAME:
-               tgl_assert(C_CamProHandler::h_GetInstance()->SetMessageName(u32_Index,
+               Q_ASSERT(C_CamProHandler::h_GetInstance()->SetMessageName(u32_Index,
                                                                            orc_Value.toString()) == C_NO_ERR);
                q_Retval = true;
                break;
@@ -748,7 +748,7 @@ bool C_CamGenTableModel::setData(const QModelIndex & orc_Index, const QVariant &
             case eAUTO_SUPPORT:
                break;
             default:
-               tgl_assert(false);
+               Q_ASSERT(false);
                break;
             }
             if (q_Continue == true)
@@ -760,7 +760,7 @@ bool C_CamGenTableModel::setData(const QModelIndex & orc_Index, const QVariant &
                   m_CheckAndHandleRegisterCyclicMessage(u32_Index, false);
                }
                //lint -e644 that's what the q_Continue is for
-               tgl_assert(C_CamProHandler::h_GetInstance()->SetMessageUint32Value(u32_Index, e_Selector,
+               Q_ASSERT(C_CamProHandler::h_GetInstance()->SetMessageUint32Value(u32_Index, e_Selector,
                                                                                   u32_Value) == C_NO_ERR);
                q_Retval = true;
                //Trigger sending of updated message
@@ -816,7 +816,7 @@ bool C_CamGenTableModel::setData(const QModelIndex & orc_Index, const QVariant &
                   q_Continue = true;
                   break;
                default:
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                   break;
                }
                if (q_Continue == true)
@@ -828,7 +828,7 @@ bool C_CamGenTableModel::setData(const QModelIndex & orc_Index, const QVariant &
                      m_CheckAndHandleRegisterCyclicMessage(u32_Index, false);
                   }
                   //lint -e644 that's what the q_Continue is for
-                  tgl_assert(C_CamProHandler::h_GetInstance()->SetMessageBoolValue(u32_Index, e_Selector,
+                  Q_ASSERT(C_CamProHandler::h_GetInstance()->SetMessageBoolValue(u32_Index, e_Selector,
                                                                                    q_Val) == C_NO_ERR);
                   //Special handling for XTD
                   if ((e_Col == eXTD) && (q_Val == false))
@@ -942,7 +942,7 @@ Qt::ItemFlags C_CamGenTableModel::flags(const QModelIndex & orc_Index) const
          }
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -1074,7 +1074,7 @@ int32_t C_CamGenTableModel::h_EnumToColumn(const C_CamGenTableModel::E_Columns o
       s32_Retval = 10;
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    return s32_Retval;
@@ -1214,7 +1214,7 @@ uint32_t C_CamGenTableModel::m_GetSizeItems(void) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_CamGenTableModel::m_DeleteItem(const uint32_t ou32_Index)
 {
-   tgl_assert(C_CamProHandler::h_GetInstance()->DeleteMessage(ou32_Index) == C_NO_ERR);
+   Q_ASSERT(C_CamProHandler::h_GetInstance()->DeleteMessage(ou32_Index) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1229,7 +1229,7 @@ void C_CamGenTableModel::m_DeleteItem(const uint32_t ou32_Index)
 //----------------------------------------------------------------------------------------------------------------------
 void C_CamGenTableModel::m_MoveItem(const uint32_t ou32_SourceIndex, const uint32_t ou32_TargetIndex)
 {
-   tgl_assert(C_CamProHandler::h_GetInstance()->MoveMessage(ou32_SourceIndex, ou32_TargetIndex) == C_NO_ERR);
+   Q_ASSERT(C_CamProHandler::h_GetInstance()->MoveMessage(ou32_SourceIndex, ou32_TargetIndex) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1313,7 +1313,7 @@ void C_CamGenTableModel::m_SpecialXtdFlagSetHandling(const int32_t os32_Row, con
       constexpr C_CamProMessageData::E_GenericUint32DataSelector e_SELECTOR_ID =
          C_CamProMessageData::eGUIDS_ID;
       constexpr uint32_t u32_NEW_VAL = 0x0UL;
-      tgl_assert(C_CamProHandler::h_GetInstance()->SetMessageUint32Value(ou32_Index, e_SELECTOR_ID,
+      Q_ASSERT(C_CamProHandler::h_GetInstance()->SetMessageUint32Value(ou32_Index, e_SELECTOR_ID,
                                                                          u32_NEW_VAL) == C_NO_ERR);
       //Message
       Q_EMIT (this->SigReport(stw::opensyde_gui_elements::C_OgeWiCustomMessage::eWARNING,

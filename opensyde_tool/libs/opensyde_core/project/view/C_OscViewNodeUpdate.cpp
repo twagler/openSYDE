@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclChecksums.hpp"
 #include "C_OscViewNodeUpdate.hpp"
 
@@ -627,7 +627,7 @@ void C_OscViewNodeUpdate::OnSyncNodeApplicationAdded(const uint32_t ou32_Applica
                                                                                ou32_ApplicationIndex))
       {
          // Skip one index as this would not have a datablock entry
-         tgl_assert(ou32_ApplicationIndex > 0UL);
+         Q_ASSERT(ou32_ApplicationIndex > 0UL);
          u32_UpdateApplicationIndex = ou32_ApplicationIndex - 1UL;
       }
       else
@@ -746,7 +746,7 @@ void C_OscViewNodeUpdate::OnSyncNodeApplicationAboutToBeChangedFromParamSetHalc(
                                                                                 const uint32_t ou32_NumDataBlockPaths)
 {
    // Must be still the same type
-   tgl_assert(oe_ApplicationType == stw::opensyde_core::C_OscNodeApplication::ePARAMETER_SET_HALC);
+   Q_ASSERT(oe_ApplicationType == stw::opensyde_core::C_OscNodeApplication::ePARAMETER_SET_HALC);
    if (oe_ApplicationType == stw::opensyde_core::C_OscNodeApplication::ePARAMETER_SET_HALC)
    {
       // Delete the param set specific information about the datablock
@@ -775,7 +775,7 @@ void C_OscViewNodeUpdate::OnSyncNodeApplicationChangedToParamSetHalc(const uint3
                                                                      const C_OscNodeApplication::E_Type oe_ApplicationType, const uint32_t ou32_NumDataBlockPaths,
                                                                      const std::vector<C_OscNodeApplication> & orc_AllApplications)
 {
-   tgl_assert(oe_ApplicationType == stw::opensyde_core::C_OscNodeApplication::ePARAMETER_SET_HALC);
+   Q_ASSERT(oe_ApplicationType == stw::opensyde_core::C_OscNodeApplication::ePARAMETER_SET_HALC);
    if (oe_ApplicationType == stw::opensyde_core::C_OscNodeApplication::ePARAMETER_SET_HALC)
    {
       // Delete the "normal" datablock configuration
@@ -804,14 +804,14 @@ void C_OscViewNodeUpdate::OnSyncNodeApplicationChangedToParamSetHalc(const uint3
 void C_OscViewNodeUpdate::OnSyncNodeApplicationResultPathSizeChanged(
    const C_OscNodeApplication::E_Type oe_ApplicationType, const uint32_t ou32_OldSize, const uint32_t ou32_NewSize)
 {
-   tgl_assert(oe_ApplicationType == stw::opensyde_core::C_OscNodeApplication::ePARAMETER_SET_HALC);
+   Q_ASSERT(oe_ApplicationType == stw::opensyde_core::C_OscNodeApplication::ePARAMETER_SET_HALC);
    if (oe_ApplicationType == stw::opensyde_core::C_OscNodeApplication::ePARAMETER_SET_HALC)
    {
       if (ou32_OldSize < ou32_NewSize)
       {
          // 1 to 2
          // Insert one
-         tgl_assert((ou32_OldSize == 1U) && (ou32_NewSize == 2U));
+         Q_ASSERT((ou32_OldSize == 1U) && (ou32_NewSize == 2U));
          this->mc_ParamSetPaths.insert(this->mc_ParamSetPaths.begin() + 1,
                                        C_OscViewNodeUpdateParamInfo());
          this->mc_SkipUpdateOfFiles[mhs32_PARAMETER_SET_INDEX].insert(
@@ -821,7 +821,7 @@ void C_OscViewNodeUpdate::OnSyncNodeApplicationResultPathSizeChanged(
       {
          // 2 to 1
          // Delete the second entry
-         tgl_assert((ou32_OldSize == 2U) && (ou32_NewSize == 1U));
+         Q_ASSERT((ou32_OldSize == 2U) && (ou32_NewSize == 1U));
          this->mc_ParamSetPaths.erase(this->mc_ParamSetPaths.begin() + 1);
          this->mc_SkipUpdateOfFiles[mhs32_PARAMETER_SET_INDEX].erase(
             this->mc_SkipUpdateOfFiles[mhs32_PARAMETER_SET_INDEX].begin() + 1);

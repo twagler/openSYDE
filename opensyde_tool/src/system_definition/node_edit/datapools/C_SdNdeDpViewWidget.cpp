@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing all available datapools of a node
@@ -18,7 +18,7 @@
 #include "ui_C_SdNdeDpViewWidget.h"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_Uti.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_UsHandler.hpp"
@@ -420,7 +420,7 @@ void C_SdNdeDpViewWidget::NavigateToNextDataPool(const bool oq_Forwards)
       const int32_t s32_NewDpIndex =
          C_SdNdeDpUtil::h_GetNextDiagOrNvmDpIndex(this->mu32_NodeIndex, this->mu32_LastKnownDataPoolIndex, oq_Forwards);
 
-      tgl_assert(s32_NewDpIndex >= 0);
+      Q_ASSERT(s32_NewDpIndex >= 0);
       if (s32_NewDpIndex >= 0)
       {
          this->SetActualDataPool(s32_NewDpIndex); // first: update internal indices
@@ -565,15 +565,15 @@ void C_SdNdeDpViewWidget::m_DpUpdateUsageView(void)
       const stw::opensyde_core::C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(
          this->mu32_NodeIndex);
 
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          const stw::opensyde_core::C_OscDeviceDefinition * const pc_DevDef = pc_Node->pc_DeviceDefinition;
          const uint32_t u32_SubDeviceIndex = pc_Node->u32_SubDeviceIndex;
-         tgl_assert(pc_DevDef != NULL);
+         Q_ASSERT(pc_DevDef != NULL);
          if (pc_DevDef != NULL)
          {
-            tgl_assert(u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size());
+            Q_ASSERT(u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size());
             if (u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size())
             {
                uint32_t u32_Percentage;
@@ -583,7 +583,7 @@ void C_SdNdeDpViewWidget::m_DpUpdateUsageView(void)
                                         static_cast<QString>(
                   " (%2 / %3)");
 
-               tgl_assert(C_PuiSdHandler::h_GetInstance()->GetNodeNvmDataPoolAreas(this->mu32_NodeIndex,
+               Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetNodeNvmDataPoolAreas(this->mu32_NodeIndex,
                                                                                    c_Areas) == C_NO_ERR);
 
                this->mpc_UsageBar->SetUsage(this->mu32_NodeIndex,

@@ -19,13 +19,12 @@
 #include "stwerrors.hpp"
 #include "stwtypes.hpp"
 #include "C_OscUtils.hpp"
-#include "TglFile.hpp"
 #include "C_OscSecurityPemSecUpdate.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_core;
 using namespace stw::errors;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 

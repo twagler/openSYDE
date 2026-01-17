@@ -11,8 +11,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscXmlParserLog.hpp"
@@ -21,7 +21,7 @@
 #include "C_OscXceManifestFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -60,7 +60,7 @@ int32_t C_OscXceManifestFiler::h_LoadFile(C_OscXceManifest & orc_Config, const s
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading manifest data");
@@ -200,19 +200,19 @@ int32_t C_OscXceManifestFiler::h_LoadData(C_OscXceManifest & orc_Config, C_OscXm
 void C_OscXceManifestFiler::h_SaveData(const C_OscXceManifest & orc_Config, C_OscXmlParserBase & orc_XmlParser)
 {
    //File version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
    orc_XmlParser.SetNodeContent(stw::scl::C_SclString::IntToStr(mhu16_FILE_VERSION_1));
    //Return
    orc_XmlParser.SelectNodeParent();
    //Package
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("package") == "package");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("package") == "package");
    orc_XmlParser.SetAttributeString("types", "x-app-security-certificates");
    //Return
    orc_XmlParser.SelectNodeParent();
    //Config
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("x-app-security-certificates") == "x-app-security-certificates");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("x-app-security-certificates") == "x-app-security-certificates");
    orc_XmlParser.CreateNodeChild("package-version", stw::scl::C_SclString::IntToStr(mhu16_PACKAGE_VERSION_1));
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("secure-authentication") == "secure-authentication");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("secure-authentication") == "secure-authentication");
    orc_XmlParser.SetAttributeString("certificates-path", orc_Config.c_CertificatesPath);
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -273,7 +273,7 @@ int32_t C_OscXceManifestFiler::mh_LoadUpdatePackageParameters(std::vector<C_OscX
                if (s32_Retval == C_NO_ERR)
                {
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "update-package-parameters-list");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "update-package-parameters-list");
                }
             }
             if (u32_ExpectedCount != u32_ActualCount)
@@ -304,8 +304,8 @@ int32_t C_OscXceManifestFiler::mh_LoadUpdatePackageParameters(std::vector<C_OscX
 void C_OscXceManifestFiler::mh_SaveUpdatePackageParameters(
    const std::vector<C_OscXceUpdatePackageParameters> & orc_Config, C_OscXmlParserBase & orc_XmlParser)
 {
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("secure-update") == "secure-update");
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("secure-update") == "secure-update");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(
                  "update-package-parameters-list") == "update-package-parameters-list");
    orc_XmlParser.SetAttributeUint32("num-parameters", static_cast<uint32_t>(orc_Config.size()));
    for (uint32_t u32_It = 0UL; u32_It < orc_Config.size(); ++u32_It)
@@ -351,7 +351,7 @@ int32_t C_OscXceManifestFiler::mh_LoadUpdatePackageParameter(C_OscXceUpdatePacka
 void C_OscXceManifestFiler::mh_SaveUpdatePackageParameter(const C_OscXceUpdatePackageParameters & orc_Config,
                                                           C_OscXmlParserBase & orc_XmlParser)
 {
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("update-package-parameters") == "update-package-parameters");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("update-package-parameters") == "update-package-parameters");
    orc_XmlParser.SetAttributeString("password", orc_Config.c_Password);
    orc_XmlParser.SetAttributeString("authentication_key", orc_Config.c_AuthenticationKeyPath);
    //Return

@@ -11,8 +11,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscXmlParserLog.hpp"
@@ -22,7 +22,7 @@
 #include "C_OscDataLoggerJobFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -58,7 +58,7 @@ int32_t C_OscDataLoggerJobFiler::h_LoadFile(std::vector<C_OscDataLoggerJob> & or
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading data loggers data");
@@ -152,7 +152,7 @@ int32_t C_OscDataLoggerJobFiler::h_LoadData(std::vector<C_OscDataLoggerJob> & or
                   c_NodeName = orc_XmlParser.SelectNodeNext("job");
                }
                while ((c_NodeName == "job") && (s32_Retval == C_NO_ERR));
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "jobs");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "jobs");
             }
             if (u32_ExpectedSize != orc_Config.size())
             {
@@ -179,18 +179,18 @@ void C_OscDataLoggerJobFiler::h_SaveData(const std::vector<C_OscDataLoggerJob> &
                                          C_OscXmlParserBase & orc_XmlParser)
 {
    //File version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
    orc_XmlParser.SetNodeContent(stw::scl::C_SclString::IntToStr(mhu16_FILE_VERSION_1));
    //Return
    orc_XmlParser.SelectNodeParent();
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("jobs") == "jobs");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("jobs") == "jobs");
    orc_XmlParser.SetAttributeUint32("length", static_cast<uint32_t>(orc_Config.size()));
    for (std::vector<C_OscDataLoggerJob>::const_iterator c_It = orc_Config.begin();
         c_It != orc_Config.end(); ++c_It)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("job") == "job");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("job") == "job");
       C_OscDataLoggerJobFiler::mh_SaveJobData(*c_It, orc_XmlParser);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "jobs");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "jobs");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -408,7 +408,7 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadJobProperties(C_OscDataLoggerJobProperti
       if (s32_Retval == C_NO_ERR)
       {
          orc_Config.c_Name = orc_XmlParser.GetNodeContent();
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
       }
    }
 
@@ -418,7 +418,7 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadJobProperties(C_OscDataLoggerJobProperti
       if (s32_Retval == C_NO_ERR)
       {
          orc_Config.c_Comment = orc_XmlParser.GetNodeContent();
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
       }
    }
 
@@ -428,7 +428,7 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadJobProperties(C_OscDataLoggerJobProperti
       if (s32_Retval == C_NO_ERR)
       {
          s32_Retval = mh_StringToLogFileType(orc_XmlParser.GetNodeContent(), orc_Config.e_LogFileFormat);
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
       }
    }
 
@@ -438,7 +438,7 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadJobProperties(C_OscDataLoggerJobProperti
       if (s32_Retval == C_NO_ERR)
       {
          s32_Retval = mh_StringToLocalLogTriggerType(orc_XmlParser.GetNodeContent(), orc_Config.e_LocalLogTrigger);
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
       }
    }
 
@@ -447,7 +447,7 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadJobProperties(C_OscDataLoggerJobProperti
       if (orc_XmlParser.SelectNodeChild("use-case") == "use-case")
       {
          s32_Retval = mh_StringToUseCaseType(orc_XmlParser.GetNodeContent(), orc_Config.e_UseCase);
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
       }
    }
 
@@ -456,14 +456,14 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadJobProperties(C_OscDataLoggerJobProperti
       if (orc_XmlParser.SelectNodeChild("log-destination-directory") == "log-destination-directory")
       {
          orc_Config.c_LogDestinationDirectory = orc_XmlParser.GetNodeContent();
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
       }
    }
    if (s32_Retval == C_NO_ERR)
    {
       s32_Retval = mh_LoadJobAdditionalTriggerProperties(orc_Config.c_AdditionalTriggerProperties, orc_XmlParser);
    }
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "job");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "job");
    return s32_Retval;
 }
 
@@ -488,7 +488,7 @@ void C_OscDataLoggerJobFiler::mh_SaveJobProperties(const C_OscDataLoggerJobPrope
    orc_XmlParser.CreateNodeChild("use-case", mh_UseCaseTypeToString(orc_Config.e_UseCase));
    orc_XmlParser.CreateNodeChild("log-destination-directory", orc_Config.c_LogDestinationDirectory);
    mh_SaveJobAdditionalTriggerProperties(orc_Config.c_AdditionalTriggerProperties, orc_XmlParser);
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "job");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "job");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -516,7 +516,7 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadJobAdditionalTriggerProperties(
          if (s32_Retval == C_NO_ERR)
          {
             orc_Config.c_Operation = orc_XmlParser.GetNodeContent();
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "additional-trigger-properties");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "additional-trigger-properties");
          }
       }
       if (s32_Retval == C_NO_ERR)
@@ -537,10 +537,10 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadJobAdditionalTriggerProperties(
             //copy over value so we have the correct type:
             s32_Retval = C_OscNodeDataPoolFiler::h_LoadDataPoolContentV1(orc_Config.c_Threshold, orc_XmlParser);
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "additional-trigger-properties");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "additional-trigger-properties");
          }
       }
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
    }
    return s32_Retval;
 }
@@ -563,9 +563,9 @@ void C_OscDataLoggerJobFiler::mh_SaveJobAdditionalTriggerProperties(
    orc_XmlParser.SelectNodeParent();
    orc_XmlParser.CreateAndSelectNodeChild("threshold");
    C_OscNodeDataPoolFiler::h_SaveDataPoolContentV1(orc_Config.c_Threshold, orc_XmlParser);
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "additional-trigger-properties");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "additional-trigger-properties");
    orc_XmlParser.CreateNodeChild("operation", orc_Config.c_Operation);
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -606,7 +606,7 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadConfiguredDataElements(
                c_NodeName = orc_XmlParser.SelectNodeNext("configured-data-element");
             }
             while ((c_NodeName == "configured-data-element") && (s32_Retval == C_NO_ERR));
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "configured-data-elements");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "configured-data-elements");
          }
          if (u32_ExpectedSize != orc_Config.size())
          {
@@ -631,14 +631,14 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadConfiguredDataElements(
 void C_OscDataLoggerJobFiler::mh_SaveConfiguredDataElements(
    const std::vector<C_OscDataLoggerDataElementReference> & orc_Config, C_OscXmlParserBase & orc_XmlParser)
 {
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("configured-data-elements") == "configured-data-elements");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("configured-data-elements") == "configured-data-elements");
    orc_XmlParser.SetAttributeUint32("length", static_cast<uint32_t>(orc_Config.size()));
    for (std::vector<C_OscDataLoggerDataElementReference>::const_iterator c_It = orc_Config.begin();
         c_It != orc_Config.end(); ++c_It)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("configured-data-element") == "configured-data-element");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("configured-data-element") == "configured-data-element");
       C_OscDataLoggerJobFiler::mh_SaveConfiguredDataElement(*c_It, orc_XmlParser);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "configured-data-elements");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "configured-data-elements");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -666,7 +666,7 @@ int32_t C_OscDataLoggerJobFiler::mh_LoadConfiguredDataElement(C_OscDataLoggerDat
       if (s32_Retval == C_NO_ERR)
       {
          orc_Config.c_CustomName = orc_XmlParser.GetNodeContent();
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "configured-data-element");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "configured-data-element");
       }
    }
 

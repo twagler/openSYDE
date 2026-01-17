@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       short description (implementation)
@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "C_OgeCbxTable.hpp"
 #include "C_OgeSpxTable.hpp"
@@ -221,7 +221,7 @@ void C_SdNdeSfoResetMessageTableDelegate::setModelData(QWidget * const opc_Edito
          }
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }

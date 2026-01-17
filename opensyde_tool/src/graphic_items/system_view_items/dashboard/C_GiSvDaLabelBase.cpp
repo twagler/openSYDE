@@ -16,7 +16,7 @@
 
 #include "gitypes.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_PuiSvHandler.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -26,7 +26,7 @@
 #include "C_SdNdeDpContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -106,7 +106,7 @@ void C_GiSvDaLabelBase::SetDisplayStyle(const C_PuiSvDbWidgetBase::E_Style oe_St
       if (pc_Dashboard != NULL)
       {
          const C_PuiSvDbLabel * const pc_Box = pc_Dashboard->GetLabel(static_cast<uint32_t>(this->ms32_Index));
-         tgl_assert(pc_Box != NULL);
+         Q_ASSERT(pc_Box != NULL);
          if (pc_Box != NULL)
          {
             this->mpc_LabelWidget->SetDisplayStyle(pc_Box->e_Type, pc_Box->q_ShowCaption, pc_Box->q_ShowUnit);
@@ -140,7 +140,7 @@ void C_GiSvDaLabelBase::LoadData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbLabel * const pc_Box = pc_Dashboard->GetLabel(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          this->LoadSvBasicData(*pc_Box);
@@ -165,12 +165,12 @@ void C_GiSvDaLabelBase::UpdateData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbLabel * const pc_Box = pc_Dashboard->GetLabel(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          C_PuiSvDbLabel c_Box = *pc_Box;
          this->UpdateSvBasicData(c_Box);
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                         this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         &c_Box, this->me_Type) == C_NO_ERR);
@@ -186,7 +186,7 @@ void C_GiSvDaLabelBase::DeleteData(void)
 {
    if (this->ms32_Index >= 0)
    {
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex, this->mu32_DashboardIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex, this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         this->me_Type) ==
                  C_NO_ERR);
@@ -267,7 +267,7 @@ bool C_GiSvDaLabelBase::CallProperties(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbLabel * const pc_Box = pc_Dashboard->GetLabel(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          C_PuiSvDbNodeDataPoolListElementId c_ElementId;
@@ -332,8 +332,8 @@ bool C_GiSvDaLabelBase::CallProperties(void)
             //Force update
             this->mq_InitialStyleCall = true;
             //Add to Data (before call to SetDisplayStyle)
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            static_cast<uint32_t>(this->ms32_Index),
                                                                            &c_Box, this->me_Type) == C_NO_ERR);

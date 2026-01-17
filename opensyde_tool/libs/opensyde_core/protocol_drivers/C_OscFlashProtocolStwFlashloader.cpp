@@ -15,7 +15,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscFlashProtocolStwFlashloader.hpp"
 #include "C_OscLoggingHandler.hpp"
 
@@ -24,7 +24,7 @@
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::diag_lib;
-using namespace stw::tgl;
+
 using namespace stw::scl;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */

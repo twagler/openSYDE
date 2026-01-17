@@ -11,12 +11,13 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
+#include <QDir>
 
 #include <cstdio>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglFile.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OscSystemFilerUtil.hpp"
 #include "C_OscLoggingHandler.hpp"
@@ -25,7 +26,7 @@
 
 using namespace stw::opensyde_core;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -116,7 +117,7 @@ int32_t C_OscSystemFilerUtil::h_GetParserForExistingFile(C_OscXmlParser & orc_Fi
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path))
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()))
    {
       s32_Retval = orc_FileXmlParser.LoadFromFile(orc_Path);
       if (s32_Retval == C_NO_ERR)
@@ -159,7 +160,7 @@ int32_t C_OscSystemFilerUtil::h_GetParserForNewFile(C_OscXmlParser & orc_FileXml
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path))
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()))
    {
       if (std::remove(orc_Path.c_str()) == 0)
       {
@@ -191,13 +192,13 @@ int32_t C_OscSystemFilerUtil::h_CreateFolder(const C_SclString & orc_Path)
 {
    int32_t s32_Retval;
 
-   if (TglDirectoryExists(orc_Path))
+   if (QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isDir())
    {
       s32_Retval = C_NO_ERR;
    }
    else
    {
-      if (TglCreateDirectory(orc_Path) == 0)
+      if ((QDir().mkpath(QString::fromStdString(*orc_Path.AsStdString())) ? 0 : -1) == 0)
       {
          s32_Retval = C_NO_ERR;
       }
@@ -238,7 +239,7 @@ C_SclString C_OscSystemFilerUtil::h_PrepareItemNameForFileName(const C_SclString
 C_SclString C_OscSystemFilerUtil::h_CombinePaths(const C_SclString & orc_BasePathName,
                                                  const C_SclString & orc_SubFolderFileName)
 {
-   const C_SclString c_BasePath = TglExtractFilePath(orc_BasePathName);
+   const C_SclString c_BasePath = (QFileInfo(QString::fromStdString(*orc_BasePathName.AsStdString())).absolutePath() + "/").toStdString();
 
    return c_BasePath + orc_SubFolderFileName;
 }
@@ -266,11 +267,11 @@ int32_t C_OscSystemFilerUtil::h_SaveStringToFile(const C_SclString & orc_Complet
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   const C_SclString c_Folder = TglExtractFilePath(orc_CompleteFilePath);
+   const C_SclString c_Folder = (QFileInfo(QString::fromStdString(*orc_CompleteFilePath.AsStdString())).absolutePath() + "/").toStdString();
 
-   if (TglDirectoryExists(c_Folder) == false)
+   if (QFileInfo(QString::fromStdString(*c_Folder.AsStdString())).isDir() == false)
    {
-      if (TglCreateDirectory(c_Folder) != 0)
+      if ((QDir().mkpath(QString::fromStdString(*c_Folder.AsStdString())) ? 0 : -1) != 0)
       {
          osc_write_log_error(orc_LogHeading, "Could not create folder \"" + c_Folder + "\".");
          s32_Retval = C_RD_WR;
@@ -316,8 +317,11 @@ int32_t C_OscSystemFilerUtil::h_SaveStringToFile(const C_SclString & orc_Complet
 void C_OscSystemFilerUtil::h_AdaptProjectPathToSystemDefinition(const C_SclString & orc_ProjectPath,
                                                                 C_SclString & orc_SystemDefintionPath)
 {
-   orc_SystemDefintionPath = TglExtractFilePath(orc_ProjectPath) + "system_definition/" +
-                             TglChangeFileExtension(TglExtractFileName(orc_ProjectPath), ".syde_sysdef");
+   const QString c_QFilePath = QString::fromStdString(*orc_ProjectPath.AsStdString());
+   const QFileInfo c_FileInfo(c_QFilePath);
+   const QString c_BaseName = c_FileInfo.completeBaseName();
+   orc_SystemDefintionPath = (c_FileInfo.absolutePath() + "/").toStdString() + "system_definition/" +
+                             (c_BaseName + ".syde_sysdef").toStdString();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -330,8 +334,11 @@ void C_OscSystemFilerUtil::h_AdaptProjectPathToSystemDefinition(const C_SclStrin
 void C_OscSystemFilerUtil::h_AdaptProjectPathToSystemViews(const C_SclString & orc_ProjectPath,
                                                            C_SclString & orc_SystemViewsPath)
 {
-   orc_SystemViewsPath = TglExtractFilePath(orc_ProjectPath) + "system_views/" +
-                         TglChangeFileExtension(TglExtractFileName(orc_ProjectPath), ".syde_sysviews");
+   const QString c_QFilePath = QString::fromStdString(*orc_ProjectPath.AsStdString());
+   const QFileInfo c_FileInfo(c_QFilePath);
+   const QString c_BaseName = c_FileInfo.completeBaseName();
+   orc_SystemViewsPath = (c_FileInfo.absolutePath() + "/").toStdString() + "system_views/" +
+                         (c_BaseName + ".syde_sysviews").toStdString();
 }
 
 //----------------------------------------------------------------------------------------------------------------------

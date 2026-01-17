@@ -9,6 +9,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 //we do not use the unspecified values; just "pass through" to get the clearly defined structure "struct tm"
 //lint -estring(829,ctime)
@@ -19,14 +20,13 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscComMessageLoggerFileAsc.hpp"
-#include "TglFile.hpp"
-#include "TglTime.hpp"
+#include "C_OscComMessageLoggerFileAsc.hpp"
+#include <QDateTime>
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -119,7 +119,7 @@ int32_t C_OscComMessageLoggerFileAsc::OpenFile(void)
       this->m_WriteHeader();
 
       // Check if the file was really created
-      if (TglFileExists(this->mc_FilePath) == false)
+      if ((QFileInfo(QString::fromStdString(*this->mc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*this->mc_FilePath.AsStdString())).isFile()) == false)
       {
          // File was not created
          s32_Return = C_RD_WR;
@@ -312,28 +312,28 @@ C_SclString C_OscComMessageLoggerFileAsc::mh_GetAscTimeString(void)
 {
    C_SclString c_Result;
    C_SclString c_Temp;
+   QDateTime c_Now = QDateTime::currentDateTime();
 
    // Getting weekday
-   const std::time_t x_Time = std::time(NULL);      //lint !e8080 using type expected by the library for compatibility
-   const std::tm c_Time = *std::localtime(&x_Time); //lint !e613 //documentation of localtime says "not NULL"
-   const uint32_t u32_TimeMs = TglGetTickCount();
-
-   c_Result += mh_GetDay(c_Time.tm_wday) + " ";
-   c_Result += mh_GetMonth(c_Time.tm_mon) + " ";
-   c_Result += C_SclString::IntToStr(c_Time.tm_mday) + " ";
+   const int32_t s32_DayOfWeek = c_Now.date().dayOfWeek();
+   // QDateTime dayOfWeek: 1=Mon, 7=Sun.
+   // mh_GetDay expects 0=Sun, 1=Mon.
+   c_Result += mh_GetDay(s32_DayOfWeek == 7 ? 0 : s32_DayOfWeek) + " ";
+   c_Result += mh_GetMonth(c_Now.date().month() - 1) + " ";
+   c_Result += C_SclString::IntToStr(c_Now.date().day()) + " ";
    // Hours
-   c_Temp.PrintFormatted("%.2d", c_Time.tm_hour);
+   c_Temp.PrintFormatted("%.2d", c_Now.time().hour());
    c_Result += c_Temp + ":";
    // Minutes
-   c_Temp.PrintFormatted("%.2d", c_Time.tm_min);
+   c_Temp.PrintFormatted("%.2d", c_Now.time().minute());
    c_Result += c_Temp + ":";
    // Seconds
-   c_Temp.PrintFormatted("%.2d", c_Time.tm_sec);
+   c_Temp.PrintFormatted("%.2d", c_Now.time().second());
    c_Result += c_Temp + ".";
    // Get the milliseconds
-   c_Temp.PrintFormatted("%.3u", u32_TimeMs % 1000U);
+   c_Temp.PrintFormatted("%.3u", c_Now.time().msec());
    c_Result += c_Temp + " ";
-   c_Result += C_SclString::IntToStr(1900 + c_Time.tm_year);
+   c_Result += C_SclString::IntToStr(c_Now.date().year());
 
    return c_Result;
 }

@@ -14,7 +14,7 @@
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeUnoDasDataPoolListManager.hpp"
 #include "C_SdNdeUnoDasDataPoolListMoveCommand.hpp"
 #include "C_SdNdeUnoDasDataPoolListDeleteCommand.hpp"
@@ -28,7 +28,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */

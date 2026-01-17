@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for system view dashboards settings
@@ -11,13 +11,13 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSvHandler.hpp"
 #include "C_SyvDaDashboardSettings.hpp"
 #include "ui_C_SyvDaDashboardSettings.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -152,17 +152,17 @@ void C_SyvDaDashboardSettings::InitStaticNames(void) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDaDashboardSettings::Save(void) const
 {
-   tgl_assert(C_PuiSvHandler::h_GetInstance()->SetViewUpdateRateFast(this->mu32_ViewIndex,
+   Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetViewUpdateRateFast(this->mu32_ViewIndex,
                                                                      static_cast<uint16_t>(this->mpc_Ui->pc_SpinBoxFast
                                                                                            ->
                                                                                            value())) ==
               C_NO_ERR);
-   tgl_assert(C_PuiSvHandler::h_GetInstance()->SetViewUpdateRateMedium(this->mu32_ViewIndex,
+   Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetViewUpdateRateMedium(this->mu32_ViewIndex,
                                                                        static_cast<uint16_t>(this->mpc_Ui->
                                                                                              pc_SpinBoxMedium->
                                                                                              value())) ==
               C_NO_ERR);
-   tgl_assert(C_PuiSvHandler::h_GetInstance()->SetViewUpdateRateSlow(this->mu32_ViewIndex,
+   Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetViewUpdateRateSlow(this->mu32_ViewIndex,
                                                                      static_cast<uint16_t>(this->mpc_Ui->pc_SpinBoxSlow
                                                                                            ->
                                                                                            value())) ==

@@ -15,7 +15,7 @@
 #include "C_PuiSdSharedDatapools.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclChecksums.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -98,13 +98,13 @@ void C_PuiSdSharedDatapools::AddSharedDatapool(const C_OscNodeDataPoolId & orc_N
    uint32_t u32_GroupIndex = 0U;
 
    // Check if the new Datapool was not already shared. That should not happen
-   tgl_assert(this->IsSharedDatapool(orc_NewDatapool, NULL) == false);
+   Q_ASSERT(this->IsSharedDatapool(orc_NewDatapool, NULL) == false);
 
    // Is the shared Datapool already shared or are both Datapools still stand alone Datapools
    if (this->IsSharedDatapool(orc_ShareDatapool, &u32_GroupIndex) == true)
    {
       // Group exists already
-      tgl_assert(u32_GroupIndex < this->c_SharedDatapools.size());
+      Q_ASSERT(u32_GroupIndex < this->c_SharedDatapools.size());
       this->c_SharedDatapools[u32_GroupIndex].push_back(orc_NewDatapool);
 
       std::sort(this->c_SharedDatapools[u32_GroupIndex].begin(), this->c_SharedDatapools[u32_GroupIndex].end());
@@ -508,7 +508,7 @@ void C_PuiSdSharedDatapools::OnDatapoolMoved(const C_OscNodeDataPoolId & orc_Sou
    if (q_IsShared == true)
    {
       // Save the group in case of a shared Datapool
-      tgl_assert(this->GetSharedDatapoolGroup(u32_SharedGroup, c_SharedGroup) == C_NO_ERR);
+      Q_ASSERT(this->GetSharedDatapoolGroup(u32_SharedGroup, c_SharedGroup) == C_NO_ERR);
    }
 
    // Handle the origin Datapool Id as removed
@@ -523,7 +523,7 @@ void C_PuiSdSharedDatapools::OnDatapoolMoved(const C_OscNodeDataPoolId & orc_Sou
       if (c_SharedGroup.size() > 2)
       {
          // Standard case. Add the adapted Datapool Id as shared Datapool again
-         tgl_assert(this->AddSharedDatapool(orc_TargetDatapool, u32_SharedGroup) == C_NO_ERR);
+         Q_ASSERT(this->AddSharedDatapool(orc_TargetDatapool, u32_SharedGroup) == C_NO_ERR);
       }
       else if (c_SharedGroup.size() == 2)
       {
@@ -564,7 +564,7 @@ void C_PuiSdSharedDatapools::OnDatapoolMoved(const C_OscNodeDataPoolId & orc_Sou
       else
       {
          // Should not happen
-         tgl_assert(c_SharedGroup.size() < 2);
+         Q_ASSERT(c_SharedGroup.size() < 2);
       }
    }
 }

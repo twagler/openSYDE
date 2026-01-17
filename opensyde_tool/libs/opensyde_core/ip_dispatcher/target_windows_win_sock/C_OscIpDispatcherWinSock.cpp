@@ -11,16 +11,17 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <winsock2.h>
 #include <winsock.h> //Windows WinSock
 #include <cstring>
 #include <iphlpapi.h> //Windows IP helper utilities
+#include <QMutexLocker>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscIpDispatcherWinSock.hpp"
-#include "TglFile.hpp"
 #include "C_SclString.hpp"
 #include "C_SclIniFile.hpp"
 
@@ -28,7 +29,7 @@
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -60,7 +61,7 @@ static int32_t m_WsFionRead(void)
 /* -- Module Global Variables --------------------------------------------------------------------------------------- */
 std::map<C_OscIpDispatcherWinSock::C_BufferIdentifier,
          std::list<std::vector<uint8_t> > > C_OscIpDispatcherWinSock::mhc_TcpBuffer;
-C_TglCriticalSection C_OscIpDispatcherWinSock::mhc_LockBuffer;
+QRecursiveMutex C_OscIpDispatcherWinSock::mhc_LockBuffer;
 
 /* -- Module Global Function Prototypes ----------------------------------------------------------------------------- */
 
@@ -1014,24 +1015,24 @@ int32_t C_OscIpDispatcherWinSock::ReadTcp(const uint32_t ou32_Handle, const uint
             std::map<C_BufferIdentifier, std::list<std::vector<uint8_t> > >::iterator c_ItBuffer;
             const C_BufferIdentifier c_Id(u8_TargetbusId, u8_TargetNodeId, u8_SourceBusId, u8_SourceNodeId);
 
-            mhc_LockBuffer.Acquire();
-
-            // Search for already existing data of this identifier
-            c_ItBuffer = mhc_TcpBuffer.find(c_Id);
-
-            if (c_ItBuffer != mhc_TcpBuffer.end())
             {
-               c_ItBuffer->second.push_back(orc_Data);
-            }
-            else
-            {
-               std::list<std::vector<uint8_t> > c_List;
-               c_List.push_back(orc_Data);
-               mhc_TcpBuffer.insert(
-                  std::pair<C_BufferIdentifier, std::list<std::vector<uint8_t> > >(c_Id, c_List));
-            }
+               QMutexLocker c_Lock(&mhc_LockBuffer);
 
-            mhc_LockBuffer.Release();
+               // Search for already existing data of this identifier
+               c_ItBuffer = mhc_TcpBuffer.find(c_Id);
+
+               if (c_ItBuffer != mhc_TcpBuffer.end())
+               {
+                  c_ItBuffer->second.push_back(orc_Data);
+               }
+               else
+               {
+                  std::list<std::vector<uint8_t> > c_List;
+                  c_List.push_back(orc_Data);
+                  mhc_TcpBuffer.insert(
+                     std::pair<C_BufferIdentifier, std::list<std::vector<uint8_t> > >(c_Id, c_List));
+               }
+            }
 
             s32_Return = C_WARN;
          }
@@ -1081,26 +1082,27 @@ int32_t C_OscIpDispatcherWinSock::ReadTcpBuffer(const uint8_t ou8_ClientBusIdent
    const C_BufferIdentifier c_Id(ou8_ClientBusIdentifier, ou8_ClientNodeIdentifier, ou8_ServerBusIdentifier,
                                  ou8_ServerNodeIdentifier);
 
-   mhc_LockBuffer.Acquire();
-
-   // Search for saved data in the buffer
-   c_ItBuffer = mhc_TcpBuffer.find(c_Id);
-
-   if (c_ItBuffer != mhc_TcpBuffer.end())
    {
-      std::list<std::vector<uint8_t> > & rc_List = c_ItBuffer->second;
+      QMutexLocker c_Lock(&mhc_LockBuffer);
 
-      if (rc_List.size() > 0)
+      // Search for saved data in the buffer
+      c_ItBuffer = mhc_TcpBuffer.find(c_Id);
+
+      if (c_ItBuffer != mhc_TcpBuffer.end())
       {
-         // Copy the data
-         orc_Data = *rc_List.begin();
-         // Remove the read data package
-         rc_List.erase(rc_List.begin());
+         std::list<std::vector<uint8_t> > & rc_List = c_ItBuffer->second;
 
-         s32_Return = C_NO_ERR;
+         if (rc_List.size() > 0)
+         {
+            // Copy the data
+            orc_Data = *rc_List.begin();
+            // Remove the read data package
+            rc_List.erase(rc_List.begin());
+
+            s32_Return = C_NO_ERR;
+         }
       }
    }
-   mhc_LockBuffer.Release();
 
    return s32_Return;
 }
@@ -1281,7 +1283,7 @@ int32_t C_OscIpDispatcherWinSock::ReadUdp(std::vector<uint8_t> & orc_Data, uint8
 //----------------------------------------------------------------------------------------------------------------------
 void C_OscIpDispatcherWinSock::LoadConfigFile(const C_SclString & orc_FileLocation)
 {
-   if (TglFileExists(orc_FileLocation) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_FileLocation.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FileLocation.AsStdString())).isFile()) == true)
    {
       C_SclIniFile c_Ini(orc_FileLocation);
       const C_SclString c_Help = c_Ini.ReadString("ETH_CONFIG", "ETH_INTERFACE_NAME", "");

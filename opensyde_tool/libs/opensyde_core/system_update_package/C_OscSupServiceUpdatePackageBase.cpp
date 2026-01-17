@@ -11,6 +11,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <fstream>
 #include <iterator>
@@ -26,7 +27,6 @@
 #include "C_OscDeviceDefinition.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
 #include "C_OscSuSequences.hpp"
-#include "TglFile.hpp"
 #include "C_SclIniFile.hpp"
 #include "C_OscSuSequences.hpp"
 #include "C_OscUtils.hpp"
@@ -43,7 +43,7 @@
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::diag_lib;
 using namespace std;
 using namespace stw::opensyde_core;
@@ -157,7 +157,7 @@ void C_OscSupServiceUpdatePackageBase::mh_GetSydeSecureDefFileNames(const C_OscS
    for (uint32_t u32_ItNode = 0UL; u32_ItNode < orc_SystemDefinition.c_Nodes.size(); ++u32_ItNode)
    {
       const C_OscNode & rc_Node = orc_SystemDefinition.c_Nodes[u32_ItNode];
-      const C_SclString c_Folder = TglFileIncludeTrailingDelimiter(C_OscUtils::h_NiceifyStringForFileName(
+      const C_SclString c_Folder = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(C_OscUtils::h_NiceifyStringForFileName(
                                                                       rc_Node.c_Properties.c_Name));
       const C_SclString c_File = "secure_update_collection.syde_sucdef";
       const C_SclString c_RelPath = c_File;
@@ -185,7 +185,7 @@ void C_OscSupServiceUpdatePackageBase::mh_GetNodeFolderNames(const C_OscSystemDe
    {
       const C_OscNode & rc_Node = orc_SystemDefinition.c_Nodes[u32_ItNode];
       const C_SclString c_RelFile = C_OscUtils::h_NiceifyStringForFileName(rc_Node.c_Properties.c_Name);
-      const C_SclString c_AbsFile = TglFileIncludeTrailingDelimiter(orc_TargetPath + c_RelFile);
+      const C_SclString c_AbsFile = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_TargetPath + c_RelFile);
       orc_AbsPath.push_back(c_AbsFile);
       orc_RelPath.push_back(c_RelFile);
    }
@@ -315,7 +315,7 @@ int32_t C_OscSupServiceUpdatePackageBase::mh_AddFileToDigest(const C_SclString &
    const uint32_t u32_SECTION_SIZE = 256;
 
    std::ifstream c_InputFileStream;
-   const uint32_t u32_InputFileSize = static_cast<uint32_t>(TglFileSize(orc_FilePath));
+   const uint32_t u32_InputFileSize = static_cast<uint32_t>(static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).size()));
 
    c_InputFileStream.open(orc_FilePath.c_str(), std::ifstream::binary);
 

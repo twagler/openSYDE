@@ -112,7 +112,7 @@ int32_t C_OscXappPropertiesFiler::h_LoadXappProperties(C_OscXappProperties & orc
                                                                       orc_XappProperties.u8_ConnectedInterfaceNumber,
                                                                       orc_XmlParser, "connected-interface",
                                                                       "Loading X-App properties");
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
       }
    }
    orc_XmlParser.SelectNodeParent();
@@ -140,7 +140,7 @@ int32_t C_OscXappPropertiesFiler::h_SaveXappPropertiesFile(const C_OscXappProper
    if (s32_Retval == C_NO_ERR)
    {
       //File version
-      tgl_assert(c_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
+      Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
       c_XmlParser.SetNodeContent(stw::scl::C_SclString::IntToStr(mhu16_FILE_VERSION_1));
       //Return
       c_XmlParser.SelectNodeParent();
@@ -178,7 +178,7 @@ void C_OscXappPropertiesFiler::h_SaveXappProperties(const C_OscXappProperties & 
    C_OscXappPropertiesFiler::h_SaveCommInterfaceId(orc_XappProperties.e_ConnectedInterfaceType,
                                                    orc_XappProperties.u8_ConnectedInterfaceNumber, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "properties");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "properties");
    //Return
    orc_XmlParser.SelectNodeParent();
 }
@@ -213,7 +213,7 @@ int32_t C_OscXappPropertiesFiler::h_LoadCommInterfaceId(C_OscSystemBus::E_Type &
       s32_Retval = C_OscSystemFilerUtil::h_BusTypeStringToEnum(
          orc_XmlParser.GetNodeContent(), ore_Type);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == orc_ParentNodeName);
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == orc_ParentNodeName);
    }
    else
    {

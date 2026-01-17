@@ -17,7 +17,7 @@
 #include <algorithm>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglTime.hpp"
+#include <QElapsedTimer>
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscProtocolSerialNumber.hpp"
 #include "C_OscProtocolDriverOsyTpIp.hpp"
@@ -28,7 +28,7 @@
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -180,7 +180,7 @@ int32_t C_OscProtocolDriverOsyTpIp::IsConnected(void)
 
    if (this->mpc_Dispatcher == NULL)
    {
-      tgl_assert(false); //misuse ...
+      Q_ASSERT(false); //misuse ...
       s32_Return = C_NOACT;
    }
    else
@@ -207,7 +207,7 @@ int32_t C_OscProtocolDriverOsyTpIp::ReConnect(void)
 
    if (this->mpc_Dispatcher == NULL)
    {
-      tgl_assert(false); //misuse ...
+      Q_ASSERT(false); //misuse ...
       s32_Return = C_NOACT;
    }
    else
@@ -238,7 +238,7 @@ int32_t C_OscProtocolDriverOsyTpIp::Disconnect(void)
 
    if (this->mpc_Dispatcher == NULL)
    {
-      tgl_assert(false); //misuse ...
+      Q_ASSERT(false); //misuse ...
       s32_Return = C_NOACT;
    }
    else
@@ -303,13 +303,14 @@ const
       else
       {
          //check for responses
-         const uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
+         QElapsedTimer c_Timer;
+         c_Timer.start();
          uint8_t au8_Ip[4];
          std::vector<uint8_t> c_Response;
          std::vector<C_BroadcastGetDeviceInfoResults>::iterator c_ItDeviceInfo;
          std::vector<C_BroadcastGetDeviceInfoExtendedResults>::iterator c_ItDeviceExtInfo;
 
-         while ((stw::tgl::TglGetTickCount() - mu32_BroadcastTimeoutMs) < u32_StartTime)
+         while (c_Timer.hasExpired(mu32_BroadcastTimeoutMs) == false)
          {
             int32_t s32_ReturnLocal = mpc_Dispatcher->ReadUdp(c_Response, au8_Ip);
             if (s32_ReturnLocal == C_NO_ERR)
@@ -473,11 +474,12 @@ int32_t C_OscProtocolDriverOsyTpIp::BroadcastSetIpAddress(const C_OscProtocolSer
       }
       else
       {
-         const uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
+         QElapsedTimer c_Timer;
+         c_Timer.start();
          std::vector<uint8_t> c_Response;
          bool q_Done = false;
 
-         while (((stw::tgl::TglGetTickCount() - mu32_BroadcastTimeoutMs) < u32_StartTime) && (q_Done == false))
+         while ((c_Timer.hasExpired(mu32_BroadcastTimeoutMs) == false) && (q_Done == false))
          {
             //check for response
             s32_ReturnLocal = mpc_Dispatcher->ReadUdp(c_Response, orau8_ResponseIp);
@@ -643,11 +645,12 @@ int32_t C_OscProtocolDriverOsyTpIp::BroadcastSetIpAddressExtended(const C_OscPro
       }
       else
       {
-         const uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
+         QElapsedTimer c_Timer;
+         c_Timer.start();
          std::vector<uint8_t> c_Response;
          bool q_Done = false;
 
-         while (((stw::tgl::TglGetTickCount() - mu32_BroadcastTimeoutMs) < u32_StartTime) && (q_Done == false))
+         while ((c_Timer.hasExpired(mu32_BroadcastTimeoutMs) == false) && (q_Done == false))
          {
             //check for response
             s32_ReturnLocal = mpc_Dispatcher->ReadUdp(c_Response, orau8_ResponseIp);
@@ -804,11 +807,12 @@ int32_t C_OscProtocolDriverOsyTpIp::BroadcastRequestProgramming(
       else
       {
          //check for responses
-         const uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
+         QElapsedTimer c_Timer;
+         c_Timer.start();
          uint8_t au8_Ip[4];
          std::vector<uint8_t> c_Response;
 
-         while ((stw::tgl::TglGetTickCount() - mu32_BroadcastTimeoutMs) < u32_StartTime)
+         while (c_Timer.hasExpired(mu32_BroadcastTimeoutMs) == false)
          {
             int32_t s32_ReturnLocal = mpc_Dispatcher->ReadUdp(c_Response, au8_Ip);
             if (s32_ReturnLocal == C_NO_ERR)

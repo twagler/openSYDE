@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Properties dialog for datapool properties
@@ -21,7 +21,7 @@
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscDeviceDefinition.hpp"
 #include "C_PuiSdUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_OscNodeDataPoolId.hpp"
@@ -34,7 +34,7 @@ using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -197,7 +197,7 @@ C_SdNdeDpProperties::C_SdNdeDpProperties(C_OgePopUpDialog & orc_Parent, C_OscNod
       {
          // Get the flag for the NVM start address mode
          const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_NodeIndex);
-         tgl_assert(pc_Node != NULL);
+         Q_ASSERT(pc_Node != NULL);
          if (pc_Node != NULL)
          {
             this->mq_DatapoolAutoNvmStartAddress = pc_Node->q_DatapoolAutoNvmStartAddress;
@@ -281,7 +281,7 @@ C_SdNdeDpProperties::C_SdNdeDpProperties(C_OgePopUpDialog & orc_Parent, C_OscNod
          const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(
             opc_SharedDatapoolId->u32_NodeIndex);
 
-         tgl_assert(pc_Node != NULL);
+         Q_ASSERT(pc_Node != NULL);
          if ((pc_Node != NULL) &&
              (opc_SharedDatapoolId->u32_DataPoolIndex < pc_Node->c_DataPools.size()))
          {
@@ -654,12 +654,12 @@ void C_SdNdeDpProperties::m_OkClicked(void)
 
          //Parse version
          //Format: v99.99r99;0
-         tgl_assert(c_Version.size() <= 9);
+         Q_ASSERT(c_Version.size() <= 9);
          if (c_Version.size() <= 9)
          {
             const QRegularExpression c_Separators("(\\.|r)");
             const QStringList c_Parts = c_Version.remove(0, 1).split(c_Separators);
-            tgl_assert(c_Parts.size() == 3);
+            Q_ASSERT(c_Parts.size() == 3);
             if (c_Parts.size() == 3)
             {
                this->mpc_OscDataPool->au8_Version[0] = static_cast<uint8_t>(c_Parts[0].toInt());
@@ -856,10 +856,10 @@ void C_SdNdeDpProperties::m_UpdateSizePrediction(void) const
    {
       const C_OscDeviceDefinition * const pc_DevDef = pc_Node->pc_DeviceDefinition;
       const uint32_t u32_SubDeviceIndex = pc_Node->u32_SubDeviceIndex;
-      tgl_assert(pc_DevDef != NULL);
+      Q_ASSERT(pc_DevDef != NULL);
       if (pc_DevDef != NULL)
       {
-         tgl_assert(u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size());
+         Q_ASSERT(u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size());
          if (u32_SubDeviceIndex < pc_DevDef->c_SubDevices.size())
          {
             uint32_t u32_SizeOfAllNvmDatapools = 0;
@@ -1028,10 +1028,10 @@ void C_SdNdeDpProperties::m_InitSpinBox(void) const
       {
          const C_OscDeviceDefinition * const pc_Device = pc_Node->pc_DeviceDefinition;
          const uint32_t u32_SubDeviceIndex = pc_Node->u32_SubDeviceIndex;
-         tgl_assert(pc_Device != NULL);
+         Q_ASSERT(pc_Device != NULL);
          if (pc_Device != NULL)
          {
-            tgl_assert(u32_SubDeviceIndex < pc_Device->c_SubDevices.size());
+            Q_ASSERT(u32_SubDeviceIndex < pc_Device->c_SubDevices.size());
             if (u32_SubDeviceIndex < pc_Device->c_SubDevices.size())
             {
                const uint32_t u32_Maximum = pc_Device->c_SubDevices[u32_SubDeviceIndex].u32_UserEepromSizeBytes;

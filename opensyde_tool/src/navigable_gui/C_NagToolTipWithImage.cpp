@@ -19,7 +19,7 @@
 #include <QIcon>
 
 #include "C_OgeWiUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_NagToolTipWithImage.hpp"
 #include "ui_C_NagToolTipWithImage.h"
 
@@ -160,7 +160,7 @@ void C_NagToolTipWithImage::SetType(const C_NagToolTipWithImage::E_Type oe_Type)
       c_NewType = "ERROR";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    C_OgeWiUtil::h_ApplyStylesheetProperty(this->mpc_Ui->mpc_GroupBox, "Type", c_NewType);

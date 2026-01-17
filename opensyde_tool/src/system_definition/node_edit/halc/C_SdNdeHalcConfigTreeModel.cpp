@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Tree model for HALC use case configuration.
@@ -13,7 +13,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeHalcConfigTreeModel.hpp"
 #include "C_TblTreItem.hpp"
 
@@ -22,7 +22,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
@@ -117,7 +117,7 @@ QVariant C_SdNdeHalcConfigTreeModel::headerData(const int32_t os32_Section, cons
             c_Retval = "Description";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -135,7 +135,7 @@ QVariant C_SdNdeHalcConfigTreeModel::headerData(const int32_t os32_Section, cons
             c_Retval = "Description";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -153,7 +153,7 @@ QVariant C_SdNdeHalcConfigTreeModel::headerData(const int32_t os32_Section, cons
             c_Retval = "Description of this parameter.";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -252,7 +252,7 @@ QVariant C_SdNdeHalcConfigTreeModel::data(const QModelIndex & orc_Index, const i
                   }
                   break;
                default:
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                   break;
                }
                break;
@@ -260,7 +260,7 @@ QVariant C_SdNdeHalcConfigTreeModel::data(const QModelIndex & orc_Index, const i
                c_Retval = pc_ParameterElement->c_Comment.c_str();
                break;
             default:
-               tgl_assert(false);
+               Q_ASSERT(false);
                break;
             }
          }
@@ -329,7 +329,7 @@ QVariant C_SdNdeHalcConfigTreeModel::data(const QModelIndex & orc_Index, const i
                c_Retval = static_cast<int32_t>(eURIEL_LINE_EDIT);
                break;
             default:
-               tgl_assert(false);
+               Q_ASSERT(false);
                break;
             }
          }
@@ -446,7 +446,7 @@ bool C_SdNdeHalcConfigTreeModel::setData(const QModelIndex & orc_Index, const QV
                         //Linked values
                         for (uint32_t u32_It = 0UL; u32_It < c_LinkedChannels.size(); ++u32_It)
                         {
-                           tgl_assert(C_PuiSdHandler::h_GetInstance()->SetHalcDomainChannelParameterConfigElementEnum(
+                           Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetHalcDomainChannelParameterConfigElementEnum(
                                          this->mu32_NodeIndex,
                                          this->mu32_DomainIndex,
                                          c_LinkedChannels[u32_It], u32_ParameterIndex, u32_ParameterElementIndex,
@@ -479,7 +479,7 @@ bool C_SdNdeHalcConfigTreeModel::setData(const QModelIndex & orc_Index, const QV
                            //Linked values
                            for (uint32_t u32_It = 0UL; u32_It < c_LinkedChannels.size(); ++u32_It)
                            {
-                              tgl_assert(
+                              Q_ASSERT(
                                  C_PuiSdHandler::h_GetInstance()->SetHalcDomainChannelParameterConfigElementBitmask(
                                     this->mu32_NodeIndex,
                                     this->mu32_DomainIndex,
@@ -511,7 +511,7 @@ bool C_SdNdeHalcConfigTreeModel::setData(const QModelIndex & orc_Index, const QV
                         //Linked values
                         for (uint32_t u32_It = 0UL; u32_It < c_LinkedChannels.size(); ++u32_It)
                         {
-                           tgl_assert(C_PuiSdHandler::h_GetInstance()->SetHalcDomainChannelParameterConfigElementPlain(
+                           Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetHalcDomainChannelParameterConfigElementPlain(
                                          this->mu32_NodeIndex,
                                          this->mu32_DomainIndex,
                                          c_LinkedChannels[u32_It], u32_ParameterIndex, u32_ParameterElementIndex,
@@ -535,7 +535,7 @@ bool C_SdNdeHalcConfigTreeModel::setData(const QModelIndex & orc_Index, const QV
                   //Linked values
                   for (uint32_t u32_It = 0UL; u32_It < c_LinkedChannels.size(); ++u32_It)
                   {
-                     tgl_assert(C_PuiSdHandler::h_GetInstance()->SetHalcDomainChannelParameterConfigElementString(
+                     Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetHalcDomainChannelParameterConfigElementString(
                                    this->mu32_NodeIndex,
                                    this->mu32_DomainIndex,
                                    c_LinkedChannels[u32_It], u32_ParameterIndex, u32_ParameterElementIndex,
@@ -544,7 +544,7 @@ bool C_SdNdeHalcConfigTreeModel::setData(const QModelIndex & orc_Index, const QV
                }
                break;
             default:
-               tgl_assert(false);
+               Q_ASSERT(false);
                break;
             }
             Q_EMIT (this->dataChanged(orc_Index, orc_Index, QVector<int32_t>() << os32_Role));

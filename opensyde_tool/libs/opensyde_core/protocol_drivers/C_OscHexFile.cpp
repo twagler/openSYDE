@@ -15,7 +15,7 @@
 #include "C_OscHexFile.hpp"
 #include "C_SclString.hpp"
 #include "CXFLECUInformation.hpp"
-#include "TglUtils.hpp"
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -74,12 +74,12 @@ int32_t C_OscHexFile::ScanDeviceIdFromHexFile(C_SclString & orc_DeviceId)
    int32_t s32_Return;
    C_SclString c_DeviceId = "";
 
-   C_SclDynamicArray<C_XFLECUInformation> c_InfoBlocks;
+   QList<C_XFLECUInformation> c_InfoBlocks;
    s32_Return = this->GetECUInformationBlocks(c_InfoBlocks, 0x0U, false, false, true);
-   if ((s32_Return == C_NO_ERR) && (c_InfoBlocks.GetLength() > 0))
+   if ((s32_Return == C_NO_ERR) && (c_InfoBlocks.size() > 0))
    {
       int32_t s32_Index;
-      for (s32_Index = 0; s32_Index < c_InfoBlocks.GetLength(); s32_Index++)
+      for (s32_Index = 0; s32_Index < c_InfoBlocks.size(); s32_Index++)
       {
          if (c_InfoBlocks[s32_Index].ContainsDeviceID() == true)
          {
@@ -135,17 +135,17 @@ int32_t C_OscHexFile::ScanApplicationInformationBlockFromHexFile(C_XFLECUInforma
 {
    int32_t s32_Return;
 
-   C_SclDynamicArray<C_XFLECUInformation> c_InfoBlocks;
+   QList<C_XFLECUInformation> c_InfoBlocks;
    s32_Return = this->GetECUInformationBlocks(c_InfoBlocks, 0x0U, false, false, true);
-   tgl_assert(s32_Return == C_NO_ERR); //no plausible reasons documented
+   Q_ASSERT(s32_Return == C_NO_ERR); //no plausible reasons documented
 
-   if (c_InfoBlocks.GetLength() == 0)
+   if (c_InfoBlocks.size() == 0)
    {
       s32_Return = C_NOACT;
    }
-   else if (c_InfoBlocks.GetLength() > 1)
+   else if (c_InfoBlocks.size() > 1)
    {
-      for (int32_t s32_Pos = 1; s32_Pos < c_InfoBlocks.GetLength(); s32_Pos++)
+      for (int32_t s32_Pos = 1; s32_Pos < c_InfoBlocks.size(); s32_Pos++)
       {
          // compare every device name with first device name, this is enough because all must be equal
          if (c_InfoBlocks[0].GetDeviceID() != c_InfoBlocks[s32_Pos].GetDeviceID())

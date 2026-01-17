@@ -33,7 +33,7 @@ set(PROJECT_ROOT ${PROJECT_SOURCE_DIR}/../..)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core Xml)
 find_package(Qt6 REQUIRED COMPONENTS Gui)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Svg)
@@ -721,6 +721,7 @@ add_subdirectory(${PROJECT_ROOT}/libs/opensyde_core ${CMAKE_BINARY_DIR}/opensyde
 # SET LIBRARIES
 set(OPENSYDE_LINK_LIBRARIES
    Qt6::Core
+   Qt6::Xml
    Qt6::Gui
    Qt6::Widgets
    Qt6::Svg

@@ -49,7 +49,7 @@ public:
    const C_KFXVariableBase * GetVariableByName(const stw::scl::C_SclString & orc_VariableName) const;
    C_KFXVariableBase * GetVariableByName(const stw::scl::C_SclString & orc_VariableName);
 
-   stw::scl::C_SclDynamicArray<C_KFXVariableBase> VariableList;
+   QList<C_KFXVariableBase> VariableList;
 };
 
 //---------------------------------------------------------------------------

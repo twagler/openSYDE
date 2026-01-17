@@ -9,11 +9,11 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscXmlParserLog.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscSystemFilerUtil.hpp"
@@ -22,7 +22,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -63,7 +63,7 @@ int32_t C_OscViewFiler::h_LoadSystemViewsFile(std::vector<C_OscViewData> & orc_V
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_PathSystemViews) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_PathSystemViews.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PathSystemViews.AsStdString())).isFile()) == true)
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading System Views");
@@ -144,7 +144,7 @@ int32_t C_OscViewFiler::h_LoadViewsOsc(std::vector<C_OscViewData> & orc_Views,
          }
          while ((c_CurrentViewNode == "opensyde-system-view") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-views");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-views");
       }
       //Compare length
       if ((s32_Retval == C_NO_ERR) && (q_ExpectedSizeHere == true))
@@ -158,7 +158,7 @@ int32_t C_OscViewFiler::h_LoadViewsOsc(std::vector<C_OscViewData> & orc_Views,
          }
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-views");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-views");
    }
    else
    {
@@ -190,7 +190,7 @@ int32_t C_OscViewFiler::h_LoadViewOsc(C_OscViewData & orc_View, C_OscXmlParserBa
    {
       orc_View.SetName(orc_XmlParser.GetNodeContent().c_str());
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
    }
    else
    {
@@ -218,7 +218,7 @@ int32_t C_OscViewFiler::h_LoadViewOsc(C_OscViewData & orc_View, C_OscXmlParserBa
                mh_LoadPc(c_OscPcData, orc_XmlParser);
                orc_View.SetOscPcData(c_OscPcData);
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
             }
             else
             {
@@ -252,10 +252,10 @@ void C_OscViewFiler::h_SaveNodeActiveFlags(const std::vector<uint8_t> & orc_Node
       orc_XmlParser.CreateAndSelectNodeChild("active-node");
       orc_XmlParser.SetAttributeBool("state", (orc_NodeActiveFlags[u32_ItNodeActiveFlag] == 1U));
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "active-nodes");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "active-nodes");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -316,10 +316,10 @@ void C_OscViewFiler::h_SaveNodeUpdateInformation(const std::vector<C_OscViewNode
       C_OscViewFiler::mh_SaveNodeUpdateInformationPem(rc_NodeUpdateInformation, orc_XmlParser);
 
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node-update-information");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-update-information");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -503,10 +503,10 @@ int32_t C_OscViewFiler::mh_LoadNodeActiveFlags(std::vector<uint8_t> & orc_NodeAc
          }
          while (c_CurrentNodeActiveFlagNode == "active-node");
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "active-nodes");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "active-nodes");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
    }
    else
    {
@@ -569,10 +569,10 @@ int32_t C_OscViewFiler::mh_LoadNodeUpdateInformation(std::vector<C_OscViewNodeUp
          }
          while ((c_CurrentNodeUpdateInformationNode == "node-update-information") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "node-update-informations");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-update-informations");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
    }
    else
    {
@@ -607,10 +607,10 @@ int32_t C_OscViewFiler::mh_LoadNodeUpdateInformation(std::vector<C_OscViewNodeUp
             while ((c_CurrentNodeUpdateInformationNode == "node-specific-update-information") &&
                    (s32_Retval == C_NO_ERR));
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "node-update-information");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-update-information");
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-system-view");
       }
       else
       {
@@ -665,7 +665,7 @@ void C_OscViewFiler::mh_LoadNodeUpdateInformationPaths(std::vector<C_SclString> 
          }
          while (c_CurrentPathNode == c_ChildName);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == c_ParentName);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == c_ParentName);
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -716,7 +716,7 @@ int32_t C_OscViewFiler::mh_LoadOneNodeUpdateInformation(C_OscViewNodeUpdate & or
          }
          while (c_CurrentNodeUpdateInformationNode == "path");
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "paths");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "paths");
       }
 
       // Adapt size for skip flags for compatibility
@@ -827,7 +827,7 @@ void C_OscViewFiler::mh_LoadNodeUpdateInformationParam(std::vector<C_OscViewNode
             {
                c_Path = orc_XmlParser.GetNodeContent();
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "param-set");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param-set");
             }
             else
             {
@@ -852,7 +852,7 @@ void C_OscViewFiler::mh_LoadNodeUpdateInformationParam(std::vector<C_OscViewNode
          }
          while (c_CurrentPathNode == "param-set");
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "param-sets");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param-sets");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -887,7 +887,7 @@ void C_OscViewFiler::mh_LoadNodeUpdateInformationSkipUpdateOfFiles(std::vector<b
          }
          while (c_CurrentNodeActiveFlagNode == "skip-update-of-file");
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "skip-update-of-files");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "skip-update-of-files");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -925,7 +925,7 @@ int32_t C_OscViewFiler::mh_LoadNodeUpdateInformationPem(C_OscViewNodeUpdate & or
          {
             orc_NodeUpdateInformation.SetPemFilePath(orc_XmlParser.GetNodeContent().c_str());
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "pem-file");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "pem-file");
          }
       }
       if (s32_Retval == C_NO_ERR)
@@ -936,7 +936,7 @@ int32_t C_OscViewFiler::mh_LoadNodeUpdateInformationPem(C_OscViewNodeUpdate & or
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "node-specific-update-information");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-specific-update-information");
       }
    }
 
@@ -973,7 +973,7 @@ int32_t C_OscViewFiler::mh_LoadNodeUpdateInformationPemStates(C_OscViewNodeUpdat
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "states");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "states");
          }
       }
       if (s32_Retval == C_NO_ERR)
@@ -986,7 +986,7 @@ int32_t C_OscViewFiler::mh_LoadNodeUpdateInformationPemStates(C_OscViewNodeUpdat
             if (s32_Retval == C_NO_ERR)
             {
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "states");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "states");
             }
          }
       }
@@ -995,7 +995,7 @@ int32_t C_OscViewFiler::mh_LoadNodeUpdateInformationPemStates(C_OscViewNodeUpdat
          orc_NodeUpdateInformation.SetStates(e_StateSecurity, e_StateDebugger);
 
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "pem-file");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "pem-file");
       }
    }
    return s32_Retval;
@@ -1100,7 +1100,7 @@ void C_OscViewFiler::mh_SaveNodeUpdateInformationPaths(const std::vector<C_SclSt
       orc_XmlParser.CreateNodeChild(c_ChildName, rc_Path);
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "node-specific-update-information");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-specific-update-information");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1122,10 +1122,10 @@ void C_OscViewFiler::mh_SaveNodeUpdateInformationParamInfo(const std::vector<C_O
       orc_XmlParser.SetAttributeUint32("last-known-crc", rc_ParamSetInfo.GetLastKnownCrc());
       orc_XmlParser.CreateNodeChild("path", rc_ParamSetInfo.GetPath());
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "param-sets");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param-sets");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "node-specific-update-information");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-specific-update-information");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1145,10 +1145,10 @@ void C_OscViewFiler::mh_SaveNodeUpdateInformationSkipUpdateOfFiles(const std::ve
       orc_XmlParser.CreateAndSelectNodeChild("skip-update-of-file");
       orc_XmlParser.SetAttributeBool("state", orc_Flags[u32_ItSkipFlag]);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "skip-update-of-files");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "skip-update-of-files");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "node-specific-update-information");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-specific-update-information");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1171,7 +1171,7 @@ void C_OscViewFiler::mh_SaveNodeUpdateInformationPem(const C_OscViewNodeUpdate &
    orc_XmlParser.CreateNodeChild("security", C_OscViewFiler::h_PemFileStateSecurityToString(e_StateSecurity));
    orc_XmlParser.CreateNodeChild("debugger", C_OscViewFiler::h_PemFileStateDebuggerToString(e_StateDebugger));
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "pem-file");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "pem-file");
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "node-specific-update-information");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-specific-update-information");
 }

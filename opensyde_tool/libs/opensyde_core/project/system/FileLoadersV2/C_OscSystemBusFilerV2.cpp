@@ -16,7 +16,7 @@
 #include "stwerrors.hpp"
 #include "C_OscSystemBusFilerV2.hpp"
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscSystemFilerUtil.hpp"
 #include "C_OscLoggingHandler.hpp"
 
@@ -64,7 +64,7 @@ int32_t C_OscSystemBusFilerV2::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParse
       {
          orc_Bus.c_Name = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
       }
       else
       {
@@ -78,7 +78,7 @@ int32_t C_OscSystemBusFilerV2::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParse
          {
             orc_Bus.c_Comment = orc_XmlParser.GetNodeContent();
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
          }
          //Type
          if (orc_XmlParser.SelectNodeChild("type") == "type")
@@ -90,7 +90,7 @@ int32_t C_OscSystemBusFilerV2::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParse
                s32_Retval = C_CONFIG;
             }
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
          }
          else
          {
@@ -114,7 +114,7 @@ int32_t C_OscSystemBusFilerV2::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParse
                s32_Retval = C_CONFIG;
             }
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
          }
          else
          {
@@ -138,7 +138,7 @@ int32_t C_OscSystemBusFilerV2::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParse
                s32_Retval = C_CONFIG;
             }
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
          }
          else
          {
@@ -162,7 +162,7 @@ int32_t C_OscSystemBusFilerV2::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParse
                s32_Retval = C_CONFIG;
             }
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
          }
          else
          {
@@ -171,7 +171,7 @@ int32_t C_OscSystemBusFilerV2::h_LoadBus(C_OscSystemBus & orc_Bus, C_OscXmlParse
          }
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
    }
    else
    {
@@ -197,34 +197,34 @@ void C_OscSystemBusFilerV2::h_SaveBus(const C_OscSystemBus & orc_Bus, C_OscXmlPa
    const C_SclString c_BitRate(orc_Bus.u64_BitRate);
    const C_SclString c_RxTimeout(orc_Bus.u16_RxTimeoutOffsetMs);
 
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("core") == "core");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("core") == "core");
    //Name
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("name") == "name");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("name") == "name");
    orc_XmlParser.SetNodeContent(orc_Bus.c_Name);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
    //Comment
    orc_XmlParser.CreateNodeChild("comment", orc_Bus.c_Comment);
    //Type
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("type") == "type");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("type") == "type");
    orc_XmlParser.SetNodeContent(C_OscSystemFilerUtil::h_BusTypeEnumToString(orc_Bus.e_Type));
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
    //Bitrate
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("bitrate") == "bitrate");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("bitrate") == "bitrate");
    orc_XmlParser.SetAttributeString("number", c_BitRate);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
    //Bus id
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("bus-id") == "bus-id");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("bus-id") == "bus-id");
    orc_XmlParser.SetAttributeUint32("number", orc_Bus.u8_BusId);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
    //Bitrate
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("rx-delta-time") == "rx-delta-time");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("rx-delta-time") == "rx-delta-time");
    orc_XmlParser.SetAttributeString("number", c_RxTimeout);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "core");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "core");
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "bus");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus");
 }

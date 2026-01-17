@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Message receiver edit list (implementation)
@@ -10,12 +10,12 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
-#include "TglUtils.hpp"
+
 #include "C_SdBueMessageRxList.hpp"
 #include "ui_C_SdBueMessageRxList.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
 
@@ -178,7 +178,7 @@ void C_SdBueMessageRxList::AddNodes(const std::vector<QString> & orc_EntryNames,
    }
    else
    {
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 }
 
@@ -265,7 +265,7 @@ void C_SdBueMessageRxList::CheckNodes(const std::vector<uint32_t> & orc_NodeInde
    }
    else
    {
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 }
 
@@ -306,7 +306,7 @@ void C_SdBueMessageRxList::SetModeSingleNode(const bool oq_ModeSingleNode)
    if (this->mq_ModeSingleNode == true)
    {
       // Only one node should exist
-      tgl_assert(this->mc_Entries.size() == 1);
+      Q_ASSERT(this->mc_Entries.size() == 1);
       if (this->mc_Entries.size() == 1)
       {
          // First scenario: One Datapool, one entry. User is not allowed to deselect the item

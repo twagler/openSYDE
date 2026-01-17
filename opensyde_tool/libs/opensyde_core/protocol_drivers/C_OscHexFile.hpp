@@ -14,7 +14,7 @@
 #include "stwtypes.hpp"
 #include "CXFLHexFile.hpp"
 #include "C_SclString.hpp"
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 
 //----------------------------------------------------------------------------------------------------------------------
 

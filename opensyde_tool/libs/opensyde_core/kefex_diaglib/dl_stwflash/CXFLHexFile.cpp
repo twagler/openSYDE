@@ -8,14 +8,14 @@
 #include "DLLocalize.hpp"
 #include "CXFLHexFile.hpp"
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclChecksums.hpp"
 
 using namespace stw::errors;
 using namespace stw::hex_file;
 using namespace stw::diag_lib;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 //-----------------------------------------------------------------------------
 /*!
@@ -35,30 +35,30 @@ C_SclString C_XFLHexFile::ErrorCodeToErrorText(const uint32_t ou32_ErrorCode) co
    switch (ou32_ErrorCode & ERR_MASK)
    {
    case WRN_NO_EOF_RECORD:
-      c_Text = TGL_LoadStr(STR_FM_ERR_RD_HF_EOF);
+      c_Text = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_HF_EOF);
       break;
    case WRN_RECORD_OVERLAY:
       u32_Address = this->GetLastOverlayErrorAddress(); //ou32_ErrorCode only contains lowest 7 nibbles !
       c_Text.PrintFormatted("Error in Hexfile: Address 0x%08x used twice !", u32_Address);
       break;
    case ERR_HEXLINE_SYNTAX:
-      c_Text.PrintFormatted("%s %d", TGL_LoadStr(STR_FM_ERR_RD_HF_LINE_SYNTAX).c_str(), ou32_ErrorCode & 0x0FFFFFFFUL);
+      c_Text.PrintFormatted("%s %d", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_HF_LINE_SYNTAX).c_str(), ou32_ErrorCode & 0x0FFFFFFFUL);
       break;
    case ERR_HEXLINE_CHECKSUM:
-      c_Text.PrintFormatted("%s %d", TGL_LoadStr(STR_FM_ERR_RD_HF_LINE_CHECKSUM).c_str(),
+      c_Text.PrintFormatted("%s %d", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_HF_LINE_CHECKSUM).c_str(),
                             ou32_ErrorCode & 0x0FFFFFFFUL);
       break;
    case ERR_HEXLINE_COMMAND:
-      c_Text.PrintFormatted("%s %d", TGL_LoadStr(STR_FM_ERR_RD_HF_LINE_COMMAND).c_str(), ou32_ErrorCode & 0x0FFFFFFFUL);
+      c_Text.PrintFormatted("%s %d", stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_HF_LINE_COMMAND).c_str(), ou32_ErrorCode & 0x0FFFFFFFUL);
       break;
    case ERR_NOT_ENOUGH_MEMORY:
-      c_Text = TGL_LoadStr(STR_FM_ERR_RD_HF_MEMORY);
+      c_Text = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_HF_MEMORY);
       break;
    case ERR_CANT_OPEN_FILE:
-      c_Text = TGL_LoadStr(STR_FM_ERR_RD_HF_OPEN_FILE);
+      c_Text = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_HF_OPEN_FILE);
       break;
    default:
-      c_Text = TGL_LoadStr(STR_FM_ERR_RD_HF_UNDEFINED);
+      c_Text = stw::opensyde_core::C_OscUtils::h_LoadString(STR_FM_ERR_RD_HF_UNDEFINED);
       break;
    }
    return c_Text;
@@ -84,7 +84,7 @@ C_SclString C_XFLHexFile::ErrorCodeToErrorText(const uint32_t ou32_ErrorCode) co
    C_NOACT      if oq_ExactAddressMatch: no block found at specified address
 */
 //-----------------------------------------------------------------------------
-int32_t C_XFLHexFile::GetECUInformationBlocks(C_SclDynamicArray<C_XFLECUInformation> & orc_InfoBlocks,
+int32_t C_XFLHexFile::GetECUInformationBlocks(QList<C_XFLECUInformation> & orc_InfoBlocks,
                                               const uint32_t ou32_SearchStartAddress, const bool oq_OnlyOneBlock,
                                               const bool oq_ExactAddressMatch, const bool oq_Block0Only)
 {
@@ -98,7 +98,7 @@ int32_t C_XFLHexFile::GetECUInformationBlocks(C_SclDynamicArray<C_XFLECUInformat
    s32_Return = C_NO_ERR;
    char_t acn_Magic[XFL_DEVICE_INFO_MAGIC_LENGTH_V2];
 
-   orc_InfoBlocks.SetLength(0);
+   orc_InfoBlocks.resize(0);
 
    while (true)
    {
@@ -179,8 +179,8 @@ int32_t C_XFLHexFile::GetECUInformationBlocks(C_SclDynamicArray<C_XFLECUInformat
          {
             //we have all the data !
             //-> add to array
-            orc_InfoBlocks.IncLength();
-            orc_InfoBlocks[orc_InfoBlocks.GetHigh()] = c_Block;
+            orc_InfoBlocks.resize(orc_InfoBlocks.size() + 1);
+            orc_InfoBlocks[(orc_InfoBlocks.size() > 0 ? orc_InfoBlocks.size() - 1 : 0)] = c_Block;
             if (oq_OnlyOneBlock == true)
             {
                break;
@@ -229,7 +229,7 @@ int32_t C_XFLHexFile::CalcFileChecksum(uint32_t & oru32_Checksum)
    }
 
    oru32_Checksum = static_cast<uint32_t>(~0x56489437U); //fixed start value !
-   for (uint32_t u32_Index = 0U; u32_Index < static_cast<uint32_t>(pc_Dump->at_Blocks.GetLength()); u32_Index++)
+   for (uint32_t u32_Index = 0U; u32_Index < static_cast<uint32_t>(pc_Dump->at_Blocks.size()); u32_Index++)
    {
       //address (serialize to make the code endian-safe):
       const uint32_t u32_AddressOffset = pc_Dump->at_Blocks[u32_Index].u32_AddressOffset;
@@ -246,7 +246,7 @@ int32_t C_XFLHexFile::CalcFileChecksum(uint32_t & oru32_Checksum)
 
       //data:
       C_SclChecksums::CalcCRC32(&pc_Dump->at_Blocks[u32_Index].au8_Data[0],
-                                pc_Dump->at_Blocks[u32_Index].au8_Data.GetLength(), oru32_Checksum);
+                                pc_Dump->at_Blocks[u32_Index].au8_Data.size(), oru32_Checksum);
    }
 
    oru32_Checksum = ~oru32_Checksum;

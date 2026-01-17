@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for an existing node entry (implementation)
@@ -16,7 +16,7 @@
 #include <QDragLeaveEvent>
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -219,7 +219,7 @@ void C_SyvDcExistingNodeWidget::AppendDeviceConfig(std::vector<C_SyvDcDeviceConf
       else
       {
          uint32_t u32_NodeSquadIndex;
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->GetNodeSquadIndexWithNodeIndex(this->mu32_NodeIndex,
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetNodeSquadIndexWithNodeIndex(this->mu32_NodeIndex,
                                                                                     u32_NodeSquadIndex) == C_NO_ERR);
          const C_OscNodeSquad * const pc_Squad = C_PuiSdHandler::h_GetInstance()->GetOscNodeSquad(u32_NodeSquadIndex);
 
@@ -448,21 +448,21 @@ void C_SyvDcExistingNodeWidget::dropEvent(QDropEvent * const opc_Event)
                               }
                               if (q_IpAddressOk == false)
                               {
-                                 tgl_assert(false);
+                                 Q_ASSERT(false);
                                  q_IpAddressValid = false;
                                  q_ErrorDetected = true;
                               }
                            }
                            else
                            {
-                              tgl_assert(false);
+                              Q_ASSERT(false);
                               q_IpAddressValid = false;
                               q_ErrorDetected = true;
                            }
                         }
                         else
                         {
-                           tgl_assert(false);
+                           Q_ASSERT(false);
                            q_IpAddressValid = false;
                            q_ErrorDetected = true;
                         }
@@ -503,7 +503,7 @@ void C_SyvDcExistingNodeWidget::dropEvent(QDropEvent * const opc_Event)
                   {
                      const C_OscNodeSquad * const pc_Squad = C_PuiSdHandler::h_GetInstance()->GetOscNodeSquadConst(
                         u32_SquadIndex);
-                     tgl_assert(pc_Squad != NULL);
+                     Q_ASSERT(pc_Squad != NULL);
                      if (pc_Squad != NULL)
                      {
                         const uint32_t u32_CountSubNodes = pc_Squad->c_SubNodeIndexes.size();
@@ -531,7 +531,7 @@ void C_SyvDcExistingNodeWidget::dropEvent(QDropEvent * const opc_Event)
                   else
                   {
                      // Should not happen
-                     tgl_assert(false);
+                     Q_ASSERT(false);
                   }
                }
             }
@@ -726,7 +726,7 @@ void C_SyvDcExistingNodeWidget::mh_AppendDeviceConfigForNode(const uint32_t ou32
             else
             {
                // Should not happen. Must be handled earlier
-               tgl_assert(false);
+               Q_ASSERT(false);
             }
 
             //Append current ID

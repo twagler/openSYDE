@@ -12,13 +12,13 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SebUtil.hpp"
 #include "C_PuiSdUtil.hpp"
 #include "C_SdTopologyDataSnapshot.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
 

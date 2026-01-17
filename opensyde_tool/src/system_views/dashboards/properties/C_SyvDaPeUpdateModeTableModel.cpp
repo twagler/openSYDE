@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Table model for system view dashboard data element update mode (implementation)
@@ -14,7 +14,7 @@
 
 #include <limits>
 #include "C_SdUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "stwerrors.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -25,7 +25,7 @@
 #include "C_SyvDaPeUpdateModeTableModel.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui;
@@ -69,12 +69,12 @@ C_SyvDaPeUpdateModeTableModel::C_SyvDaPeUpdateModeTableModel(const uint32_t ou32
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDaPeUpdateModeTableModel::ApplyData(void) const
 {
-   tgl_assert(this->mc_UniqueDataElementIds.size() == this->mc_DataElementConfigurations.size());
+   Q_ASSERT(this->mc_UniqueDataElementIds.size() == this->mc_DataElementConfigurations.size());
    if (this->mc_UniqueDataElementIds.size() == this->mc_DataElementConfigurations.size())
    {
       for (uint32_t u32_It = 0; u32_It < this->mc_UniqueDataElementIds.size(); ++u32_It)
       {
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetViewReadRailAssignment(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetViewReadRailAssignment(this->mu32_ViewIndex,
                                                                                this->mc_UniqueDataElementIds[u32_It],
                                                                                this->mc_DataElementConfigurations[
                                                                                   u32_It]) == C_NO_ERR);
@@ -487,7 +487,7 @@ QVariant C_SyvDaPeUpdateModeTableModel::data(const QModelIndex & orc_Index, cons
                               c_Tmp.push_back(":/images/system_definition/NodeEdit/halc/OtherSmallActive.svg");
                               break;
                            default:
-                              tgl_assert(false);
+                              Q_ASSERT(false);
                               break;
                            }
                         }
@@ -526,7 +526,7 @@ QVariant C_SyvDaPeUpdateModeTableModel::data(const QModelIndex & orc_Index, cons
                   c_Retval = c_INACTIVE_2;
                   break;
                default:
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                   break;
                }
             }
@@ -1001,7 +1001,7 @@ QString C_SyvDaPeUpdateModeTableModel::m_RailIndexToString(const uint8_t ou8_Rai
    QString c_Retval;
    const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
-   tgl_assert(pc_View != NULL);
+   Q_ASSERT(pc_View != NULL);
    if (pc_View != NULL)
    {
       switch (ou8_RailIndex)

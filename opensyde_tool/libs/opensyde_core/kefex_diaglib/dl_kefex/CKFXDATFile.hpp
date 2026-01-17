@@ -22,16 +22,16 @@ private:
    static int32_t m_BufferToLists(const uint8_t * const opu8_Buffer, C_KFXVariableLists & orc_VariableLists,
                                   const uint16_t ou16_NumListsInDat, const uint32_t ou32_NumBytesTotal,
                                   const bool oq_SingleList, const uint16_t ou16_SingleListIndex,
-                                  stw::scl::C_SclDynamicArray<uint8_t> * const opc_ListsLoaded);
+                                  QList<uint8_t> * const opc_ListsLoaded);
 
 public:
    //DAT -> Default
    static int32_t LoadDATList(const stw::scl::C_SclString & orc_FileName, const stw::scl::C_SclString & orc_DeviceName,
                               C_KFXVariableLists & orc_VariableLists, const int32_t os32_ListIndex,
-                              stw::scl::C_SclDynamicArray<uint8_t> * const opc_ListsLoaded = NULL);
+                              QList<uint8_t> * const opc_ListsLoaded = NULL);
    static int32_t LoadDATAllLists(const stw::scl::C_SclString & orc_FileName,
                                   const stw::scl::C_SclString & orc_DeviceName, C_KFXVariableLists & orc_VariableLists,
-                                  stw::scl::C_SclDynamicArray<uint8_t> * const opc_ListsLoaded = NULL);
+                                  QList<uint8_t> * const opc_ListsLoaded = NULL);
 };
 }
 }

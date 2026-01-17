@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclChecksums.hpp"
 #include "C_PuiSvReadDataConfiguration.hpp"
 
@@ -169,7 +169,7 @@ int32_t C_PuiSvReadDataConfiguration::InitDefaultThreshold(const stw::opensyde_c
                break;
             }
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }
@@ -261,7 +261,7 @@ int32_t C_PuiSvReadDataConfiguration::InitDefaultThreshold(const stw::opensyde_c
                      break;
                   }
                default:
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                   break;
                }
             }

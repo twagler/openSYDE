@@ -47,7 +47,7 @@ public:
    stw::scl::C_SclString c_ShortName;
    uint16_t u16_Length; ///< total size of service in bytes
 
-   stw::scl::C_SclDynamicArray<C_CanMonProtocolSipPayload> c_Payload;
+   QList<C_CanMonProtocolSipPayload> c_Payload;
 
    void Set(const stw::scl::C_SclString & orc_ShortName, const uint16_t ou16_Length);
 };
@@ -60,12 +60,12 @@ class C_CanMonProtocolSipAsnDescription
 public:
    //index is implicit as they start from zero !
    stw::scl::C_SclString c_ShortName;
-   stw::scl::C_SclString c_AspPrefix;                                 ///< if c_ASPs.GetLength() == 0: meaning of ASP
+   stw::scl::C_SclString c_AspPrefix;                                 ///< if c_ASPs.size() == 0: meaning of ASP
                                                                       // (e.g. "CH" or "IDX")
-   uint16_t u16_Length;                                               ///< if c_ASPs.GetLength() == 0: expected size of
+   uint16_t u16_Length;                                               ///< if c_ASPs.size() == 0: expected size of
                                                                       // APAY
-   stw::scl::C_SclDynamicArray<C_CanMonProtocolSipPayload> c_Payload; ///< if c_ASPs.GetLength() == 0
-   stw::scl::C_SclDynamicArray<C_CanMonProtocolSipAspDescription> c_Asps;
+   QList<C_CanMonProtocolSipPayload> c_Payload; ///< if c_ASPs.size() == 0
+   QList<C_CanMonProtocolSipAspDescription> c_Asps;
 
    void Set(const stw::scl::C_SclString & orc_ShortName, const uint8_t ou8_NumAsps,
             const stw::scl::C_SclString & orc_AspPrefix = "", const uint16_t ou16_Length = 0);
@@ -79,7 +79,7 @@ class C_CanMonProtocolSipAsaDescription
 public:
    //index is implicit as they start from zero !
    stw::scl::C_SclString c_ShortName;
-   stw::scl::C_SclDynamicArray<C_CanMonProtocolSipAsnDescription> c_Asns;
+   QList<C_CanMonProtocolSipAsnDescription> c_Asns;
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -91,9 +91,9 @@ class C_CanMonProtocolShipIpIva :
 private:
    static bool hmq_ServiceTableInitialized;
    static void hm_InitServiceTable(void);
-   static stw::scl::C_SclDynamicArray<C_CanMonProtocolSipAsaDescription> hmc_Services;
+   static QList<C_CanMonProtocolSipAsaDescription> hmc_Services;
 
-   stw::scl::C_SclString m_SipDecodeData(const stw::scl::C_SclDynamicArray<C_CanMonProtocolSipPayload> & orc_Payload,
+   stw::scl::C_SclString m_SipDecodeData(const QList<C_CanMonProtocolSipPayload> & orc_Payload,
                                          const uint8_t ou8_NumBytesInPayload, const uint8_t * const opu8_Payload) const;
 
    stw::scl::C_SclString m_MessageToString11Bit(const stw::can::T_STWCAN_Msg_RX & orc_Msg) const;
@@ -104,7 +104,7 @@ private:
    stw::scl::C_SclString m_Sip11MessageToString(const stw::can::T_STWCAN_Msg_RX & orc_Msg) const;
    stw::scl::C_SclString m_SipDecodeSfFfReadWriteHeader(const uint8_t ou8_Asa, const uint8_t ou8_Asn,
                                                         const uint8_t ou8_Asp,
-                                                        stw::scl::C_SclDynamicArray<C_CanMonProtocolSipPayload> ** const oppc_Payload)
+                                                        QList<C_CanMonProtocolSipPayload> ** const oppc_Payload)
    const;
    stw::scl::C_SclString m_SipGetTpErrorFromCode(const uint8_t ou8_ErrorCode) const;
    stw::scl::C_SclString m_SipGetAppErrorFromCode(const uint8_t ou8_ErrorCode) const;

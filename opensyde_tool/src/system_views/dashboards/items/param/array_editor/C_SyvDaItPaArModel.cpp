@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Node data pool list array edit model (implementation)
@@ -14,7 +14,7 @@
 
 #include "C_Uti.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_GiSvDaParam.hpp"
@@ -25,7 +25,7 @@
 #include "C_SdNdeDpContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -287,7 +287,7 @@ bool C_SyvDaItPaArModel::setData(const QModelIndex & orc_Index, const QVariant &
                                                                                    pc_OscElement->f64_Factor,
                                                                                    pc_OscElement->f64_Offset,
                                                                                    u32_Index);
-                     tgl_assert(pc_ParamWidget->SetParamItem(c_Copy) == C_NO_ERR);
+                     Q_ASSERT(pc_ParamWidget->SetParamItem(c_Copy) == C_NO_ERR);
                      q_Retval = true;
                   }
                }

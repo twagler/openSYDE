@@ -9,13 +9,13 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "stwerrors.hpp"
 
 #include "C_SyvUpPacConfigFiler.hpp"
 
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclString.hpp"
 #include "C_OscXmlParserLog.hpp"
 #include "C_OscLoggingHandler.hpp"
@@ -56,7 +56,7 @@ int32_t C_SyvUpPacConfigFiler::h_LoadConfig(const QString & orc_FilePath, C_SyvU
 {
    int32_t s32_Return = C_RD_WR;
 
-   if (stw::tgl::TglFileExists(orc_FilePath.toStdString().c_str()) == true)
+   if (QFileInfo(orc_FilePath).exists() && QFileInfo(orc_FilePath).isFile())
    {
       C_OscXmlParserLog c_XmlParser;
 
@@ -97,13 +97,13 @@ int32_t C_SyvUpPacConfigFiler::h_LoadConfig(const QString & orc_FilePath, C_SyvU
                }
 
                //Return
-               tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-update-package-configuration");
+               Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-update-package-configuration");
 
                // Get all nodes
                if (mh_LoadNodes(c_XmlParser, orc_Config) == true)
                {
                   //Return
-                  tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-update-package-configuration");
+                  Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-update-package-configuration");
                }
                else
                {
@@ -144,7 +144,7 @@ int32_t C_SyvUpPacConfigFiler::h_SaveConfig(const QString & orc_FilePath, const 
    int32_t s32_Return = C_RANGE;
    C_OscXmlParser c_XmlParser;
 
-   if (stw::tgl::TglFileExists(orc_FilePath.toStdString().c_str()) == false)
+   if (QFileInfo(orc_FilePath).exists() && QFileInfo(orc_FilePath).isFile())
    {
       bool q_Success;
 
@@ -162,7 +162,7 @@ int32_t C_SyvUpPacConfigFiler::h_SaveConfig(const QString & orc_FilePath, const 
          {
             c_XmlParser.SetNodeContent(C_SclString::IntToStr(hu16_FILE_VERSION_LATEST));
             //Return
-            tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-update-package-configuration");
+            Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-update-package-configuration");
          }
       }
 
@@ -241,7 +241,7 @@ bool C_SyvUpPacConfigFiler::mh_SaveNode(C_OscXmlParser & orc_XmlParser, const C_
          if (q_Success == true)
          {
             // Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
          }
       }
 
@@ -263,7 +263,7 @@ bool C_SyvUpPacConfigFiler::mh_SaveNode(C_OscXmlParser & orc_XmlParser, const C_
          }
 
          // Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
       }
 
       if (q_Success == true)
@@ -287,7 +287,7 @@ bool C_SyvUpPacConfigFiler::mh_SaveNode(C_OscXmlParser & orc_XmlParser, const C_
          if (q_Success == true)
          {
             // Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
          }
       }
 
@@ -297,7 +297,7 @@ bool C_SyvUpPacConfigFiler::mh_SaveNode(C_OscXmlParser & orc_XmlParser, const C_
       }
 
       // Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "nodes");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "nodes");
    }
 
    return q_Success;
@@ -317,7 +317,7 @@ bool C_SyvUpPacConfigFiler::mh_SaveApp(C_OscXmlParser & orc_XmlParser, const C_S
       orc_XmlParser.CreateNodeChild("path", orc_AppConfig.c_Path.toStdString().c_str());
 
       // Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "applications");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "applications");
    }
 
    return q_Success;
@@ -335,7 +335,7 @@ bool C_SyvUpPacConfigFiler::mh_SaveParamSet(C_OscXmlParser & orc_XmlParser, cons
       orc_XmlParser.CreateNodeChild("path", orc_Path.toStdString().c_str());
 
       // Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "parameter-set-images");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameter-set-images");
    }
 
    return q_Success;
@@ -353,7 +353,7 @@ bool C_SyvUpPacConfigFiler::mh_SaveFile(C_OscXmlParser & orc_XmlParser, const QS
       orc_XmlParser.CreateNodeChild("path", orc_Path.toStdString().c_str());
 
       // Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "files");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "files");
    }
 
    return q_Success;
@@ -377,9 +377,9 @@ void C_SyvUpPacConfigFiler::mh_SaveNodeUpdateInformationPem(const C_SyvUpPacConf
    orc_XmlParser.CreateNodeChild("debugger",
                                  C_OscViewFiler::h_PemFileStateDebuggerToString(orc_NodeConfig.e_StateDebugger));
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "pem-file");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "pem-file");
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -400,7 +400,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadNodes(C_OscXmlParser & orc_XmlParser, C_SyvUp
             {
                c_NodeConfig.c_Name = orc_XmlParser.GetNodeContent().c_str();
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
             }
             else
             {
@@ -412,7 +412,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadNodes(C_OscXmlParser & orc_XmlParser, C_SyvUp
             {
                c_NodeConfig.c_DeviceType = orc_XmlParser.GetNodeContent().c_str();
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
             }
             else
             {
@@ -428,7 +428,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadNodes(C_OscXmlParser & orc_XmlParser, C_SyvUp
                if (q_Success == true)
                {
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
                }
             }
 
@@ -441,7 +441,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadNodes(C_OscXmlParser & orc_XmlParser, C_SyvUp
                if (q_Success == true)
                {
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
                }
             }
 
@@ -454,7 +454,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadNodes(C_OscXmlParser & orc_XmlParser, C_SyvUp
                if (q_Success == true)
                {
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
                }
             }
 
@@ -479,7 +479,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadNodes(C_OscXmlParser & orc_XmlParser, C_SyvUp
          while (orc_XmlParser.SelectNodeNext("node") == "node");
 
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "nodes");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "nodes");
       }
    }
    else
@@ -509,7 +509,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadApps(C_OscXmlParser & orc_XmlParser, C_SyvUpP
                C_OscNodeApplication::h_StringToApplication(orc_XmlParser.GetNodeContent(), c_AppConfig.e_Type);
 
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "application");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "application");
             }
             else
             {
@@ -521,7 +521,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadApps(C_OscXmlParser & orc_XmlParser, C_SyvUpP
             {
                c_AppConfig.c_Name = orc_XmlParser.GetNodeContent().c_str();
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "application");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "application");
             }
             else
             {
@@ -533,7 +533,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadApps(C_OscXmlParser & orc_XmlParser, C_SyvUpP
             {
                c_AppConfig.c_Path = orc_XmlParser.GetNodeContent().c_str();
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "application");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "application");
             }
             else
             {
@@ -553,7 +553,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadApps(C_OscXmlParser & orc_XmlParser, C_SyvUpP
          while (orc_XmlParser.SelectNodeNext("application") == "application");
 
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "applications");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "applications");
       }
    }
    else
@@ -582,7 +582,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadParamSets(C_OscXmlParser & orc_XmlParser, C_S
             {
                c_Path = orc_XmlParser.GetNodeContent().c_str();
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "parameter-set-image");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameter-set-image");
             }
             else
             {
@@ -605,7 +605,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadParamSets(C_OscXmlParser & orc_XmlParser, C_S
          if (q_Success == true)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "parameter-set-images");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "parameter-set-images");
          }
       }
    }
@@ -635,7 +635,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadFiles(C_OscXmlParser & orc_XmlParser, C_SyvUp
             {
                c_Path = orc_XmlParser.GetNodeContent().c_str();
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "file");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "file");
             }
             else
             {
@@ -658,7 +658,7 @@ bool C_SyvUpPacConfigFiler::mh_LoadFiles(C_OscXmlParser & orc_XmlParser, C_SyvUp
          if (q_Success == true)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "files");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "files");
          }
       }
    }
@@ -695,14 +695,14 @@ int32_t C_SyvUpPacConfigFiler::mh_LoadNodeUpdateInformationPem(C_SyvUpPacConfigN
       {
          orc_NodeConfig.c_PemFilePath = orc_XmlParser.GetNodeContent().c_str();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "pem-file");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "pem-file");
          s32_Retval = C_SyvUpPacConfigFiler::mh_LoadNodeUpdateInformationPemStates(orc_NodeConfig,
                                                                                    orc_XmlParser);
       }
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
       }
    }
 
@@ -739,7 +739,7 @@ int32_t C_SyvUpPacConfigFiler::mh_LoadNodeUpdateInformationPemStates(C_SyvUpPacC
          {
             orc_NodeConfig.e_StateSecurity = e_StateSecurity;
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "states");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "states");
          }
       }
       if (s32_Retval == C_NO_ERR)
@@ -754,14 +754,14 @@ int32_t C_SyvUpPacConfigFiler::mh_LoadNodeUpdateInformationPemStates(C_SyvUpPacC
             {
                orc_NodeConfig.e_StateDebugger = e_StateDebugger;
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "states");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "states");
             }
          }
       }
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "pem-file");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "pem-file");
       }
    }
    return s32_Retval;

@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Base widget for log job data selection
@@ -22,7 +22,7 @@
 #include "C_PuiSdHandler.hpp"
 #include "C_OscNodeDataPoolListElement.hpp"
 #include "C_Uti.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
@@ -208,7 +208,7 @@ void C_SdNdeDalLogJobDataSelectionWidget::m_AddClicked()
          {
             if (c_DataElements[u32_Counter].GetIsValid() == true)
             {
-               tgl_assert(C_PuiSdHandler::h_GetInstance()->CheckAndHandleNewElement(
+               Q_ASSERT(C_PuiSdHandler::h_GetInstance()->CheckAndHandleNewElement(
                              c_DataElements[u32_Counter]) == C_NO_ERR);
 
                C_OscDataLoggerDataElementReference c_Data;

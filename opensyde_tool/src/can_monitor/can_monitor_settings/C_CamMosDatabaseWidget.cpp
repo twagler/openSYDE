@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for configuring database files like DBC or syde_sysdef files.
@@ -20,7 +20,7 @@
 
 #include "stwtypes.hpp"
 #include "C_OgeWiUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_CamProHandler.hpp"
 #include "stwerrors.hpp"
 #include "C_OgePopUpDialog.hpp"
@@ -114,7 +114,7 @@ void C_CamMosDatabaseWidget::OnLoadFinishedDbc(const int32_t os32_Result)
       if (this->mc_DatabasesToLoad[0] != NULL)
       {
          const C_CamProDatabaseData c_Database = mc_DatabasesToLoad[0]->GetDatabaseData();
-         tgl_assert(c_Database.c_Name.endsWith(".dbc", Qt::CaseInsensitive) == true);
+         Q_ASSERT(c_Database.c_Name.endsWith(".dbc", Qt::CaseInsensitive) == true);
       }
    }
 
@@ -138,7 +138,7 @@ void C_CamMosDatabaseWidget::OnLoadFinishedOsySysDef(const int32_t os32_Result,
    {
       if (this->mc_DatabasesToLoad[0] != NULL)
       {
-         tgl_assert(this->mc_DatabasesToLoad[0]->GetDatabaseData().c_Name.endsWith(".syde_sysdef",
+         Q_ASSERT(this->mc_DatabasesToLoad[0]->GetDatabaseData().c_Name.endsWith(".syde_sysdef",
                                                                                    Qt::CaseInsensitive) == true);
 
          // remember buses
@@ -303,7 +303,7 @@ void C_CamMosDatabaseWidget::OnSigSavedAsNew(void) const
    for (std::vector<C_CamMosDatabaseItemWidget *>::const_iterator c_It = mc_Entries.begin(); c_It != mc_Entries.end();
         ++c_It)
    {
-      tgl_assert((*c_It != NULL) && (u32_It < c_Databases.size()));
+      Q_ASSERT((*c_It != NULL) && (u32_It < c_Databases.size()));
       if ((*c_It != NULL) && (u32_It < c_Databases.size()))
       {
          const C_CamProDatabaseData & rc_Database = c_Databases[u32_It];
@@ -592,11 +592,11 @@ void C_CamMosDatabaseWidget::m_RemoveDatabase(C_CamMosDatabaseItemWidget * const
       this->m_RemoveDatabaseWidget(opc_ItemWidget);
 
       // update data handling
-      tgl_assert(C_CamProHandler::h_GetInstance()->DeleteDatabase(s32_IndexToRemove) == C_NO_ERR);
+      Q_ASSERT(C_CamProHandler::h_GetInstance()->DeleteDatabase(s32_IndexToRemove) == C_NO_ERR);
    }
 
    // number of database widgets should now equal number of filters in data handling
-   tgl_assert(C_CamProHandler::h_GetInstance()->GetDatabases().size() == mc_Entries.size());
+   Q_ASSERT(C_CamProHandler::h_GetInstance()->GetDatabases().size() == mc_Entries.size());
 
    // eventually show "no database" label
    if (this->mc_Entries.size() == 0)
@@ -654,7 +654,7 @@ bool C_CamMosDatabaseWidget::m_ActivateDatabase(const C_CamMosDatabaseItemWidget
    if (q_Continue)
    {
       // index is -1 if item widget is NULL which can not happen
-      tgl_assert(s32_Index >= 0);
+      Q_ASSERT(s32_Index >= 0);
       if (s32_Index >= 0)
       {
          C_CamProHandler::h_GetInstance()->SetDatabaseEnabled(s32_Index, orq_Enable);
@@ -689,7 +689,7 @@ void C_CamMosDatabaseWidget::m_UpdateDatabasePath(C_CamMosDatabaseItemWidget * c
    const std::vector<C_CamProDatabaseData>  & rc_Databases =  C_CamProHandler::h_GetInstance()->GetDatabases();
 
    // index is -1 if item widget is NULL which can not happen
-   tgl_assert((s32_Index >= 0) && (s32_Index < static_cast<int32_t>(rc_Databases.size())));
+   Q_ASSERT((s32_Index >= 0) && (s32_Index < static_cast<int32_t>(rc_Databases.size())));
    if ((s32_Index >= 0) && (s32_Index < static_cast<int32_t>(rc_Databases.size())))
    {
       // remove deprecated database

@@ -11,6 +11,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <fstream>
 #include <sstream>
@@ -19,14 +20,13 @@
 #include "openssl/x509v3.h"
 #include "openssl/pem.h"
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OscSecurityPemBase.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -119,7 +119,7 @@ int32_t C_OscSecurityPemBase::LoadFromFile(const std::string & orc_FileName, std
 
    this->Clear();
 
-   if (TglFileExists(orc_FileName.c_str()))
+   if ((QFileInfo(QString::fromStdString(*orc_FileName.c_str(.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FileName.c_str(.AsStdString())).isFile())))
    {
       stw::scl::C_SclString c_FileContent;
       C_OscUtils::h_FileToString(orc_FileName.c_str(), c_FileContent);

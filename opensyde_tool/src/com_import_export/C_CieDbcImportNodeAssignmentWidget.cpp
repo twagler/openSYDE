@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Popup widget where user can select which DBC node corresponds to which openSYDE node
@@ -17,7 +17,7 @@
 #include "C_CieDbcImportNodeAssignmentWidget.hpp"
 #include "ui_C_CieDbcImportNodeAssignmentWidget.h"
 
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "C_Uti.hpp"
 #include "C_CieConverter.hpp"
@@ -208,7 +208,7 @@ std::vector<C_CieDbcOsyNodeAssignment> C_CieDbcImportNodeAssignmentWidget::GetNo
       }
 
       // assigned indexes
-      tgl_assert(this->mc_InterfaceIndexes.size() == this->mc_NodeIndexes.size());
+      Q_ASSERT(this->mc_InterfaceIndexes.size() == this->mc_NodeIndexes.size());
       if (u32_DataIndex < this->mc_NodeIndexes.size())
       {
          c_UnmappedMessages.s32_AssignedOsyNodeIndex = this->mc_NodeIndexes[u32_DataIndex];
@@ -323,7 +323,7 @@ void C_CieDbcImportNodeAssignmentWidget::m_InitNodes(const uint32_t ou32_BusInde
    C_PuiSdHandler::h_GetInstance()->GetOscSystemDefinitionConst().GetNodeIndexesOfBus(ou32_BusIndex,
                                                                                       this->mc_NodeIndexes,
                                                                                       this->mc_InterfaceIndexes);
-   tgl_assert(C_SdUtil::h_GetNames(this->mc_NodeIndexes, this->mc_InterfaceIndexes, c_NodeNames, false) ==
+   Q_ASSERT(C_SdUtil::h_GetNames(this->mc_NodeIndexes, this->mc_InterfaceIndexes, c_NodeNames, false) ==
               stw::errors::C_NO_ERR);
 
    // mapped messages section: insert item widgets

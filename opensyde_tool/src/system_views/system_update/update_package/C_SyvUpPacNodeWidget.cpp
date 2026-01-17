@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for one node in the update package
@@ -22,7 +22,7 @@
 #include "stwerrors.hpp"
 
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -274,7 +274,7 @@ void C_SyvUpPacNodeWidget::SetUpdateApplicationStarted(void) const
 {
    C_SyvUpPacSectionNodeWidget * const pc_List = this->m_GetNextListInUpdateOrder();
 
-   tgl_assert(pc_List != NULL);
+   Q_ASSERT(pc_List != NULL);
    if (pc_List != NULL)
    {
       pc_List->SetUpdateApplicationStarted();
@@ -302,7 +302,7 @@ void C_SyvUpPacNodeWidget::SetUpdateApplicationFinished(void)
       this->mpc_Ui->pc_WidgetTitle->SetProgress(100U);
    }
 
-   tgl_assert(pc_List != NULL);
+   Q_ASSERT(pc_List != NULL);
    if (pc_List != NULL)
    {
       pc_List->SetUpdateApplicationFinished();
@@ -317,7 +317,7 @@ void C_SyvUpPacNodeWidget::SetUpdateApplicationError(void) const
 {
    C_SyvUpPacSectionNodeWidget * const pc_List = this->m_GetNextListInUpdateOrder();
 
-   tgl_assert(pc_List != NULL);
+   Q_ASSERT(pc_List != NULL);
    if (pc_List != NULL)
    {
       pc_List->SetUpdateApplicationError();
@@ -568,14 +568,14 @@ void C_SyvUpPacNodeWidget::RemoveAllFiles(void) const
       this->mpc_FilesWidget->RemoveAllFiles();
    }
 
-   tgl_assert(C_PuiSvHandler::h_GetInstance()->ClearNodeUpdateInformationAsAppropriate(this->mu32_ViewIndex,
+   Q_ASSERT(C_PuiSvHandler::h_GetInstance()->ClearNodeUpdateInformationAsAppropriate(this->mu32_ViewIndex,
                                                                                        this->mu32_NodeIndex,
                                                                                        C_OscViewNodeUpdate::
                                                                                        eFTP_DATA_BLOCK) == C_NO_ERR);
 
    if (this->mq_FileBased == true)
    {
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->ClearNodeUpdateInformationAsAppropriate(this->mu32_ViewIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->ClearNodeUpdateInformationAsAppropriate(this->mu32_ViewIndex,
                                                                                           this->mu32_NodeIndex,
                                                                                           C_OscViewNodeUpdate::
                                                                                           eFTP_FILE_BASED) == C_NO_ERR);
@@ -1243,7 +1243,7 @@ void C_SyvUpPacNodeWidget::dropEvent(QDropEvent * const opc_Event)
                if (c_PathsParamAndPemAndFile.size() > 0)
                {
   // Re-split paths
-                  tgl_assert(c_PathsParamAndPemAndFile.size() ==
+                  Q_ASSERT(c_PathsParamAndPemAndFile.size() ==
                              (c_TimerFilePathsParamsetFiles.size() + c_TimerFilePathsFileBased.size() +
                               c_TimerFilePathsPemFiles.size()));
 
@@ -1332,15 +1332,15 @@ void C_SyvUpPacNodeWidget::m_Init(void)
    const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_NodeIndex);
    QSpacerItem * const pc_Spacer = new QSpacerItem(0, 3, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       uint32_t u32_DatablockParamSetFiles = 0U;
       uint32_t u32_DatablockCounter;
       uint32_t u32_ViewDataBlockPathNumber = 0;
 
-      tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
-      tgl_assert(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
+      Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
+      Q_ASSERT(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
       this->mq_FileBased =
          pc_Node->pc_DeviceDefinition->c_SubDevices[pc_Node->u32_SubDeviceIndex].q_FlashloaderOpenSydeIsFileBased;
       this->mq_StwFlashloader = (pc_Node->c_Properties.e_FlashLoader == C_OscNodeProperties::eFL_STW);
@@ -1367,7 +1367,7 @@ void C_SyvUpPacNodeWidget::m_Init(void)
          {
             // Special case: A HALC NVM node
             this->mq_NvmHalcBased = true;
-            tgl_assert(u32_DatablockParamSetFiles > 0);
+            Q_ASSERT(u32_DatablockParamSetFiles > 0);
          }
          else
          {
@@ -1387,7 +1387,7 @@ void C_SyvUpPacNodeWidget::m_Init(void)
       // It is only necessary for file based devices and can get psi files without restrictions
       if (this->mq_StwFlashloader == false)
       {
-         tgl_assert(this->mpc_FilesWidget == NULL);
+         Q_ASSERT(this->mpc_FilesWidget == NULL);
          this->mpc_FilesWidget = new C_SyvUpPacSectionNodeFilesWidget(this);
          this->mpc_Ui->pc_ScrollAreaLayout->addWidget(this->mpc_FilesWidget);
 
@@ -1541,11 +1541,11 @@ C_SyvUpPacSectionNodeWidget * C_SyvUpPacNodeWidget::m_GetNextListInUpdateOrder(v
       else
       {
          // Shall not happen
-         tgl_assert(false);
+         Q_ASSERT(false);
       }
    }
 
-   tgl_assert(pc_List != NULL);
+   Q_ASSERT(pc_List != NULL);
 
    return pc_List;
 }
@@ -1586,7 +1586,7 @@ const
    {
       pc_Parent = dynamic_cast<C_SyvUpPacSectionNodeWidget *>(opc_App->GetListParent());
 
-      tgl_assert(pc_Parent != NULL);
+      Q_ASSERT(pc_Parent != NULL);
    }
 
    return pc_Parent;
@@ -1828,7 +1828,7 @@ void C_SyvUpPacNodeWidget::m_OnCreatePackage(const QString & orc_PublicKeyPath, 
    QString c_FullPackagePath;
    const C_PuiSvData * const pc_ViewData = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
-   tgl_assert(pc_ViewData != NULL);
+   Q_ASSERT(pc_ViewData != NULL);
 
    if (pc_ViewData != NULL)
    {

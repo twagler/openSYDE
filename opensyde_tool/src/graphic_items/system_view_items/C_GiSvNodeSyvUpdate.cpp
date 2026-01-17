@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Offers system view update specific visualization and functionality of a node. (implementation)
@@ -24,7 +24,7 @@
 #include "C_OgePopUpDialog.hpp"
 #include "C_GiSvNodeSyvUpdate.hpp"
 #include "C_OscLoggingHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -68,7 +68,7 @@ C_GiSvNodeSyvUpdate::C_GiSvNodeSyvUpdate(const uint32_t ou32_ViewIndex, const in
    mpc_IconBottom(NULL),
    mpc_InfoDialog(NULL)
 {
-   tgl_assert(this->ms32_Index >= 0);
+   Q_ASSERT(this->ms32_Index >= 0);
    if (this->ms32_Index >= 0)
    {
       this->mc_NodeData.Init(ou32_ViewIndex, static_cast<uint32_t>(ors32_NodeIndex));

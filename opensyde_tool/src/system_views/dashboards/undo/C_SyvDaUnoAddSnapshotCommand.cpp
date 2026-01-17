@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -21,7 +21,7 @@
 #include "C_SyvDaUnoAddSnapshotCommand.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
@@ -234,19 +234,19 @@ void C_SyvDaUnoAddSnapshotCommand::m_InitialReadRailHandling(void)
                            rc_Config.c_ElementId.u32_NodeIndex,
                            rc_Config.c_ElementId.u32_DataPoolIndex, rc_Config.c_ElementId.u32_ListIndex,
                            rc_Config.c_ElementId.u32_ElementIndex);
-                     tgl_assert(pc_Element != NULL);
+                     Q_ASSERT(pc_Element != NULL);
                      if (pc_Element != NULL)
                      {
                         if (pc_View->CheckReadUsage(rc_Config.c_ElementId) == false)
                         {
                            C_PuiSvReadDataConfiguration c_Config;
-                           tgl_assert(c_Config.InitDefaultThreshold(pc_Element->c_MinValue,
+                           Q_ASSERT(c_Config.InitDefaultThreshold(pc_Element->c_MinValue,
                                                                     pc_Element->c_MaxValue) == C_NO_ERR);
                            //Definitely add of read rail required
                            if (this->m_AddReadRailToInternalBackup(rc_Config.c_ElementId, c_Config) == C_NO_ERR)
                            {
                               //No explicit undo step after this so this has to be done manually
-                              tgl_assert(C_PuiSvHandler::h_GetInstance()->AddViewReadRailItem(pc_Scene->GetViewIndex(),
+                              Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddViewReadRailItem(pc_Scene->GetViewIndex(),
                                                                                               rc_Config.c_ElementId,
                                                                                               c_Config) == C_NO_ERR);
                            }

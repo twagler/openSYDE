@@ -20,6 +20,7 @@
 #include "C_OscProtocolSerialNumber.hpp"
 #include "C_CanDispatcher.hpp"
 #include "C_SclString.hpp"
+#include <QElapsedTimer>
 
 /* -- Namespace ----------------------------------------------------------------------------------------------------- */
 namespace stw
@@ -52,10 +53,8 @@ private:
       uint16_t u16_TransmissionIndex; ///< read resp. write index in service data
       uint8_t u8_SequenceNumber;      ///< next sequence number to send or expect
       E_ServiceStatus e_Status;       ///< status of service
-      uint32_t u32_StartTimeMs;       ///< Tx: time the transmission was started; used for checking for "N_Bs"
-      // timeout
-      uint32_t u32_SendCfTimeout; ///< Tx:time at which sending all CFs should have been finished; set upon
-      ///< reception of FC
+      QElapsedTimer c_Timer;          ///< Timer for timeout handling
+      uint32_t u32_SendCfTimeoutDuration; ///< Tx: calculated timeout duration for sending all CFs
    };
 
    ///CAN-TP PCI types:

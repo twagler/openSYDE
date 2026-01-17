@@ -19,7 +19,7 @@
 #include <cmath>
 
 #include "C_GiBiRectBaseGroup.hpp"
-#include "TglUtils.hpp"
+
 #include "C_GiCustomFunctions.hpp"
 #include "C_PuiBsLineBase.hpp"
 #include "C_OscUtils.hpp"
@@ -254,7 +254,7 @@ QRectF C_GiBiRectBaseGroup::m_GetBiggestSubItemBoundingRect(void) const
 {
    QRectF c_Rect;
 
-   tgl_assert(this->mpc_BiggestSubItem != NULL);
+   Q_ASSERT(this->mpc_BiggestSubItem != NULL);
 
    if (this->mpc_BiggestSubItem != NULL)
    {
@@ -464,7 +464,7 @@ QSizeF C_GiBiRectBaseGroup::GetSize(void) const
 {
    QSizeF c_Size(0.0, 0.0);
 
-   tgl_assert(this->mpc_BiggestSubItem != NULL);
+   Q_ASSERT(this->mpc_BiggestSubItem != NULL);
 
    if (this->mpc_BiggestSubItem != NULL)
    {
@@ -495,7 +495,7 @@ void C_GiBiRectBaseGroup::LoadBasicData(const stw::opensyde_gui_logic::C_PuiBsBo
 //----------------------------------------------------------------------------------------------------------------------
 void C_GiBiRectBaseGroup::UpdateBasicData(stw::opensyde_gui_logic::C_PuiBsBox & orc_Data) const
 {
-   tgl_assert(this->mpc_BiggestSubItem != NULL);
+   Q_ASSERT(this->mpc_BiggestSubItem != NULL);
 
    if (this->mpc_BiggestSubItem != NULL)
    {
@@ -572,7 +572,7 @@ void C_GiBiRectBaseGroup::ApplySizeChange(const QPointF & orc_NewPos, const QSiz
    f64_DiffWidth = c_Size.width() - this->m_GetBiggestSubItemBoundingRect().width();
    f64_DiffHeight = c_Size.height() - this->m_GetBiggestSubItemBoundingRect().height();
 
-   tgl_assert(this->mpc_BiggestSubItem != NULL);
+   Q_ASSERT(this->mpc_BiggestSubItem != NULL);
    if (this->mpc_BiggestSubItem != NULL)
    {
       this->mpc_BiggestSubItem->f64_Width = c_Size.width();

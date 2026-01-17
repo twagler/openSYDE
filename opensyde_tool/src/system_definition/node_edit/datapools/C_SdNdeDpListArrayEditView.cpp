@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Data pool list array edit view (implementation)
@@ -18,7 +18,7 @@
 #include <QDrag>
 #include "C_SdNdeDpListArrayEditView.hpp"
 #include "C_PuiSdHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_Uti.hpp"
 #include "C_SdNdeDpUtil.hpp"
@@ -28,7 +28,7 @@ using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui_logic;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -304,7 +304,7 @@ void C_SdNdeDpListArrayEditView::m_UpdateModelView(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SdNdeDpListArrayEditView::m_UpdateCornerButton(void)
 {
-   tgl_assert(this->mpc_LabelCorner != NULL);
+   Q_ASSERT(this->mpc_LabelCorner != NULL);
    if (this->mpc_LabelCorner != NULL)
    {
       this->mpc_LabelCorner->setGeometry(0, 0, this->verticalHeader()->width(), this->horizontalHeader()->height());

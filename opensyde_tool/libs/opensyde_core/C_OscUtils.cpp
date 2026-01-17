@@ -18,10 +18,12 @@
 #include <limits>
 #include <fstream>
 #include <algorithm>
+#include <QDir>
+#include <QFileInfo>
+#include <QCoreApplication>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
-#include "TglFile.hpp"
 #include "C_SclResourceStrings.hpp"
 #define STR_TABLE_INCLUDE //we really want the symbols from the DLStrings.h header
 #include "DLStrings.hpp"
@@ -32,7 +34,7 @@ using namespace stw::opensyde_core;
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 const float64_t C_OscUtils::mhf64_EPSILON = 1e-5;
@@ -202,7 +204,7 @@ int32_t C_OscUtils::h_CreateFolderRecursively(const C_SclString & orc_Folder)
       x_CharIndex = c_Path.find_first_of("\\/", x_CharIndex + 1);
 
       c_PartialPath = c_Path.substr(0, x_CharIndex);
-      s32_Return = TglCreateDirectory(c_PartialPath.c_str());
+      s32_Return = QDir().mkpath(QString::fromStdString(c_PartialPath)) ? 0 : -1;
       if (s32_Return != 0)
       {
          s32_Return = C_NOACT;
@@ -426,10 +428,10 @@ bool C_OscUtils::h_CheckValidFilePath(const C_SclString & orc_String)
    else
    {
       bool q_AtLeastOneOtherChar = false;
-      C_SclDynamicArray<C_SclString> c_SplitStrings;
+      QList<C_SclString> c_SplitStrings;
       orc_String.Tokenize("\\/", c_SplitStrings);
 
-      for (int32_t s32_Index = 0U; (s32_Index < c_SplitStrings.GetLength()) && (q_Return == true); s32_Index++)
+      for (int32_t s32_Index = 0U; (s32_Index < c_SplitStrings.size()) && (q_Return == true); s32_Index++)
       {
          const C_SclString & rc_Substring = c_SplitStrings[s32_Index];
 
@@ -855,7 +857,7 @@ C_SclString C_OscUtils::h_MakeIndependentOfDbProjectPath(const C_SclString & orc
       // concatenate if placeholder-resolved path would be relative
       const C_SclString c_ResolvedPath = C_OscUtils::h_ResolvePlaceholderVariables(orc_Path, orc_OsydeProjectPath);
 
-      if (TglIsRelativePath(c_ResolvedPath) == true)
+      if (QDir::isRelativePath(QString::fromStdString(*c_ResolvedPath.AsStdString())) == true)
       {
          //relative path
          c_Return = C_OscUtils::h_ConcatPathIfNecessary(orc_DbProjectPath, c_Return);
@@ -929,21 +931,23 @@ C_SclString C_OscUtils::h_ResolveProjIndependentPlaceholderVariables(const C_Scl
 
    if (u32_Pos != 0U)
    {
-      c_Replacement = TglExtractFilePath(TglGetExePath());
+      const QString c_ExePath = QCoreApplication::applicationFilePath();
+      const QString c_ExeDir = QFileInfo(c_ExePath).absolutePath() + "/";
+      c_Replacement = c_ExeDir.toStdString();
       c_Return.ReplaceAll(hc_PATH_VARIABLE_OPENSYDE_BIN, c_Replacement);
    }
 
    u32_Pos = c_Return.Pos(hc_PATH_VARIABLE_USER_NAME);
    if (u32_Pos != 0U)
    {
-      tgl_assert(TglGetSystemUserName(c_Replacement) == true);
+      Q_ASSERT(stw::opensyde_core::C_OscUtils::h_GetSystemUserName(c_Replacement) == true);
       c_Return.ReplaceAll(hc_PATH_VARIABLE_USER_NAME, c_Replacement);
    }
 
    u32_Pos = c_Return.Pos(hc_PATH_VARIABLE_COMPUTER_NAME);
    if (u32_Pos != 0U)
    {
-      tgl_assert(TglGetSystemMachineName(c_Replacement) == true);
+      Q_ASSERT(stw::opensyde_core::C_OscUtils::h_GetSystemMachineName(c_Replacement) == true);
       c_Return.ReplaceAll(hc_PATH_VARIABLE_COMPUTER_NAME, c_Replacement);
    }
 
@@ -967,9 +971,11 @@ C_SclString C_OscUtils::h_ConcatPathIfNecessary(const C_SclString & orc_BaseDir,
 {
    C_SclString c_Retval;
 
-   const C_SclString c_Path = TglExtractFilePath(orc_RelativeOrAbsolutePath);
+   const QString c_QPath = QString::fromStdString(*orc_RelativeOrAbsolutePath.AsStdString());
+   const QString c_QPathDir = QFileInfo(c_QPath).absolutePath() + "/";
+   const C_SclString c_Path = c_QPathDir.toStdString();
 
-   bool q_IsRelativePath = TglIsRelativePath(c_Path);
+   bool q_IsRelativePath = QDir::isRelativePath(c_QPath);
 
    //special scenario: if the path starts with "\\" or "//" is is a UNC network path
    //for our purpose we consider it an absolute path (concatting would have weird results)
@@ -1151,4 +1157,106 @@ void C_OscUtils::mh_GetBaseNameAndCurrentConflictNumberFromString(const C_SclStr
       //Add skipped part to base string again
       orc_CutString = c_SkippedPart + orc_CutString;
    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+/*! \brief  Include trailing delimiter
+*/
+//----------------------------------------------------------------------------------------------------------------------
+C_SclString C_OscUtils::h_IncludeTrailingDelimiter(const C_SclString& orc_Path)
+{
+   QString c_Path = QString(orc_Path.c_str());
+   if (!c_Path.endsWith("/") && !c_Path.endsWith("\\"))
+   {
+      c_Path += "/";
+   }
+   return c_Path.toStdString().c_str();
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+/*! \brief  Get system user name
+*/
+//----------------------------------------------------------------------------------------------------------------------
+bool C_OscUtils::h_GetSystemUserName(C_SclString& orc_UserName)
+{
+   QString c_User = qgetenv("USERNAME");
+   if (c_User.isEmpty())
+   {
+      c_User = qgetenv("USER");
+   }
+   
+   bool q_Return = !c_User.isEmpty();
+   if (q_Return)
+   {
+      orc_UserName = c_User.toStdString().c_str();
+   }
+   else
+   {
+      orc_UserName = "????";
+   }
+   return q_Return;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+/*! \brief  Get system machine name
+*/
+//----------------------------------------------------------------------------------------------------------------------
+bool C_OscUtils::h_GetSystemMachineName(C_SclString& orc_MachineName)
+{
+   QString c_Machine = qgetenv("COMPUTERNAME");
+   if (c_Machine.isEmpty())
+   {
+      c_Machine = qgetenv("HOSTNAME");
+   }
+
+   bool q_Return = !c_Machine.isEmpty();
+   if (q_Return)
+   {
+      orc_MachineName = c_Machine.toStdString().c_str();
+   }
+   else
+   {
+      orc_MachineName = "????";
+   }
+   return q_Return;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+/*! \brief  Handle system messages (Qt process events)
+*/
+//----------------------------------------------------------------------------------------------------------------------
+void C_OscUtils::h_HandleSystemMessages(void)
+{
+   QCoreApplication::processEvents();
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+/*! \brief  Change file extension
+*/
+//----------------------------------------------------------------------------------------------------------------------
+C_SclString C_OscUtils::h_ChangeFileExtension(const C_SclString& orc_FilePath, const C_SclString& orc_NewExtension)
+{
+   QString c_Path = QString(orc_FilePath.c_str());
+   int s32_LastDot = c_Path.lastIndexOf('.');
+   int s32_LastSep = c_Path.lastIndexOf('/');
+   int s32_LastSep2 = c_Path.lastIndexOf('\\');
+   
+   if (s32_LastSep2 > s32_LastSep)
+   {
+       s32_LastSep = s32_LastSep2;
+   }
+
+   if ((s32_LastDot != -1) && (s32_LastDot > s32_LastSep))
+   {
+       c_Path = c_Path.left(s32_LastDot);
+   }
+
+   QString c_NewExt = QString(orc_NewExtension.c_str());
+   if (!c_NewExt.startsWith("."))
+   {
+       c_Path += ".";
+   }
+   c_Path += c_NewExt;
+
+   return c_Path.toStdString().c_str();
 }

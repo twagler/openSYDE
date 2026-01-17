@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Dialog for RTF file export (implementation)
@@ -19,14 +19,13 @@
 #include <QProcess>
 #include <QFileDialog>
 #include <QDateTime>
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_RtfExportWidget.hpp"
-#include "TglFile.hpp"
 #include "C_OscXmlParser.hpp"
 #include "C_OscProject.hpp"
 #include "C_PuiProject.hpp"
@@ -37,7 +36,7 @@
 #include "ui_C_RtfExportWidget.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -174,16 +173,16 @@ int32_t C_RtfExportWidget::GetRtfPath(C_SclString & orc_RtfPath) const
    if (C_OscUtils::h_CheckValidFilePath(orc_RtfPath) == true)
    {
       // check if directory exists
-      if (TglDirectoryExists(TglExtractFilePath(orc_RtfPath)) == true)
+      if (QFileInfo(QString::fromStdString(*(QFileInfo(QString::fromStdString(*orc_RtfPath.AsStdString(.AsStdString())).absolutePath() + "/").toStdString())).isDir()) == true)
       {
          // check if file name is valid
-         const C_SclString c_FileExtAct = TglExtractFileExtension(orc_RtfPath);
+         const C_SclString c_FileExtAct = ("." + QFileInfo(QString::fromStdString(*orc_RtfPath.AsStdString())).suffix()).toStdString();
          if (c_FileExtAct.LowerCase() == ".rtf")
          {
             const QFileInfo c_Info(orc_RtfPath.c_str());
             if (C_OscUtils::h_CheckValidFileName(c_Info.completeBaseName().toStdString().c_str()))
             {
-               if (TglFileExists(orc_RtfPath) == true)
+               if ((QFileInfo(QString::fromStdString(*orc_RtfPath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_RtfPath.AsStdString())).isFile()) == true)
                {
                   s32_Return = C_WARN;
                }
@@ -260,10 +259,10 @@ int32_t C_RtfExportWidget::GetCompanyLogoPath(C_SclString & orc_CompanyLogoPath)
             C_PuiUtil::h_GetAbsolutePathFromProject(orc_CompanyLogoPath.c_str()).toStdString().c_str();
 
          // check if file exists
-         if (TglFileExists(orc_CompanyLogoPath) == true)
+         if ((QFileInfo(QString::fromStdString(*orc_CompanyLogoPath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_CompanyLogoPath.AsStdString())).isFile()) == true)
          {
             // check if file name is valid
-            const C_SclString c_FileExtAct = TglExtractFileExtension(orc_CompanyLogoPath);
+            const C_SclString c_FileExtAct = ("." + QFileInfo(QString::fromStdString(*orc_CompanyLogoPath.AsStdString())).suffix()).toStdString();
             if ((c_FileExtAct.LowerCase() == ".jpg") || (c_FileExtAct.LowerCase() == ".png"))
             {
                s32_Return = C_NO_ERR;
@@ -353,7 +352,7 @@ int32_t C_RtfExportWidget::ExportToRtf(const C_SclString & orc_RtfPath, const C_
    // get paths of 'DocuCreator' tool and its config XML file (which has to be created)
    QString c_DocuCreatorPath = C_Uti::h_GetExePath(); // get device ini location by project path
    QDir c_DirDocuCreatorTmp(c_DocuCreatorPath);
-   tgl_assert(c_DirDocuCreatorTmp.cdUp() == true);                      // go one directory up
+   Q_ASSERT(c_DirDocuCreatorTmp.cdUp() == true);                      // go one directory up
    c_DocuCreatorPath = c_DirDocuCreatorTmp.absolutePath();              // get current path
    c_DocuCreatorPath += "/connectors/DocuCreator/osy_docu_creator.exe"; // add DocuCreator location
    const C_SclString c_SclStringDocuCreatorPath = c_DocuCreatorPath.toStdString().c_str();
@@ -365,7 +364,7 @@ int32_t C_RtfExportWidget::ExportToRtf(const C_SclString & orc_RtfPath, const C_
    osc_write_log_info("RTF File Export", "Look for DocuCreator at path \"" + c_SclStringDocuCreatorPath + "\".");
 
    // check for path of external 'DocuCreator' tool
-   if (TglFileExists(c_SclStringDocuCreatorPath) == false)
+   if ((QFileInfo(QString::fromStdString(*c_SclStringDocuCreatorPath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_SclStringDocuCreatorPath.AsStdString())).isFile()) == false)
    {
       this->mc_Error = "Can't find external tool 'DocuCreator' for RTF File Export at path \"" +
                        c_SclStringDocuCreatorPath + "\".";
@@ -560,10 +559,10 @@ int32_t C_RtfExportWidget::m_CreateConfigXml(const C_SclString & orc_Path,
 
    //Root Node
    c_XmlParser.CreateNodeChild(c_ROOT_NAME);
-   tgl_assert(c_XmlParser.SelectRoot() == c_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectRoot() == c_ROOT_NAME);
 
    //Project content
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(c_PROJECT) == c_PROJECT);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(c_PROJECT) == c_PROJECT);
 
    c_XmlParser.CreateNodeChild("title", orc_ExportXmlStructure.c_Title);
    c_XmlParser.CreateNodeChild("name", orc_ExportXmlStructure.c_Name);
@@ -576,18 +575,18 @@ int32_t C_RtfExportWidget::m_CreateConfigXml(const C_SclString & orc_Path,
    c_XmlParser.CreateNodeChild("networkTopologyImage", orc_ExportXmlStructure.c_NetworkTopologyImage);
 
    //Return
-   tgl_assert(c_XmlParser.SelectNodeParent() == c_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == c_ROOT_NAME);
 
    //openSYDE version content
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(c_OPENSYDE) == c_OPENSYDE);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(c_OPENSYDE) == c_OPENSYDE);
 
    c_XmlParser.CreateNodeChild("version", orc_ExportXmlStructure.c_OpenSydeVersion);
 
    //Return
-   tgl_assert(c_XmlParser.SelectNodeParent() == c_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == c_ROOT_NAME);
 
    //Company details
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(c_COMPANY) == c_COMPANY);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(c_COMPANY) == c_COMPANY);
 
    if (orc_ExportXmlStructure.c_CompanyName != "")
    {
@@ -608,7 +607,7 @@ int32_t C_RtfExportWidget::m_CreateConfigXml(const C_SclString & orc_Path,
    }
 
    //Return
-   tgl_assert(c_XmlParser.SelectNodeParent() == c_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == c_ROOT_NAME);
 
    // save DocuCreator configuration file
    s32_Return = c_XmlParser.SaveToFile(orc_Path);
@@ -680,9 +679,9 @@ void C_RtfExportWidget::m_RtfPathClicked(void)
    const C_SclString c_Tmp =
       C_PuiUtil::h_GetAbsolutePathFromProject(this->mpc_Ui->pc_EditRtfPath->GetPath()).toStdString().c_str();
 
-   if (TglDirectoryExists(TglExtractFilePath(c_Tmp)) == true)
+   if (QFileInfo(QString::fromStdString(*(QFileInfo(QString::fromStdString(*c_Tmp.AsStdString(.AsStdString())).absolutePath() + "/").toStdString())).isDir()) == true)
    {
-      c_Folder = TglExtractFilePath(c_Tmp).c_str();
+      c_Folder = (QFileInfo(QString::fromStdString(*c_Tmp.AsStdString())).absolutePath() + "/").toStdString().c_str();
    }
    else
    {
@@ -715,9 +714,9 @@ void C_RtfExportWidget::m_LogoPathClicked(void) const
    const C_SclString c_Tmp =
       C_PuiUtil::h_GetAbsolutePathFromProject(this->mpc_Ui->pc_EditLogoPath->GetPath()).toStdString().c_str();
 
-   if (TglDirectoryExists(TglExtractFilePath(c_Tmp)) == true)
+   if (QFileInfo(QString::fromStdString(*(QFileInfo(QString::fromStdString(*c_Tmp.AsStdString(.AsStdString())).absolutePath() + "/").toStdString())).isDir()) == true)
    {
-      c_Folder = TglExtractFilePath(c_Tmp).c_str();
+      c_Folder = (QFileInfo(QString::fromStdString(*c_Tmp.AsStdString())).absolutePath() + "/").toStdString().c_str();
    }
    else
    {

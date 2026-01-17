@@ -23,7 +23,7 @@
 #include "C_OscCanSignal.hpp"
 #include "C_TblDelegateUtil.hpp"
 #include "C_CamMetTreeDelegate.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
@@ -108,13 +108,13 @@ void C_CamMetTreeDelegate::paint(QPainter * const opc_Painter, const QStyleOptio
    {
       //Don't do anything else
       //Make sure text is not painted twice
-      tgl_assert(orc_Index.data(static_cast<int32_t>(Qt::DisplayRole)).toString().isEmpty());
+      Q_ASSERT(orc_Index.data(static_cast<int32_t>(Qt::DisplayRole)).toString().isEmpty());
    }
    else if (mh_PaintChildCell(opc_Painter, c_PaddedCellRect, orc_Index, q_Selected) == true)
    {
       //Don't do anything else
       // Make sure text is not painted twice
-      tgl_assert(orc_Index.data(static_cast<int32_t>(Qt::DisplayRole)).toString().isEmpty());
+      Q_ASSERT(orc_Index.data(static_cast<int32_t>(Qt::DisplayRole)).toString().isEmpty());
    }
    else
    {

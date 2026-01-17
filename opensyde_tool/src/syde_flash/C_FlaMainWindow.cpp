@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Main window for project SYDEflash
@@ -391,7 +391,7 @@ void C_FlaMainWindow::m_OnUpdateNode()
          }
          else
          {
-            tgl_assert(false);
+            Q_ASSERT(false);
          }
       }
    }
@@ -894,7 +894,7 @@ void C_FlaMainWindow::m_TimerUpdate(void)
          {
          case C_FlaUpSequences::eNOT_ACTIVE:
             // should never happen
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          case C_FlaUpSequences::eACTIVATEFLASHLOADER:
             // next step: read device information

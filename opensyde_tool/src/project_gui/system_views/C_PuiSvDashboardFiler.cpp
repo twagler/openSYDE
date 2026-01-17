@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -24,7 +24,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -390,7 +390,7 @@ int32_t C_PuiSvDashboardFiler::h_LoadSliderValue(C_PuiSvDbSlider & orc_Slider, C
             s32_Retval = C_CONFIG;
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "slider");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "slider");
       }
       else
       {
@@ -448,10 +448,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadCharts(std::vector<C_PuiSvDbChart> & orc_W
                   while ((c_CurrentWidgetNode2 == "active-flag") && (s32_Retval == C_NO_ERR));
 
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "active-flags");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "active-flags");
                }
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "chart");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "chart");
             }
 
             if (c_Box.c_DataPoolElementsActive.size() != c_Box.c_DataPoolElementsConfig.size())
@@ -469,7 +469,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadCharts(std::vector<C_PuiSvDbChart> & orc_W
                }
 
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "chart");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "chart");
             }
 
             orc_Widgets.push_back(c_Box);
@@ -478,7 +478,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadCharts(std::vector<C_PuiSvDbChart> & orc_W
          }
          while ((c_CurrentWidgetNode == "chart") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "charts");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "charts");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -530,10 +530,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadTabChart(C_PuiSvDbTabChart & orc_Widget, C
             while ((c_CurrentWidgetNode2 == "active-flag") && (s32_Retval == C_NO_ERR));
 
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "active-flags");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "active-flags");
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "tab-chart");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tab-chart");
       }
 
       if (orc_Widget.c_DataPoolElementsActive.size() != orc_Widget.c_DataPoolElementsConfig.size())
@@ -564,10 +564,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadTabChart(C_PuiSvDbTabChart & orc_Widget, C
             while ((c_CurrentWidgetNode2 == "color-index") && (s32_Retval == C_NO_ERR));
 
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "color-indexes");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "color-indexes");
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "tab-chart");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tab-chart");
       }
 
       if (orc_Widget.c_DataPoolElementsColorIndex.size() != orc_Widget.c_DataPoolElementsConfig.size())
@@ -600,7 +600,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadTabChart(C_PuiSvDbTabChart & orc_Widget, C
          }
 
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "tab-chart");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tab-chart");
       }
       else
       {
@@ -617,7 +617,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadTabChart(C_PuiSvDbTabChart & orc_Widget, C
          }
 
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "tab-chart");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tab-chart");
       }
       else
       {
@@ -696,7 +696,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadLabels(std::vector<C_PuiSvDbLabel> & orc_W
             {
                c_Box.c_Caption = orc_XmlParser.GetNodeContent().c_str();
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "label");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "label");
             }
             if (orc_XmlParser.SelectNodeChild("type") == "type")
             {
@@ -705,7 +705,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadLabels(std::vector<C_PuiSvDbLabel> & orc_W
                   s32_Retval = C_CONFIG;
                }
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "label");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "label");
             }
             else
             {
@@ -717,7 +717,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadLabels(std::vector<C_PuiSvDbLabel> & orc_W
          }
          while ((c_CurrentWidgetNode == "label") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "labels");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "labels");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -786,7 +786,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadParams(std::vector<C_PuiSvDbParam> & orc_W
          }
          while ((c_CurrentWidgetNode == "param") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "params");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "params");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -833,10 +833,10 @@ void C_PuiSvDashboardFiler::mh_LoadParamExpandedItems(std::vector<C_PuiSvDbExpan
          }
          while (c_CurrentWidgetNode == "expanded-tree-item");
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "expanded-tree-items");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "expanded-tree-items");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "param");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param");
    }
 }
 
@@ -873,10 +873,10 @@ void C_PuiSvDashboardFiler::mh_LoadParamColumnPositionIndices(std::vector<int32_
          }
          while (c_CurrentWidgetNode == "column-position-index");
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "column-position-indices");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "column-position-indices");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "param");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param");
    }
 }
 
@@ -915,7 +915,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadPieCharts(std::vector<C_PuiSvDbPieChart> &
          }
          while ((c_CurrentWidgetNode == "pie-chart") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "pie-charts");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "pie-charts");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -963,7 +963,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadSpinBoxes(std::vector<C_PuiSvDbSpinBox> & 
                   s32_Retval = C_CONFIG;
                }
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "spin-box");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "spin-box");
             }
             else
             {
@@ -976,7 +976,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadSpinBoxes(std::vector<C_PuiSvDbSpinBox> & 
                   s32_Retval = C_CONFIG;
                }
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "spin-box");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "spin-box");
             }
             orc_Widgets.push_back(c_Box);
             //Next
@@ -984,7 +984,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadSpinBoxes(std::vector<C_PuiSvDbSpinBox> & 
          }
          while ((c_CurrentWidgetNode == "spin-box") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "spin-boxes");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "spin-boxes");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -1046,10 +1046,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadTables(std::vector<C_PuiSvDbTable> & orc_W
                   }
                   while ((c_CurrentColumnNode == "column") && (s32_Retval == C_NO_ERR));
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "columns");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "columns");
                }
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "table");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "table");
             }
 
             orc_Widgets.push_back(c_Box);
@@ -1058,7 +1058,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadTables(std::vector<C_PuiSvDbTable> & orc_W
          }
          while ((c_CurrentWidgetNode == "table") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "tables");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tables");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -1109,7 +1109,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadSliders(std::vector<C_PuiSvDbSlider> & orc
                      s32_Retval = C_CONFIG;
                   }
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "slider");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "slider");
                }
                else
                {
@@ -1128,7 +1128,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadSliders(std::vector<C_PuiSvDbSlider> & orc
          }
          while ((c_CurrentWidgetNode == "slider") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "sliders");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "sliders");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -1187,7 +1187,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadProgressBars(std::vector<C_PuiSvDbProgress
                      s32_Retval = C_CONFIG;
                   }
                   //Return
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "progress-bar");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "progress-bar");
                }
                else
                {
@@ -1203,7 +1203,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadProgressBars(std::vector<C_PuiSvDbProgress
                         s32_Retval = C_CONFIG;
                      }
                      //Return
-                     tgl_assert(orc_XmlParser.SelectNodeParent() == "progress-bar");
+                     Q_ASSERT(orc_XmlParser.SelectNodeParent() == "progress-bar");
                   }
                   else
                   {
@@ -1217,7 +1217,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadProgressBars(std::vector<C_PuiSvDbProgress
          }
          while ((c_CurrentWidgetNode == "progress-bar") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "progress-bars");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "progress-bars");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -1264,7 +1264,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadToggles(std::vector<C_PuiSvDbToggle> & orc
                   s32_Retval = C_CONFIG;
                }
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "toggle");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "toggle");
             }
             else
             {
@@ -1286,7 +1286,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadToggles(std::vector<C_PuiSvDbToggle> & orc
          }
          while ((c_CurrentWidgetNode == "toggle") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "toggles");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "toggles");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -1320,7 +1320,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadWidgetBase(C_PuiSvDbWidgetBase & orc_Widge
       {
          C_PuiBsElementsFiler::h_LoadBoxBase(orc_Widget, orc_XmlParser);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "base");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "base");
       }
       else
       {
@@ -1342,10 +1342,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadWidgetBase(C_PuiSvDbWidgetBase & orc_Widge
             }
             while ((c_CurrentDataPoolElementNode == "data-pool-element") && (s32_Retval == C_NO_ERR));
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool-elements");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool-elements");
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "base");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "base");
       }
       else
       {
@@ -1359,7 +1359,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadWidgetBase(C_PuiSvDbWidgetBase & orc_Widge
             s32_Retval = C_CONFIG;
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "base");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "base");
       }
       else
       {
@@ -1408,7 +1408,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadWriteWidgetBase(C_PuiSvDbWriteWidgetBase &
          s32_Retval = C_CONFIG;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "base");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "base");
    }
    else
    {
@@ -1429,7 +1429,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadWriteWidgetBase(C_PuiSvDbWriteWidgetBase &
                s32_Retval = C_CONFIG;
             }
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "connect-init-handling");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "connect-init-handling");
          }
          else
          {
@@ -1443,17 +1443,17 @@ int32_t C_PuiSvDashboardFiler::mh_LoadWriteWidgetBase(C_PuiSvDbWriteWidgetBase &
                s32_Retval = C_CONFIG;
             }
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "connect-init-handling");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "connect-init-handling");
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "write");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "write");
       }
       else
       {
          s32_Retval = C_CONFIG;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "base");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "base");
    }
    else
    {
@@ -1491,7 +1491,7 @@ int32_t C_PuiSvDashboardFiler::mh_LoadDataElementConfig(C_PuiSvDbNodeDataElement
       {
          orc_Config.c_DisplayName = orc_XmlParser.GetNodeContent().c_str();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool-element");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool-element");
       }
       else
       {
@@ -1526,10 +1526,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadDataScalingConfig(C_PuiSvDbDataElementScal
       {
          orc_Config.c_Unit = orc_XmlParser.GetNodeContent().c_str();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "scaling");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "scaling");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool-element");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool-element");
    }
    else
    {
@@ -1565,10 +1565,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadDataFormatterConfig(C_PuiSvDbDataElementDi
       {
          orc_Config.c_FormatterString = orc_XmlParser.GetNodeContent().c_str();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "display-formatter");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "display-formatter");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool-element");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool-element");
    }
    return s32_Retval;
 }
@@ -1611,10 +1611,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadParamDataSetIndices(std::vector<int32_t> &
          }
          while ((c_CurrentValueNode == "data-set-selection") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-set-selections");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-set-selections");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "param");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param");
    }
    else
    {
@@ -1655,10 +1655,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadParamValues(std::vector<C_OscNodeDataPoolC
          }
          while ((c_CurrentValueNode == "value") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "values");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "values");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "param");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param");
    }
    else
    {
@@ -1702,10 +1702,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadParamTables(std::vector<std::vector<int32_
          }
          while ((c_CurrentValueNode == "table") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "tables");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tables");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "param");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param");
    }
    else
    {
@@ -1752,10 +1752,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadParamColumns(std::vector<int32_t> & orc_Va
          }
          while ((c_CurrentValueNode == "column") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "columns");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "columns");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "table");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "table");
    }
    else
    {
@@ -1809,10 +1809,10 @@ int32_t C_PuiSvDashboardFiler::mh_LoadTabChartScreenRegion(std::vector<std::arra
          }
          while ((c_CurrentValueNode == "screen-region") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "screen-regions");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "screen-regions");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "tab-chart");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tab-chart");
    }
    else
    {
@@ -1858,11 +1858,11 @@ void C_PuiSvDashboardFiler::mh_SaveTabChart(const C_PuiSvDbTabChart & orc_Widget
       orc_XmlParser.CreateAndSelectNodeChild("active-flag");
       orc_XmlParser.SetAttributeBool("state", orc_Widget.c_DataPoolElementsActive[u32_ItActive]);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "active-flags");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "active-flags");
    }
 
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "tab-chart");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tab-chart");
 
    orc_XmlParser.CreateAndSelectNodeChild("color-indexes");
    for (uint32_t u32_ItActive = 0; u32_ItActive < orc_Widget.c_DataPoolElementsColorIndex.size(); ++u32_ItActive)
@@ -1870,11 +1870,11 @@ void C_PuiSvDashboardFiler::mh_SaveTabChart(const C_PuiSvDbTabChart & orc_Widget
       orc_XmlParser.CreateAndSelectNodeChild("color-index");
       orc_XmlParser.SetAttributeUint32("index", orc_Widget.c_DataPoolElementsColorIndex[u32_ItActive]);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "color-indexes");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "color-indexes");
    }
 
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "tab-chart");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tab-chart");
 
    orc_XmlParser.CreateNodeChild("zoom-mode",
                                  C_PuiSvDashboardFiler::mh_TabChartZoomModeToString(
@@ -1913,7 +1913,7 @@ void C_PuiSvDashboardFiler::mh_SaveLabels(const std::vector<C_PuiSvDbLabel> & or
       orc_XmlParser.CreateNodeChild("caption", rc_Label.c_Caption.toStdString().c_str());
       orc_XmlParser.CreateNodeChild("type", mh_LabelTypeToString(rc_Label.e_Type).toStdString().c_str());
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "labels");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "labels");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -1942,10 +1942,10 @@ void C_PuiSvDashboardFiler::mh_SaveParams(const std::vector<C_PuiSvDbParam> & or
          orc_XmlParser.CreateAndSelectNodeChild("data-set-selection");
          orc_XmlParser.SetAttributeSint32("value", rc_Param.c_DataSetSelectionIndices[u32_ItDataSet]);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-set-selections");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-set-selections");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "param");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param");
       //Values
       orc_XmlParser.CreateAndSelectNodeChild("values");
       for (uint32_t u32_ItValue = 0; u32_ItValue < rc_Param.c_ListValues.size(); ++u32_ItValue)
@@ -1953,10 +1953,10 @@ void C_PuiSvDashboardFiler::mh_SaveParams(const std::vector<C_PuiSvDbParam> & or
          orc_XmlParser.CreateAndSelectNodeChild("value");
          C_OscNodeDataPoolFiler::h_SaveDataPoolContentV1(rc_Param.c_ListValues[u32_ItValue], orc_XmlParser);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "values");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "values");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "param");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param");
       //Columns
       orc_XmlParser.CreateAndSelectNodeChild("tables");
       for (uint32_t u32_ItTable = 0; u32_ItTable < rc_Param.c_ColWidth.size(); ++u32_ItTable)
@@ -1969,19 +1969,19 @@ void C_PuiSvDashboardFiler::mh_SaveParams(const std::vector<C_PuiSvDbParam> & or
             orc_XmlParser.CreateAndSelectNodeChild("column");
             orc_XmlParser.SetAttributeSint32("value", rc_Cols[u32_ItColumn]);
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "columns");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "columns");
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "table");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "table");
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "tables");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tables");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "param");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param");
       mh_SaveParamExpandedItems(rc_Param.c_ExpandedItems, orc_XmlParser);
       mh_SaveParamColumnPositionIndices(rc_Param.c_ColPosIndices, orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "params");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "params");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -2006,10 +2006,10 @@ void C_PuiSvDashboardFiler::mh_SaveParamExpandedItems(const std::vector<C_PuiSvD
       orc_XmlParser.SetAttributeUint32("valid-layers", rc_TreeElement.u32_Layer);
       h_SaveUiIndex(rc_TreeElement.c_ExpandedId, orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "expanded-tree-items");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "expanded-tree-items");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "param");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2028,10 +2028,10 @@ void C_PuiSvDashboardFiler::mh_SaveParamColumnPositionIndices(const std::vector<
       orc_XmlParser.CreateAndSelectNodeChild("column-position-index");
       orc_XmlParser.SetAttributeSint32("value", orc_Items[u32_ItTable]);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "column-position-indices");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "column-position-indices");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "param");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "param");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2054,7 +2054,7 @@ void C_PuiSvDashboardFiler::mh_SavePieCharts(const std::vector<C_PuiSvDbPieChart
 
       C_PuiSvDashboardFiler::mh_SaveWidgetBase(rc_PieChart, orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "pie-charts");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "pie-charts");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -2085,9 +2085,9 @@ void C_PuiSvDashboardFiler::mh_SaveSpinBoxes(const std::vector<C_PuiSvDbSpinBox>
       orc_XmlParser.CreateAndSelectNodeChild("content");
       C_OscNodeDataPoolFiler::h_SaveDataPoolContentV1(rc_SpinBox.c_Value, orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "spin-box");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "spin-box");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "spin-boxes");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "spin-boxes");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -2118,13 +2118,13 @@ void C_PuiSvDashboardFiler::mh_SaveTables(const std::vector<C_PuiSvDbTable> & or
          orc_XmlParser.CreateAndSelectNodeChild("column");
          orc_XmlParser.SetAttributeSint32("width", rc_Table.c_ColumnWidth[u32_ItColumn]);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "columns");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "columns");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "table");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "table");
 
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "tables");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tables");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -2152,9 +2152,9 @@ void C_PuiSvDashboardFiler::mh_SaveSliders(const std::vector<C_PuiSvDbSlider> & 
       orc_XmlParser.CreateAndSelectNodeChild("content");
       C_OscNodeDataPoolFiler::h_SaveDataPoolContentV1(rc_Slider.c_Value, orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "slider");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "slider");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "sliders");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "sliders");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -2184,7 +2184,7 @@ void C_PuiSvDashboardFiler::mh_SaveProgressBars(const std::vector<C_PuiSvDbProgr
       orc_XmlParser.SetAttributeBool("show-min-max", rc_ProgressBar.q_ShowMinMax);
       orc_XmlParser.SetAttributeBool("show-unit", rc_ProgressBar.q_ShowUnit);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "progress-bars");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "progress-bars");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -2215,7 +2215,7 @@ void C_PuiSvDashboardFiler::mh_SaveToggles(const std::vector<C_PuiSvDbToggle> & 
       orc_XmlParser.SetAttributeBool("state", rc_Toggle.q_State);
 
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "toggles");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "toggles");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -2235,7 +2235,7 @@ void C_PuiSvDashboardFiler::mh_SaveWidgetBase(const C_PuiSvDbWidgetBase & orc_Wi
    orc_XmlParser.CreateAndSelectNodeChild("box");
    C_PuiBsElementsFiler::h_SaveBoxBase(orc_Widget, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "base");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "base");
    orc_XmlParser.CreateAndSelectNodeChild("data-pool-elements");
 
    for (uint32_t u32_ItDataElement = 0;
@@ -2247,7 +2247,7 @@ void C_PuiSvDashboardFiler::mh_SaveWidgetBase(const C_PuiSvDbWidgetBase & orc_Wi
    }
 
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "base");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "base");
 
    orc_XmlParser.CreateNodeChild("display-style", C_PuiSvDashboardFiler::mh_DisplayStyleToString(
                                     orc_Widget.e_DisplayStyle).toStdString().c_str());
@@ -2284,11 +2284,11 @@ void C_PuiSvDashboardFiler::mh_SaveWriteWidgetBase(const C_PuiSvDbWriteWidgetBas
    orc_XmlParser.CreateAndSelectNodeChild("value");
    C_OscNodeDataPoolFiler::h_SaveDataPoolContentV1(orc_WriteWidget.c_InitialValue, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "connect-init-handling");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "connect-init-handling");
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "write");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "write");
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "base");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "base");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2309,7 +2309,7 @@ void C_PuiSvDashboardFiler::mh_SaveDataElementConfig(const C_PuiSvDbNodeDataElem
    C_PuiSvDashboardFiler::mh_SaveDataFormatterConfig(orc_Config.c_DisplayFormatter, orc_XmlParser);
    orc_XmlParser.CreateNodeChild("display-name", orc_Config.c_DisplayName.toStdString().c_str());
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool-elements");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool-elements");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2328,7 +2328,7 @@ void C_PuiSvDashboardFiler::mh_SaveDataScalingConfig(const C_PuiSvDbDataElementS
    orc_XmlParser.SetAttributeFloat64("offset", orc_Config.f64_Offset);
    orc_XmlParser.CreateNodeChild("unit", orc_Config.c_Unit.toStdString().c_str());
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool-element");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool-element");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2345,7 +2345,7 @@ void C_PuiSvDashboardFiler::mh_SaveDataFormatterConfig(const C_PuiSvDbDataElemen
    orc_XmlParser.SetAttributeBool("is-active", orc_Config.q_IsActive);
    orc_XmlParser.CreateNodeChild("string", orc_Config.c_FormatterString.toStdString().c_str());
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool-element");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool-element");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2369,10 +2369,10 @@ void C_PuiSvDashboardFiler::mh_SaveTabChartScreenRegion(const std::vector<std::a
       orc_XmlParser.SetAttributeFloat64("value3", rc_Vals[2]);
       orc_XmlParser.SetAttributeFloat64("value4", rc_Vals[3]);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "screen-regions");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "screen-regions");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "tab-chart");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "tab-chart");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2402,7 +2402,7 @@ void C_PuiSvDashboardFiler::mh_HandlePreviousSliderValue(const int32_t os32_Prev
             float64_t f64_SliderMin;
             float64_t f64_SliderFactor;
             float64_t f64_UnscaledMin;
-            tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(pc_Element->c_MinValue, f64_UnscaledMin,
+            Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(pc_Element->c_MinValue, f64_UnscaledMin,
                                                                  0UL) == C_NO_ERR);
             if (C_SdNdeDpContentUtil::h_GetNumberOfAvailableSteps(pc_Element->c_MinValue,
                                                                   pc_Element->c_MaxValue,
@@ -2443,7 +2443,7 @@ void C_PuiSvDashboardFiler::mh_HandlePreviousSliderValue(const int32_t os32_Prev
             else
             {
                float64_t f64_UnscaledMax;
-               tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(pc_Element->c_MaxValue, f64_UnscaledMax,
+               Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(pc_Element->c_MaxValue, f64_UnscaledMax,
                                                                     0UL) == C_NO_ERR);
                f64_SliderMin = static_cast<float64_t>(std::numeric_limits<int32_t>::lowest());
                //factor for uint32_t::max steps

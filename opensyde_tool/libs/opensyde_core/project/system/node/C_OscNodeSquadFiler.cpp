@@ -12,14 +12,14 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscNodeSquadFiler.hpp"
 #include "C_OscLoggingHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -96,7 +96,7 @@ int32_t C_OscNodeSquadFiler::h_LoadNodeGroups(std::vector<C_OscNodeSquad> & orc_
                }
                if (s32_Retval == C_NO_ERR)
                {
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "node-groups");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-groups");
                }
             }
          }
@@ -166,7 +166,7 @@ int32_t C_OscNodeSquadFiler::h_LoadNodeGroup(C_OscNodeSquad & orc_NodeGroup, C_O
                }
                if (s32_Retval == C_NO_ERR)
                {
-                  tgl_assert(orc_XmlParser.SelectNodeParent() == "sub-node-indices");
+                  Q_ASSERT(orc_XmlParser.SelectNodeParent() == "sub-node-indices");
                }
             }
          }
@@ -216,8 +216,8 @@ void C_OscNodeSquadFiler::h_SaveNodeGroup(const C_OscNodeSquad & orc_NodeGroup, 
    {
       orc_XmlParser.CreateAndSelectNodeChild("sub-node-index");
       orc_XmlParser.SetAttributeUint32("value", orc_NodeGroup.c_SubNodeIndexes[u32_ItIndex]);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "sub-node-indices");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "sub-node-indices");
    }
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "node-group");
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "node-groups");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-group");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node-groups");
 }

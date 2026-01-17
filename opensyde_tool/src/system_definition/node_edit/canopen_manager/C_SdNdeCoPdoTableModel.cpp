@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Table model for showing the PDO configuration of a specific device on a specific interface of
@@ -15,7 +15,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSdHandlerBusLogic.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_OscCanMessage.hpp"
@@ -550,7 +550,7 @@ void C_SdNdeCoPdoTableModel::m_FillPdoInfo(void)
    const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(
       this->mu32_ManagerNodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       uint32_t u32_InterfaceIndex = 0U;
@@ -572,7 +572,7 @@ void C_SdNdeCoPdoTableModel::m_FillPdoInfo(void)
          }
       }
 
-      tgl_assert(q_IntfFound == true);
+      Q_ASSERT(q_IntfFound == true);
       if (q_IntfFound == true)
       {
          // get message container of CANopen protocol

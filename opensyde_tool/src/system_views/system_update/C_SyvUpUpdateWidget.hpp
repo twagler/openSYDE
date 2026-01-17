@@ -164,8 +164,8 @@ private:
    bool mq_NodesPreconditionError;
    C_GiSvNodeData::C_GiSvNodeDataPreconditionErrors mc_NodePreconditionErrors;
 
-   uint32_t mu32_DisconnectTime;
-   uint32_t mu32_UpdateTime;
+   qint64 ms64_DisconnectTime;
+   qint64 ms64_UpdateTime;
 
    static const QString mhc_TEMP_FOLDER;
    static const int32_t mhs32_WIDGET_BORDER;

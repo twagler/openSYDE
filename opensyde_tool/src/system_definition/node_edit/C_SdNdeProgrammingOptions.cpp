@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Dialog for system node programming properties (implementation)
@@ -13,14 +13,14 @@
 #include <limits>
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSdHandler.hpp"
 
 #include "C_SdNdeProgrammingOptions.hpp"
 #include "ui_C_SdNdeProgrammingOptions.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -163,7 +163,7 @@ void C_SdNdeProgrammingOptions::Save(void) const
    // Scaling
    c_GeneralSettings.e_ScalingSupport =
       static_cast<C_OscNodeCodeExportSettings::E_Scaling>(this->mpc_Ui->pc_ComboBoxScaling->currentData().toInt());
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->SetNodeCodeExportSettings(this->mu32_NodeIndex,
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetNodeCodeExportSettings(this->mu32_NodeIndex,
                                                                          c_GeneralSettings) == C_NO_ERR);
 
    //DPD
@@ -202,7 +202,7 @@ void C_SdNdeProgrammingOptions::Save(void) const
    c_DpdSettings.u16_MaxRoutingMessageBufferRx = static_cast<uint16_t>(this->mpc_Ui->pc_SpinBoxNBR->value());
    c_DpdSettings.u8_MaxParallelTransmissions =
       static_cast<uint8_t>(this->mpc_Ui->pc_SpinBoxParallelTransmissions->value());
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->SetNodeOpenSydeServerSettings(this->mu32_NodeIndex,
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetNodeOpenSydeServerSettings(this->mu32_NodeIndex,
                                                                              c_DpdSettings) == C_NO_ERR);
 }
 

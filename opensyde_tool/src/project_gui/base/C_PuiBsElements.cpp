@@ -13,12 +13,12 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SebUtil.hpp"
 #include "C_PuiBsElements.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui_logic;
 
@@ -224,7 +224,7 @@ void C_PuiBsElements::SetDataZetOffset(const float64_t of64_HighestUsedZetValue)
 //----------------------------------------------------------------------------------------------------------------------
 void C_PuiBsElements::AddBoundary(const C_PuiBsBoundary & orc_Data)
 {
-   tgl_assert(this->InsertBoundary(this->c_Boundaries.size(), orc_Data) == C_NO_ERR);
+   Q_ASSERT(this->InsertBoundary(this->c_Boundaries.size(), orc_Data) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ int32_t C_PuiBsElements::InsertBoundary(const uint32_t & oru32_Index, const C_Pu
 //----------------------------------------------------------------------------------------------------------------------
 void C_PuiBsElements::AddImage(const C_PuiBsImage & orc_Data)
 {
-   tgl_assert(this->InsertImage(this->c_Images.size(), orc_Data) == C_NO_ERR);
+   Q_ASSERT(this->InsertImage(this->c_Images.size(), orc_Data) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -298,7 +298,7 @@ int32_t C_PuiBsElements::InsertImage(const uint32_t & oru32_Index, const C_PuiBs
 //----------------------------------------------------------------------------------------------------------------------
 void C_PuiBsElements::AddLineArrow(const C_PuiBsLineArrow & orc_Data)
 {
-   tgl_assert(this->InsertLineArrow(this->c_LineArrows.size(), orc_Data) == C_NO_ERR);
+   Q_ASSERT(this->InsertLineArrow(this->c_LineArrows.size(), orc_Data) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -335,7 +335,7 @@ int32_t C_PuiBsElements::InsertLineArrow(const uint32_t & oru32_Index, const C_P
 //----------------------------------------------------------------------------------------------------------------------
 void C_PuiBsElements::AddTextElement(const C_PuiBsTextElement & orc_Data)
 {
-   tgl_assert(this->InsertTextElement(this->c_TextElements.size(), orc_Data) == C_NO_ERR);
+   Q_ASSERT(this->InsertTextElement(this->c_TextElements.size(), orc_Data) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

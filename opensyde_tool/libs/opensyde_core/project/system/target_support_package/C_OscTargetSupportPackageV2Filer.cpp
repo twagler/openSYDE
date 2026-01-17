@@ -11,11 +11,11 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscTargetSupportPackageV2Filer.hpp"
-#include "TglFile.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscXmlParser.hpp"
 #include "C_SclString.hpp"
@@ -25,7 +25,7 @@
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
-using namespace stw::tgl;
+
 using namespace stw::scl;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -60,7 +60,7 @@ int32_t C_OscTargetSupportPackageV2Filer::h_Load(C_OscTargetSupportPackageV2 & o
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscXmlParser c_XmlParser;
 
@@ -205,7 +205,7 @@ int32_t C_OscTargetSupportPackageV2Filer::mh_Load(C_OscTargetSupportPackageV2 & 
          s32_Return = C_OscSystemFilerUtil::h_StringToCodeExportScalingType(
             orc_XmlParser.GetNodeContent(), orc_TargetSupportPackage.c_CodeExportSettings.e_ScalingSupport);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "code-export-settings");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "code-export-settings");
       }
       else
       {
@@ -520,7 +520,7 @@ int32_t C_OscTargetSupportPackageV2Filer::mh_ParseApplication(C_OscTargetSupport
             orc_XmlParser.SelectNodeParent(); //back to parent
          }
       }
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "application"); //back to parent
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "application"); //back to parent
    }
 
    // project-folder
@@ -587,7 +587,7 @@ int32_t C_OscTargetSupportPackageV2Filer::mh_ParseApplication(C_OscTargetSupport
          while (c_CurrNode == "output-file");
 
          // maximum of 2 output files allowed
-         tgl_assert(c_Application.c_ResultPaths.size() <= 2);
+         Q_ASSERT(c_Application.c_ResultPaths.size() <= 2);
 
          orc_XmlParser.SelectNodeParent(); //back to parent result-paths
          orc_XmlParser.SelectNodeParent(); //back to parent application

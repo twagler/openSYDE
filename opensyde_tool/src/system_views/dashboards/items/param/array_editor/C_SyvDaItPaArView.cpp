@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Data pool list array edit view (implementation)
@@ -17,7 +17,7 @@
 #include "stwtypes.hpp"
 #include "C_SyvDaItPaArView.hpp"
 #include "C_SdNdeSingleHeaderView.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui;
@@ -162,7 +162,7 @@ std::vector<uint32_t> C_SyvDaItPaArView::m_GetSelectedIndices(void) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDaItPaArView::m_UpdateCornerButton(void)
 {
-   tgl_assert(this->mpc_LabelCorner != NULL);
+   Q_ASSERT(this->mpc_LabelCorner != NULL);
    if (this->mpc_LabelCorner != NULL)
    {
       this->mpc_LabelCorner->setGeometry(0, 0, this->verticalHeader()->width(), this->horizontalHeader()->height());

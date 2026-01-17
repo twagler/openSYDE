@@ -82,7 +82,7 @@ public:
    bool IsAnyDataSerieOnPosition(const QPoint & orc_Pos) const;
    void AddGraphContent(const stw::opensyde_gui_logic::C_PuiSvDbNodeDataPoolListElementId & orc_DataPoolElementId,
                         const QString & orc_FormattedLastValue, const QVector<float64_t> & orc_Values,
-                        const QVector<uint32_t> & orc_Timestamps);
+                        const QVector<qint64> & orc_Timestamps);
    void SetScaling(const uint32_t ou32_DataPoolElementConfigIndex, const QString & orc_DisplayName,
                    const stw::opensyde_gui_logic::C_PuiSvDbDataElementScaling & orc_ElementScaling);
    uint32_t GetCountGraphs(void) const;
@@ -147,7 +147,7 @@ private:
 
    float64_t mf64_MaxValue;
    float64_t mf64_MinValue;
-   uint32_t mu32_TimeStampOfStart;
+   qint64 ms64_TimeStampOfStart;
 
    // Saving for each datapool element the minimum content to have the type
    std::vector<stw::opensyde_core::C_OscNodeDataPoolContent> mc_DataPoolElementContentMin;

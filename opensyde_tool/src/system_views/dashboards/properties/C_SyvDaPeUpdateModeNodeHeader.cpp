@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for system view dashboard data element update mode node header (implementation)
@@ -10,7 +10,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSdHandler.hpp"
@@ -19,7 +19,7 @@
 #include "ui_C_SyvDaPeUpdateModeNodeHeader.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -83,7 +83,7 @@ C_SyvDaPeUpdateModeNodeHeader::C_SyvDaPeUpdateModeNodeHeader(const uint32_t ou32
    C_OgeWiUtil::h_ApplyStylesheetProperty(this->mpc_Ui->pc_LabelCount, "Valid", true);
    C_OgeWiUtil::h_ApplyStylesheetProperty(this->mpc_Ui->pc_LabelCountNumber, "Valid", true);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       //Translation: 1: Node name
@@ -136,7 +136,7 @@ void C_SyvDaPeUpdateModeNodeHeader::UpdateCount(const int32_t os32_Count) const
 {
    const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
-   tgl_assert(pc_View != NULL);
+   Q_ASSERT(pc_View != NULL);
    if (pc_View != NULL)
    {
       uint32_t u32_Cur;

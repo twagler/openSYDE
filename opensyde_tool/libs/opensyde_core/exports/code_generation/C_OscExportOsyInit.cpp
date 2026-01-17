@@ -15,8 +15,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclString.hpp"
 #include "C_SclStringList.hpp"
 #include "C_OscExportOsyInit.hpp"
@@ -30,7 +29,7 @@
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -196,7 +195,7 @@ int32_t C_OscExportOsyInit::h_CreateSourceCode(const C_SclString & orc_FilePath,
                u8_NumEthChannels++;
                break;
             default:
-               tgl_assert(false); //oh for %$%$"§% sake
+               Q_ASSERT(false); //oh for %$%$"§% sake
                break;
             }
          }
@@ -488,7 +487,7 @@ int32_t C_OscExportOsyInit::h_CreateSourceCode(const C_SclString & orc_FilePath,
             }
          }
          //remove final ",":
-         c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].Delete(
+         c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].removeAt(
             c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].Length(), 1U);
 
          c_Lines.Add("   };");
@@ -562,7 +561,7 @@ int32_t C_OscExportOsyInit::h_CreateSourceCode(const C_SclString & orc_FilePath,
             }
          }
          //remove final ",":
-         c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].Delete(
+         c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].removeAt(
             c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].Length(), 1U);
          c_Lines.Add("   };");
          c_Lines.Add("");

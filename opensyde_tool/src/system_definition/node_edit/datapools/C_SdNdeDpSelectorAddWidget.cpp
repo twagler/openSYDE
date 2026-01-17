@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for adding a new Datapool and configuring if it is a stand alone or shared Datapool
@@ -14,7 +14,7 @@
 #include "ui_C_SdNdeDpSelectorAddWidget.h"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeDpUtil.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -169,7 +169,7 @@ C_SdNdeDpSelectorAddWidget::E_SelectionResult C_SdNdeDpSelectorAddWidget::GetDia
    else
    {
       // No button checked can not happen
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 
    return e_Result;
@@ -381,7 +381,7 @@ void C_SdNdeDpSelectorAddWidget::m_OnSharedDataPoolChanged(void) const
       std::vector<QString> c_SharedDatapoolGroup;
       uint32_t u32_DatapoolCounter;
 
-      tgl_assert(C_SdNdeDpUtil::h_GetSharedDatapoolGroup(u32_SharedGroup, c_SelectedDatapoolId,
+      Q_ASSERT(C_SdNdeDpUtil::h_GetSharedDatapoolGroup(u32_SharedGroup, c_SelectedDatapoolId,
                                                          this->mu32_NodeIndex,
                                                          c_SharedDatapoolGroup) == C_NO_ERR);
 
@@ -406,7 +406,7 @@ void C_SdNdeDpSelectorAddWidget::m_GetSelectedSharedDatapool(C_OscNodeDataPoolId
       const std::map<QString, stw::opensyde_core::C_OscNodeDataPoolId>::const_iterator c_ItDatapool =
          this->mc_AvailableDatapools.find(this->mpc_Ui->pc_ComboBoxSharedDatapool->currentText());
 
-      tgl_assert(c_ItDatapool != this->mc_AvailableDatapools.end());
+      Q_ASSERT(c_ItDatapool != this->mc_AvailableDatapools.end());
       if (c_ItDatapool != this->mc_AvailableDatapools.end())
       {
          orc_SharedDatapoolId = c_ItDatapool->second;

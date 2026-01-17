@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Utility functions for system definition (implementation)
@@ -16,7 +16,7 @@
 #include "C_PuiSdUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_OscHalcMagicianUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscRoutingCalculation.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -241,7 +241,7 @@ QString C_PuiSdUtil::h_GetInterfaceName(const C_OscSystemBus::E_Type oe_Type, co
       c_Type = "ETHERNET";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -267,11 +267,11 @@ C_OscCanProtocol::E_Type C_PuiSdUtil::h_GetRelatedCanProtocolType(const uint32_t
    C_OscCanProtocol::E_Type e_Return = C_OscCanProtocol::eLAYER2;
    const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(ou32_NodeIndex);
 
-   tgl_assert(pc_Node != NULL);
+   Q_ASSERT(pc_Node != NULL);
    if (pc_Node != NULL)
    {
       const C_OscCanProtocol * const pc_Protocol = pc_Node->GetRelatedCanProtocolConst(ou32_DatapoolIndex);
-      tgl_assert(pc_Protocol != NULL);
+      Q_ASSERT(pc_Protocol != NULL);
       if (pc_Protocol != NULL)
       {
          e_Return = pc_Protocol->e_Type;
@@ -849,7 +849,7 @@ void C_PuiSdUtil::h_GetInterfaceDataForNode(const uint32_t ou32_NodeIndex,
          }
       }
    }
-   tgl_assert(orc_Properties.size() == c_NodeIndices.size());
+   Q_ASSERT(orc_Properties.size() == c_NodeIndices.size());
 }
 
 //----------------------------------------------------------------------------------------------------------------------

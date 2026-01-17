@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for IP Address configuration (implementation)
@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "C_PuiSdHandler.hpp"
 #include "C_SdNdeIpAddressConfigurationWidget.hpp"
-#include "TglUtils.hpp"
+
 #include "ui_C_SdNdeIpAddressConfigurationWidget.h"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_OgeWiUtil.hpp"

@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing system view update
@@ -15,8 +15,7 @@
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_SclString.hpp"
-#include "TglTime.hpp"
-#include "TglFile.hpp"
+#include <QDateTime>
 #include "C_Uti.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscUtils.hpp"
@@ -32,7 +31,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::scl;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -84,8 +83,8 @@ C_SyvUpUpdateWidget::C_SyvUpUpdateWidget(const uint32_t ou32_ViewIndex, QWidget 
    mq_ConnectFailed(false),
    mq_ErrorDetected(false),
    mq_NodesPreconditionError(false),
-   mu32_DisconnectTime(0U),
-   mu32_UpdateTime(0U)
+   ms64_DisconnectTime(0),
+   ms64_UpdateTime(0)
 {
    const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
    QString c_Name;
@@ -1142,7 +1141,7 @@ void C_SyvUpUpdateWidget::m_CheckOpenSydeFlashloaderInformation(const std::vecto
 {
    uint32_t u32_NodesInformationCounter;
 
-   tgl_assert(orc_OsyNodeIndexes.size() == orc_OsyDeviceInformation.size());
+   Q_ASSERT(orc_OsyNodeIndexes.size() == orc_OsyDeviceInformation.size());
 
    for (u32_NodesInformationCounter = 0U; u32_NodesInformationCounter < orc_OsyNodeIndexes.size();
         ++u32_NodesInformationCounter)
@@ -1275,7 +1274,7 @@ void C_SyvUpUpdateWidget::m_Connect(void)
    }
 
    // Is a new connect already possible
-   while ((this->mu32_DisconnectTime + mhu32_WAIT_TIME) > TglGetTickCount())
+   while ((this->ms64_DisconnectTime + mhu32_WAIT_TIME) > QDateTime::currentMSecsSinceEpoch())
    {
       // Wait till it is possible
    }
@@ -1549,7 +1548,7 @@ void C_SyvUpUpdateWidget::m_Update(void)
                this->m_UpdateReportText("Update System started");
 
                // Is a new update already possible
-               while ((this->mu32_UpdateTime + mhu32_WAIT_TIME) > TglGetTickCount())
+               while ((this->ms64_UpdateTime + mhu32_WAIT_TIME) > QDateTime::currentMSecsSinceEpoch())
                {
                   // Wait till it is possible
                }
@@ -1814,7 +1813,7 @@ void C_SyvUpUpdateWidget::m_Timer(void)
             this->mpc_Ui->pc_PbConnect->setEnabled(true);
 
             // Get the connect status of the nodes
-            tgl_assert(this->mpc_UpSequences->GetConnectStates(c_NodeStates) == C_NO_ERR);
+            Q_ASSERT(this->mpc_UpSequences->GetConnectStates(c_NodeStates) == C_NO_ERR);
             Q_EMIT (this->SigNodeConnectStates(c_NodeStates, this->mc_NodePreconditionErrors));
 
             m_HandleConnectionFailure();
@@ -1827,7 +1826,7 @@ void C_SyvUpUpdateWidget::m_Timer(void)
             // Get the connect status of the nodes and inform the UI
             std::vector<stw::opensyde_core::C_OscSuSequencesNodeConnectStates> c_NodeStates;
 
-            tgl_assert(this->mpc_UpSequences->GetConnectStates(c_NodeStates) == C_NO_ERR);
+            Q_ASSERT(this->mpc_UpSequences->GetConnectStates(c_NodeStates) == C_NO_ERR);
             Q_EMIT (this->SigNodeConnectStates(c_NodeStates, this->mc_NodePreconditionErrors));
          }
 
@@ -1959,7 +1958,7 @@ void C_SyvUpUpdateWidget::m_Timer(void)
             // Get the connect status of the nodes and inform the UI
             std::vector<stw::opensyde_core::C_OscSuSequencesNodeUpdateStates> c_NodeStates;
 
-            tgl_assert(this->mpc_UpSequences->GetUpdateStates(c_NodeStates) == C_NO_ERR);
+            Q_ASSERT(this->mpc_UpSequences->GetUpdateStates(c_NodeStates) == C_NO_ERR);
             Q_EMIT (this->SigNodeUpdateStates(c_NodeStates));
          }
 
@@ -2082,7 +2081,7 @@ void C_SyvUpUpdateWidget::m_Timer(void)
          this->m_UpdateUpdatePackageStatus();
 
          // Save the time of update
-         this->mu32_UpdateTime = TglGetTickCount();
+         this->ms64_UpdateTime = QDateTime::currentMSecsSinceEpoch();
 
          break;
       case C_SyvUpSequences::eRESET_SYSTEM:
@@ -2104,7 +2103,7 @@ void C_SyvUpUpdateWidget::m_Timer(void)
          Q_EMIT (this->SigBlockDragAndDrop(false));
 
          // Save the time of disconnect
-         this->mu32_DisconnectTime = TglGetTickCount();
+         this->ms64_DisconnectTime = QDateTime::currentMSecsSinceEpoch();
 
          // Close sequence
          this->m_CleanUpSequence();
@@ -2480,8 +2479,8 @@ void C_SyvUpUpdateWidget::m_ReplaceOriginalWithTempPaths(void)
    uint32_t u32_NodeCounter;
 
    // All vector must have the size of the count of nodes in the system
-   tgl_assert(this->mc_NodesToFlash.size() == this->mc_NodesWithAllApplications.size());
-   tgl_assert(this->mc_NodesToFlash.size() == this->mc_NodesWithAllApplicationsAndTempPath.size());
+   Q_ASSERT(this->mc_NodesToFlash.size() == this->mc_NodesWithAllApplications.size());
+   Q_ASSERT(this->mc_NodesToFlash.size() == this->mc_NodesWithAllApplicationsAndTempPath.size());
 
    for (u32_NodeCounter = 0U; u32_NodeCounter < this->mc_NodesToFlash.size(); ++u32_NodeCounter)
    {

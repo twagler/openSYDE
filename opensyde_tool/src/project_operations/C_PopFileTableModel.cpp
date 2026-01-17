@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Model for project file table (implementation)
@@ -17,7 +17,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PopFileTableModel.hpp"
 #include "C_SdUtil.hpp"
 #include "C_PuiProject.hpp"
@@ -25,7 +25,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -65,7 +65,7 @@ C_PopFileTableModel::C_PopFileTableModel(QObject * const opc_Parent) :
 void C_PopFileTableModel::UpdateData(const std::vector<QString> & orc_RecentFilePaths,
                                      const std::vector<C_OscProject> & orc_RecentProjects)
 {
-   tgl_assert(orc_RecentFilePaths.size() == orc_RecentProjects.size());
+   Q_ASSERT(orc_RecentFilePaths.size() == orc_RecentProjects.size());
    if (orc_RecentFilePaths.size() == orc_RecentProjects.size())
    {
       beginResetModel();
@@ -177,7 +177,7 @@ QVariant C_PopFileTableModel::data(const QModelIndex & orc_Index, const int32_t 
             c_Font = mc_STYLE_GUIDE_FONT_REGULAR_14;
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
          //Convert point to pixel
@@ -200,7 +200,7 @@ QVariant C_PopFileTableModel::data(const QModelIndex & orc_Index, const int32_t 
             c_Retval = mc_STYLE_GUIDE_COLOR_12;
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }

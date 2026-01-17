@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       List with all datapools of a specific type of one node(implementation)
@@ -26,7 +26,7 @@
 #include "C_PuiSdUtil.hpp"
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_SdUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSdSharedDatapools.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_SdNdeDpImportRamView.hpp"
@@ -445,11 +445,11 @@ const
          orc_AdaptedDatapool.u32_NodeIndex,
          orc_AdaptedDatapool.u32_DataPoolIndex);
 
-      tgl_assert(pc_AdaptedDatapool != NULL);
+      Q_ASSERT(pc_AdaptedDatapool != NULL);
       if (pc_AdaptedDatapool != NULL)
       {
          uint32_t u32_DpIdCounter;
-         tgl_assert(rc_SharedDatapools.GetSharedDatapoolGroup(u32_SharedGroup, c_Group) == C_NO_ERR);
+         Q_ASSERT(rc_SharedDatapools.GetSharedDatapoolGroup(u32_SharedGroup, c_Group) == C_NO_ERR);
 
          // Synchronize with all registered shared Datapools in the same group
          for (u32_DpIdCounter = 0U; u32_DpIdCounter < c_Group.size(); ++u32_DpIdCounter)
@@ -459,7 +459,7 @@ const
                C_OscNode * const pc_SyncNode = C_PuiSdHandler::h_GetInstance()->GetOscNode(
                   c_Group[u32_DpIdCounter].u32_NodeIndex);
 
-               tgl_assert(pc_SyncNode != NULL);
+               Q_ASSERT(pc_SyncNode != NULL);
                if ((pc_SyncNode != NULL) &&
                    (c_Group[u32_DpIdCounter].u32_DataPoolIndex < pc_SyncNode->c_DataPools.size()))
                {
@@ -604,7 +604,7 @@ void C_SdNdeDpSelectorListWidget::AddNewDatapool(void)
                                                                c_SharedDatapool,
                                                                c_SharedUiDataPool);
 
-               tgl_assert(s32_SharedDpReturn == C_NO_ERR);
+               Q_ASSERT(s32_SharedDpReturn == C_NO_ERR);
                if (s32_SharedDpReturn == C_NO_ERR)
                {
                   // Copy all shared items
@@ -625,7 +625,7 @@ void C_SdNdeDpSelectorListWidget::AddNewDatapool(void)
                // Get a potential start address
                uint32_t u32_AreaCounter;
                std::vector<C_PuiSdHandler::C_PuiSdHandlerNodeLogicNvmArea> c_NvmAreas;
-               tgl_assert(C_PuiSdHandler::h_GetInstance()->GetNodeNvmDataPoolAreas(this->mu32_NodeIndex,
+               Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetNodeNvmDataPoolAreas(this->mu32_NodeIndex,
                                                                                    c_NvmAreas) == C_NO_ERR);
 
                // Search the first free gap
@@ -1447,7 +1447,7 @@ void C_SdNdeDpSelectorListWidget::m_AddNewDataPool(const C_OscNodeDataPool & orc
          s32_RealIndex = C_PuiSdHandler::h_GetInstance()->GetDataPoolIndex(this->mu32_NodeIndex,
                                                                            this->me_DataPoolType,
                                                                            s32_Row);
-         tgl_assert(s32_RealIndex >= 0);
+         Q_ASSERT(s32_RealIndex >= 0);
 
          c_NewDatapoolId.u32_NodeIndex = this->mu32_NodeIndex;
          // Getting the real index of the new datapool

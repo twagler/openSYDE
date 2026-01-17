@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for system view dashboard toggle properties (implementation)
@@ -12,7 +12,7 @@
 
 #include "stwtypes.hpp"
 
-#include "TglUtils.hpp"
+
 #include "C_SyvDaPeToggle.hpp"
 #include "ui_C_SyvDaPeToggle.h"
 
@@ -148,7 +148,7 @@ void C_SyvDaPeToggle::SetType(const C_PuiSvDbToggle::E_Type oe_Type) const
       this->mpc_Ui->pc_ComboBoxType->setCurrentIndex(C_SyvDaPeToggle::mhs32_INDEX_STYLE_TYPE3);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }

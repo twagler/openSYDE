@@ -19,6 +19,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "stwtypes.hpp"
 #include "C_CieExportDbc.hpp"
@@ -27,8 +28,7 @@
 #include "C_CieConverter.hpp"
 #include "C_OscCanSignal.hpp"
 #include "C_OscNodeDataPoolContent.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeDpContentUtil.hpp"
 #include "C_OscLoggingHandler.hpp"
 
@@ -38,7 +38,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
 using namespace stw::opensyde_core;
-using namespace stw::tgl;
+
 using namespace stw::scl;
 using namespace stw::opensyde_gui_logic;
 
@@ -109,7 +109,7 @@ int32_t C_CieExportDbc::h_ExportNetwork(const stw::scl::C_SclString & orc_File,
    mhc_ExportStatistic.u32_NumOfSignals = 0;
 
    // check file path
-   if (TglDirectoryExists(TglExtractFilePath(orc_File)) == false)
+   if (QFileInfo(QString::fromStdString(*(QFileInfo(QString::fromStdString(*orc_File.AsStdString(.AsStdString())).absolutePath() + "/").toStdString())).isDir()) == false)
    {
       orc_ErrorMessage = "Path \"" + orc_File + "\" does not exist.";
       osc_write_log_warning("DBC file export", orc_ErrorMessage);
@@ -460,7 +460,7 @@ int32_t C_CieExportDbc::mh_SetSignals(const std::vector<C_CieConverter::C_CieCan
          c_DbcSignal.multiplexerSwitchValue = rc_CieSignal.u16_MultiplexValue;
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
 
@@ -469,7 +469,7 @@ int32_t C_CieExportDbc::mh_SetSignals(const std::vector<C_CieConverter::C_CieCan
       // set signal values
       const C_CieConverter::C_CieDataPoolElement & rc_Element = rc_CieSignal.c_Element;
       s32_Return = mh_SetSignalValues(rc_Element, c_DbcSignal);
-      tgl_assert(s32_Return == C_NO_ERR);
+      Q_ASSERT(s32_Return == C_NO_ERR);
 
       if (s32_Return == C_NO_ERR)
       {

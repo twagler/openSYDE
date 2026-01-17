@@ -9,7 +9,7 @@
 #include "stwtypes.hpp"
 #include "CKFXVariableBase.hpp"
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclChecksums.hpp"
 
 //**************************************************************
@@ -80,7 +80,7 @@ C_KFXVariableBase::C_KFXVariableBase(void)
 
    this->u8_Type = KFX_DATA_TYPE_NOVAR;
 
-   this->aau8_Defaults.SetLength(0);
+   this->aau8_Defaults.resize(0);
 
    (void)std::memset(&au8_Access[0], KFX_DATA_ACCESS_INVALID, sizeof(au8_Access));
 
@@ -250,17 +250,17 @@ void C_KFXVariableBase::SetSize(const uint32_t ou32_Size)
          }
          this->pu8_Value = NULL;
       }
-      for (s32_Index = 0; s32_Index < this->aau8_Defaults.GetLength(); s32_Index++)
+      for (s32_Index = 0; s32_Index < this->aau8_Defaults.size(); s32_Index++)
       {
-         aau8_Defaults[s32_Index].SetLength(ou32_Size);
+         aau8_Defaults[s32_Index].resize(ou32_Size);
       }
-      mc_MinValue.SetLength(ou32_Size);
-      mc_MaxValue.SetLength(ou32_Size);
+      mc_MinValue.resize(ou32_Size);
+      mc_MaxValue.resize(ou32_Size);
 
       if (ou32_Size > 0U)
       {
          this->pu8_Value = new uint8_t[ou32_Size];
-         tgl_assert(this->pu8_Value != NULL);
+         Q_ASSERT(this->pu8_Value != NULL);
       }
    }
    catch (...)
@@ -444,7 +444,7 @@ void C_KFXVariableBase::SetStringValue(const C_SclString & orc_Value)
 
 void C_KFXVariableBase::CopyDefaultToValue(const uint16_t ou16_DefaultIndex)
 {
-   if (ou16_DefaultIndex < static_cast<uint16_t>(aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex < static_cast<uint16_t>(aau8_Defaults.size()))
    {
       (void)std::memcpy(this->pu8_Value, &this->aau8_Defaults[ou16_DefaultIndex][0], this->mu32_Size);
    }
@@ -454,7 +454,7 @@ void C_KFXVariableBase::CopyDefaultToValue(const uint16_t ou16_DefaultIndex)
 
 void C_KFXVariableBase::CopyValueToDefault(const uint16_t ou16_DefaultIndex)
 {
-   if (ou16_DefaultIndex < static_cast<uint16_t>(aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex < static_cast<uint16_t>(aau8_Defaults.size()))
    {
       (void)std::memcpy(&this->aau8_Defaults[ou16_DefaultIndex][0], this->pu8_Value, this->mu32_Size);
    }
@@ -466,7 +466,7 @@ bool C_KFXVariableBase::DefaultMatchesValue(const uint16_t ou16_DefaultIndex) co
 {
    int32_t s32_Return;
 
-   if (ou16_DefaultIndex < static_cast<uint16_t>(aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex < static_cast<uint16_t>(aau8_Defaults.size()))
    {
       s32_Return = std::memcmp(this->pu8_Value, &this->aau8_Defaults[ou16_DefaultIndex][0], this->mu32_Size);
    }
@@ -483,7 +483,7 @@ void C_KFXVariableBase::ClearAllDefaults(void)
 {
    int32_t s32_Index;
 
-   for (s32_Index = 0U; s32_Index < this->aau8_Defaults.GetLength(); s32_Index++)
+   for (s32_Index = 0U; s32_Index < this->aau8_Defaults.size(); s32_Index++)
    {
       this->ClearDefault(static_cast<uint16_t>(s32_Index));
    }
@@ -493,7 +493,7 @@ void C_KFXVariableBase::ClearAllDefaults(void)
 
 void C_KFXVariableBase::ClearDefault(const uint16_t ou16_DefaultIndex)
 {
-   if (ou16_DefaultIndex < static_cast<uint16_t>(aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex < static_cast<uint16_t>(aau8_Defaults.size()))
    {
       (void)std::memset(&this->aau8_Defaults[ou16_DefaultIndex][0], 0, this->mu32_Size);
    }
@@ -607,27 +607,27 @@ bool C_KFXVariableBase::CheckMinMax(void) const
 //-----------------------------------------------------------------------------
 void C_KFXVariableBase::SetNumDefaults(const uint16_t ou16_NumDefaults)
 {
-   if (static_cast<uint16_t>(this->aau8_Defaults.GetLength()) == ou16_NumDefaults)
+   if (static_cast<uint16_t>(this->aau8_Defaults.size()) == ou16_NumDefaults)
    {
       return;
    }
 
-   if (static_cast<uint16_t>(this->aau8_Defaults.GetLength()) > ou16_NumDefaults)
+   if (static_cast<uint16_t>(this->aau8_Defaults.size()) > ou16_NumDefaults)
    {
-      this->aau8_Defaults.SetLength(ou16_NumDefaults);
+      this->aau8_Defaults.resize(ou16_NumDefaults);
    }
    else
    {
       int32_t s32_Index;
       //add new arrays:
-      this->aau8_Defaults.SetLength(ou16_NumDefaults);
+      this->aau8_Defaults.resize(ou16_NumDefaults);
       if (this->mu32_Size > 0U)
       {
-         for (s32_Index = 0; s32_Index < this->aau8_Defaults.GetLength(); s32_Index++)
+         for (s32_Index = 0; s32_Index < this->aau8_Defaults.size(); s32_Index++)
          {
-            if (this->aau8_Defaults[s32_Index].GetLength() == 0)
+            if (this->aau8_Defaults[s32_Index].size() == 0)
             {
-               this->aau8_Defaults[s32_Index].SetLength(mu32_Size);
+               this->aau8_Defaults[s32_Index].resize(mu32_Size);
             }
          }
       }
@@ -646,7 +646,7 @@ void C_KFXVariableBase::SetNumDefaults(const uint16_t ou16_NumDefaults)
 //-----------------------------------------------------------------------------
 uint16_t C_KFXVariableBase::GetNumDefaults(void) const
 {
-   return static_cast<uint16_t>(this->aau8_Defaults.GetLength());
+   return static_cast<uint16_t>(this->aau8_Defaults.size());
 }
 
 //-----------------------------------------------------------------------------
@@ -663,7 +663,7 @@ uint16_t C_KFXVariableBase::GetNumDefaults(void) const
 //-----------------------------------------------------------------------------
 int64_t C_KFXVariableBase::GetNumericDefault(const uint16_t ou16_DefaultIndex) const
 {
-   if (ou16_DefaultIndex >= static_cast<uint16_t>(this->aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex >= static_cast<uint16_t>(this->aau8_Defaults.size()))
    {
       return 0;
    }
@@ -684,7 +684,7 @@ int64_t C_KFXVariableBase::GetNumericDefault(const uint16_t ou16_DefaultIndex) c
 //-----------------------------------------------------------------------------
 void C_KFXVariableBase::SetNumericDefault(const int64_t os64_Value, const uint16_t ou16_DefaultIndex)
 {
-   if (ou16_DefaultIndex < static_cast<uint16_t>(this->aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex < static_cast<uint16_t>(this->aau8_Defaults.size()))
    {
       C_KFXVariableBase::mh_SetNumericData(this->mu32_Size, &this->aau8_Defaults[ou16_DefaultIndex][0], os64_Value);
    }
@@ -704,7 +704,7 @@ void C_KFXVariableBase::SetNumericDefault(const int64_t os64_Value, const uint16
 //-----------------------------------------------------------------------------
 float64_t C_KFXVariableBase::GetFloatDefault(const uint16_t ou16_DefaultIndex) const
 {
-   if (ou16_DefaultIndex >= static_cast<uint16_t>(this->aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex >= static_cast<uint16_t>(this->aau8_Defaults.size()))
    {
       return 0.0;
    }
@@ -725,7 +725,7 @@ float64_t C_KFXVariableBase::GetFloatDefault(const uint16_t ou16_DefaultIndex) c
 //-----------------------------------------------------------------------------
 void C_KFXVariableBase::SetFloatDefault(const float64_t of64_Value, const uint16_t ou16_DefaultIndex)
 {
-   if (ou16_DefaultIndex < static_cast<uint16_t>(this->aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex < static_cast<uint16_t>(this->aau8_Defaults.size()))
    {
       C_KFXVariableBase::mh_SetFloatData(this->u8_Type, &this->aau8_Defaults[ou16_DefaultIndex][0], of64_Value);
    }
@@ -739,7 +739,7 @@ C_SclString C_KFXVariableBase::GetStringDefault(const uint16_t ou16_DefaultIndex
    uint32_t u32_Len;
    const uint8_t * pu8_Data;
 
-   if (ou16_DefaultIndex >= static_cast<uint16_t>(this->aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex >= static_cast<uint16_t>(this->aau8_Defaults.size()))
    {
       return "";
    }
@@ -768,7 +768,7 @@ void C_KFXVariableBase::SetStringDefault(const C_SclString & orc_Value, const ui
 {
    uint8_t * pu8_Data;
 
-   if (ou16_DefaultIndex < static_cast<uint16_t>(this->aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex < static_cast<uint16_t>(this->aau8_Defaults.size()))
    {
       pu8_Data = &this->aau8_Defaults[ou16_DefaultIndex][0];
 
@@ -864,7 +864,7 @@ void C_KFXVariableBase::CalcCRCOverEntry(uint16_t & oru16_CRC, const bool oq_Ski
    C_SclChecksums::CalcCRC16STW(&this->mc_MinValue[0], this->mu32_Size, oru16_CRC);
    C_SclChecksums::CalcCRC16STW(&this->mc_MaxValue[0], this->mu32_Size, oru16_CRC);
    C_SclChecksums::CalcCRC16STW(&this->au8_Access[0],  sizeof(this->au8_Access), oru16_CRC);
-   for (s32_Default = 0; s32_Default < aau8_Defaults.GetLength(); s32_Default++)
+   for (s32_Default = 0; s32_Default < aau8_Defaults.size(); s32_Default++)
    {
       C_SclChecksums::CalcCRC16STW(&this->aau8_Defaults[s32_Default][0], this->mu32_Size, oru16_CRC);
    }
@@ -1427,7 +1427,7 @@ void C_KFXVariableBase::m_CheckArrayAccessParamsDefault(const uint16_t ou16_Defa
                                                         const uint32_t ou32_ArrayIndex,
                                                         uint32_t & oru32_ByteOffset) const
 {
-   if (ou16_DefaultIndex >= static_cast<uint16_t>(this->aau8_Defaults.GetLength()))
+   if (ou16_DefaultIndex >= static_cast<uint16_t>(this->aau8_Defaults.size()))
    {
       throw "C_KFXVariableBase: invalid default set index";
    }
@@ -1554,28 +1554,28 @@ void C_KFXVariableBase::SetMinMaxToMaximum(void)
 
 //**************************************************************
 
-const C_SclDynamicArray<uint8_t> & C_KFXVariableBase::GetMinReference(void) const
+const QList<uint8_t> & C_KFXVariableBase::GetMinReference(void) const
 {
    return this->mc_MinValue;
 }
 
 //**************************************************************
 
-const C_SclDynamicArray<uint8_t> & C_KFXVariableBase::GetMaxReference(void) const
+const QList<uint8_t> & C_KFXVariableBase::GetMaxReference(void) const
 {
    return this->mc_MaxValue;
 }
 
 //**************************************************************
 
-C_SclDynamicArray<uint8_t> & C_KFXVariableBase::GetMinReference(void)
+QList<uint8_t> & C_KFXVariableBase::GetMinReference(void)
 {
    return this->mc_MinValue;
 }
 
 //**************************************************************
 
-C_SclDynamicArray<uint8_t> & C_KFXVariableBase::GetMaxReference(void)
+QList<uint8_t> & C_KFXVariableBase::GetMaxReference(void)
 {
    return this->mc_MaxValue;
 }
@@ -1619,7 +1619,7 @@ C_SclString C_KFXVariableBase::GetTypeDependentValueString(const bool oq_Hex, co
             c_Help = "-0x" + C_SclString::IntToHex(s64_Temp, 0);
             if (oq_LeadingZeroes == true)
             {
-               c_Help.Insert(C_SclString::StringOfChar('0', (3 + (this->GetSize() * 2)) - c_Help.Length()), 4);
+               c_Help.insert(C_SclString::StringOfChar('0', (3 + (this->GetSize() * 2)) - c_Help.Length()), 4);
             }
          }
          else
@@ -1627,7 +1627,7 @@ C_SclString C_KFXVariableBase::GetTypeDependentValueString(const bool oq_Hex, co
             c_Help = "0x" + C_SclString::IntToHex(s64_Temp, 0);
             if (oq_LeadingZeroes == true)
             {
-               c_Help.Insert(C_SclString::StringOfChar('0', (2 + (this->GetSize() * 2)) - c_Help.Length()), 3);
+               c_Help.insert(C_SclString::StringOfChar('0', (2 + (this->GetSize() * 2)) - c_Help.Length()), 3);
             }
          }
       }
@@ -1656,7 +1656,7 @@ C_SclString C_KFXVariableBase::GetTypeDependentValueString(const bool oq_Hex, co
       c_Help = "N/A";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    return c_Help;
@@ -1695,7 +1695,7 @@ C_SclString C_KFXVariableBase::GetTypeDependentDefaultString(const bool oq_Hex, 
             c_Help = "-0x" + C_SclString::IntToHex(s64_Temp, 0);
             if (oq_LeadingZeroes == true)
             {
-               c_Help.Insert(C_SclString::StringOfChar('0', (3 + (this->GetSize() * 2)) - c_Help.Length()), 4);
+               c_Help.insert(C_SclString::StringOfChar('0', (3 + (this->GetSize() * 2)) - c_Help.Length()), 4);
             }
          }
          else
@@ -1703,7 +1703,7 @@ C_SclString C_KFXVariableBase::GetTypeDependentDefaultString(const bool oq_Hex, 
             c_Help = "0x" + C_SclString::IntToHex(s64_Temp, 0);
             if (oq_LeadingZeroes == true)
             {
-               c_Help.Insert(C_SclString::StringOfChar('0', (2 + (this->GetSize() * 2)) - c_Help.Length()), 3);
+               c_Help.insert(C_SclString::StringOfChar('0', (2 + (this->GetSize() * 2)) - c_Help.Length()), 3);
             }
          }
       }
@@ -1732,7 +1732,7 @@ C_SclString C_KFXVariableBase::GetTypeDependentDefaultString(const bool oq_Hex, 
       c_Help = "N/A";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    return c_Help;

@@ -6,7 +6,7 @@
 #include "DiagLib_config.hpp"
 #include "stwtypes.hpp"
 #include "CKFXCommConfiguration.hpp"
-#include "TglTasks.hpp"
+
 #include "C_CanDispatcher.hpp"
 #ifndef DIAGLIB_KEFEX_PROTOCOL_NO_LOGGING
 #include "C_CanMonProtocol.hpp" //for protocolling HLP to text file

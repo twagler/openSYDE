@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for bus messages (note: main module description should be in .cpp file)
@@ -17,7 +17,7 @@
 #include "C_OgeWiCustomMessage.hpp"
 #include "ui_C_SdBueMessageSelectorWidget.h"
 
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_Uti.hpp"
 
@@ -231,7 +231,7 @@ void C_SdBueMessageSelectorWidget::UpdateButtonText(void) const
          c_Text = static_cast<QString>("Messages (%1)");
       }
 
-      tgl_assert(this->mpc_MessageSyncManager != NULL);
+      Q_ASSERT(this->mpc_MessageSyncManager != NULL);
       if (this->mpc_MessageSyncManager != NULL)
       {
          const uint32_t u32_MsgCount = this->mpc_MessageSyncManager->GetUniqueMessageCount(this->me_ProtocolType);
@@ -429,7 +429,7 @@ void C_SdBueMessageSelectorWidget::RecheckProtocolError(void) const
       {
          const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(
             c_NodeIndexes[u32_Counter]);
-         tgl_assert(pc_Node != NULL);
+         Q_ASSERT(pc_Node != NULL);
 
          if (pc_Node != NULL)
          {

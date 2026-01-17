@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing a specific application or data block as part of a node
@@ -19,7 +19,7 @@
 #include "C_PuiSvData.hpp"
 #include "C_OscViewNodeUpdate.hpp"
 #include "C_PuiSvHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_Uti.hpp"
 #include "C_PuiUtil.hpp"
 
@@ -429,7 +429,7 @@ void C_SyvUpPacListNodeItemWidget::LoadImportConfig(const C_SyvUpPacConfigNodeAp
    this->SetAppFile(c_Path, (c_Path == this->mc_DefaultFilePath));
 
    // Data handling
-   tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPath(
+   Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationPath(
                  this->mu32_ViewIndex,
                  this->mu32_NodeIndex,
                  this->mu32_Number, c_Path,

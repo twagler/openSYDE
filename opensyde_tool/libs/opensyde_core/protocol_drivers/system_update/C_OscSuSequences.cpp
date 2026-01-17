@@ -11,17 +11,19 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
+#include <QDir>
 
 #include <set>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscSuSequences.hpp"
+#include <QDateTime>
 #include "C_SclString.hpp"
-#include "C_SclDateTime.hpp"
 #include "C_SclChecksums.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
-#include "TglFile.hpp"
+
+#include <QElapsedTimer>
+#include <QThread>
 #include "C_OscHexFile.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscUtils.hpp"
@@ -35,7 +37,7 @@
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::diag_lib;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -104,7 +106,7 @@ bool C_OscSuSequences::m_IsNodeActive(const uint32_t ou32_NodeIndex, const uint3
             //openSYDE node ?
             if (rc_Node.c_Properties.e_DiagnosticServer == C_OscNodeProperties::eDS_OPEN_SYDE)
             {
-               tgl_assert(rc_Node.c_Properties.e_FlashLoader == C_OscNodeProperties::eFL_OPEN_SYDE);
+               Q_ASSERT(rc_Node.c_Properties.e_FlashLoader == C_OscNodeProperties::eFL_OPEN_SYDE);
             }
 
             q_Return = true;
@@ -483,14 +485,14 @@ int32_t C_OscSuSequences::m_FlashNodeOpenSydeHex(const std::vector<C_SclString> 
             {
                orc_StateHexFiles[u32_File].e_DataDumpFromFileRead = eSUSEQ_STATE_NO_ERR;
 
-               for (uint16_t u16_Area = 0U; u16_Area < pc_HexDump->at_Blocks.GetLength(); u16_Area++)
+               for (uint16_t u16_Area = 0U; u16_Area < pc_HexDump->at_Blocks.size(); u16_Area++)
                {
                   uint8_t u8_NrCode;
                   s32_Return =
                      this->mpc_ComDriver->SendOsyCheckFlashMemoryAvailable(
                         mc_CurrentNode,
                         pc_HexDump->at_Blocks[u16_Area].u32_AddressOffset,
-                        pc_HexDump->at_Blocks[u16_Area].au8_Data.GetLength(),
+                        pc_HexDump->at_Blocks[u16_Area].au8_Data.size(),
                         &u8_NrCode);
                   if (s32_Return != C_NO_ERR)
                   {
@@ -500,7 +502,7 @@ int32_t C_OscSuSequences::m_FlashNodeOpenSydeHex(const std::vector<C_SclString> 
                         " Offset: 0x%08x Size: 0x%08x). Details: %s",
                         orc_FilesToFlash[u32_File].c_str(),
                         pc_HexDump->at_Blocks[u16_Area].u32_AddressOffset,
-                        static_cast<uint32_t>(pc_HexDump->at_Blocks[u16_Area].au8_Data.GetLength()),
+                        static_cast<uint32_t>(pc_HexDump->at_Blocks[u16_Area].au8_Data.size()),
                         C_OscProtocolDriverOsy::h_GetOpenSydeServiceErrorDetails(s32_Return, u8_NrCode).c_str());
                      (void)m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_CHECK_MEMORY_NOT_OK, s32_Return, 20U,
                                             mc_CurrentNode, c_ErrorText);
@@ -528,7 +530,7 @@ int32_t C_OscSuSequences::m_FlashNodeOpenSydeHex(const std::vector<C_SclString> 
          {
             const stw::hex_file::C_HexDataDump * const pc_HexDump = c_Files[u32_File]->GetDataDump(u32_Return);
             //we would not have gotten here if we could not get a decent dump ...
-            tgl_assert(pc_HexDump != NULL);
+            Q_ASSERT(pc_HexDump != NULL);
 
             if (pc_HexDump != NULL)
             {
@@ -596,22 +598,22 @@ int32_t C_OscSuSequences::m_FlashOneFileOpenSydeHex(const stw::hex_file::C_HexDa
                           "Flashing HEX file ...");
 
    //get total number of bytes for progress calculations:
-   for (int32_t s32_Area = 0U; s32_Area < orc_HexDataDump.at_Blocks.GetLength(); s32_Area++)
+   for (int32_t s32_Area = 0U; s32_Area < orc_HexDataDump.at_Blocks.size(); s32_Area++)
    {
-      u32_TotalNumberOfBytes += static_cast<uint32_t>(orc_HexDataDump.at_Blocks[s32_Area].au8_Data.GetLength());
+      u32_TotalNumberOfBytes += static_cast<uint32_t>(orc_HexDataDump.at_Blocks[s32_Area].au8_Data.size());
    }
 
    //flash all areas
-   for (int32_t s32_Area = 0U; s32_Area < orc_HexDataDump.at_Blocks.GetLength(); s32_Area++)
+   for (int32_t s32_Area = 0U; s32_Area < orc_HexDataDump.at_Blocks.size(); s32_Area++)
    {
-      const uint32_t u32_AreaSize = orc_HexDataDump.at_Blocks[s32_Area].au8_Data.GetLength();
+      const uint32_t u32_AreaSize = orc_HexDataDump.at_Blocks[s32_Area].au8_Data.size();
       uint32_t u32_MaxBlockLength = 0U;
       uint8_t u8_NrCode;
       bool q_Abort;
 
       //calculate progress percentage:
       // (we just need a rough approximation; so integer calculation will suffice)
-      tgl_assert(u32_TotalNumberOfBytes != 0U); //prerequisite for function: non-empty hex file
+      Q_ASSERT(u32_TotalNumberOfBytes != 0U); //prerequisite for function: non-empty hex file
       // Prevent an overflow when file is bigger than 43MB
       //lint -e{414}  //see assertion
       uint8_t u8_ProgressPercentage =
@@ -635,7 +637,7 @@ int32_t C_OscSuSequences::m_FlashOneFileOpenSydeHex(const stw::hex_file::C_HexDa
          s32_Return = this->mpc_ComDriver->SendOsyRequestDownload(
             mc_CurrentNode,
             orc_HexDataDump.at_Blocks[s32_Area].u32_AddressOffset,
-            orc_HexDataDump.at_Blocks[s32_Area].au8_Data.GetLength(),
+            orc_HexDataDump.at_Blocks[s32_Area].au8_Data.size(),
             u32_MaxBlockLength, &u8_NrCode);
 
          if (s32_Return != C_NO_ERR)
@@ -644,7 +646,7 @@ int32_t C_OscSuSequences::m_FlashOneFileOpenSydeHex(const stw::hex_file::C_HexDa
             c_Error.PrintFormatted("Erasing flash memory for area %d failed (Offset: 0x%08X Size: 0x%08X). Details: %s",
                                    s32_Area + 1,
                                    orc_HexDataDump.at_Blocks[s32_Area].u32_AddressOffset,
-                                   static_cast<uint32_t>(orc_HexDataDump.at_Blocks[s32_Area].au8_Data.GetLength()),
+                                   static_cast<uint32_t>(orc_HexDataDump.at_Blocks[s32_Area].au8_Data.size()),
                                    C_OscProtocolDriverOsy::h_GetOpenSydeServiceErrorDetails(s32_Return,
                                                                                             u8_NrCode).c_str());
             (void)m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_FLASH_HEX_AREA_ERASE_ERROR, s32_Return,
@@ -675,7 +677,7 @@ int32_t C_OscSuSequences::m_FlashOneFileOpenSydeHex(const stw::hex_file::C_HexDa
          {
             C_SclString c_Text;
             c_Text.PrintFormatted("Writing data for area %02d/%02d  byte %08u/%08u ...",
-                                  s32_Area + 1, orc_HexDataDump.at_Blocks.GetLength(),
+                                  s32_Area + 1, orc_HexDataDump.at_Blocks.size(),
                                   u32_AreaSize - u32_RemainingBytes, u32_AreaSize);
             q_Abort = m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_FLASH_HEX_AREA_TRANSFER_START, C_NO_ERR,
                                        u8_ProgressPercentage, mc_CurrentNode, c_Text);
@@ -744,12 +746,12 @@ int32_t C_OscSuSequences::m_FlashOneFileOpenSydeHex(const stw::hex_file::C_HexDa
          //report "final" status:
          C_SclString c_Text;
          c_Text.PrintFormatted("Writing data for area %02d/%02d  byte %08u/%08u ...",
-                               s32_Area + 1, orc_HexDataDump.at_Blocks.GetLength(), u32_AreaSize, u32_AreaSize);
+                               s32_Area + 1, orc_HexDataDump.at_Blocks.size(), u32_AreaSize, u32_AreaSize);
          (void)m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_FLASH_HEX_AREA_TRANSFER_START, C_NO_ERR,
                                 u8_ProgressPercentage, mc_CurrentNode, c_Text);
 
          //if it's the last area we need to check the signature
-         if (s32_Area == (orc_HexDataDump.at_Blocks.GetLength() - 1))
+         if (s32_Area == (orc_HexDataDump.at_Blocks.size() - 1))
          {
             (void)m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_FLASH_HEX_AREA_EXIT_FINAL_START, C_NO_ERR,
                                    u8_ProgressPercentage, mc_CurrentNode,
@@ -973,7 +975,7 @@ int32_t C_OscSuSequences::m_FlashOneFileOpenSydeFile(const C_SclString & orc_Fil
       const bool q_Abort = m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_FLASH_FILE_PREPARE_START, C_NO_ERR, 0U,
                                             mc_CurrentNode,
                                             "Preparing file system for file \"" +
-                                            TglExtractFileName(orc_FileToFlash) + "\"...");
+                                            QFileInfo(QString::fromStdString(*orc_FileToFlash.AsStdString())).fileName().toStdString() + "\"...");
 
       orc_StateOtherFile.e_FileLoaded = eSUSEQ_STATE_NO_ERR;
 
@@ -987,14 +989,14 @@ int32_t C_OscSuSequences::m_FlashOneFileOpenSydeFile(const C_SclString & orc_Fil
          (void)this->mpc_ComDriver->OsySetPollingTimeout(mc_CurrentNode, ou32_RequestDownloadTimeout);
 
          s32_Return = this->mpc_ComDriver->SendOsyRequestFileTransfer(
-            mc_CurrentNode, TglExtractFileName(orc_FileToFlash), u32_TotalNumberOfBytes, u32_MaxBlockLength,
+            mc_CurrentNode, QFileInfo(QString::fromStdString(*orc_FileToFlash.AsStdString())).fileName().toStdString(), u32_TotalNumberOfBytes, u32_MaxBlockLength,
             &u8_NrCode);
 
          if (s32_Return != C_NO_ERR)
          {
             C_SclString c_Error;
             c_Error.PrintFormatted("Preparing file system for file \"%s\" failed. Details: %s",
-                                   TglExtractFileName(orc_FileToFlash).c_str(),
+                                   QFileInfo(QString::fromStdString(*orc_FileToFlash.AsStdString())).fileName().toStdString().c_str(),
                                    C_OscProtocolDriverOsy::h_GetOpenSydeServiceErrorDetails(s32_Return,
                                                                                             u8_NrCode).c_str());
             (void)m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_FLASH_FILE_PREPARE_ERROR, s32_Return,
@@ -1038,7 +1040,7 @@ int32_t C_OscSuSequences::m_FlashOneFileOpenSydeFile(const C_SclString & orc_Fil
       {
          C_SclString c_Text;
          bool q_Abort;
-         tgl_assert(u32_TotalNumberOfBytes != 0U); //prerequisite for function: non-empty hex file
+         Q_ASSERT(u32_TotalNumberOfBytes != 0U); //prerequisite for function: non-empty hex file
          // Prevent an overflow when file is bigger than 43MB
          //lint -e{414}  //see assertion
          u8_ProgressPercentage = static_cast<uint8_t>((static_cast<uint64_t>(u32_TotalNumberOfBytesFlashed) * 100ULL) /
@@ -1261,7 +1263,7 @@ int32_t C_OscSuSequences::m_WriteNvmOpenSyde(const std::vector<C_SclString> & or
    //Get pointer to OSY protocol driver provided by comm driver:
    C_OscProtocolDriverOsyTpBase * const pc_TransportProtocol = mpc_ComDriver->GetOsyTransportProtocol(mu32_CurrentNode);
 
-   tgl_assert(pc_TransportProtocol != NULL);
+   Q_ASSERT(pc_TransportProtocol != NULL);
    if (pc_TransportProtocol != NULL)
    {
       uint16_t u16_MaxBlockLength = 0U;
@@ -1273,10 +1275,10 @@ int32_t C_OscSuSequences::m_WriteNvmOpenSyde(const std::vector<C_SclString> & or
       //get node-IDs from ProtocolDriver and set in DiagProtocol:
       pc_TransportProtocol->GetNodeIdentifiers(c_Client, c_Server);
       s32_Return = c_DiagProtocol.SetNodeIdentifiers(c_Client, c_Server);
-      tgl_assert(s32_Return == C_NO_ERR);
+      Q_ASSERT(s32_Return == C_NO_ERR);
       //Set transport protocol in DiagProtocol:
       s32_Return = c_DiagProtocol.SetTransportProtocol(pc_TransportProtocol);
-      tgl_assert(s32_Return == C_NO_ERR);
+      Q_ASSERT(s32_Return == C_NO_ERR);
 
       //set up DataDealer:
       C_OscDataDealerNvmSafe c_Dealer(&rc_Node, mu32_CurrentNode, &c_DiagProtocol);
@@ -1776,7 +1778,9 @@ int32_t C_OscSuSequences::m_WriteFingerPrintOsy(void)
 {
    //all prerequisites checked; commence the flashing ...
    //write fingerprint
-   const C_SclDateTime c_Now = C_SclDateTime::Now();
+   const QDateTime c_Now = QDateTime::currentDateTime();
+   const QDate c_Date = c_Now.date();
+   const QTime c_Time = c_Now.time();
    uint8_t au8_Date[3];
    uint8_t au8_Time[3];
    C_SclString c_UserName;
@@ -1784,16 +1788,16 @@ int32_t C_OscSuSequences::m_WriteFingerPrintOsy(void)
    uint8_t u8_NrCode;
    int32_t s32_Return;
 
-   au8_Date[0] = static_cast<uint8_t>(c_Now.mu16_Year % 1000U);
-   au8_Date[1] = static_cast<uint8_t>(c_Now.mu16_Month);
-   au8_Date[2] = static_cast<uint8_t>(c_Now.mu16_Day);
-   au8_Time[0] = static_cast<uint8_t>(c_Now.mu16_Hour);
-   au8_Time[1] = static_cast<uint8_t>(c_Now.mu16_Minute);
-   au8_Time[2] = static_cast<uint8_t>(c_Now.mu16_Second);
+   au8_Date[0] = static_cast<uint8_t>(c_Date.year() % 100);
+   au8_Date[1] = static_cast<uint8_t>(c_Date.month());
+   au8_Date[2] = static_cast<uint8_t>(c_Date.day());
+   au8_Time[0] = static_cast<uint8_t>(c_Time.hour());
+   au8_Time[1] = static_cast<uint8_t>(c_Time.minute());
+   au8_Time[2] = static_cast<uint8_t>(c_Time.second());
 
    (void)m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_FINGERPRINT_START, C_NO_ERR, 30U, mc_CurrentNode,
                           "Writing fingerprint ...");
-   q_Return = stw::tgl::TglGetSystemUserName(c_UserName);
+   q_Return = stw::opensyde_core::C_OscUtils::h_GetSystemUserName(c_UserName);
    if (q_Return != true)
    {
       (void)m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_FINGERPRINT_NAME_NOT_READABLE, C_WARN, 30U, mc_CurrentNode,
@@ -1986,7 +1990,7 @@ int32_t C_OscSuSequences::m_ReadDeviceInformationOpenSyde(const uint8_t ou8_Prog
       {
          const C_OscNode & rc_CurNode = this->mpc_SystemDefinition->c_Nodes[ou32_NodeIndex];
          //this information is only available for address based devices
-         tgl_assert(rc_CurNode.u32_SubDeviceIndex < rc_CurNode.pc_DeviceDefinition->c_SubDevices.size());
+         Q_ASSERT(rc_CurNode.u32_SubDeviceIndex < rc_CurNode.pc_DeviceDefinition->c_SubDevices.size());
          if (rc_CurNode.pc_DeviceDefinition->c_SubDevices[rc_CurNode.u32_SubDeviceIndex].
              q_FlashloaderOpenSydeIsFileBased
              ==
@@ -2235,7 +2239,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
       //consistent configuration ?
       for (uint16_t u16_Node = 0U; u16_Node < orc_Nodes.size(); u16_Node++)
       {
-         tgl_assert(orc_Nodes[u16_Node].pc_DeviceDefinition != NULL);
+         Q_ASSERT(orc_Nodes[u16_Node].pc_DeviceDefinition != NULL);
 
          //node inactive but files defined ?
          if ((orc_ActiveNodes[u16_Node] == 0U) &&
@@ -2257,7 +2261,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                     u16_File++)
                {
                   const C_SclString c_File = orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u16_File];
-                  if (TglFileExists(c_File) == false)
+                  if ((QFileInfo(QString::fromStdString(*c_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_File.AsStdString())).isFile()) == false)
                   {
                      s32_Return = C_RANGE;
                      if (opc_ErrorPath != NULL)
@@ -2272,7 +2276,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                     u16_File++)
                {
                   const C_SclString c_File = orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u16_File];
-                  if (TglFileExists(c_File) == false)
+                  if ((QFileInfo(QString::fromStdString(*c_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_File.AsStdString())).isFile()) == false)
                   {
                      s32_Return = C_RANGE;
                      if (opc_ErrorPath != NULL)
@@ -2286,7 +2290,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                if (orc_ApplicationsToWrite[u16_Node].c_PemFile != "")
                {
                   const C_SclString c_File = orc_ApplicationsToWrite[u16_Node].c_PemFile;
-                  if (TglFileExists(c_File) == false)
+                  if ((QFileInfo(QString::fromStdString(*c_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_File.AsStdString())).isFile()) == false)
                   {
                      s32_Return = C_RANGE;
                      if (opc_ErrorPath != NULL)
@@ -2301,7 +2305,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
          if (s32_Return == C_NO_ERR)
          {
             // Special case: File based nodes shall have unique file names
-            tgl_assert(
+            Q_ASSERT(
                orc_Nodes[u16_Node].u32_SubDeviceIndex < orc_Nodes[u16_Node].pc_DeviceDefinition->c_SubDevices.size());
             if (orc_Nodes[u16_Node].pc_DeviceDefinition->c_SubDevices[orc_Nodes[u16_Node].u32_SubDeviceIndex].
                 q_FlashloaderOpenSydeIsFileBased == true)
@@ -2311,7 +2315,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                //also: remove paths
                for (uint16_t u16_File = 0U; u16_File < c_Files.size(); u16_File++)
                {
-                  c_Files[u16_File] = TglExtractFileName(c_Files[u16_File]).LowerCase();
+                  c_Files[u16_File] = QFileInfo(QString::fromStdString(*c_Files[u16_File].AsStdString())).fileName().toStdString().LowerCase();
                }
                //get same names next to each other:
                std::sort(c_Files.begin(), c_Files.end());
@@ -2335,9 +2339,9 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
    if (s32_Return == C_NO_ERR)
    {
       //erase target path if it exists:
-      if (TglDirectoryExists(orc_TargetPath) == true)
+      if (QFileInfo(QString::fromStdString(*orc_TargetPath.AsStdString())).isDir() == true)
       {
-         s32_Return = TglRemoveDirectory(orc_TargetPath, false);
+         s32_Return = (QDir(QString::fromStdString(*orc_TargetPath.AsStdString())).removeRecursively() ? 0 : -1);
          if (s32_Return != 0)
          {
             s32_Return = C_BUSY;
@@ -2372,10 +2376,10 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
             if (orc_ActiveNodes[u16_Node] == 1U)
             {
                c_NodeTargetPaths[u16_Node] =
-                  TglFileIncludeTrailingDelimiter(orc_TargetPath + C_OscUtils::h_NiceifyStringForFileName(
+                  stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_TargetPath + C_OscUtils::h_NiceifyStringForFileName(
                                                      orc_Nodes[u16_Node].c_Properties.c_Name));
 
-               s32_Return = TglCreateDirectory(c_NodeTargetPaths[u16_Node]);
+               s32_Return = (QDir().mkpath(QString::fromStdString(*c_NodeTargetPaths[u16_Node].AsStdString())) ? 0 : -1);
                if (s32_Return != 0)
                {
                   if (opc_ErrorPath != NULL)
@@ -2405,7 +2409,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                //compose target file name
                C_SclString c_TargetFileName;
 
-               tgl_assert(
+               Q_ASSERT(
                   orc_Nodes[u16_Node].u32_SubDeviceIndex <
                   orc_Nodes[u16_Node].pc_DeviceDefinition->c_SubDevices.size());
                if (orc_Nodes[u16_Node].pc_DeviceDefinition->c_SubDevices[orc_Nodes[u16_Node].u32_SubDeviceIndex].
@@ -2413,7 +2417,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                {
                   // File based nodes need the unchanged file name and must be unique
                   c_TargetFileName = c_NodeTargetPaths[u16_Node] +
-                                     TglExtractFileName(orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u16_File]);
+                                     QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u16_File].AsStdString())).fileName().toStdString();
                }
                else
                {
@@ -2421,7 +2425,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                   // Add an counter to the target file name
                   c_TargetFileName = c_NodeTargetPaths[u16_Node] +
                                      C_SclString::IntToStr(static_cast<uint32_t>(u16_File) + 1U) + "_" +
-                                     TglExtractFileName(orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u16_File]);
+                                     QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u16_File].AsStdString())).fileName().toStdString();
                }
 
                //copy file
@@ -2447,7 +2451,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                const C_SclString c_TargetFileName =
                   c_NodeTargetPaths[u16_Node] +
                   C_SclString::IntToStr(static_cast<uint32_t>(u16_File) + 1U) + "_" +
-                  TglExtractFileName(orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u16_File]);
+                  QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u16_File].AsStdString())).fileName().toStdString();
 
                //copy file
                s32_Return = C_OscUtils::h_CopyFile(c_SourceFileName, c_TargetFileName, opc_ErrorPath);
@@ -2469,7 +2473,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                //compose target file name
                const C_SclString c_TargetFileName =
                   c_NodeTargetPaths[u16_Node] +
-                  TglExtractFileName(orc_ApplicationsToWrite[u16_Node].c_PemFile);
+                  QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_PemFile.AsStdString())).fileName().toStdString();
 
                //copy file
                s32_Return = C_OscUtils::h_CopyFile(c_SourceFileName, c_TargetFileName, opc_ErrorPath);
@@ -2597,8 +2601,8 @@ int32_t C_OscSuSequences::ActivateFlashloader(const bool oq_FailOnFirstError)
       // Prepare only nodes on the local bus in the first step ...
 
       //check prerequisites (should have been checked at Init() already)
-      tgl_assert(this->mpc_SystemDefinition->c_Nodes.size() == this->mc_ActiveNodes.size());
-      tgl_assert(this->mu32_ActiveBusIndex < this->mpc_SystemDefinition->c_Buses.size());
+      Q_ASSERT(this->mpc_SystemDefinition->c_Nodes.size() == this->mc_ActiveNodes.size());
+      Q_ASSERT(this->mu32_ActiveBusIndex < this->mpc_SystemDefinition->c_Buses.size());
 
       // send openSYDE CAN-TP "RequestProgramming" to each node
       (void)m_ReportProgress(eACTIVATE_FLASHLOADER_OSY_REQUEST_PROGRAMMING_START, C_NO_ERR, 0U,
@@ -2776,7 +2780,11 @@ int32_t C_OscSuSequences::ActivateFlashloader(const bool oq_FailOnFirstError)
          // is not possible via Ethernet; it really has to react to RequestProgramming
          if (this->mpc_SystemDefinition->c_Buses[this->mu32_ActiveBusIndex].e_Type == C_OscSystemBus::eCAN)
          {
-            const uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
+            const bool q_UseOpenSydeProtocol = this->mq_OpenSydeDevicesActive;
+            const bool q_UseStwFlashloaderProtocol = this->mq_StwFlashloaderDevicesActiveOnLocalBus;
+
+            QElapsedTimer c_Timer;
+            c_Timer.start();
             uint32_t u32_WaitTime = this->GetMinimumFlashloaderResetWaitTime(C_OscComDriverFlash::eNO_CHANGES_CAN);
 
             if (u32_WaitTime < u32_SCAN_TIME_MS)
@@ -2789,7 +2797,7 @@ int32_t C_OscSuSequences::ActivateFlashloader(const bool oq_FailOnFirstError)
                                    "Broadcasting enter Flashloader request ...");
             do
             {
-               if (this->mq_OpenSydeDevicesActive == true)
+               if (q_UseOpenSydeProtocol == true)
                {
                   // openSYDE "DiagnosticSessionControl(PreProgramming)" broadcast
                   s32_Return = this->mpc_ComDriver->SendOsyCanBroadcastEnterPreProgrammingSession();
@@ -2801,7 +2809,7 @@ int32_t C_OscSuSequences::ActivateFlashloader(const bool oq_FailOnFirstError)
                   }
                }
 
-               if ((this->mq_StwFlashloaderDevicesActiveOnLocalBus == true) &&
+               if ((q_UseStwFlashloaderProtocol == true) &&
                    (s32_Return == C_NO_ERR))
                {
                   // send STW Flashloader "FLASH" in parallel:
@@ -2819,14 +2827,14 @@ int32_t C_OscSuSequences::ActivateFlashloader(const bool oq_FailOnFirstError)
                   break;
                }
 
-               stw::tgl::TglSleep(5);
+               QThread::msleep(5);
             }
-            while (stw::tgl::TglGetTickCount() < (u32_WaitTime + u32_StartTime));
+            while (c_Timer.hasExpired(u32_WaitTime) == false);
          }
          else
          {
             //Ethernet. Give the targets the minimum reset time to reset and initialize their Ethernet interfaces ...
-            TglSleep(this->GetMinimumFlashloaderResetWaitTime(C_OscComDriverFlash::eNO_CHANGES_ETHERNET));
+            QThread::msleep(this->GetMinimumFlashloaderResetWaitTime(C_OscComDriverFlash::eNO_CHANGES_ETHERNET));
          }
       }
 
@@ -3026,7 +3034,7 @@ int32_t C_OscSuSequences::ActivateFlashloader(const bool oq_FailOnFirstError)
                               stw::opensyde_core::C_OscProtocolDriverOsyNode c_LastRouter;
 
                               // Check what interface is used of target (not the local bus)
-                              tgl_assert(this->mpc_ComDriver->GetRoutingTargetInterfaceType(
+                              Q_ASSERT(this->mpc_ComDriver->GetRoutingTargetInterfaceType(
                                             u16_Node, e_TargetInterfaceType) == C_NO_ERR);
                               if (e_TargetInterfaceType == C_OscSystemBus::eCAN)
                               {
@@ -3037,21 +3045,22 @@ int32_t C_OscSuSequences::ActivateFlashloader(const bool oq_FailOnFirstError)
                                  e_WaitType = C_OscComDriverFlash::eNO_CHANGES_ETHERNET;
                               }
 
-                              tgl_assert(this->GetMinimumFlashloaderResetWaitTime(e_WaitType,
+                              Q_ASSERT(this->GetMinimumFlashloaderResetWaitTime(e_WaitType,
                                                                                   this->mc_CurrentNode,
                                                                                   u32_WaitTime) == C_NO_ERR);
 
-                              tgl_assert(this->mpc_ComDriver->GetServerIdOfLastRouter(u16_Node,
+                              Q_ASSERT(this->mpc_ComDriver->GetServerIdOfLastRouter(u16_Node,
                                                                                       c_LastRouter) == C_NO_ERR);
 
-                              u32_StartTime = stw::tgl::TglGetTickCount();
-                              u32_LastSentTesterPresent = u32_StartTime;
+                              QElapsedTimer c_Timer;
+                              c_Timer.start();
+                              u32_LastSentTesterPresent = 0; // Relative to timer start
 
                               // Give the targets some time to reset and initialize their interfaces
                               // and wait the minimum time
                               do
                               {
-                                 u32_CurrentTime = stw::tgl::TglGetTickCount();
+                                 u32_CurrentTime = static_cast<uint32_t>(c_Timer.elapsed());
 
                                  // Tester present is only necessary in case of CAN. In case of Ethernet the entire
                                  // routing will be restarted anyway by m_ReconnectToTargetServer
@@ -3075,9 +3084,9 @@ int32_t C_OscSuSequences::ActivateFlashloader(const bool oq_FailOnFirstError)
                                     u32_LastSentTesterPresent = u32_CurrentTime;
                                  }
 
-                                 TglSleep(5);
+                                 QThread::msleep(5);
                               }
-                              while (u32_CurrentTime < (u32_WaitTime + u32_StartTime));
+                              while (c_Timer.hasExpired(u32_WaitTime) == false);
 
                               if (s32_Return == C_NO_ERR)
                               {
@@ -3135,11 +3144,11 @@ int32_t C_OscSuSequences::ActivateFlashloader(const bool oq_FailOnFirstError)
 
                            if (s32_Return == C_NO_ERR)
                            {
-                              const uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
+                              const qint64 s64_StartTime = QDateTime::currentMSecsSinceEpoch();
                               uint32_t u32_WaitTime;
 
                               // Get the minimum wait time of the concrete routing node
-                              tgl_assert(this->GetMinimumFlashloaderResetWaitTime(
+                              Q_ASSERT(this->GetMinimumFlashloaderResetWaitTime(
                                             C_OscComDriverFlash::eNO_CHANGES_CAN,
                                             this->mc_CurrentNode,
                                             u32_WaitTime) == C_NO_ERR);
@@ -3157,9 +3166,9 @@ int32_t C_OscSuSequences::ActivateFlashloader(const bool oq_FailOnFirstError)
                                     break;
                                  }
 
-                                 stw::tgl::TglSleep(5);
+                                 QThread::msleep(5);
                               }
-                              while (stw::tgl::TglGetTickCount() < (u32_WaitTime + u32_StartTime));
+                              while (QDateTime::currentMSecsSinceEpoch() < (static_cast<qint64>(u32_WaitTime) + s64_StartTime));
 
                               if (s32_Return == C_NO_ERR)
                               {
@@ -3559,7 +3568,7 @@ int32_t C_OscSuSequences::UpdateSystem(const std::vector<C_OscSuSequences::C_DoF
             const uint32_t u32_SubDeviceIndex =
                this->mpc_SystemDefinition->c_Nodes[u16_Node].u32_SubDeviceIndex;
 
-            tgl_assert(pc_DeviceDefinition != NULL);
+            Q_ASSERT(pc_DeviceDefinition != NULL);
             if (pc_DeviceDefinition != NULL)
             {
                if (pc_DeviceDefinition->c_SubDevices[u32_SubDeviceIndex].q_FlashloaderOpenSydeIsFileBased == false)
@@ -3637,17 +3646,17 @@ int32_t C_OscSuSequences::UpdateSystem(const std::vector<C_OscSuSequences::C_DoF
                      }
                      else
                      {
-                        tgl_assert(false);
+                        Q_ASSERT(false);
                      }
 
                      if (pc_FileState != NULL)
                      {
                         // Save the file name
                         pc_FileState->c_FileName =
-                           TglExtractFileName(orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File]);
+                           QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File].AsStdString())).fileName().toStdString();
                      }
 
-                     if (TglFileExists(orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File]) == false)
+                     if ((QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File].AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File].AsStdString())).isFile()) == false)
                      {
                         osc_write_log_error("System Update", "Could not find file \"" +
                                             orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File] + "\" !");
@@ -3672,9 +3681,9 @@ int32_t C_OscSuSequences::UpdateSystem(const std::vector<C_OscSuSequences::C_DoF
                   {
                      // Save the file name
                      rc_State.c_StatePsiFiles[u32_File].c_FileName =
-                        TglExtractFileName(orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File]);
+                        QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File].AsStdString())).fileName().toStdString();
 
-                     if (TglFileExists(orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File]) == false)
+                     if ((QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File].AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File].AsStdString())).isFile()) == false)
                      {
                         osc_write_log_error("System Update", "Could not find file \"" +
                                             orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File] + "\" !");
@@ -3690,9 +3699,8 @@ int32_t C_OscSuSequences::UpdateSystem(const std::vector<C_OscSuSequences::C_DoF
                   // PEM file
                   if (orc_ApplicationsToWrite[u16_Node].c_PemFile != "")
                   {
-                     rc_State.c_StatePemFile.c_FileName = TglExtractFileName(
-                        orc_ApplicationsToWrite[u16_Node].c_PemFile);
-                     if (TglFileExists(orc_ApplicationsToWrite[u16_Node].c_PemFile) == false)
+                     rc_State.c_StatePemFile.c_FileName = QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_PemFile.AsStdString())).fileName().toStdString();
+                     if ((QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_PemFile.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_PemFile.AsStdString())).isFile()) == false)
                      {
                         osc_write_log_error("System Update", "Could not find file \"" +
                                             orc_ApplicationsToWrite[u16_Node].c_PemFile + "\" !");
@@ -3831,7 +3839,7 @@ int32_t C_OscSuSequences::UpdateSystem(const std::vector<C_OscSuSequences::C_DoF
                         this->mpc_SystemDefinition->c_Nodes[u32_NodeIndex].u32_SubDeviceIndex;
                      (void)m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_START, C_NO_ERR, 10U, mc_CurrentNode,
                                             "Starting device update ...");
-                     tgl_assert(pc_DeviceDefinition != NULL);
+                     Q_ASSERT(pc_DeviceDefinition != NULL);
                      if (pc_DeviceDefinition != NULL)
                      {
                         C_OscProtocolDriverOsy::C_ListOfFeatures c_AvailableFeatures;
@@ -3867,7 +3875,7 @@ int32_t C_OscSuSequences::UpdateSystem(const std::vector<C_OscSuSequences::C_DoF
                         if ((s32_Return == C_NO_ERR) &&
                             (orc_ApplicationsToWrite[u32_NodeIndex].c_FilesToFlash.size() > 0))
                         {
-                           tgl_assert(u32_SubDeviceIndex < pc_DeviceDefinition->c_SubDevices.size());
+                           Q_ASSERT(u32_SubDeviceIndex < pc_DeviceDefinition->c_SubDevices.size());
                            //address based or file based ?
                            if (pc_DeviceDefinition->c_SubDevices[u32_SubDeviceIndex].q_FlashloaderOpenSydeIsFileBased ==
                                false)
@@ -4113,7 +4121,7 @@ int32_t C_OscSuSequences::ResetSystem(void)
                   {
                      // Reset command does not send a response. Need a little wait time to guarantee that
                      // the routing nodes really send the reset command
-                     TglSleep(20);
+                     QThread::msleep(20);
 
                      // Stop routing always because of cleaning up the tp and legacy routing dispatcher
                      this->mpc_ComDriver->StopRouting(u32_Node);
@@ -4284,14 +4292,14 @@ void C_OscSuSequences::h_StwFlashloaderInformationToText(const C_XflDeviceInform
 
    if (orc_Info.c_BasicInformation.q_DeviceInfoAddressesValid == true)
    {
-      tgl_assert(orc_Info.c_BasicInformation.c_DeviceInfoAddresses.GetLength() ==
-                 orc_Info.c_BasicInformation.c_DeviceInfoBlocks.GetLength());
-      tgl_assert(orc_Info.c_BasicInformation.c_DeviceInfoAddresses.GetLength() ==
-                 orc_Info.c_BasicInformation.c_DeviceInfoBlocksValid.GetLength());
+      Q_ASSERT(orc_Info.c_BasicInformation.c_DeviceInfoAddresses.size() ==
+                 orc_Info.c_BasicInformation.c_DeviceInfoBlocks.size());
+      Q_ASSERT(orc_Info.c_BasicInformation.c_DeviceInfoAddresses.size() ==
+                 orc_Info.c_BasicInformation.c_DeviceInfoBlocksValid.size());
 
       orc_Text.Add("Number of applications: " +
-                   C_SclString::IntToStr(orc_Info.c_BasicInformation.c_DeviceInfoAddresses.GetLength()));
-      for (uint8_t u8_Application = 0U; u8_Application < orc_Info.c_BasicInformation.c_DeviceInfoAddresses.GetLength();
+                   C_SclString::IntToStr(orc_Info.c_BasicInformation.c_DeviceInfoAddresses.size()));
+      for (uint8_t u8_Application = 0U; u8_Application < orc_Info.c_BasicInformation.c_DeviceInfoAddresses.size();
            u8_Application++)
       {
          orc_Text.Add("Application " + C_SclString::IntToStr(u8_Application));
@@ -4442,11 +4450,11 @@ void C_OscSuSequences::h_StwFlashloaderInformationToText(const C_XflDeviceInform
 
       //print whole flash information data:
       //first raw information:
-      if (rc_FlashInfo.c_ProtectedSectors.GetLength() == 0)
+      if (rc_FlashInfo.c_ProtectedSectors.size() == 0)
       {
          orc_Text.Add("  No protected sectors.");
       }
-      for (s32_Index = 0; s32_Index < rc_FlashInfo.c_ProtectedSectors.GetLength(); s32_Index++)
+      for (s32_Index = 0; s32_Index < rc_FlashInfo.c_ProtectedSectors.size(); s32_Index++)
       {
          c_Line.PrintFormatted("  Protected sector: IC %03d, Sector %05d",
                                rc_FlashInfo.c_ProtectedSectors[s32_Index].u8_ICIndex,
@@ -4454,20 +4462,20 @@ void C_OscSuSequences::h_StwFlashloaderInformationToText(const C_XflDeviceInform
          orc_Text.Add(c_Line);
       }
 
-      orc_Text.Add("  Number of flash ICs: " + C_SclString::IntToStr(rc_FlashInfo.c_ICs.GetLength()));
+      orc_Text.Add("  Number of flash ICs: " + C_SclString::IntToStr(rc_FlashInfo.c_ICs.size()));
 
-      for (s32_Index = 0; s32_Index < rc_FlashInfo.c_ICs.GetLength(); s32_Index++)
+      for (s32_Index = 0; s32_Index < rc_FlashInfo.c_ICs.size(); s32_Index++)
       {
          c_Line.PrintFormatted(
             "  IC %03d: size: 0x%08X; sec0: 0x%08X; regions: 0x%02X; erasetime: %ums; progtime: %ums",
             s32_Index,
             rc_FlashInfo.c_ICs[s32_Index].u32_TotalSize,
             rc_FlashInfo.c_ICs[s32_Index].u32_Sector0Offset,
-            static_cast<uint32_t>(rc_FlashInfo.c_ICs[s32_Index].c_Regions.GetLength()),
+            static_cast<uint32_t>(rc_FlashInfo.c_ICs[s32_Index].c_Regions.size()),
             rc_FlashInfo.c_ICs[s32_Index].u32_SectorEraseTime,
             rc_FlashInfo.c_ICs[s32_Index].u32_ProgrammingTime);
          orc_Text.Add(c_Line);
-         for (int32_t s32_RegionIndex = 0; s32_RegionIndex < rc_FlashInfo.c_ICs[s32_Index].c_Regions.GetLength();
+         for (int32_t s32_RegionIndex = 0; s32_RegionIndex < rc_FlashInfo.c_ICs[s32_Index].c_Regions.size();
               s32_RegionIndex++)
          {
             c_Line.PrintFormatted("  IC %03d, region 0x%02X: blocksize: 0x%08X; numblocks: 0x%04X",
@@ -4486,7 +4494,7 @@ void C_OscSuSequences::h_StwFlashloaderInformationToText(const C_XflDeviceInform
 
       rc_FlashInfo.ConvertToFlashSectorTable(c_SectorTable);
 
-      for (s32_Index = 0; s32_Index < c_SectorTable.GetLength(); s32_Index++)
+      for (s32_Index = 0; s32_Index < c_SectorTable.size(); s32_Index++)
       {
          uint32_t u32_SectorSize;
 
@@ -4527,12 +4535,12 @@ void C_OscSuSequences::h_StwFlashloaderInformationToText(const C_XflDeviceInform
       orc_Text.Add(c_Line);
 
       //Aliased memory
-      if (rc_FlashInfo.c_Aliases.GetLength() != 0)
+      if (rc_FlashInfo.c_Aliases.size() != 0)
       {
          orc_Text.Add("\n");
          orc_Text.Add("  Number of aliased memory regions: " +
-                      C_SclString::IntToStr(rc_FlashInfo.c_Aliases.GetLength()));
-         for (s32_Index = 0; s32_Index < rc_FlashInfo.c_Aliases.GetLength(); s32_Index++)
+                      C_SclString::IntToStr(rc_FlashInfo.c_Aliases.size()));
+         for (s32_Index = 0; s32_Index < rc_FlashInfo.c_Aliases.size(); s32_Index++)
          {
             c_Line.PrintFormatted("  Aliased region %03d: Physical: 0x%08X; Aliased: 0x%08X; Size: 0x%08X",
                                   s32_Index,

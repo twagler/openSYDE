@@ -16,7 +16,7 @@
 #include <limits>
 #include "gitypes.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -31,7 +31,7 @@
 #include "C_OscNodeDataPoolContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -118,7 +118,7 @@ void C_GiSvDaSliderBase::SetDisplayStyle(const C_PuiSvDbWidgetBase::E_Style oe_S
       if (pc_Dashboard != NULL)
       {
          const C_PuiSvDbSlider * const pc_Box = pc_Dashboard->GetSlider(static_cast<uint32_t>(this->ms32_Index));
-         tgl_assert(pc_Box != NULL);
+         Q_ASSERT(pc_Box != NULL);
          if (pc_Box != NULL)
          {
             this->mpc_SliderWidget->SetDisplayStyle(pc_Box->e_Type);
@@ -151,7 +151,7 @@ void C_GiSvDaSliderBase::LoadData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbSlider * const pc_Box = pc_Dashboard->GetSlider(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          this->LoadSvBasicData(*pc_Box);
@@ -176,7 +176,7 @@ void C_GiSvDaSliderBase::UpdateData(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbSlider * const pc_Box = pc_Dashboard->GetSlider(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          C_PuiSvDbSlider c_Box = *pc_Box;
@@ -186,7 +186,7 @@ void C_GiSvDaSliderBase::UpdateData(void)
             const float64_t f64_Value = this->m_GetCurrentUnscaledValue();
             C_OscNodeDataPoolContentUtil::h_SetValueInContent(f64_Value, c_Box.c_Value);
          }
-         tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+         Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                         this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         &c_Box, this->me_Type) == C_NO_ERR);
@@ -202,7 +202,7 @@ void C_GiSvDaSliderBase::DeleteData(void)
 {
    if (this->ms32_Index >= 0)
    {
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex, this->mu32_DashboardIndex,
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->DeleteDashboardWidget(this->mu32_ViewIndex, this->mu32_DashboardIndex,
                                                                         static_cast<uint32_t>(this->ms32_Index),
                                                                         this->me_Type) ==
                  C_NO_ERR);
@@ -249,7 +249,7 @@ void C_GiSvDaSliderBase::ConnectionActiveChanged(const bool oq_Active)
          // Special case: Defined constant value as start value is set
          // Update before calling base class implementation
          float64_t f64_UnscaledValue;
-         tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(pc_Box->c_InitialValue, f64_UnscaledValue,
+         Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(pc_Box->c_InitialValue, f64_UnscaledValue,
                                                               0UL) == C_NO_ERR);
          this->m_SetUnscaledValueToSliderWidget(f64_UnscaledValue);
       }
@@ -281,7 +281,7 @@ void C_GiSvDaSliderBase::SendCurrentValue(void)
    if (this->mpc_SliderWidget != NULL)
    {
       C_PuiSvDbDataElementScaling c_Scaling;
-      tgl_assert(this->GetDataPoolElementScaling(0, c_Scaling) == C_NO_ERR);
+      Q_ASSERT(this->GetDataPoolElementScaling(0, c_Scaling) == C_NO_ERR);
       // Prepare the value
       this->mf64_WriteValue = this->m_GetCurrentUnscaledValue();
       //For precision reasons we only use valid values (in range of actual type),
@@ -307,7 +307,7 @@ bool C_GiSvDaSliderBase::CallProperties(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbSlider * const pc_Box = pc_Dashboard->GetSlider(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          C_PuiSvDbNodeDataPoolListElementId c_ElementId;
@@ -369,13 +369,13 @@ bool C_GiSvDaSliderBase::CallProperties(void)
                                                                        ::h_GetInstance()->GetOscDataPoolListElement(
                   c_Tmp.c_ElementId);
                c_Box.c_DataPoolElementsConfig.push_back(c_Tmp);
-               tgl_assert(pc_Element != NULL);
+               Q_ASSERT(pc_Element != NULL);
                if (pc_Element != NULL)
                {
                   C_OscNodeDataPoolContentUtil::E_ValueChangedTo e_Tmp;
                   c_Box.c_Value = pc_Element->c_MinValue;
                   C_OscNodeDataPoolContentUtil::h_ZeroContent(c_Box.c_Value);
-                  tgl_assert(C_OscNodeDataPoolContentUtil::h_SetValueInMinMaxRange(pc_Element->c_MinValue,
+                  Q_ASSERT(C_OscNodeDataPoolContentUtil::h_SetValueInMinMaxRange(pc_Element->c_MinValue,
                                                                                    pc_Element->c_MaxValue,
                                                                                    c_Box.c_Value, e_Tmp) == C_NO_ERR);
                }
@@ -399,8 +399,8 @@ bool C_GiSvDaSliderBase::CallProperties(void)
                                              pc_Dialog->GetFormatterInformation());
             }
 
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->CheckAndHandleNewElement(c_Tmp.c_ElementId) == C_NO_ERR);
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetDashboardWidget(this->mu32_ViewIndex,
                                                                            this->mu32_DashboardIndex,
                                                                            static_cast<uint32_t>(this->ms32_Index),
                                                                            &c_Box, this->me_Type) == C_NO_ERR);
@@ -482,7 +482,7 @@ void C_GiSvDaSliderBase::m_UpdateStaticValues(void)
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbSlider * const pc_Box = pc_Dashboard->GetSlider(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          if (pc_Box->c_DataPoolElementsConfig.size() > 0)
@@ -501,7 +501,7 @@ void C_GiSvDaSliderBase::m_UpdateStaticValues(void)
                   uint64_t u64_Steps;
                   float64_t f64_UnscaledMax;
                   C_PuiSvDbDataElementDisplayFormatterConfig c_Formatter;
-                  tgl_assert(this->GetDataPoolElementFormatterConfig(0UL, c_Formatter) == C_NO_ERR);
+                  Q_ASSERT(this->GetDataPoolElementFormatterConfig(0UL, c_Formatter) == C_NO_ERR);
                   C_SdNdeDpContentUtil::h_GetValueAsFloat64(pc_Element->c_MinValue, this->mf64_UnscaledMinValue, 0UL);
                   C_SdNdeDpContentUtil::h_GetValueAsFloat64(pc_Element->c_MaxValue, f64_UnscaledMax, 0UL);
                   if (C_SdNdeDpContentUtil::h_GetNumberOfAvailableSteps(pc_Element->c_MinValue,
@@ -617,7 +617,7 @@ bool C_GiSvDaSliderBase::m_IsOnChange(void) const
    if (pc_Dashboard != NULL)
    {
       const C_PuiSvDbSlider * const pc_Box = pc_Dashboard->GetSlider(static_cast<uint32_t>(this->ms32_Index));
-      tgl_assert(pc_Box != NULL);
+      Q_ASSERT(pc_Box != NULL);
       if (pc_Box != NULL)
       {
          if (pc_Box->e_ElementWriteMode == C_PuiSvDbWriteWidgetBase::eWM_ON_CHANGE)
@@ -691,7 +691,7 @@ int32_t C_GiSvDaSliderBase::m_GetSliderValueFromContent(const C_OscNodeDataPoolC
    int32_t s32_Retval;
    float64_t f64_ContentValue;
 
-   tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Content, f64_ContentValue, 0UL) == C_NO_ERR);
+   Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Content, f64_ContentValue, 0UL) == C_NO_ERR);
    if (C_OscUtils::h_IsFloat64NearlyEqual(this->mf64_SliderFactor, 1.0) == true)
    {
       const float64_t f64_Tmp = (f64_ContentValue - this->mf64_UnscaledMinValue) +

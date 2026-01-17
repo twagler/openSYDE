@@ -278,7 +278,7 @@ void C_SyvUpPacHexFileView::mh_AddDataInformation(C_OscHexFile & orc_HexFile, QS
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvUpPacHexFileView::mh_AddApplicationInformation(C_OscHexFile & orc_HexFile, QString & orc_Content)
 {
-   C_SclDynamicArray<stw::diag_lib::C_XFLECUInformation> c_InfoBlocks;
+   QList<stw::diag_lib::C_XFLECUInformation> c_InfoBlocks;
    orc_HexFile.GetECUInformationBlocks(c_InfoBlocks, 0UL, false, false, false);
    orc_Content += "<h3>" + static_cast<QString>("File Information Blocks") + "</h3>";
    orc_Content += "<table>";
@@ -287,11 +287,11 @@ void C_SyvUpPacHexFileView::mh_AddApplicationInformation(C_OscHexFile & orc_HexF
    orc_Content += "Number of blocks:";
    orc_Content += "</td>";
    orc_Content += "<td>";
-   orc_Content += QString::number(c_InfoBlocks.GetLength());
+   orc_Content += QString::number(c_InfoBlocks.size());
    orc_Content += "</td>";
    orc_Content += "</tr>";
    orc_Content += "</table>";
-   for (int32_t s32_ItAppl = 0UL; s32_ItAppl < c_InfoBlocks.GetLength(); ++s32_ItAppl)
+   for (int32_t s32_ItAppl = 0UL; s32_ItAppl < c_InfoBlocks.size(); ++s32_ItAppl)
    {
       const stw::diag_lib::C_XFLECUInformation & rc_CurInfo = c_InfoBlocks[s32_ItAppl];
       orc_Content += "<h3>" +

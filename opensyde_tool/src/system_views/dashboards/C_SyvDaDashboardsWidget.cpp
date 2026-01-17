@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for system view dashboards
@@ -16,8 +16,8 @@
 #include "C_Uti.hpp"
 #include "stwerrors.hpp"
 #include "constants.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
+
+#include <QDateTime>
 #include "C_SyvUtil.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -30,7 +30,7 @@
 #include "C_OscLoggingHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -42,7 +42,7 @@ const QString C_SyvDaDashboardsWidget::mhc_DARK_MODE_ENABLED_ICON_PATH = "://ima
 const QString C_SyvDaDashboardsWidget::mhc_DARK_MODE_DISABLED_ICON_PATH = "://images/system_views/Darkmode_Enable.svg";
 const int32_t C_SyvDaDashboardsWidget::mhs32_WIDGET_BORDER = 11;
 const int32_t C_SyvDaDashboardsWidget::mhs32_TOOLBOX_INIT_POS_Y = 150;
-uint32_t C_SyvDaDashboardsWidget::mhu32_DisconnectTime = 0UL;
+qint64 C_SyvDaDashboardsWidget::mhs64_DisconnectTime = 0;
 
 /* -- Types --------------------------------------------------------------------------------------------------------- */
 
@@ -166,7 +166,7 @@ C_SyvDaDashboardsWidget::~C_SyvDaDashboardsWidget(void)
    // In this scenario it can be relevant when switching the views and reconnect instantly again
    if (this->mq_ConnectActive == true)
    {
-      C_SyvDaDashboardsWidget::mhu32_DisconnectTime = TglGetTickCount();
+      C_SyvDaDashboardsWidget::mhs64_DisconnectTime = QDateTime::currentMSecsSinceEpoch();
    }
 
    if (this->mpc_Toolbox != NULL)
@@ -384,7 +384,7 @@ void C_SyvDaDashboardsWidget::SetConnectActive(const bool oq_Value)
    if ((this->mq_ConnectActive == true) &&
        (this->mpc_ComDriver == NULL))
    {
-      this->mpc_ConnectionThread->SetWaitingStepParameters(C_SyvDaDashboardsWidget::mhu32_DisconnectTime);
+      this->mpc_ConnectionThread->SetWaitingStepParameters(C_SyvDaDashboardsWidget::mhs64_DisconnectTime);
       this->mpc_ConnectionThread->start();
    }
    else
@@ -398,7 +398,7 @@ void C_SyvDaDashboardsWidget::SetConnectActive(const bool oq_Value)
       Q_EMIT (this->SigBlockDragAndDrop(false));
 
       // Save the time of disconnect
-      C_SyvDaDashboardsWidget::mhu32_DisconnectTime = TglGetTickCount();
+      C_SyvDaDashboardsWidget::mhs64_DisconnectTime = QDateTime::currentMSecsSinceEpoch();
    }
 
    QApplication::restoreOverrideCursor();
@@ -1132,7 +1132,7 @@ void C_SyvDaDashboardsWidget::m_ConnectStepFinished(void)
    else
    {
       //Step unknown
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 }
 
@@ -1167,7 +1167,7 @@ void C_SyvDaDashboardsWidget::m_HandleConnectionResult(const int32_t os32_Result
 
       this->m_CloseOsyDriver();
       // Save the time of 'disconnect'
-      C_SyvDaDashboardsWidget::mhu32_DisconnectTime = TglGetTickCount();
+      C_SyvDaDashboardsWidget::mhs64_DisconnectTime = QDateTime::currentMSecsSinceEpoch();
 
       //Reactivate edit & config
       if (C_PuiSvHandler::h_GetInstance()->GetServiceModeActive() == false)

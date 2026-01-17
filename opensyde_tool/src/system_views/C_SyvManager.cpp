@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       System views manager (add, delete, ...) (implementation)
@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_SyvUtil.hpp"
@@ -22,7 +22,7 @@
 #include "C_OgeWiCustomMessage.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -117,7 +117,7 @@ void C_SyvManager::HandleInitialSystemView(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvManager::RenameView(const uint32_t ou32_Index, const QString & orc_Name) const
 {
-   tgl_assert(C_PuiSvHandler::h_GetInstance()->SetViewName(ou32_Index, orc_Name) == C_NO_ERR);
+   Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetViewName(ou32_Index, orc_Name) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ void C_SyvManager::MoveView(const uint32_t ou32_StartIndex, const uint32_t ou32_
    {
       QString c_SubMode;
       QString c_SubSubMode;
-      tgl_assert(C_PuiSvHandler::h_GetInstance()->MoveView(ou32_StartIndex, ou32_TargetIndex) == C_NO_ERR);
+      Q_ASSERT(C_PuiSvHandler::h_GetInstance()->MoveView(ou32_StartIndex, ou32_TargetIndex) == C_NO_ERR);
 
       C_SyvUtil::h_GetViewDisplayName(ou32_TargetIndex, ms32_SUBMODE_SYSVIEW_SETUP, c_SubMode, c_SubSubMode);
       //Update all names
@@ -212,7 +212,7 @@ void C_SyvManager::DeleteSysView(const uint32_t ou32_Index, const int32_t os32_S
             QString c_SubMode;
             QString c_SubSubMode;
 
-            tgl_assert(C_PuiSvHandler::h_GetInstance()->DeleteView(ou32_Index) == C_NO_ERR);
+            Q_ASSERT(C_PuiSvHandler::h_GetInstance()->DeleteView(ou32_Index) == C_NO_ERR);
             //Important reload view
             Q_EMIT this->SigReloadNaviBarSystemViewContent();
             //Select?

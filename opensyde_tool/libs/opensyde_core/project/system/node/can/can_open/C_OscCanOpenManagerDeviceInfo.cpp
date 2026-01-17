@@ -11,9 +11,9 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "stwerrors.hpp"
-#include "TglFile.hpp"
 #include "C_SclChecksums.hpp"
 #include "C_OscCanOpenManagerDeviceInfo.hpp"
 #include "C_OscLoggingHandler.hpp"
@@ -22,7 +22,7 @@
 using namespace stw::opensyde_core;
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -110,7 +110,7 @@ const C_OscCanOpenObjectDictionary & C_OscCanOpenManagerDeviceInfo::GetEdsFileCo
 {
    if (this->mq_EdsFileContentLoaded == false)
    {
-      if (TglFileExists(this->c_ProjectEdsFilePath))
+      if ((QFileInfo(QString::fromStdString(*this->c_ProjectEdsFilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*this->c_ProjectEdsFilePath.AsStdString())).isFile()))
       {
          const int32_t s32_Retval = this->mc_EdsFileContent.LoadFromFile(this->c_ProjectEdsFilePath);
          if (s32_Retval != C_NO_ERR)

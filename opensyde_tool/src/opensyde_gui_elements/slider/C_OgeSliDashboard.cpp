@@ -20,7 +20,7 @@
 #include "stwtypes.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_OgeSliDashboard.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::opensyde_gui_elements;
@@ -132,7 +132,7 @@ void C_OgeSliDashboard::HandleResize(void)
       s32_GrooveHeight = std::max(this->height() / 5, 1);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       s32_GrooveHeight = 0;
       break;
    }
@@ -283,7 +283,7 @@ void C_OgeSliDashboard::m_ReinitStyle(void)
          }
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
       break;
@@ -325,12 +325,12 @@ void C_OgeSliDashboard::m_ReinitStyle(void)
          }
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }

@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for editing messages and / or signals
@@ -13,7 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_UsHandler.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SdBueMessageSignalEditWidget.hpp"
@@ -710,7 +710,7 @@ const
       const C_OscCanMessage * const pc_CanMessage =
          C_PuiSdHandler::h_GetInstance()->GetCanMessage(orc_MessageId);
 
-      tgl_assert(pc_CanMessage != NULL);
+      Q_ASSERT(pc_CanMessage != NULL);
       if (pc_CanMessage != NULL)
       {
          q_ShowDisabledPdoInfo = !pc_CanMessage->q_CanOpenManagerMessageActive;

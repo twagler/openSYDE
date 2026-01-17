@@ -15,8 +15,9 @@
 #include "stwtypes.hpp"
 #include "stwerrors.h"
 
-#include "TglTime.hpp"
-#include "C_SclDateTime.hpp"
+#include <QElapsedTimer>
+#include <QThread>
+#include <QDateTime>
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscProtocolDriverOsyTpBase.hpp"
 #include "C_OscUpdateUtil.hpp"
@@ -24,7 +25,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -192,8 +193,8 @@ int32_t C_OscBuSequences::ActivateFlashLoader(const uint32_t ou32_FlashloaderRes
    }
 
    // Always continue with broadcast. If previous steps did not work, user can do the manual reset while we broadcast.
-   const uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
-
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    do
    {
       // openSYDE "DiagnosticSessionControl(PreProgramming)" broadcast
@@ -212,9 +213,9 @@ int32_t C_OscBuSequences::ActivateFlashLoader(const uint32_t ou32_FlashloaderRes
          break;
       }
 
-      TglSleep(5);
+      QThread::msleep(5);
    }
-   while (TglGetTickCount() < (u32_WaitTime + u32_StartTime));
+   while (c_Timer.hasExpired(u32_WaitTime) == false);
 
    if (this->mpc_CanDispatcher != NULL)
    {
@@ -476,7 +477,7 @@ int32_t C_OscBuSequences::UpdateNode(const C_SclString & orc_HexFilePath, const 
          osc_write_log_warning(c_LogActivity, "The node was not ready for the Security Access request. Trying"
                                " after waiting for another second again.");
 
-         stw::tgl::TglSleep(1000);
+         QThread::msleep(1000);
 
          s32_Return = mc_OsyProtocol.OsySecurityAccessRequestSeed(u8_SECURITY_LEVEL, q_SecureMode, u64_Seed,
                                                                   ou8_SecurityAlgorithm, &u8_NumberCode);
@@ -522,17 +523,17 @@ int32_t C_OscBuSequences::UpdateNode(const C_SclString & orc_HexFilePath, const 
       osc_write_log_info(c_LogActivity, "Checking Flash memory availability ...");
 
       //do we have enough space for the hex file data ?
-      for (uint16_t u16_Area = 0U; u16_Area < pc_HexDump->at_Blocks.GetLength(); u16_Area++)
+      for (uint16_t u16_Area = 0U; u16_Area < pc_HexDump->at_Blocks.size(); u16_Area++)
       {
          s32_Return = mc_OsyProtocol.OsyCheckFlashMemoryAvailable(
             pc_HexDump->at_Blocks[u16_Area].u32_AddressOffset,
-            pc_HexDump->at_Blocks[u16_Area].au8_Data.GetLength(),
+            pc_HexDump->at_Blocks[u16_Area].au8_Data.size(),
             &u8_NumberCode);
          if (s32_Return != C_NO_ERR)
          {
             C_SclString c_Error;
             c_Error.PrintFormatted("(Offset: 0x%08x Size: 0x%08x)", pc_HexDump->at_Blocks[u16_Area].u32_AddressOffset,
-                                   static_cast<uint32_t>(pc_HexDump->at_Blocks[u16_Area].au8_Data.GetLength()));
+                                   static_cast<uint32_t>(pc_HexDump->at_Blocks[u16_Area].au8_Data.size()));
             osc_write_log_error(c_LogActivity,  "Could not get confirmation about flash memory availability " +
                                 c_Error + "! Details: " +
                                 C_OscProtocolDriverOsy::h_GetOpenSydeServiceErrorDetails(s32_Return, u8_NumberCode));
@@ -544,22 +545,24 @@ int32_t C_OscBuSequences::UpdateNode(const C_SclString & orc_HexFilePath, const 
    if (s32_Return == C_NO_ERR)
    {
       //write fingerprint
-      const C_SclDateTime c_Now = C_SclDateTime::Now();
+      const QDateTime c_Now = QDateTime::currentDateTime();
+      const QDate c_Date = c_Now.date();
+      const QTime c_Time = c_Now.time();
       uint8_t au8_Date[3];
       uint8_t au8_Time[3];
       C_SclString c_UserName;
       bool q_Return;
-      au8_Date[0] = static_cast<uint8_t>(c_Now.mu16_Year % 1000U);
-      au8_Date[1] = static_cast<uint8_t>(c_Now.mu16_Month);
-      au8_Date[2] = static_cast<uint8_t>(c_Now.mu16_Day);
-      au8_Time[0] = static_cast<uint8_t>(c_Now.mu16_Hour);
-      au8_Time[1] = static_cast<uint8_t>(c_Now.mu16_Minute);
-      au8_Time[2] = static_cast<uint8_t>(c_Now.mu16_Second);
+      au8_Date[0] = static_cast<uint8_t>(c_Date.year() % 100);
+      au8_Date[1] = static_cast<uint8_t>(c_Date.month());
+      au8_Date[2] = static_cast<uint8_t>(c_Date.day());
+      au8_Time[0] = static_cast<uint8_t>(c_Time.hour());
+      au8_Time[1] = static_cast<uint8_t>(c_Time.minute());
+      au8_Time[2] = static_cast<uint8_t>(c_Time.second());
 
       c_LogActivity = "Write Fingerprint";
       osc_write_log_info(c_LogActivity, "Writing fingerprint ...");
 
-      q_Return = TglGetSystemUserName(c_UserName);
+      q_Return = stw::opensyde_core::C_OscUtils::h_GetSystemUserName(c_UserName);
       if (q_Return != true)
       {
          osc_write_log_warning(c_LogActivity, "Could not get the name of the current Windows user!");
@@ -581,9 +584,9 @@ int32_t C_OscBuSequences::UpdateNode(const C_SclString & orc_HexFilePath, const 
       c_LogActivity = "Flash";
 
       //flash all areas
-      for (uint16_t u16_Area = 0U; u16_Area < pc_HexDump->at_Blocks.GetLength(); u16_Area++)
+      for (uint16_t u16_Area = 0U; u16_Area < pc_HexDump->at_Blocks.size(); u16_Area++)
       {
-         const int32_t s32_Size = pc_HexDump->at_Blocks[u16_Area].au8_Data.GetLength();
+         const int32_t s32_Size = pc_HexDump->at_Blocks[u16_Area].au8_Data.size();
          uint32_t u32_MaxBlockLength;
 
          osc_write_log_info(c_LogActivity, "Preparing flashing ...");
@@ -592,13 +595,13 @@ int32_t C_OscBuSequences::UpdateNode(const C_SclString & orc_HexFilePath, const 
          mc_OsyProtocol.SetTimeoutPolling(ou32_RequestDownloadTimeout);
 
          s32_Return = mc_OsyProtocol.OsyRequestDownload(pc_HexDump->at_Blocks[u16_Area].u32_AddressOffset,
-                                                        pc_HexDump->at_Blocks[u16_Area].au8_Data.GetLength(),
+                                                        pc_HexDump->at_Blocks[u16_Area].au8_Data.size(),
                                                         u32_MaxBlockLength, &u8_NumberCode);
          if (s32_Return != C_NO_ERR)
          {
             C_SclString c_Error;
             c_Error.PrintFormatted("(Offset: 0x%08X Size: 0x%08X)", pc_HexDump->at_Blocks[u16_Area].u32_AddressOffset,
-                                   static_cast<uint32_t>(pc_HexDump->at_Blocks[u16_Area].au8_Data.GetLength()));
+                                   static_cast<uint32_t>(pc_HexDump->at_Blocks[u16_Area].au8_Data.size()));
             osc_write_log_error(c_LogActivity, "Could not request download " + c_Error + "! Details: " +
                                 C_OscProtocolDriverOsy::h_GetOpenSydeServiceErrorDetails(s32_Return, u8_NumberCode));
             q_ErrorOccurred = true;
@@ -637,7 +640,7 @@ int32_t C_OscBuSequences::UpdateNode(const C_SclString & orc_HexFilePath, const 
                {
                   C_SclString c_Text;
                   c_Text.PrintFormatted("Transferring area %02d/%02d  byte %08d/%08d",
-                                        u16_Area + 1, pc_HexDump->at_Blocks.GetLength(),
+                                        u16_Area + 1, pc_HexDump->at_Blocks.size(),
                                         s32_Size - s32_RemainingBytes, s32_Size);
                   m_ReportProgress(s32_Return, c_Text);
 
@@ -666,7 +669,7 @@ int32_t C_OscBuSequences::UpdateNode(const C_SclString & orc_HexFilePath, const 
          {
             C_SclString c_Text;
             c_Text.PrintFormatted("Transferring area %02d/%02d  byte %08d/%08d",
-                                  u16_Area + 1, pc_HexDump->at_Blocks.GetLength(), s32_Size, s32_Size);
+                                  u16_Area + 1, pc_HexDump->at_Blocks.size(), s32_Size, s32_Size);
 
             const uint8_t u8_MAX_PERCENTAGE = 100;
             m_ReportProgressPercentage(u8_MAX_PERCENTAGE);
@@ -674,7 +677,7 @@ int32_t C_OscBuSequences::UpdateNode(const C_SclString & orc_HexFilePath, const 
             m_ReportProgress(s32_Return, c_Text);
             m_ReportProgress(s32_Return, "Finished writing area, finalizing ...");
 
-            if (u16_Area == (pc_HexDump->at_Blocks.GetLength() - 1))
+            if (u16_Area == (pc_HexDump->at_Blocks.size() - 1))
             {
                osc_write_log_info(c_LogActivity,
                                   "This is the last area, we'll better check the signature as well ...");
@@ -736,7 +739,7 @@ int32_t C_OscBuSequences::ResetSystem(void)
    }
    else
    {
-      TglSleep(500); //wait a little to make sure the device has performed the reset
+      QThread::msleep(500); //wait a little to make sure the device has performed the reset
       osc_write_log_error(c_LogActivity, "Successfully sent reset to target device!");
    }
 
@@ -774,14 +777,14 @@ int32_t C_OscBuSequences::h_ReadHexFile(const C_SclString & orc_HexFilePath, C_O
    }
    else
    {
-      C_SclDynamicArray<stw::diag_lib::C_XFLECUInformation> c_InfoBlocks;
+      QList<stw::diag_lib::C_XFLECUInformation> c_InfoBlocks;
       //no return value that can cause trouble for us
       (void)orc_HexFile.GetECUInformationBlocks(c_InfoBlocks, 0, false, false, false);
 
       osc_write_log_info(c_LogActivity, "Number of application information blocks in HEX file: " +
-                         C_SclString::IntToStr(c_InfoBlocks.GetLength()));
+                         C_SclString::IntToStr(c_InfoBlocks.size()));
 
-      for (int32_t s32_Index = 0; s32_Index < c_InfoBlocks.GetLength(); s32_Index++)
+      for (int32_t s32_Index = 0; s32_Index < c_InfoBlocks.size(); s32_Index++)
       {
          C_SclStringList c_Lines;
          C_SclString c_Help;

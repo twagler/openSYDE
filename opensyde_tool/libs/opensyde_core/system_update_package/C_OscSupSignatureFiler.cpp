@@ -12,13 +12,13 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscXmlParser.hpp"
 #include "C_OscSupSignatureFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -67,15 +67,15 @@ int32_t C_OscSupSignatureFiler::h_CreateSignatureFile(const stw::scl::C_SclStrin
    c_XmlParser.CreateAndSelectNodeChild(mc_ROOT_NAME);
 
    //File version
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
    c_XmlParser.SetNodeContent(stw::scl::C_SclString::IntToStr(mu16_FILE_VERSION));
-   tgl_assert(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
 
    //signature
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(mc_NODE_SIG) == mc_NODE_SIG);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(mc_NODE_SIG) == mc_NODE_SIG);
    c_XmlParser.SetAttributeString(mc_NODE_SIG_TYPE_ATTR, mc_SIG_TYPE);
    c_XmlParser.SetAttributeString(mc_NODE_SIG_VALUE_ATTR, orc_Signature);
-   tgl_assert(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
 
    // save signature file
    s32_Result = c_XmlParser.SaveToFile(orc_Path);
@@ -108,23 +108,23 @@ int32_t C_OscSupSignatureFiler::h_LoadSignatureFile(const stw::scl::C_SclString 
    s32_Result = c_XmlParser.LoadFromFile(orc_Path);
    if (s32_Result == C_NO_ERR)
    {
-      tgl_assert(c_XmlParser.SelectRoot() == mc_ROOT_NAME);
+      Q_ASSERT(c_XmlParser.SelectRoot() == mc_ROOT_NAME);
 
       // file version
-      tgl_assert(c_XmlParser.SelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
+      Q_ASSERT(c_XmlParser.SelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
       const stw::scl::C_SclString c_FileVersion = c_XmlParser.GetNodeContent();
       const uint32_t u32_FileVersion = static_cast<uint32_t>(c_FileVersion.ToInt());
-      tgl_assert(c_XmlParser.SelectRoot() == mc_ROOT_NAME);
+      Q_ASSERT(c_XmlParser.SelectRoot() == mc_ROOT_NAME);
 
       if (u32_FileVersion == mu16_FILE_VERSION)
       {
          //signature
-         tgl_assert(c_XmlParser.SelectNodeChild(mc_NODE_SIG) == mc_NODE_SIG);
+         Q_ASSERT(c_XmlParser.SelectNodeChild(mc_NODE_SIG) == mc_NODE_SIG);
          const stw::scl::C_SclString c_SigType = c_XmlParser.GetAttributeString(mc_NODE_SIG_TYPE_ATTR);
-         tgl_assert(c_SigType == mc_SIG_TYPE);
+         Q_ASSERT(c_SigType == mc_SIG_TYPE);
          orc_Signature = c_XmlParser.GetAttributeString(mc_NODE_SIG_VALUE_ATTR);
 
-         tgl_assert(c_XmlParser.SelectRoot() == mc_ROOT_NAME);
+         Q_ASSERT(c_XmlParser.SelectRoot() == mc_ROOT_NAME);
       }
    }
    return s32_Result;

@@ -12,7 +12,6 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglFile.hpp"
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_SclChecksums.hpp"
@@ -21,7 +20,6 @@
 #include "C_OscCanOpenEdsInfoBlock.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
 using namespace stw::scl;
 using namespace stw::errors;
 using namespace stw::opensyde_core;

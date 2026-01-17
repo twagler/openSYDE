@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for displaying and editing hardware configuration.
@@ -16,7 +16,7 @@
 #include "ui_C_SdNdeHalcWidget.h"
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_UsHandler.hpp"
@@ -468,7 +468,7 @@ void C_SdNdeHalcWidget::m_OnSelectClicked(void)
    bool q_IsClear = false;
 
    // Does a configuration already exist?
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->IsHalcClear(this->mu32_NodeIndex, q_IsClear) == C_NO_ERR);
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->IsHalcClear(this->mu32_NodeIndex, q_IsClear) == C_NO_ERR);
 
    if (q_IsClear == false)
    {
@@ -533,7 +533,7 @@ void C_SdNdeHalcWidget::m_OnSelectClicked(void)
             }
 
             // set the HALC definition
-            tgl_assert(C_PuiSdHandler::h_GetInstance()->SetHalcConfig(this->mu32_NodeIndex, c_HalcConfig) == C_NO_ERR);
+            Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetHalcConfig(this->mu32_NodeIndex, c_HalcConfig) == C_NO_ERR);
 
             // update GUI
             this->m_UpdateNodeData();
@@ -556,7 +556,7 @@ void C_SdNdeHalcWidget::m_OnUpdateClicked(void)
 {
    const C_OscHalcConfig * const pc_OldConfig = C_PuiSdHandler::h_GetInstance()->GetHalcConfig(this->mu32_NodeIndex);
 
-   tgl_assert((pc_OldConfig != NULL) && (pc_OldConfig->IsClear() == false));
+   Q_ASSERT((pc_OldConfig != NULL) && (pc_OldConfig->IsClear() == false));
    if ((pc_OldConfig != NULL) && (pc_OldConfig->IsClear() == false))
    {
       C_OscHalcConfig c_HalcConfig;
@@ -617,7 +617,7 @@ void C_SdNdeHalcWidget::m_OnUpdateClicked(void)
 
                if (s32_Return == C_NO_ERR)
                {
-                  tgl_assert(C_PuiSdHandler::h_GetInstance()->SetHalcConfig(this->mu32_NodeIndex,
+                  Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetHalcConfig(this->mu32_NodeIndex,
                                                                             c_UpdatedHalcConfig) == C_NO_ERR);
 
                   // update GUI
@@ -661,10 +661,10 @@ void C_SdNdeHalcWidget::m_RunDatapoolMagician(void) const
 {
    const int32_t s32_Result = C_PuiSdHandler::h_GetInstance()->HalcGenerateDatapools(this->mu32_NodeIndex);
 
-   tgl_assert((s32_Result == C_NO_ERR) || (s32_Result == C_NOACT));
+   Q_ASSERT((s32_Result == C_NO_ERR) || (s32_Result == C_NOACT));
 
    // make sure all HALC NVM Datapools are assigned if possible (after magician generation!)
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->
               AssignAllHalcNvmDataPools(this->mu32_NodeIndex) == stw::errors::C_NO_ERR);
 
    // Inform Datapool overview about changed existence of HAL Datapools
@@ -773,7 +773,7 @@ bool C_SdNdeHalcWidget::m_LoadHalcDefinitionFile(C_OscHalcConfig & orc_HalcConfi
       {
          const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_NodeIndex);
 
-         tgl_assert(pc_Node != NULL);
+         Q_ASSERT(pc_Node != NULL);
          if (pc_Node != NULL)
          {
             // Device type comparison
@@ -822,13 +822,13 @@ bool C_SdNdeHalcWidget::m_LoadHalcDefinitionFile(C_OscHalcConfig & orc_HalcConfi
 void C_SdNdeHalcWidget::m_CleanUpHalcDefinition(void) const
 {
    // Clear configuration
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->ClearHalcConfig(this->mu32_NodeIndex) == C_NO_ERR);
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->ClearHalcConfig(this->mu32_NodeIndex) == C_NO_ERR);
 
    // Remove HAL Datapools
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->HalcRemoveDatapools(this->mu32_NodeIndex) == C_NO_ERR);
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->HalcRemoveDatapools(this->mu32_NodeIndex) == C_NO_ERR);
 
    // Reset PSI generation Data Blocks
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->HalcResetDataBlocks(this->mu32_NodeIndex) == C_NO_ERR);
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->HalcResetDataBlocks(this->mu32_NodeIndex) == C_NO_ERR);
 }
 
 //----------------------------------------------------------------------------------------------------------------------

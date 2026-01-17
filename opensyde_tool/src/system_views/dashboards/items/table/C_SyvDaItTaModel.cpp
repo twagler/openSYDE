@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Table model for dashboard table widget (implementation)
@@ -15,7 +15,7 @@
 #include <limits>
 #include "C_Uti.hpp"
 #include "C_SdUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "constants.hpp"
 #include "C_SyvUtil.hpp"
@@ -29,7 +29,7 @@
 #include "C_OscNodeDataPoolContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -1249,12 +1249,12 @@ uint32_t C_SyvDaItTaModel::m_AddNewItem(const uint32_t ou32_SelectedIndex)
          //Add new item
          c_Copy.c_DataPoolElementsConfig.insert(c_Copy.c_DataPoolElementsConfig.begin() + s32_InsertAt, c_NewConfig);
          //Apply
-         tgl_assert(pc_TableWidget->SetTableItem(c_Copy) == C_NO_ERR);
+         Q_ASSERT(pc_TableWidget->SetTableItem(c_Copy) == C_NO_ERR);
          //Register
          if ((this->mpc_Data != NULL) &&
              (this->mpc_Data->IsDataElementRegistered(this->mc_AddDataPoolElementId) == false))
          {
-            tgl_assert(this->mpc_Data->RegisterDataPoolElement(this->mc_AddDataPoolElementId,
+            Q_ASSERT(this->mpc_Data->RegisterDataPoolElement(this->mc_AddDataPoolElementId,
                                                                c_NewConfig.c_ElementScaling,
                                                                c_NewConfig.c_DisplayFormatter) == C_NO_ERR);
          }
@@ -1346,7 +1346,7 @@ void C_SyvDaItTaModel::m_DeleteItem(const uint32_t ou32_Index)
          const C_PuiSvDbNodeDataPoolListElementId c_Item = this->m_RemoveItem(ou32_Index,
                                                                               c_Copy.c_DataPoolElementsConfig);
          this->mc_RemovedDataPoolElementIds.push_back(c_Item);
-         tgl_assert(pc_TableWidget->SetTableItem(c_Copy) == C_NO_ERR);
+         Q_ASSERT(pc_TableWidget->SetTableItem(c_Copy) == C_NO_ERR);
       }
    }
 }
@@ -1424,7 +1424,7 @@ void C_SyvDaItTaModel::m_MoveItem(const uint32_t ou32_SourceIndex, const uint32_
          c_Copy.c_DataPoolElementsConfig.insert(c_Copy.c_DataPoolElementsConfig.begin() + ou32_TargetIndex,
                                                 c_NewConfig);
          //Apply
-         tgl_assert(pc_TableWidget->SetTableItem(c_Copy) == C_NO_ERR);
+         Q_ASSERT(pc_TableWidget->SetTableItem(c_Copy) == C_NO_ERR);
       }
    }
 }
@@ -1606,7 +1606,7 @@ QString C_SyvDaItTaModel::m_GetValue(const uint32_t ou32_Index) const
       else
       {
          //String in first element
-         tgl_assert(this->mc_ScaledDisplayDataValues[ou32_Index].size() >= 1);
+         Q_ASSERT(this->mc_ScaledDisplayDataValues[ou32_Index].size() >= 1);
          if (this->mc_ScaledDisplayDataValues[ou32_Index].size() >= 1)
          {
             c_Retval = this->mc_ScaledDisplayDataValues[ou32_Index][0UL];
@@ -1659,8 +1659,8 @@ void C_SyvDaItTaModel::m_InitMinMaxAndNameForOneRow(const C_PuiSvDbNodeDataPoolL
       const C_OscNodeDataPool * const pc_Datapool = C_PuiSdHandler::h_GetInstance()->GetOscDataPool(
          orc_ElementId.u32_NodeIndex, orc_ElementId.u32_DataPoolIndex);
 
-      tgl_assert(pc_OscElement != NULL);
-      tgl_assert(pc_Datapool != NULL);
+      Q_ASSERT(pc_OscElement != NULL);
+      Q_ASSERT(pc_Datapool != NULL);
       if ((pc_OscElement != NULL) && (pc_Datapool != NULL))
       {
          this->m_InitValuesForOneRow(orc_ElementId, orc_ElementConfig, *pc_OscElement, ou32_Index);

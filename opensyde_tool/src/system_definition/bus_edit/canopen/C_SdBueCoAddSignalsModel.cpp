@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Model part for add signals tree
@@ -14,7 +14,7 @@
 
 #include "C_Uti.hpp"
 #include "C_SdUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "stwerrors.hpp"
 #include "C_CieUtil.hpp"
@@ -24,7 +24,7 @@
 #include "C_SdBueCoAddSignalsModel.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -148,7 +148,7 @@ std::map<uint32_t, std::vector<uint32_t> > C_SdBueCoAddSignalsModel::h_GetUnique
       uint32_t u32_SignalIndex;
       bool q_IsSignal;
       C_SdBueCoAddSignalsModel::mh_DecodeIndex(*c_It, u32_ObjectIndex, u32_SignalIndex, q_IsSignal);
-      tgl_assert(q_IsSignal == true);
+      Q_ASSERT(q_IsSignal == true);
       c_Retval[u32_ObjectIndex].push_back(u32_SignalIndex);
    }
    for (std::map<uint32_t, std::vector<uint32_t> >::iterator c_It = c_Retval.begin();
@@ -361,7 +361,7 @@ void C_SdBueCoAddSignalsModel::m_Init(void)
    {
       C_TblTreItem * const pc_RootItem = new C_TblTreItem();
 
-      tgl_assert(this->mpc_InvisibleRootItem == NULL);
+      Q_ASSERT(this->mpc_InvisibleRootItem == NULL);
       this->beginResetModel();
       this->m_InitObjectMap();
       this->mpc_InvisibleRootItem = pc_RootItem;
@@ -399,7 +399,7 @@ void C_SdBueCoAddSignalsModel::m_InitObjectMap()
                if (c_ItItem != c_ItObject->second.cend())
                {
                   //Should not happen
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                }
                else
                {
@@ -482,7 +482,7 @@ void C_SdBueCoAddSignalsModel::m_InitObjectNodeChildren(C_TblTreItem & orc_Objec
                            uint32_t> >::const_iterator c_ItMappableObjects =
       this->mc_MapObjectIndexToVectorIndex.find(ou32_ObjectIndex);
 
-   tgl_assert(c_ItMappableObjects != this->mc_MapObjectIndexToVectorIndex.end());
+   Q_ASSERT(c_ItMappableObjects != this->mc_MapObjectIndexToVectorIndex.end());
    if (c_ItMappableObjects != this->mc_MapObjectIndexToVectorIndex.end())
    {
       for (std::map<uint32_t,
@@ -536,7 +536,7 @@ void C_SdBueCoAddSignalsModel::mh_DecodeIndex(const QModelIndex & orc_ModelIndex
    {
       //lint -e{9079} Result of Qt interface restrictions, set by index function
       const C_TblTreItem * const pc_TreeItem = static_cast<const C_TblTreItem *>(orc_ModelIndex.internalPointer());
-      tgl_assert(pc_TreeItem != NULL);
+      Q_ASSERT(pc_TreeItem != NULL);
       if (pc_TreeItem != NULL)
       {
          const QModelIndex c_ParentModelIndex = orc_ModelIndex.parent();
@@ -545,7 +545,7 @@ void C_SdBueCoAddSignalsModel::mh_DecodeIndex(const QModelIndex & orc_ModelIndex
             //lint -e{9079} Result of Qt interface restrictions, set by index function
             const C_TblTreItem * const pc_ParentTreeItem =
                static_cast<const C_TblTreItem *>(c_ParentModelIndex.internalPointer());
-            tgl_assert(pc_ParentTreeItem != NULL);
+            Q_ASSERT(pc_ParentTreeItem != NULL);
             if (pc_ParentTreeItem != NULL)
             {
                oru32_ObjectIndex = pc_ParentTreeItem->u32_Index;
@@ -587,22 +587,22 @@ void C_SdBueCoAddSignalsModel::m_GetData(const E_Columns oe_Column, const uint32
                         std::map<uint32_t, uint32_t> >::const_iterator c_ItObject =
             this->mc_MapObjectIndexToVectorIndex.find(ou32_ObjectIndex);
 
-         tgl_assert(c_ItObject != this->mc_MapObjectIndexToVectorIndex.cend());
+         Q_ASSERT(c_ItObject != this->mc_MapObjectIndexToVectorIndex.cend());
          if (c_ItObject != this->mc_MapObjectIndexToVectorIndex.cend())
          {
             const std::map<uint32_t, uint32_t>::const_iterator c_ItItem =
                c_ItObject->second.find(ou32_SignalIndex);
 
-            tgl_assert(c_ItItem != c_ItObject->second.cend());
+            Q_ASSERT(c_ItItem != c_ItObject->second.cend());
             if (c_ItItem != c_ItObject->second.cend())
             {
                const std::vector<C_OscCanOpenManagerMappableSignal> * const pc_MappableSignals =
                   this->m_GetMappableSignals();
 
-               tgl_assert(pc_MappableSignals != NULL);
+               Q_ASSERT(pc_MappableSignals != NULL);
                if (pc_MappableSignals != NULL)
                {
-                  tgl_assert(c_ItItem->second < pc_MappableSignals->size());
+                  Q_ASSERT(c_ItItem->second < pc_MappableSignals->size());
                   if (c_ItItem->second < pc_MappableSignals->size())
                   {
                      const C_OscCanOpenManagerMappableSignal & rc_ResultEntry = (*pc_MappableSignals)[c_ItItem->second];
@@ -631,7 +631,7 @@ void C_SdBueCoAddSignalsModel::m_GetData(const E_Columns oe_Column, const uint32
                         orc_Output = rc_ResultEntry.c_SignalData.u16_ComBitLength;
                         break;
                      default:
-                        tgl_assert(false);
+                        Q_ASSERT(false);
                         break;
                      }
                   }
@@ -663,7 +663,7 @@ void C_SdBueCoAddSignalsModel::m_GetData(const E_Columns oe_Column, const uint32
             orc_Output = "";
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
       }

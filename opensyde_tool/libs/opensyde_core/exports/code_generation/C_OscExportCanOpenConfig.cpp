@@ -19,7 +19,7 @@
 #include "C_OscExportCanOpenConfig.hpp"
 #include "C_OscExportUti.hpp"
 #include "C_OscExportDataPool.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -182,7 +182,7 @@ C_SclString C_OscExportCanOpenConciseEntry::GetConciseString(void) const
       c_PayloadString += "0x" + C_SclString::IntToHex(c_Payload[u8_It], 2).UpperCase() + "U, ";
    }
    //remove last comma + whitespace
-   c_PayloadString.Delete(c_PayloadString.LastPos(","), 2U);
+   c_PayloadString.Delete(c_PayloadString.LastPos(", "), 2U);
    c_Retval += c_PayloadString;
 
    return c_Retval;
@@ -281,7 +281,7 @@ uint16_t C_OscExportCanOpenConfig::h_ConvertOverallCodeVersion(const uint16_t ou
    else
    {
       // should never occur...
-      tgl_assert(false);
+      Q_ASSERT(false);
       u16_Return = 0U;
    }
 
@@ -650,7 +650,7 @@ void C_OscExportCanOpenConfig::mh_AddDefines(C_SclStringList & orc_Data, const C
       const std::map<uint8_t, C_OscCanOpenManagerInfo>::const_iterator c_Iterator =
          orc_Node.c_CanOpenManagers.find(ou8_InterfaceIndex);
       //Sanity check: the manager for the specified interface should be available:
-      tgl_assert(c_Iterator != orc_Node.c_CanOpenManagers.end());
+      Q_ASSERT(c_Iterator != orc_Node.c_CanOpenManagers.end());
 
       const C_OscCanOpenManagerInfo c_OscoManInfo = c_Iterator->second;
       std::map<C_OscCanInterfaceId, C_OscCanOpenManagerDeviceInfo>::const_iterator c_DeviceIt;
@@ -939,7 +939,7 @@ void C_OscExportCanOpenConfig::mh_AddPdoDefinitions(C_SclStringList & orc_Data,
          C_SclString c_TransmissionType;
          C_SclString c_Text;
 
-         tgl_assert(rc_CurrentMessage.u16_DelayTimeMs <= 6553U);
+         Q_ASSERT(rc_CurrentMessage.u16_DelayTimeMs <= 6553U);
          //we need a resolution of 100 micro-seconds on embedded side
          const uint16_t u16_InhibitTime = static_cast<uint16_t>(rc_CurrentMessage.u16_DelayTimeMs * 10U);
 
@@ -1454,7 +1454,7 @@ void C_OscExportCanOpenConfig::mh_CollectPdoConciseData(
                case C_OscCanMessage::eTX_METHOD_ON_EVENT:
                default:
                   //not supported for CANopen
-                  tgl_assert(false);
+                  Q_ASSERT(false);
                   break;
                }
 
@@ -1492,13 +1492,13 @@ void C_OscExportCanOpenConfig::mh_CollectPdoConciseData(
                if (oq_IsTx == true)
                {
                   //Event-Time on TX PDOs = TX interval
-                  tgl_assert(rc_CurrentPdo.u32_CycleTimeMs <= 0xFFFFU);
+                  Q_ASSERT(rc_CurrentPdo.u32_CycleTimeMs <= 0xFFFFU);
                   u16_EventTime = static_cast<uint16_t>(rc_CurrentPdo.u32_CycleTimeMs);
                }
                else
                {
                   //Event-Time on RX PDOs = timeout value
-                  tgl_assert(rc_CurrentPdo.u32_TimeoutMs <= 0xFFFFU);
+                  Q_ASSERT(rc_CurrentPdo.u32_TimeoutMs <= 0xFFFFU);
                   u16_EventTime = static_cast<uint16_t>(rc_CurrentPdo.u32_TimeoutMs);
                }
 
@@ -1549,7 +1549,7 @@ void C_OscExportCanOpenConfig::mh_CollectPdoConciseData(
 
                if (rc_CurrentPdo.c_Signals.size() > 0)
                {
-                  tgl_assert(rc_CurrentPdo.c_Signals.size() <= 127U);
+                  Q_ASSERT(rc_CurrentPdo.c_Signals.size() <= 127U);
 
                   //set mappings. To do so iterate over all signals of the current message
                   for (uint16_t u16_SigIt = 0; u16_SigIt < rc_CurrentPdo.c_Signals.size(); ++u16_SigIt)
@@ -1557,7 +1557,7 @@ void C_OscExportCanOpenConfig::mh_CollectPdoConciseData(
                      const C_OscCanSignal & rc_CurrentSignal = rc_CurrentPdo.c_Signals[u16_SigIt];
                      uint32_t u32_Value;
 
-                     tgl_assert(rc_CurrentSignal.u16_ComBitLength <= 255U);
+                     Q_ASSERT(rc_CurrentSignal.u16_ComBitLength <= 255U);
 
                      //payload will contain 8bit signal length, 8bit sub-index, 16bit index (low byte), 16bit
                      // index (high byte)
@@ -1812,7 +1812,7 @@ void C_OscExportCanOpenConfig::mh_GetDefineNmlStart(C_SclString & orc_String, co
    else
    {
       //combination oq_StartDevices == false && oq_NmtStartAll == false) is not valid!
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 }
 
@@ -1839,7 +1839,7 @@ void C_OscExportCanOpenConfig::mh_GetDefineNmtStop(C_SclString & orc_String,
       break;
    default:
       //should not happen
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }

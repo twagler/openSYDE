@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing an usage bar with multiple elements (implementation)
@@ -18,7 +18,7 @@
 
 #include "stwtypes.hpp"
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 
 #include "C_SdNdeDpViewUsageWidget.hpp"
 
@@ -123,7 +123,7 @@ void C_SdNdeDpViewUsageWidget::SetUsage(const uint32_t ou32_NodeIndex, const uin
    {
       const C_OscNode * const pc_Node = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(ou32_NodeIndex);
 
-      tgl_assert(pc_Node != NULL);
+      Q_ASSERT(pc_Node != NULL);
       if (pc_Node != NULL)
       {
          uint32_t u32_CorrectDatapoolAreas = 0U;
@@ -199,7 +199,7 @@ void C_SdNdeDpViewUsageWidget::SetUsage(const uint32_t ou32_NodeIndex, const uin
                   uint32_t u32_NextAreaCounter;
                   bool q_AdaptColor = true;
 
-                  tgl_assert(rc_Area.c_DataPoolIndexes[0] < pc_Node->c_DataPools.size());
+                  Q_ASSERT(rc_Area.c_DataPoolIndexes[0] < pc_Node->c_DataPools.size());
                   c_UsageArea.c_ShowedString = pc_Node->c_DataPools[rc_Area.c_DataPoolIndexes[0]].c_Name.c_str();
                   c_UsageArea.q_Used = true;
                   c_UsageArea.c_Color = stw::opensyde_gui_logic::C_Uti::h_ScaleColor(mc_STYLE_GUIDE_COLOR_7,
@@ -258,7 +258,7 @@ void C_SdNdeDpViewUsageWidget::SetUsage(const uint32_t ou32_NodeIndex, const uin
                      {
                         c_DatapoolNames += ", ";
                      }
-                     tgl_assert(rc_Area.c_DataPoolIndexes[u32_DatapoolCounter] < pc_Node->c_DataPools.size());
+                     Q_ASSERT(rc_Area.c_DataPoolIndexes[u32_DatapoolCounter] < pc_Node->c_DataPools.size());
                      c_UsageArea.c_ShowedString =
                         c_DatapoolNames += static_cast<QString>(
                            pc_Node->c_DataPools[rc_Area.c_DataPoolIndexes[u32_DatapoolCounter]].c_Name.c_str());

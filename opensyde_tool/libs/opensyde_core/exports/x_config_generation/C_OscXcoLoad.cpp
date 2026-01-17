@@ -12,7 +12,6 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscXcoLoad.hpp"
@@ -21,7 +20,7 @@
 #include "C_OscSpaServicePackageLoadUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::scl;
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -92,9 +91,9 @@ int32_t C_OscXcoLoad::h_ProcessPackage(const C_SclString & orc_PackagePath, cons
    if (s32_Return == C_NO_ERR)
    {
       // report system definition and device definition paths
-      orc_SystemDefinitionPath = c_TargetUnzipPath + TglFileIncludeTrailingDelimiter(hc_XCFG_SYSDEF_FOLDER) +
+      orc_SystemDefinitionPath = c_TargetUnzipPath + stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(hc_XCFG_SYSDEF_FOLDER) +
                                  hc_XCFG_SYSDEF;
-      orc_DeviceDefinitionPath = c_TargetUnzipPath + TglFileIncludeTrailingDelimiter(hc_INI_DEV_FOLDER) + hc_INI_DEV;
+      orc_DeviceDefinitionPath = c_TargetUnzipPath + stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(hc_INI_DEV_FOLDER) + hc_INI_DEV;
 
       const stw::scl::C_SclString c_ManifestPath = c_TargetUnzipPath + C_OscXcoManifestFiler::hc_FILE_NAME;
       s32_Return = C_OscXcoManifestFiler::h_LoadFile(orc_Manifest, c_ManifestPath);

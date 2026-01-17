@@ -15,7 +15,7 @@
 #include <QScrollBar>
 
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSvHandler.hpp"
 #include "C_SyvDaPeUpdateModeTableView.hpp"
@@ -24,7 +24,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;

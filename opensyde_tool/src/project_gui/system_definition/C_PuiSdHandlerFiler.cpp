@@ -16,7 +16,7 @@
 #include <QFileInfo>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSdHandler.hpp"
 #include "C_OscNodeFiler.hpp"
 #include "C_OscSystemDefinitionFiler.hpp"
@@ -28,7 +28,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
-using namespace stw::tgl;
+
 using namespace stw::scl;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -113,7 +113,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadDataPools(std::vector<C_PuiSdNodeDataPool> & 
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pools");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pools");
          }
       }
       //Compare length
@@ -128,7 +128,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadDataPools(std::vector<C_PuiSdNodeDataPool> & 
          }
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
    else
    {
@@ -166,7 +166,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadDataPool(C_PuiSdNodeDataPool & orc_DataPool, 
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool");
       }
    }
    else
@@ -226,7 +226,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadDataPoolLists(std::vector<C_PuiSdNodeDataPool
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "lists");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "lists");
       }
    }
    //Compare length
@@ -270,7 +270,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadDataPoolList(C_PuiSdNodeDataPoolList & orc_Da
       }
       h_LoadDataPoolListElements(orc_DataPoolList.c_DataPoolListElements, orc_XmlParser, pc_OscElements);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
    }
    else
    {
@@ -326,7 +326,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadDataPoolListElements(
       }
       while (c_CurrentDataPoolListElementNode == "data-element");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-elements");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-elements");
    }
    //Compare length
    if (q_ExpectedSizeHere == true)
@@ -397,10 +397,10 @@ int32_t C_PuiSdHandlerFiler::h_SaveDataPools(const std::vector<C_PuiSdNodeDataPo
             //Store file name
             orc_XmlParser.SetNodeContent(c_FileName.toStdString().c_str());
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pools");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pools");
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
       }
       else
       {
@@ -417,10 +417,10 @@ int32_t C_PuiSdHandlerFiler::h_SaveDataPools(const std::vector<C_PuiSdNodeDataPo
          orc_XmlParser.CreateAndSelectNodeChild("data-pool");
          h_SaveDataPool(orc_UiDataPools[u32_ItDataPool], orc_XmlParser);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pools");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pools");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
    return s32_Retval;
 }
@@ -448,7 +448,7 @@ int32_t C_PuiSdHandlerFiler::h_SaveDataPoolFile(const C_PuiSdNodeDataPool & orc_
    {
       //Version
       c_XmlParser.CreateNodeChild("file-version", "1");
-      tgl_assert(c_XmlParser.CreateAndSelectNodeChild("data-pool") == "data-pool");
+      Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("data-pool") == "data-pool");
       //node
       C_PuiSdHandlerFiler::h_SaveDataPool(orc_DataPool, c_XmlParser);
       //Don't forget to save!
@@ -480,7 +480,7 @@ void C_PuiSdHandlerFiler::h_SaveDataPool(const C_PuiSdNodeDataPool & orc_DataPoo
    h_SaveDataPoolLists(orc_DataPool.c_DataPoolLists, orc_XmlParser);
 
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "data-pool");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-pool");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -500,7 +500,7 @@ void C_PuiSdHandlerFiler::h_SaveDataPoolLists(const std::vector<C_PuiSdNodeDataP
       orc_XmlParser.CreateAndSelectNodeChild("list");
       h_SaveDataPoolList(orc_DataPoolLists[u32_ItDataPoolList], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "lists");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "lists");
    }
 }
 
@@ -517,7 +517,7 @@ void C_PuiSdHandlerFiler::h_SaveDataPoolList(const C_PuiSdNodeDataPoolList & orc
    orc_XmlParser.CreateAndSelectNodeChild("data-elements");
    h_SaveDataPoolListElements(orc_DataPoolList.c_DataPoolListElements, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -538,7 +538,7 @@ void C_PuiSdHandlerFiler::h_SaveDataPoolListElements(
       orc_XmlParser.CreateAndSelectNodeChild("data-element");
       h_SaveDataPoolListElement(orc_DataPoolListElements[u32_ItDataPoolListElement], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "data-elements");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "data-elements");
    }
 }
 
@@ -677,7 +677,7 @@ void C_PuiSdHandlerFiler::h_LoadSharedDatapoolsGroups(C_PuiSdSharedDatapools & o
       while (c_CurrentNode == "group");
 
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "shared_datapools_groups");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "shared_datapools_groups");
    }
 
    //Compare length
@@ -734,7 +734,7 @@ void C_PuiSdHandlerFiler::h_LoadSharedDatapoolsGroup(std::vector<C_OscNodeDataPo
       while (c_CurrentNode == "datapool-id");
 
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "group");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "group");
    }
 
    //Compare length
@@ -775,7 +775,7 @@ int32_t C_PuiSdHandlerFiler::h_SaveSharedDatapoolsFile(const QString & orc_FileP
       c_XmlParser.CreateNodeChild("file-version", "1");
 
       // Shared Datapool groups
-      tgl_assert(c_XmlParser.CreateAndSelectNodeChild("shared_datapools_groups") == "shared_datapools_groups");
+      Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("shared_datapools_groups") == "shared_datapools_groups");
       C_PuiSdHandlerFiler::h_SaveSharedDatapoolsGroups(orc_SharedDatapools, c_XmlParser);
 
       //Don't forget to save!
@@ -826,11 +826,11 @@ void C_PuiSdHandlerFiler::h_SaveSharedDatapoolsGroups(const C_PuiSdSharedDatapoo
          orc_XmlParser.SetAttributeUint32("datapool", rc_Group[u32_DatapoolIdCounter].u32_DataPoolIndex);
 
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "group");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "group");
       }
 
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "shared_datapools_groups");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "shared_datapools_groups");
    }
 }
 
@@ -890,7 +890,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadCanProtocols(std::vector<C_PuiSdNodeCanProtoc
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "com-protocols");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-protocols");
          }
       }
       //Compare length
@@ -905,7 +905,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadCanProtocols(std::vector<C_PuiSdNodeCanProtoc
          }
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
    else
    {
@@ -935,7 +935,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadCanProtocol(C_PuiSdNodeCanProtocol & orc_CanP
    {
       s32_Retval = h_LoadCanMessageContainers(orc_CanProtocol.c_ComMessages, orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-protocol");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-protocol");
    }
    else
    {
@@ -994,7 +994,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadCanMessageContainers(
       }
       while (c_CurrentCanMessageContainerNode == "com-message-container");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-containers");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-containers");
    }
    //Compare length
    if ((s32_Retval == C_NO_ERR) && (q_ExpectedSizeHere == true))
@@ -1031,7 +1031,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadCanMessageContainer(C_PuiSdNodeCanMessageCont
    {
       s32_Retval = h_LoadCanMessages(orc_CanMessageContainer.c_TxMessages, orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-container");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-container");
    }
    else
    {
@@ -1041,7 +1041,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadCanMessageContainer(C_PuiSdNodeCanMessageCont
    {
       s32_Retval = h_LoadCanMessages(orc_CanMessageContainer.c_RxMessages, orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-container");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-container");
    }
    else
    {
@@ -1169,7 +1169,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadCanMessage(C_PuiSdNodeCanMessage & orc_CanMes
    {
       h_LoadCanSignals(orc_CanMessage.c_Signals, orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message");
    }
    else
    {
@@ -1214,7 +1214,7 @@ void C_PuiSdHandlerFiler::h_LoadCanSignals(std::vector<C_PuiSdNodeCanSignal> & o
       }
       while (c_CurrentDataPoolListElementNode == "com-signal");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-signals");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-signals");
    }
    //Compare length
    if (q_ExpectedSizeHere == true)
@@ -1285,7 +1285,7 @@ int32_t C_PuiSdHandlerFiler::h_SaveCanProtocols(const std::vector<C_PuiSdNodeCan
                //Store file name
                orc_XmlParser.SetNodeContent(c_FileName.toStdString().c_str());
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "com-protocols");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-protocols");
             }
             else
             {
@@ -1294,7 +1294,7 @@ int32_t C_PuiSdHandlerFiler::h_SaveCanProtocols(const std::vector<C_PuiSdNodeCan
             }
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
       }
       else
       {
@@ -1311,10 +1311,10 @@ int32_t C_PuiSdHandlerFiler::h_SaveCanProtocols(const std::vector<C_PuiSdNodeCan
          orc_XmlParser.CreateAndSelectNodeChild("com-protocol");
          h_SaveCanProtocol(orc_UiCanProtocols[u32_ItCanProtocol], orc_XmlParser);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "com-protocols");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-protocols");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
    return s32_Retval;
 }
@@ -1343,7 +1343,7 @@ int32_t C_PuiSdHandlerFiler::h_SaveCanProtocolFile(const C_PuiSdNodeCanProtocol 
    {
       //Version
       c_XmlParser.CreateNodeChild("file-version", "1");
-      tgl_assert(c_XmlParser.CreateAndSelectNodeChild("com-protocol") == "com-protocol");
+      Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("com-protocol") == "com-protocol");
       //node
       C_PuiSdHandlerFiler::h_SaveCanProtocol(orc_CanProtocol, c_XmlParser);
       //Don't forget to save!
@@ -1376,7 +1376,7 @@ void C_PuiSdHandlerFiler::h_SaveCanProtocol(const C_PuiSdNodeCanProtocol & orc_C
    h_SaveCanMessageContainers(orc_CanProtocol.c_ComMessages, orc_XmlParser);
 
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "com-protocol");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-protocol");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1397,7 +1397,7 @@ void C_PuiSdHandlerFiler::h_SaveCanMessageContainers(
       orc_XmlParser.CreateAndSelectNodeChild("com-message-container");
       h_SaveCanMessageContainer(orc_CanMessageContainers[u32_ItCanMessageContainer], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-containers");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-containers");
    }
 }
 
@@ -1415,11 +1415,11 @@ void C_PuiSdHandlerFiler::h_SaveCanMessageContainer(const C_PuiSdNodeCanMessageC
    orc_XmlParser.CreateAndSelectNodeChild("tx-messages");
    h_SaveCanMessages(orc_CanMessageContainer.c_TxMessages, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-container");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-container");
    orc_XmlParser.CreateAndSelectNodeChild("rx-messages");
    h_SaveCanMessages(orc_CanMessageContainer.c_RxMessages, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message-container");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message-container");
 }
 //----------------------------------------------------------------------------------------------------------------------
 /*! \brief   Save can messages
@@ -1478,7 +1478,7 @@ void C_PuiSdHandlerFiler::h_SaveCanMessage(const C_PuiSdNodeCanMessage & orc_Can
    orc_XmlParser.CreateAndSelectNodeChild("com-signals");
    h_SaveCanSignals(orc_CanMessage.c_Signals, orc_XmlParser);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "com-message");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-message");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1499,7 +1499,7 @@ void C_PuiSdHandlerFiler::h_SaveCanSignals(const std::vector<C_PuiSdNodeCanSigna
       orc_XmlParser.CreateAndSelectNodeChild("com-signal");
       h_SaveCanSignal(orc_CanSignals[u32_ItDataPoolListElement], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "com-signals");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "com-signals");
    }
 }
 
@@ -1695,7 +1695,7 @@ void C_PuiSdHandlerFiler::h_SaveNodes(const std::vector<C_PuiSdNode> & orc_Nodes
       for (uint32_t u32_Index = 0U; u32_Index < orc_Nodes.size(); u32_Index++)
       {
          orc_XmlParser.CreateAndSelectNodeChild("node");
-         tgl_assert(C_PuiSdHandlerFiler::mh_SaveNode(orc_Nodes[u32_Index], NULL, NULL, orc_XmlParser) == C_NO_ERR);
+         Q_ASSERT(C_PuiSdHandlerFiler::mh_SaveNode(orc_Nodes[u32_Index], NULL, NULL, orc_XmlParser) == C_NO_ERR);
          //Back up (don't check to allow reuse)
          orc_XmlParser.SelectNodeParent();
       }
@@ -1838,7 +1838,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadBusTextElements(std::vector<C_PuiSdTextElemen
       }
       while (c_SelectedNode == "bus-text-element");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "bus-text-elements");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus-text-elements");
    }
    //Compare length
    if ((s32_Retval == C_NO_ERR) && (q_ExpectedSizeHere == true))
@@ -1869,7 +1869,7 @@ void C_PuiSdHandlerFiler::h_SaveBusTextElements(const std::vector<C_PuiSdTextEle
    {
       orc_XmlParser.CreateAndSelectNodeChild("bus-text-element");
       C_PuiSdHandlerFiler::mh_SaveTextElement(&orc_BusTextElements[u32_Index], orc_XmlParser);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "bus-text-elements"); //back up
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "bus-text-elements"); //back up
    }
 }
 
@@ -1911,7 +1911,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadLastKnownHalcCrcs(std::map<C_OscNodeDataPoolL
                   {
                      c_DpName = orc_XmlParser.GetNodeContent().c_str();
                      //Return
-                     tgl_assert(orc_XmlParser.SelectNodeParent() == "last-known-halc-crc");
+                     Q_ASSERT(orc_XmlParser.SelectNodeParent() == "last-known-halc-crc");
                   }
                   else
                   {
@@ -1935,7 +1935,7 @@ int32_t C_PuiSdHandlerFiler::h_LoadLastKnownHalcCrcs(std::map<C_OscNodeDataPoolL
          }
          while ((c_CurrentNode == "last-known-halc-crc") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "last-known-halc-crcs");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "last-known-halc-crcs");
       }
       //Return
       orc_XmlParser.SelectNodeParent();
@@ -1965,7 +1965,7 @@ void C_PuiSdHandlerFiler::h_SaveLastKnownHalcCrcs(const std::map<C_OscNodeDataPo
       orc_XmlParser.CreateNodeChild("hal-data-pool-name", c_It->second.c_HalDpName.toStdString().c_str());
 
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "last-known-halc-crcs");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "last-known-halc-crcs");
    }
    //Return
    orc_XmlParser.SelectNodeParent();
@@ -2006,7 +2006,7 @@ int32_t C_PuiSdHandlerFiler::h_SaveSystemDefinitionUiFile(const QString & orc_Fi
 
       //Version
       c_XmlParser.CreateNodeChild("file-version", "1");
-      tgl_assert(c_XmlParser.CreateAndSelectNodeChild("nodes") == "nodes");
+      Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("nodes") == "nodes");
       c_XmlParser.SetAttributeUint32("length", orc_OscSystemDefinition.c_Nodes.size());
       if (orc_OscSystemDefinition.c_Nodes.size() == orc_UiNodes.size())
       {
@@ -2038,19 +2038,19 @@ int32_t C_PuiSdHandlerFiler::h_SaveSystemDefinitionUiFile(const QString & orc_Fi
       }
       if (s32_Retval == C_NO_ERR)
       {
-         tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition"); //back up
+         Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition"); //back up
 
          //Bus
          c_XmlParser.CreateAndSelectNodeChild("buses");
          C_PuiSdHandlerFiler::h_SaveBuses(orc_UiBuses, c_XmlParser);
-         tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition"); //back up
+         Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition"); //back up
 
          //GUI items
 
          //Bus text elements
          c_XmlParser.CreateAndSelectNodeChild("bus-text-elements");
          C_PuiSdHandlerFiler::h_SaveBusTextElements(orc_BusTextElements, c_XmlParser);
-         tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition"); //back up
+         Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition"); //back up
 
          //Base elements
          C_PuiBsElementsFiler::h_SaveBaseElements(orc_Elements, c_XmlParser);
@@ -2151,21 +2151,21 @@ int32_t C_PuiSdHandlerFiler::h_LoadSystemDefinitionUiFile(const QString & orc_Fi
          s32_Retval = C_PuiSdHandlerFiler::h_LoadNodes(orc_UiNodes, c_XmlParser, &c_BasePath, opc_OscNodes);
          if (s32_Retval == C_NO_ERR)
          {
-            tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition");
+            Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition");
             //Buses
             if (c_XmlParser.SelectNodeChild("buses") == "buses")
             {
                s32_Retval = C_PuiSdHandlerFiler::h_LoadBuses(orc_UiBuses, c_XmlParser);
                if (s32_Retval == C_NO_ERR)
                {
-                  tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition");
+                  Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition");
                   //Bus text elements
                   if (c_XmlParser.SelectNodeChild("bus-text-elements") == "bus-text-elements")
                   {
                      s32_Retval = C_PuiSdHandlerFiler::h_LoadBusTextElements(orc_BusTextElements, c_XmlParser);
                      if (s32_Retval == C_NO_ERR)
                      {
-                        tgl_assert(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition");
+                        Q_ASSERT(c_XmlParser.SelectNodeParent() == "opensyde-system-ui-definition");
                         //Generic elements
                         s32_Retval = C_PuiBsElementsFiler::h_LoadBaseElements(orc_Elements, c_XmlParser);
                         if (s32_Retval == C_NO_ERR)
@@ -2516,11 +2516,11 @@ int32_t C_PuiSdHandlerFiler::mh_LoadNode(C_PuiSdNode & orc_Node, C_OscXmlParserB
                                  c_Text = orc_XmlParser.SelectNodeNext("interaction-point");
                               }
                               while (c_Text == "interaction-point");
-                              tgl_assert(orc_XmlParser.SelectNodeParent() == "interaction-points");
+                              Q_ASSERT(orc_XmlParser.SelectNodeParent() == "interaction-points");
                            }
 
                            orc_Node.c_UiBusConnections.push_back(c_UiConnection);
-                           tgl_assert(orc_XmlParser.SelectNodeParent() == "connection");
+                           Q_ASSERT(orc_XmlParser.SelectNodeParent() == "connection");
                         }
                         else
                         {
@@ -2532,7 +2532,7 @@ int32_t C_PuiSdHandlerFiler::mh_LoadNode(C_PuiSdNode & orc_Node, C_OscXmlParserB
                while ((s32_Return == C_NO_ERR) && (orc_XmlParser.SelectNodeNext("connection") == "connection"));
                //any more connections ?
 
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "busconnections"); //back to busconnections
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "busconnections"); //back to busconnections
             }
             orc_XmlParser.SelectNodeParent(); //back to node
          }
@@ -2573,7 +2573,7 @@ int32_t C_PuiSdHandlerFiler::mh_SaveNodeFile(const C_PuiSdNode & orc_UiNode, con
    {
       //Version
       c_XmlParser.CreateNodeChild("file-version", "1");
-      tgl_assert(c_XmlParser.CreateAndSelectNodeChild("node") == "node");
+      Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild("node") == "node");
       //node
       s32_Retval = C_PuiSdHandlerFiler::mh_SaveNode(orc_UiNode, &orc_OscNode, opc_BasePath, c_XmlParser);
       if (s32_Retval == C_NO_ERR)
@@ -2673,11 +2673,11 @@ int32_t C_PuiSdHandlerFiler::mh_SaveNode(const C_PuiSdNode & orc_UiNode, const C
                orc_XmlParser.SelectNodeParent(); //back to interaction-points
             }
 
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "connection");     //back to connection
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "busconnections"); //back to busconnections
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "connection");     //back to connection
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "busconnections"); //back to busconnections
          }
 
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "node"); //back to "node"
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node"); //back to "node"
       }
    }
    return s32_Retval;

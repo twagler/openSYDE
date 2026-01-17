@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Graphics scene for the message layout viewer (implementation)
@@ -17,14 +17,15 @@
 //lint -estring(829,*ctime*)  //this module is specifically for Windows targets; no trouble with unspecified
 // behavior expected
 #include <ctime>
+#include <QDateTime>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneContextMenuEvent>
 
 #include "stwtypes.hpp"
 #include "constants.hpp"
 
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
+
+
 #include "C_SdBueMlvGraphicsScene.hpp"
 
 #include "C_SdBueMlvBaseItem.hpp"
@@ -33,7 +34,7 @@
 #include "C_OscCanMessage.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -222,7 +223,7 @@ void C_SdBueMlvGraphicsScene::SetMessage(const C_OscCanMessageIdentificationIndi
    const C_OscCanMessage * const pc_Message =
       stw::opensyde_gui_logic::C_PuiSdHandler::h_GetInstance()->GetCanMessage(orc_MessageId);
 
-   tgl_assert(pc_Message != NULL);
+   Q_ASSERT(pc_Message != NULL);
    if (pc_Message != NULL)
    {
       uint16_t u16_Counter;
@@ -823,7 +824,7 @@ void C_SdBueMlvGraphicsScene::m_CoLoadEdsRestrictions(void)
       const C_OscCanOpenManagerDeviceInfo * const pc_Manager =
          C_PuiSdHandler::h_GetInstance()->GetCanOpenManagerDevice(this->mc_MessageId);
 
-      tgl_assert(pc_Manager != NULL);
+      Q_ASSERT(pc_Manager != NULL);
       if (pc_Manager != NULL)
       {
          const C_OscCanMessage * const pc_Message = C_PuiSdHandler::h_GetInstance()->GetCanMessage(this->mc_MessageId);
@@ -853,7 +854,7 @@ void C_SdBueMlvGraphicsScene::m_AddSignal(const uint32_t ou32_SignalIndex)
       stw::opensyde_gui_logic::C_PuiSdHandler::h_GetInstance()->GetUiCanSignal(this->mc_MessageId,
                                                                                ou32_SignalIndex);
 
-   tgl_assert(pc_SignalUiItem != NULL);
+   Q_ASSERT(pc_SignalUiItem != NULL);
    if (pc_SignalUiItem != NULL)
    {
       if (pc_SignalUiItem->u8_ColorIndex == 0U)
@@ -1157,7 +1158,7 @@ void C_SdBueMlvGraphicsScene::m_RemoveSignalFromGridMapping(C_SdBueMlvSignalMana
 void C_SdBueMlvGraphicsScene::m_RemoveSignalFromGridMappingPosition(C_SdBueMlvSignalManager * const opc_Item,
                                                                     const uint16_t ou16_Pos)
 {
-   tgl_assert(ou16_Pos < mhu8_MAX_NUM_BITS);
+   Q_ASSERT(ou16_Pos < mhu8_MAX_NUM_BITS);
    if (ou16_Pos < mhu8_MAX_NUM_BITS)
    {
       // search the item
@@ -1275,7 +1276,7 @@ C_SdBueMlvSignalManager::C_SignalItemColors C_SdBueMlvGraphicsScene::m_GetNextNo
 
    C_SdBueMlvSignalManager::C_SignalItemColors c_ColorConfig;
 
-   srand(stw::tgl::TglGetTickCount());
+   srand(QDateTime::currentMSecsSinceEpoch());
 
    // Check for a free color in the already existing sections
    // Use the oldest section, if a free color is available
@@ -1302,7 +1303,7 @@ C_SdBueMlvSignalManager::C_SignalItemColors C_SdBueMlvGraphicsScene::m_GetNextNo
       this->m_PrepareNextColorSection();
 
       // u32_SectionNumber must be match with new added section
-      tgl_assert(u32_SectionNumber < this->mc_SignalsColorsUsed.size());
+      Q_ASSERT(u32_SectionNumber < this->mc_SignalsColorsUsed.size());
    }
 
    // search a not used color with a random number in a section with at least one free entry
@@ -1371,7 +1372,7 @@ C_SdBueMlvSignalManager::C_SignalItemColors C_SdBueMlvGraphicsScene::m_GetConcre
             this->m_PrepareNextColorSection();
 
             // u32_SectionNumber must be match with new added section
-            tgl_assert(u32_SectionCounter < this->mc_SignalsColorsUsed.size());
+            Q_ASSERT(u32_SectionCounter < this->mc_SignalsColorsUsed.size());
             this->mc_SignalsColorsUsed[u32_SectionCounter][u32_ColorCounter] = true;
          }
 

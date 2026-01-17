@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for new project import/creation (implementation)
@@ -17,7 +17,7 @@
 
 #include "C_Uti.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_ImpUtil.hpp"
 #include "C_PuiUtil.hpp"
@@ -35,7 +35,7 @@
 #include "C_SdNdeNodePropertiesTabContentWidget.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -320,7 +320,7 @@ void C_SdNdeDbAddNewProject::ApplyV3Content()
    {
       const C_OscNode * const pc_Core = C_PuiSdHandler::h_GetInstance()->GetOscNodeConst(this->mu32_NodeIndex);
       const C_PuiSdNode * const pc_Ui = C_PuiSdHandler::h_GetInstance()->GetUiNode(this->mu32_NodeIndex);
-      tgl_assert((pc_Core != NULL) && (pc_Ui != NULL));
+      Q_ASSERT((pc_Core != NULL) && (pc_Ui != NULL));
       if ((pc_Core != NULL) && (pc_Ui != NULL))
       {
          C_SdNdeDbAddNewProject::mh_KeepTspProperties(*pc_Core, this->mc_OscNode, *pc_Ui, this->mc_UiNode);
@@ -991,7 +991,7 @@ void C_SdNdeDbAddNewProject::mh_KeepTspProperties(const C_OscNode & orc_Previous
    orc_NewCoreNode.c_Properties.c_Comment = orc_PreviousCoreNode.c_Properties.c_Comment;
    orc_NewUiNode.c_UiPosition = orc_PreviousUiNode.c_UiPosition;
    orc_NewUiNode.c_UiBusConnections = orc_PreviousUiNode.c_UiBusConnections;
-   tgl_assert(orc_NewCoreNode.c_Properties.c_ComInterfaces.size() ==
+   Q_ASSERT(orc_NewCoreNode.c_Properties.c_ComInterfaces.size() ==
               orc_PreviousCoreNode.c_Properties.c_ComInterfaces.size());
    if (orc_NewCoreNode.c_Properties.c_ComInterfaces.size() == orc_PreviousCoreNode.c_Properties.c_ComInterfaces.size())
    {

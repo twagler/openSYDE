@@ -16,12 +16,12 @@
 #include <QBuffer>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiBsElementsFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -171,7 +171,7 @@ int32_t C_PuiBsElementsFiler::h_LoadTextElements(std::vector<C_PuiBsTextElement>
       }
       while (c_SelectedNode == "text-element");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "text-elements");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "text-elements");
    }
    return s32_Retval;
 }
@@ -190,7 +190,7 @@ void C_PuiBsElementsFiler::h_SaveTextElements(const std::vector<C_PuiBsTextEleme
    {
       orc_XmlParser.CreateAndSelectNodeChild("text-element");
       C_PuiBsElementsFiler::h_SaveTextElement(&orc_TextElements[u32_Index], orc_XmlParser);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "text-elements"); //back up
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "text-elements"); //back up
    }
 }
 //----------------------------------------------------------------------------------------------------------------------
@@ -227,7 +227,7 @@ int32_t C_PuiBsElementsFiler::h_LoadBoundaries(std::vector<C_PuiBsBoundary> & or
       }
       while (c_SelectedNode == "boundary");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "boundaries");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "boundaries");
    }
    return s32_Retval;
 }
@@ -246,7 +246,7 @@ void C_PuiBsElementsFiler::h_SaveBoundaries(const std::vector<C_PuiBsBoundary> &
    {
       orc_XmlParser.CreateAndSelectNodeChild("boundary");
       C_PuiBsElementsFiler::mh_SaveBoundary(orc_Boundaries[u32_Index], orc_XmlParser);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "boundaries"); //back up
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "boundaries"); //back up
    }
 }
 
@@ -283,7 +283,7 @@ int32_t C_PuiBsElementsFiler::h_LoadImages(std::vector<C_PuiBsImage> & orc_Image
       }
       while (c_SelectedNode == "image");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "images");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "images");
    }
    return s32_Retval;
 }
@@ -302,7 +302,7 @@ void C_PuiBsElementsFiler::h_SaveImages(const std::vector<C_PuiBsImage> & orc_Im
    {
       orc_XmlParser.CreateAndSelectNodeChild("image");
       C_PuiBsElementsFiler::mh_SaveImage(orc_Images[u32_Index], orc_XmlParser);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "images"); //back up
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "images"); //back up
    }
 }
 
@@ -340,7 +340,7 @@ int32_t C_PuiBsElementsFiler::h_LoadLineArrows(std::vector<C_PuiBsLineArrow> & o
       }
       while (c_SelectedNode == "line-arrow");
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "line-arrows");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "line-arrows");
    }
    return s32_Retval;
 }
@@ -359,7 +359,7 @@ void C_PuiBsElementsFiler::h_SaveLineArrows(const std::vector<C_PuiBsLineArrow> 
    {
       orc_XmlParser.CreateAndSelectNodeChild("line-arrow");
       C_PuiBsElementsFiler::mh_SaveLineArrow(orc_LineArrows[u32_Index], orc_XmlParser);
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "line-arrows"); //back up
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "line-arrows"); //back up
    }
 }
 
@@ -592,7 +592,7 @@ int32_t C_PuiBsElementsFiler::h_LoadTextElement(C_PuiBsTextElement * const opc_T
          if (orc_XmlParser.SelectNodeChild("bright") == "bright")
          {
             h_LoadColor(opc_TextElement->c_UiFontColorBright, orc_XmlParser);
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "font-color");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "font-color");
          }
          else
          {
@@ -601,7 +601,7 @@ int32_t C_PuiBsElementsFiler::h_LoadTextElement(C_PuiBsTextElement * const opc_T
          if (orc_XmlParser.SelectNodeChild("dark") == "dark")
          {
             h_LoadColor(opc_TextElement->c_UiFontColorDark, orc_XmlParser);
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "font-color");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "font-color");
          }
          else
          {
@@ -724,7 +724,7 @@ int32_t C_PuiBsElementsFiler::mh_LoadBoundary(C_PuiBsBoundary & orc_Boundary,
       if (orc_XmlParser.SelectNodeChild("bright") == "bright")
       {
          h_LoadColor(orc_Boundary.c_UiBorderColorBright, orc_XmlParser);
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "border-color");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "border-color");
       }
       else
       {
@@ -733,7 +733,7 @@ int32_t C_PuiBsElementsFiler::mh_LoadBoundary(C_PuiBsBoundary & orc_Boundary,
       if (orc_XmlParser.SelectNodeChild("dark") == "dark")
       {
          h_LoadColor(orc_Boundary.c_UiBorderColorDark, orc_XmlParser);
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "border-color");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "border-color");
       }
       else
       {
@@ -761,7 +761,7 @@ int32_t C_PuiBsElementsFiler::mh_LoadBoundary(C_PuiBsBoundary & orc_Boundary,
       if (orc_XmlParser.SelectNodeChild("bright") == "bright")
       {
          h_LoadColor(orc_Boundary.c_UiBackgroundColorBright, orc_XmlParser);
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "background-color");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "background-color");
       }
       else
       {
@@ -770,7 +770,7 @@ int32_t C_PuiBsElementsFiler::mh_LoadBoundary(C_PuiBsBoundary & orc_Boundary,
       if (orc_XmlParser.SelectNodeChild("dark") == "dark")
       {
          h_LoadColor(orc_Boundary.c_UiBackgroundColorDark, orc_XmlParser);
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "background-color");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "background-color");
       }
       else
       {

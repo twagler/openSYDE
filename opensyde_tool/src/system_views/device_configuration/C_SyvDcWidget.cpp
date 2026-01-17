@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for handling the process of configuring all nodes.
@@ -11,6 +11,7 @@
 #include "precomp_headers.hpp"
 
 #include <QApplication>
+#include <QThread>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
@@ -24,8 +25,8 @@
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
+
+
 #include "C_SclString.hpp"
 #include "C_PuiSdUtil.hpp"
 #include "C_OscLoggingHandler.hpp"
@@ -777,7 +778,7 @@ void C_SyvDcWidget::m_StartConfigProper(void)
             else
             {
                //Flashloader type "none" is supported by the device structure, but not the UI
-               tgl_assert(e_Flashloader == C_OscNodeProperties::eFL_STW);
+               Q_ASSERT(e_Flashloader == C_OscNodeProperties::eFL_STW);
                this->mc_StwFlashloaderDeviceConfigurations.push_back(rc_Config);
             }
          }
@@ -937,7 +938,7 @@ void C_SyvDcWidget::m_ShowConfigResult(void)
       for (u32_CompDeviceCounter = 0U; u32_CompDeviceCounter < c_SortedOpenSydeDeviceInfos.size();
            ++u32_CompDeviceCounter)
       {
-         tgl_assert(c_SortedOpenSydeDeviceInfos[u32_CompDeviceCounter].size() > 0);
+         Q_ASSERT(c_SortedOpenSydeDeviceInfos[u32_CompDeviceCounter].size() > 0);
 
          // The grouping is for snr, so the first element of a group is enough for comparison
          if (c_SortedOpenSydeDeviceInfos[u32_CompDeviceCounter][0].c_SerialNumber == rc_Info.c_SerialNumber)
@@ -1028,8 +1029,8 @@ void C_SyvDcWidget::m_ShowConfigInfoOfDevice(const std::vector<C_SyvDcDeviceConf
                                              const uint32_t ou32_DeviceMaxCount, const uint32_t ou32_DeviceCounter,
                                              QString & orc_Text)
 {
-   tgl_assert(orc_Config.size() > 0);
-   tgl_assert(orc_Config[0].c_NodeIds.size() > 0);
+   Q_ASSERT(orc_Config.size() > 0);
+   Q_ASSERT(orc_Config[0].c_NodeIds.size() > 0);
 
    if ((this->mpc_DcSequences != NULL) &&
        (orc_Config.size() > 0) &&
@@ -1064,14 +1065,14 @@ void C_SyvDcWidget::m_ShowConfigInfoOfDevice(const std::vector<C_SyvDcDeviceConf
             uint32_t u32_SquadIndex;
             const C_OscNodeSquad * pc_Squad;
 
-            tgl_assert(C_PuiSdHandler::h_GetInstance()->GetNodeSquadIndexWithNodeIndex(u32_FirstNodeIndex,
+            Q_ASSERT(C_PuiSdHandler::h_GetInstance()->GetNodeSquadIndexWithNodeIndex(u32_FirstNodeIndex,
                                                                                        u32_SquadIndex) == C_NO_ERR);
             pc_Squad = C_PuiSdHandler::h_GetInstance()->GetOscNodeSquadConst(u32_SquadIndex);
 
-            tgl_assert(pc_Squad != NULL);
+            Q_ASSERT(pc_Squad != NULL);
             if (pc_Squad != NULL)
             {
-               tgl_assert(pc_Squad->c_SubNodeIndexes.size() == orc_Config.size());
+               Q_ASSERT(pc_Squad->c_SubNodeIndexes.size() == orc_Config.size());
 
                c_SubNodes.reserve(pc_Squad->c_SubNodeIndexes.size());
                c_ServerIds.reserve(pc_Squad->c_SubNodeIndexes.size());
@@ -1087,7 +1088,7 @@ void C_SyvDcWidget::m_ShowConfigInfoOfDevice(const std::vector<C_SyvDcDeviceConf
                                                                       orc_Config[u32_SubNodeCounter].c_NodeIds[0]));
                }
                c_SubNodeIndexes = pc_Squad->c_SubNodeIndexes;
-               tgl_assert(pc_Squad->c_SubNodeIndexes.size() == c_SubNodes.size());
+               Q_ASSERT(pc_Squad->c_SubNodeIndexes.size() == c_SubNodes.size());
                q_NodeSquad = true;
             }
          }
@@ -1134,7 +1135,7 @@ void C_SyvDcWidget::m_ShowConfigInfoOfDevice(const std::vector<C_SyvDcDeviceConf
                }
             }
 
-            tgl_assert(q_CummunicationBusFound == true);
+            Q_ASSERT(q_CummunicationBusFound == true);
             if (q_CummunicationBusFound == true)
             {
                // Show the for configuration used interface first
@@ -1536,7 +1537,7 @@ void C_SyvDcWidget::m_ResetFlashloaderAfterConfig(const bool oq_SameBitrate)
 
          //Before reinitializing the bus wait a little to make sure the CAN reset request broadcast(s) had the chance to
          // really be sent out on the bus
-         stw::tgl::TglSleep(50U);
+         QThread::msleep(50U);
 
          // Set the new bitrate for the new active configuration if the bitrate was changed
          s32_Return = this->mpc_DcSequences->InitCanAndSetCanBitrate(u32_NewBitrate);
@@ -1558,7 +1559,7 @@ void C_SyvDcWidget::m_ResetFlashloaderAfterConfig(const bool oq_SameBitrate)
          }
          else
          {
-            const uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
+            const uint32_t u32_StartTime = QDateTime::currentMSecsSinceEpoch();
             // Get the minimum wait time
             u32_WaitTime = this->mpc_DcSequences->GetMinimumFlashloaderResetWaitTime(
                C_OscComDriverFlash::eFUNDAMENTAL_COM_CHANGES_ETHERNET);
@@ -1568,7 +1569,7 @@ void C_SyvDcWidget::m_ResetFlashloaderAfterConfig(const bool oq_SameBitrate)
                //In case it takes longer do process events to handle cursor and proper show of message box
                QApplication::processEvents(QEventLoop::AllEvents, 50);
             }
-            while (stw::tgl::TglGetTickCount() < (u32_WaitTime + u32_StartTime));
+            while (QDateTime::currentMSecsSinceEpoch() < (u32_WaitTime + u32_StartTime));
          }
       }
       else
@@ -2802,7 +2803,7 @@ void C_SyvDcWidget::m_Timer(void)
             {
                //Before closing the bus wait a little to make sure the CAN reset request broadcast(s) had the chance to
                // really be sent out on the bus
-               stw::tgl::TglSleep(50U);
+                QThread::msleep(50U);
             }
 
             break;
@@ -2931,7 +2932,7 @@ bool C_SyvDcWidget::m_AreAllInterfacesToConfigure(void) const
    const C_PuiSvData * const pc_View = C_PuiSvHandler::h_GetInstance()->GetView(this->mu32_ViewIndex);
 
    // Get configuration from view
-   tgl_assert(pc_View != NULL);
+   Q_ASSERT(pc_View != NULL);
    if (pc_View != NULL)
    {
       switch (pc_View->GetDeviceConfigMode())
@@ -3054,7 +3055,7 @@ void C_SyvDcWidget::m_DoCompleteDisconnect(void)
 
                //Before closing the bus wait a little to make sure the CAN reset request broadcast(s) had the chance to
                // really be sent out on the bus
-               stw::tgl::TglSleep(50U);
+               QThread::msleep(50U);
 
                q_StartedAnything = true;
             }

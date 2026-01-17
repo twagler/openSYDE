@@ -18,8 +18,9 @@
 #include "stwerrors.hpp"
 #include "C_HexFile.hpp"
 #include "CXFLProtocol.hpp"
-#include "TglTime.hpp"
-#include "TglUtils.hpp"
+#include <QElapsedTimer>
+#include <QThread>
+
 #include "stw_can.hpp"
 #include "DLLocalize.hpp"
 
@@ -28,7 +29,7 @@
 using namespace stw::errors;
 using namespace stw::diag_lib;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::can;
 using namespace stw::hex_file;
 
@@ -190,7 +191,7 @@ int32_t C_XFLAliasedRanges::GetRangeOccupiedByAddress(const uint32_t ou32_Addres
    int32_t s32_Index;
 
    oru8_Range = 0U;
-   for (s32_Index = 0; s32_Index < this->GetLength(); s32_Index++)
+   for (s32_Index = 0; s32_Index < this->length(); s32_Index++)
    {
       if ((ou32_Address >= this->operator [](s32_Index).u32_AliasedAddress) &&
           (ou32_Address < (this->operator [](s32_Index).u32_AliasedAddress + this->operator [](s32_Index).u32_Size)))
@@ -490,15 +491,16 @@ int32_t C_XFLProtocol::SendFLASH(const uint32_t ou32_StartTimeMs, const uint8_t 
    uint32_t u32_Progress;
    uint32_t u32_Elapsed;
 
-   u32_StartTime = TglGetTickCount();
-   TRG_ReportProgress(0U, TGL_LoadStr(STR_FDL_TXT_WR_FLASH_RQ));
+   QElapsedTimer c_Timer;
+   c_Timer.start();
+   TRG_ReportProgress(0U, stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_WR_FLASH_RQ));
    do
    {
       (void)m_SendFlashMessage(); //do not check for return = OK here:
                                   //network might still be down resulting in send errors
       TRG_WaitMicroSeconds(static_cast<uint32_t>(ou8_FLASHIntervalMs) * 1000U);
       TRG_HandleSystemMessages(); //prevent system from freezing
-      u32_Elapsed = TglGetTickCount() - u32_StartTime;
+      u32_Elapsed = static_cast<uint32_t>(c_Timer.elapsed());
       if (ou32_StartTimeMs != 0U)
       {
          u32_Progress = (u32_Elapsed * 1000U) / ou32_StartTimeMs;
@@ -506,7 +508,7 @@ int32_t C_XFLProtocol::SendFLASH(const uint32_t ou32_StartTimeMs, const uint8_t 
          {
             u32_Progress = 1000U;
          }
-         s32_Return = TRG_ReportProgress(static_cast<uint16_t>(u32_Progress), TGL_LoadStr(STR_FDL_TXT_WR_FLASH_RQ));
+         s32_Return = TRG_ReportProgress(static_cast<uint16_t>(u32_Progress), stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_WR_FLASH_RQ));
          if (s32_Return != C_NO_ERR)
          {
             return C_DEFAULT; //user abort
@@ -514,7 +516,7 @@ int32_t C_XFLProtocol::SendFLASH(const uint32_t ou32_StartTimeMs, const uint8_t 
       }
    }
    while (u32_Elapsed < ou32_StartTimeMs);
-   TRG_ReportProgress(1000U, TGL_LoadStr(STR_FDL_TXT_WR_FLASH_RQ));
+   TRG_ReportProgress(1000U, stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_TXT_WR_FLASH_RQ));
    return C_NO_ERR;
 }
 
@@ -594,7 +596,8 @@ int32_t C_XFLProtocol::m_WaitForResponse(const uint8_t ou8_ExpectedLocalID, cons
    uint32_t u32_StartTime;
    T_STWCAN_Msg_RX t_RXMsg;
 
-   u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    do
    {
       TRG_HandleSystemMessages();
@@ -621,7 +624,7 @@ int32_t C_XFLProtocol::m_WaitForResponse(const uint8_t ou8_ExpectedLocalID, cons
          }
       }
    }
-   while ((TglGetTickCount() - u32_StartTime) < ou32_TimeOutMS);
+   while (c_Timer.hasExpired(ou32_TimeOutMS) == false);
    return C_COM;
 }
 
@@ -710,7 +713,8 @@ int32_t C_XFLProtocol::m_SendHexLine(const uint8_t * const opu8_HexLine, const u
          }
       }
 
-      u32_StartTime = TglGetTickCount();
+      QElapsedTimer c_Timer;
+      c_Timer.start();
 
       //evaluate response from ECU
       do
@@ -753,7 +757,7 @@ int32_t C_XFLProtocol::m_SendHexLine(const uint8_t * const opu8_HexLine, const u
             }
          }
       }
-      while ((u32_Tries < hu16_MAX_TRIES) && ((TglGetTickCount() - u32_StartTime) < u32_TimeOut));
+      while ((u32_Tries < hu16_MAX_TRIES) && (c_Timer.hasExpired(u32_TimeOut) == false));
       TRG_HandleSystemMessages();
    }
    while (u32_Tries < hu16_MAX_TRIES);
@@ -862,7 +866,8 @@ int32_t C_XFLProtocol::WakeupSerialNumber(const uint8_t (&orau8_SerialNumber)[6]
 
    m_CANSendMessage();
 
-   u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
 
    do
    {
@@ -882,7 +887,7 @@ int32_t C_XFLProtocol::WakeupSerialNumber(const uint8_t (&orau8_SerialNumber)[6]
          }
       }
    }
-   while ((TglGetTickCount() - u32_StartTime) < mu16_TIMEOUT_CHANGE_STATE_MS);
+   while (c_Timer.hasExpired(mu16_TIMEOUT_CHANGE_STATE_MS) == false);
    return C_COM;
 }
 
@@ -967,7 +972,8 @@ int32_t C_XFLProtocol::GetLocalID(uint8_t & oru8_LocalID)
 
    m_CANSendMessage();
 
-   u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    do
    {
       TRG_HandleSystemMessages();
@@ -986,7 +992,7 @@ int32_t C_XFLProtocol::GetLocalID(uint8_t & oru8_LocalID)
          }
       }
    }
-   while ((TglGetTickCount() - u32_StartTime) < mu16_TIMEOUT_READ_INFO_MS);
+   while (c_Timer.hasExpired(mu16_TIMEOUT_READ_INFO_MS) == false);
    return C_COM;
 }
 
@@ -1028,7 +1034,8 @@ int32_t C_XFLProtocol::GetLocalIDExt(uint8_t * const opu8_LocalId, const uint8_t
 
    m_CANSendMessage();
 
-   u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    do
    {
       TRG_HandleSystemMessages();
@@ -1055,7 +1062,7 @@ int32_t C_XFLProtocol::GetLocalIDExt(uint8_t * const opu8_LocalId, const uint8_t
          }
       }
    }
-   while ((TglGetTickCount() - u32_StartTime) < mu16_TIMEOUT_READ_INFO_MS);
+   while (c_Timer.hasExpired(mu16_TIMEOUT_READ_INFO_MS) == false);
    if (u8_Found > 0U)
    {
       oru8_NumFoundECUs = u8_Found;
@@ -1139,7 +1146,8 @@ int32_t C_XFLProtocol::SetLocalID(const uint8_t ou8_LocalIDNew)
    mc_CanWriteMessage.au8_Data[3] = ou8_LocalIDNew;
    m_SendMessageWithIDs();
 
-   u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    do
    {
       TRG_HandleSystemMessages();
@@ -1164,7 +1172,7 @@ int32_t C_XFLProtocol::SetLocalID(const uint8_t ou8_LocalIDNew)
          }
       }
    }
-   while ((TglGetTickCount() - u32_StartTime) < mu16_TIMEOUT_WRITE_CONFIG_MS);
+   while (c_Timer.hasExpired(mu16_TIMEOUT_WRITE_CONFIG_MS) == false);
    return C_COM;
 }
 
@@ -1301,7 +1309,8 @@ int32_t C_XFLProtocol::ReadFlash(const uint8_t ou8_NumBytes, const uint32_t ou32
 
    //wait for 1st response
    s32_Return = C_COM;
-   u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    do
    {
       TRG_HandleSystemMessages();
@@ -1327,7 +1336,7 @@ int32_t C_XFLProtocol::ReadFlash(const uint8_t ou8_NumBytes, const uint32_t ou32
          }
       }
    }
-   while ((TglGetTickCount() - u32_StartTime) < TIMEOUT_FLASH_MS); //"TIMEOUT_FLASH" used for compatibility reasons
+   while (c_Timer.hasExpired(TIMEOUT_FLASH_MS) == false); //"TIMEOUT_FLASH" used for compatibility reasons
                                                                    // with previous client implementations
    if (s32_Return != C_NO_ERR)
    {
@@ -1337,7 +1346,8 @@ int32_t C_XFLProtocol::ReadFlash(const uint8_t ou8_NumBytes, const uint32_t ou32
    //1st response was OK, now data will follow
    for (u8_Loop = 0U; u8_Loop < static_cast<uint8_t>((ou8_NumBytes / 7U) + 1U); u8_Loop++)
    {
-      u32_StartTime = TglGetTickCount();
+      QElapsedTimer c_Timer;
+      c_Timer.start();
       s32_Return = C_COM;
       do
       {
@@ -1368,7 +1378,7 @@ int32_t C_XFLProtocol::ReadFlash(const uint8_t ou8_NumBytes, const uint32_t ou32
             }
          }
       }
-      while ((TglGetTickCount() - u32_StartTime) < TIMEOUT_FLASH_MS); //"TIMEOUT_FLASH" used for compatibility reasons
+      while (c_Timer.hasExpired(TIMEOUT_FLASH_MS) == false); //"TIMEOUT_FLASH" used for compatibility reasons
                                                                       // with previous client implementations
       if (s32_Return != C_NO_ERR)
       {
@@ -1505,7 +1515,8 @@ int32_t C_XFLProtocol::m_SendCompanyIDExt(const uint8_t ou8_LocalID, const C_XFL
 
    m_CANSendMessage(); // send compid - request
 
-   u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    do
    {
       TRG_HandleSystemMessages();
@@ -1536,7 +1547,7 @@ int32_t C_XFLProtocol::m_SendCompanyIDExt(const uint8_t ou8_LocalID, const C_XFL
          }
       }
    }
-   while ((TglGetTickCount() - u32_StartTime) < mu16_TIMEOUT_CHANGE_STATE_MS);
+   while (c_Timer.hasExpired(mu16_TIMEOUT_CHANGE_STATE_MS) == false);
 
    oru8_NumFound = u8_Found;
    if ((u8_Found > 0U) && (s32_Return == C_NO_ERR))
@@ -1579,7 +1590,8 @@ int32_t C_XFLProtocol::WakeupLocalId(const C_XFLCompanyID & orc_CompanyID, uint8
 
    m_SendMessageWithIDs(); // send wakeup - request
 
-   u32_OldTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    for (;;)
    {
       TRG_HandleSystemMessages();
@@ -1590,7 +1602,7 @@ int32_t C_XFLProtocol::WakeupLocalId(const C_XFLCompanyID & orc_CompanyID, uint8
             u8_NumFoundWakeup++;
          }
       }
-      if ((TglGetTickCount() - u32_OldTime) > mu16_TIMEOUT_CHANGE_STATE_MS)
+      if (c_Timer.hasExpired(mu16_TIMEOUT_CHANGE_STATE_MS))
       {
          break;
       }
@@ -1667,7 +1679,8 @@ int32_t C_XFLProtocol::SearchId(uint8_t (&orau8_LocalIds)[XFL_NUM_DIFFERENT_LOCA
       TRG_HandleSystemMessages();
    }
 
-   u32_OldTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    for (;;)
    {
       TRG_HandleSystemMessages();
@@ -1679,7 +1692,7 @@ int32_t C_XFLProtocol::SearchId(uint8_t (&orau8_LocalIds)[XFL_NUM_DIFFERENT_LOCA
             u8_NumIDs++;
          }
       }
-      if ((TglGetTickCount() - u32_OldTime) > mu16_TIMEOUT_CHANGE_STATE_MS)
+      if (c_Timer.hasExpired(mu16_TIMEOUT_CHANGE_STATE_MS))
       {
          break;
       }
@@ -1724,7 +1737,8 @@ int32_t C_XFLProtocol::GetSNRExt(uint8_t * const opu8_SNR, const uint8_t ou8_Num
    mc_CanWriteMessage.au8_Data[1] = mu8_XFL_CMD_GRP_GET_SNR;
    m_SendMessageWithIDs();
 
-   u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    do
    {
       TRG_HandleSystemMessages();
@@ -1751,7 +1765,7 @@ int32_t C_XFLProtocol::GetSNRExt(uint8_t * const opu8_SNR, const uint8_t ou8_Num
          }
       }
    }
-   while ((TglGetTickCount() - u32_StartTime) < mu16_TIMEOUT_READ_INFO_MS);
+   while (c_Timer.hasExpired(mu16_TIMEOUT_READ_INFO_MS) == false);
 
    oru8_NumFound = u8_Found;
    if (u8_Found > 0U)
@@ -2184,7 +2198,8 @@ int32_t C_XFLProtocol::m_GetDeviceIDBlock(const uint8_t ou8_BlockIndex, char_t (
    m_SendMessageWithIDs();
 
    (void)memset(oracn_Data, 0, sizeof(oracn_Data));
-   u32_StartTime = TglGetTickCount();
+   QElapsedTimer c_Timer;
+   c_Timer.start();
    do
    {
       TRG_HandleSystemMessages();
@@ -2212,7 +2227,7 @@ int32_t C_XFLProtocol::m_GetDeviceIDBlock(const uint8_t ou8_BlockIndex, char_t (
          }
       }
    }
-   while ((TglGetTickCount() - u32_StartTime) < mu16_TIMEOUT_READ_INFO_MS);
+   while (c_Timer.hasExpired(mu16_TIMEOUT_READ_INFO_MS) == false);
    return C_COM;
 }
 
@@ -2269,7 +2284,8 @@ int32_t C_XFLProtocol::GetDeviceID(const bool oq_LongID, C_SclString & orc_Devic
       m_SendMessageWithIDs();
 
       s32_Return = C_COM;
-      u32_StartTime = TglGetTickCount();
+      QElapsedTimer c_Timer;
+      c_Timer.start();
       do
       {
          TRG_HandleSystemMessages();
@@ -2296,7 +2312,7 @@ int32_t C_XFLProtocol::GetDeviceID(const bool oq_LongID, C_SclString & orc_Devic
             }
          }
       }
-      while ((TglGetTickCount() - u32_StartTime) < mu16_TIMEOUT_READ_INFO_MS);
+      while (c_Timer.hasExpired(mu16_TIMEOUT_READ_INFO_MS) == false);
    }
 
    if (s32_Return == C_NO_ERR)
@@ -2326,7 +2342,7 @@ uint8_t C_XFLProtocol::GetLastXFLError(void) const
 
 int32_t C_XFLProtocol::m_CANSendMessage(const T_STWCAN_Msg_TX & orc_MSG)
 {
-   tgl_assert(mc_Config.pc_CANDispatcher != NULL);
+   Q_ASSERT(mc_Config.pc_CANDispatcher != NULL);
    return mc_Config.pc_CANDispatcher->CAN_Send_Msg(orc_MSG);
 }
 
@@ -2344,7 +2360,7 @@ int32_t C_XFLProtocol::m_SendMessageWithIDs(void)
 
 int32_t C_XFLProtocol::m_CANSendMessage(void)
 {
-   tgl_assert(mc_Config.pc_CANDispatcher != NULL);
+   Q_ASSERT(mc_Config.pc_CANDispatcher != NULL);
    if (mc_Config.pc_CANDispatcher == NULL)
    {
       return -1;
@@ -2373,7 +2389,7 @@ int32_t C_XFLProtocol::m_CANGetResponse(T_STWCAN_Msg_RX & orc_MSG)
 {
    int32_t s32_Return = C_NO_ERR;
 
-   tgl_assert(mc_Config.pc_CANDispatcher != NULL);
+   Q_ASSERT(mc_Config.pc_CANDispatcher != NULL);
    if (mc_Config.pc_CANDispatcher == NULL)
    {
       return C_CONFIG;
@@ -2432,7 +2448,8 @@ int32_t C_XFLProtocol::EEPROMRead(const uint8_t ou8_NumBytes, const uint16_t ou1
    u16_BytesLeft = static_cast<uint16_t>(static_cast<uint16_t>(ou8_NumBytes) + 1U); //+1 for checksum
    for (uint8_t u8_Message = 0U; u8_Message < u8_NumMessages; u8_Message++)
    {
-      u32_StartTime = TglGetTickCount();
+      QElapsedTimer c_Timer;
+      c_Timer.start();
       do
       {
          TRG_HandleSystemMessages();
@@ -2472,7 +2489,7 @@ int32_t C_XFLProtocol::EEPROMRead(const uint8_t ou8_NumBytes, const uint16_t ou1
             }
          }
       }
-      while ((TglGetTickCount() - u32_StartTime) < mu16_TIMEOUT_READ_INFO_MS);
+      while (c_Timer.hasExpired(mu16_TIMEOUT_READ_INFO_MS) == false);
    }
    if (u16_BytesLeft > 0U)
    {
@@ -2526,7 +2543,8 @@ int32_t C_XFLProtocol::EEPROMWrite(const uint8_t ou8_NumBytes, const uint16_t ou
       //wait for response
       //wait for first message...
       q_OK = false;
-      u32_StartTime = TglGetTickCount();
+      QElapsedTimer c_Timer;
+      c_Timer.start();
       do
       {
          TRG_HandleSystemMessages();
@@ -2551,7 +2569,7 @@ int32_t C_XFLProtocol::EEPROMWrite(const uint8_t ou8_NumBytes, const uint16_t ou
             }
          }
       }
-      while ((TglGetTickCount() - u32_StartTime) < mu16_TIMEOUT_WRITE_CONFIG_MS);
+      while (c_Timer.hasExpired(mu16_TIMEOUT_WRITE_CONFIG_MS) == false);
       if (q_OK == false)
       {
          return C_COM;
@@ -2735,13 +2753,13 @@ int32_t C_XFLProtocol::GetFlashInformationTotalMemorySize(const uint8_t ou8_ICIn
 */
 //----------------------------------------------------------------------------------------------------------------------
 int32_t C_XFLProtocol::GetFlashInformationProtectedSectors(
-   C_SclDynamicArray<C_XFLProtectedSectorInfo> & orc_ProtectedSectors)
+   QList<C_XFLProtectedSectorInfo> & orc_ProtectedSectors)
 {
    int32_t s32_Return;
    uint8_t au8_Result[4];
    uint8_t u8_BlockIndex = 0U;
 
-   orc_ProtectedSectors.SetLength(0);
+   orc_ProtectedSectors.resize(0);
    bool q_Finished = false;
 
    while (q_Finished == false)
@@ -2758,14 +2776,14 @@ int32_t C_XFLProtocol::GetFlashInformationProtectedSectors(
          else if (au8_Result[3] == 0x03U)
          {
             //no protected sectors at all !
-            orc_ProtectedSectors.SetLength(0);
+            orc_ProtectedSectors.resize(0);
             q_Finished = true;
          }
          else
          {
-            orc_ProtectedSectors.IncLength();
-            orc_ProtectedSectors[orc_ProtectedSectors.GetHigh()].u8_ICIndex = au8_Result[2];
-            orc_ProtectedSectors[orc_ProtectedSectors.GetHigh()].u16_SectorNumber = mh_AU8ToU16LE(&au8_Result[0]);
+            orc_ProtectedSectors.resize(orc_ProtectedSectors.size() + 1);
+            orc_ProtectedSectors[(orc_ProtectedSectors.size() > 0 ? orc_ProtectedSectors.size() - 1 : 0)].u8_ICIndex = au8_Result[2];
+            orc_ProtectedSectors[(orc_ProtectedSectors.size() > 0 ? orc_ProtectedSectors.size() - 1 : 0)].u16_SectorNumber = mh_AU8ToU16LE(&au8_Result[0]);
             switch (au8_Result[3])
             {
             case 0x00U: //last sector !
@@ -2775,7 +2793,7 @@ int32_t C_XFLProtocol::GetFlashInformationProtectedSectors(
                u8_BlockIndex++;
                break;
             default:
-               orc_ProtectedSectors.SetLength(0);
+               orc_ProtectedSectors.resize(0);
                s32_Return = C_CONFIG;
                q_Finished = true;
                break;
@@ -2963,9 +2981,9 @@ int32_t C_XFLProtocol::GetFlashInformationAliases(C_XFLAliasedRanges & orc_Alias
    s32_Return = GetFlashInformation(mu8_XFL_CMD_GET_FLASH_INFORMATION_IDX_NUM_ALIASES, 0U, 0U, 0U, au8_Result);
    if (s32_Return == C_NO_ERR)
    {
-      orc_Aliases.SetLength(au8_Result[0]);
+      orc_Aliases.resize(au8_Result[0]);
 
-      for (u8_Region = 0U; u8_Region < orc_Aliases.GetLength(); u8_Region++)
+      for (u8_Region = 0U; u8_Region < orc_Aliases.size(); u8_Region++)
       {
          s32_Return = GetFlashInformation(mu8_XFL_CMD_GET_FLASH_INFORMATION_IDX_ALIAS_PHYSICAL, 1U, u8_Region, 0U,
                                           au8_Result);
@@ -3603,7 +3621,7 @@ int32_t C_XFLProtocol::m_GetDeviceInfoAddress(const uint8_t ou8_Index, uint8_t (
    C_CONFIG           deviation from protocol specification
 */
 //----------------------------------------------------------------------------------------------------------------------
-int32_t C_XFLProtocol::GetDeviceInfoAddresses(C_SclDynamicArray<uint32_t> & orc_Addresses,
+int32_t C_XFLProtocol::GetDeviceInfoAddresses(QList<uint32_t> & orc_Addresses,
                                               const uint16_t ou16_ProtocolVersion)
 {
    uint8_t au8_Data[4];
@@ -3617,7 +3635,7 @@ int32_t C_XFLProtocol::GetDeviceInfoAddresses(C_SclDynamicArray<uint32_t> & orc_
       s32_Return = this->m_GetDeviceInfoAddress(0, au8_Data);
       if (s32_Return == C_NO_ERR)
       {
-         orc_Addresses.SetLength(1);
+         orc_Addresses.resize(1);
          orc_Addresses[0] = mh_AU8ToU32LE(&au8_Data[0]);
       }
    }
@@ -3633,7 +3651,7 @@ int32_t C_XFLProtocol::GetDeviceInfoAddresses(C_SclDynamicArray<uint32_t> & orc_
          }
          else
          {
-            orc_Addresses.SetLength(u8_NumStructures);
+            orc_Addresses.resize(u8_NumStructures);
             for (u8_Index = 0U; u8_Index < u8_NumStructures; u8_Index++)
             {
                s32_Return = this->m_GetDeviceInfoAddress(u8_Index, au8_Data);
@@ -3676,7 +3694,7 @@ int32_t C_XFLProtocol::GetDeviceInfoBlock(const uint32_t ou32_Address, C_XFLECUI
    orc_Data.ClearContents();
 
    //check that sizes match; otherwise the following charn / uint8 assignment will fail miserable
-   tgl_assert(sizeof(char_t) == sizeof(uint8_t)); //lint !e948  //evaluates to contant true if everything is fine ...
+   Q_ASSERT(sizeof(char_t) == sizeof(uint8_t)); //lint !e948  //evaluates to contant true if everything is fine ...
 
    //first read the first couple of bytes to detect "MAGIC":
    s32_Return = this->ReadFlash(XFL_DEVICE_INFO_MAGIC_LENGTH_V1, ou32_Address,
@@ -3818,13 +3836,13 @@ int32_t C_XFLProtocol::GetDeviceInfoBlock(const uint32_t ou32_Address, C_XFLECUI
    C_NOACT            error response from server
 */
 //----------------------------------------------------------------------------------------------------------------------
-int32_t C_XFLProtocol::GetBlockAddressesAll(C_SclDynamicArray<C_XFLChecksumBlock> & orc_ChecksumBlocks)
+int32_t C_XFLProtocol::GetBlockAddressesAll(QList<C_XFLChecksumBlock> & orc_ChecksumBlocks)
 {
    int32_t s32_Return;
    uint8_t u8_BlockIndex = 0U;
    C_XFLChecksumBlock c_Block;
 
-   orc_ChecksumBlocks.SetLength(0);
+   orc_ChecksumBlocks.resize(0);
    s32_Return = C_NO_ERR;
    while (s32_Return == C_NO_ERR)
    {
@@ -3833,8 +3851,8 @@ int32_t C_XFLProtocol::GetBlockAddressesAll(C_SclDynamicArray<C_XFLChecksumBlock
       {
       case C_NO_ERR:
          //block found
-         orc_ChecksumBlocks.IncLength();
-         orc_ChecksumBlocks[orc_ChecksumBlocks.GetHigh()] = c_Block;
+         orc_ChecksumBlocks.resize(orc_ChecksumBlocks.size() + 1);
+         orc_ChecksumBlocks[(orc_ChecksumBlocks.size() > 0 ? orc_ChecksumBlocks.size() - 1 : 0)] = c_Block;
          break;
       case C_NOACT:
          //was there an OUT_OF_RANGE response ?
@@ -4434,7 +4452,7 @@ void C_XFLProtocol::TRG_ReportStatus(const C_SclString & orc_Text, const uint8_t
 //----------------------------------------------------------------------------------------------------------------------
 void C_XFLProtocol::TRG_WaitMicroSeconds(const uint32_t ou32_NumUs)
 {
-   TglDelayUs(ou32_NumUs);
+   QThread::usleep(ou32_NumUs);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -4445,7 +4463,7 @@ void C_XFLProtocol::TRG_WaitMicroSeconds(const uint32_t ou32_NumUs)
 //----------------------------------------------------------------------------------------------------------------------
 void C_XFLProtocol::TRG_HandleSystemMessages(void)
 {
-   TglHandleSystemMessages();
+   stw::opensyde_core::C_OscUtils::h_HandleSystemMessages();
 }
 
 //----------------------------------------------------------------------------------------------------------------------

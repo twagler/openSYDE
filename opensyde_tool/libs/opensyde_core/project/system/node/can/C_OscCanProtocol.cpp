@@ -15,12 +15,12 @@
 #include "stwerrors.hpp"
 #include "C_OscCanProtocol.hpp"
 #include "C_SclChecksums.hpp"
-#include "TglUtils.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
 using namespace stw::opensyde_core;
-using namespace stw::tgl;
+
 using namespace stw::errors;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -541,7 +541,7 @@ std::vector<C_OscCanProtocol::E_Type> C_OscCanProtocol::mh_GetAllProtocols()
    //Check vector indices are same as enum values
    for (uint32_t u32_ItProt = 0UL; u32_ItProt < c_Retval.size(); ++u32_ItProt)
    {
-      tgl_assert(static_cast<uint32_t>(c_Retval[u32_ItProt]) == u32_ItProt);
+      Q_ASSERT(static_cast<uint32_t>(c_Retval[u32_ItProt]) == u32_ItProt);
    }
    return c_Retval;
 }

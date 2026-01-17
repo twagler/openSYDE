@@ -10,7 +10,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_SyvDaItDashboardLabelWidget.hpp"
@@ -157,7 +157,7 @@ void C_SyvDaItDashboardLabelWidget::SetDisplayStyle(const C_PuiSvDbLabel::E_Type
       C_OgeWiUtil::h_ApplyStylesheetProperty(this, "Type", "DEFAULT");
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    this->mpc_Ui->pc_LabelCaption->setVisible(oq_ShowCaption);

@@ -11,14 +11,14 @@
 #include "precomp_headers.hpp"
 
 #include <QKeyEvent>
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OgeWiSpinBoxGroup.hpp"
 #include "ui_C_OgeWiSpinBoxGroup.h"
 #include "C_SdNdeDpContentUtil.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_elements;

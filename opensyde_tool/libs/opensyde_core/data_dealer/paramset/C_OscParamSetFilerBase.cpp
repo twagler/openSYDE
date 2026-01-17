@@ -11,17 +11,17 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include "stwerrors.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscChecksummedXml.hpp"
 #include "C_OscParamSetFilerBase.hpp"
 #include "C_OscLoggingHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -55,7 +55,7 @@ int32_t C_OscParamSetFilerBase::h_AddCrc(const C_SclString & orc_Path)
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscChecksummedXml c_XmlParser;
       s32_Return = c_XmlParser.LoadFromFile(orc_Path);
@@ -131,7 +131,7 @@ int32_t C_OscParamSetFilerBase::h_CheckFileVersion(C_OscXmlParserBase & orc_XmlP
       }
 
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-parameter-sets");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-parameter-sets");
    }
    else
    {
@@ -155,11 +155,11 @@ void C_OscParamSetFilerBase::h_SaveFileVersion(C_OscXmlParserBase & orc_XmlParse
 {
    if (orc_XmlParser.SelectNodeChild("file-version") != "file-version")
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
    }
    orc_XmlParser.SetNodeContent("0x" + C_SclString::IntToHex(C_OscParamSetFilerBase::mhu16_FileVersion, 4));
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-parameter-sets");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-parameter-sets");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -176,7 +176,7 @@ void C_OscParamSetFilerBase::h_SaveFileVersion(C_OscXmlParserBase & orc_XmlParse
 void C_OscParamSetFilerBase::h_SaveFileInfo(C_OscXmlParserBase & orc_XmlParser,
                                             const C_OscParamSetInterpretedFileInfoData & orc_FileInfo)
 {
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("file-info") == "file-info");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("file-info") == "file-info");
    orc_XmlParser.CreateNodeChild("datetime", orc_FileInfo.c_DateTime);
    orc_XmlParser.CreateNodeChild("creator", orc_FileInfo.c_Creator);
    orc_XmlParser.CreateNodeChild("toolname", orc_FileInfo.c_ToolName);
@@ -185,7 +185,7 @@ void C_OscParamSetFilerBase::h_SaveFileInfo(C_OscXmlParserBase & orc_XmlParser,
    orc_XmlParser.CreateNodeChild("projectversion", orc_FileInfo.c_ProjectVersion);
    orc_XmlParser.CreateNodeChild("comment", orc_FileInfo.c_UserComment);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-parameter-sets");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-parameter-sets");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -214,7 +214,7 @@ void C_OscParamSetFilerBase::h_LoadFileInfo(C_OscXmlParserBase & orc_XmlParser,
       {
          orc_FileInfo.c_DateTime = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "file-info");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "file-info");
       }
       else
       {
@@ -224,7 +224,7 @@ void C_OscParamSetFilerBase::h_LoadFileInfo(C_OscXmlParserBase & orc_XmlParser,
       {
          orc_FileInfo.c_Creator = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "file-info");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "file-info");
       }
       else
       {
@@ -234,7 +234,7 @@ void C_OscParamSetFilerBase::h_LoadFileInfo(C_OscXmlParserBase & orc_XmlParser,
       {
          orc_FileInfo.c_ToolName = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "file-info");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "file-info");
       }
       else
       {
@@ -244,7 +244,7 @@ void C_OscParamSetFilerBase::h_LoadFileInfo(C_OscXmlParserBase & orc_XmlParser,
       {
          orc_FileInfo.c_ToolVersion = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "file-info");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "file-info");
       }
       else
       {
@@ -254,7 +254,7 @@ void C_OscParamSetFilerBase::h_LoadFileInfo(C_OscXmlParserBase & orc_XmlParser,
       {
          orc_FileInfo.c_ProjectName = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "file-info");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "file-info");
       }
       else
       {
@@ -264,7 +264,7 @@ void C_OscParamSetFilerBase::h_LoadFileInfo(C_OscXmlParserBase & orc_XmlParser,
       {
          orc_FileInfo.c_ProjectVersion = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "file-info");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "file-info");
       }
       else
       {
@@ -274,14 +274,14 @@ void C_OscParamSetFilerBase::h_LoadFileInfo(C_OscXmlParserBase & orc_XmlParser,
       {
          orc_FileInfo.c_UserComment = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "file-info");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "file-info");
       }
       else
       {
          orq_MissingOptionalContent = true;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "opensyde-parameter-sets");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "opensyde-parameter-sets");
    }
    else
    {
@@ -320,7 +320,7 @@ int32_t C_OscParamSetFilerBase::mh_LoadNodeName(stw::scl::C_SclString & orc_Name
    {
       orc_Name = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
    else
    {
@@ -347,7 +347,7 @@ void C_OscParamSetFilerBase::mh_SaveNodeName(const stw::scl::C_SclString & orc_N
    {
       orc_XmlParser.SetNodeContent(orc_Name);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
    else
    {
@@ -399,7 +399,7 @@ int32_t C_OscParamSetFilerBase::mh_LoadDataPoolInfos(std::vector<C_OscParamSetDa
          }
          while ((c_SelectedNode == "datapool") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "datapools");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "datapools");
       }
       else
       {
@@ -407,7 +407,7 @@ int32_t C_OscParamSetFilerBase::mh_LoadDataPoolInfos(std::vector<C_OscParamSetDa
          s32_Retval = C_CONFIG;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
    else
    {
@@ -434,21 +434,21 @@ void C_OscParamSetFilerBase::mh_SaveDataPoolInfos(const std::vector<C_OscParamSe
    //Avoid adding the same datapools twice
    if (orc_XmlParser.SelectNodeChild("datapools") != "datapools")
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("datapools") == "datapools");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("datapools") == "datapools");
       for (uint32_t u32_ItDataPool = 0; u32_ItDataPool < orc_DataPoolInfos.size(); ++u32_ItDataPool)
       {
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("datapool") == "datapool");
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("datapool") == "datapool");
          C_OscParamSetFilerBase::mh_SaveDataPoolInfo(orc_DataPoolInfos[u32_ItDataPool], orc_XmlParser);
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "datapools");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "datapools");
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
    else
    {
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
 }
 
@@ -506,7 +506,7 @@ int32_t C_OscParamSetFilerBase::mh_LoadDataPoolInfo(C_OscParamSetDataPoolInfo & 
       {
          orc_DataPoolInfo.c_Name = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "datapool");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "datapool");
       }
       else
       {
@@ -549,7 +549,7 @@ int32_t C_OscParamSetFilerBase::mh_LoadDataPoolInfo(C_OscParamSetDataPoolInfo & 
             s32_Retval = C_CONFIG;
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "datapool");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "datapool");
       }
       else
       {
@@ -578,10 +578,10 @@ void C_OscParamSetFilerBase::mh_SaveDataPoolInfo(const C_OscParamSetDataPoolInfo
    orc_XmlParser.SetAttributeUint32("nvm-start-address", orc_DataPoolInfo.u32_NvmStartAddress);
    orc_XmlParser.SetAttributeUint32("nvm-size", orc_DataPoolInfo.u32_NvmSize);
    orc_XmlParser.CreateNodeChild("name", orc_DataPoolInfo.c_Name);
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("version") == "version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("version") == "version");
    orc_XmlParser.SetAttributeUint32("major", orc_DataPoolInfo.au8_Version[0]);
    orc_XmlParser.SetAttributeUint32("minor", orc_DataPoolInfo.au8_Version[1]);
    orc_XmlParser.SetAttributeUint32("release", orc_DataPoolInfo.au8_Version[2]);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "datapool");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "datapool");
 }

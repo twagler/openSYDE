@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       System definition utility functions (implementation)
@@ -17,7 +17,7 @@
 
 #include "stwerrors.hpp"
 #include "C_SdUtil.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscUtils.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSdUtil.hpp"
@@ -36,7 +36,7 @@
 #include "C_SdBueUnoBusProtNodeDisconnectCommand.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -517,7 +517,7 @@ uint8_t C_SdUtil::h_GetNodeIdMaximum(const uint32_t & oru32_NodeIndex)
    }
    else
    {
-      tgl_assert(false);
+      Q_ASSERT(false);
    }
 
    return u8_Retval;
@@ -1033,10 +1033,10 @@ void C_SdUtil::h_AdaptMessageToProtocolType(C_OscCanMessage & orc_Message, C_Pui
       for (std::vector<C_OscCanSignal>::iterator c_SignalIt = orc_Message.c_Signals.begin();
            c_SignalIt != orc_Message.c_Signals.end(); ++c_SignalIt)
       {
-         tgl_assert(c_SignalIt->u32_ComDataElementIndex < orc_OscSignalListElements.size());
+         Q_ASSERT(c_SignalIt->u32_ComDataElementIndex < orc_OscSignalListElements.size());
          if (c_SignalIt->u32_ComDataElementIndex < orc_OscSignalListElements.size())
          {
-            tgl_assert(c_SignalIt->u32_ComDataElementIndex < orc_UiSignalListElements.size());
+            Q_ASSERT(c_SignalIt->u32_ComDataElementIndex < orc_UiSignalListElements.size());
             if (c_SignalIt->u32_ComDataElementIndex < orc_UiSignalListElements.size())
             {
                h_AdaptSignalToProtocolType(*c_SignalIt,
@@ -1286,7 +1286,7 @@ QString C_SdUtil::h_IpAddressAsString(const std::vector<uint8_t> & orc_Ip)
 {
    QString c_Retval;
 
-   tgl_assert(orc_Ip.size() == 4);
+   Q_ASSERT(orc_Ip.size() == 4);
    if (orc_Ip.size() == 4)
    {
       for (uint8_t u8_It = 0; u8_It < (orc_Ip.size() - 1UL); ++u8_It)
@@ -2611,13 +2611,13 @@ void C_SdUtil::h_NodeIdToBeChanged(const uint32_t ou32_NodeIndex, const uint32_t
 {
    C_OscNode * const pc_CurrentNode = C_PuiSdHandler::h_GetInstance()->GetOscNode(ou32_NodeIndex);
 
-   tgl_assert(pc_CurrentNode != NULL);
+   Q_ASSERT(pc_CurrentNode != NULL);
 
    if (pc_CurrentNode != NULL)
    {
       const C_OscNodeComInterfaceSettings * const pc_ComInterface = pc_CurrentNode->c_Properties.GetComInterface(
          C_OscSystemBus::E_Type::eCAN, static_cast<uint8_t>(ou32_InterfaceIndex));
-      tgl_assert(pc_ComInterface != NULL);
+      Q_ASSERT(pc_ComInterface != NULL);
       if (pc_ComInterface != NULL)
       {
          if (pc_ComInterface->u8_NodeId == 0)
@@ -2712,7 +2712,7 @@ void C_SdUtil::mh_AdaptSignalToUnsignedType(C_OscNodeDataPoolListElement & orc_S
                                                orc_SignalListElement.c_Name.c_str());
    C_SdUtil::mh_AdaptDataElementToUnsignedType(orc_SignalListElement.c_MaxValue, orc_AdaptationInfos, "Max value",
                                                orc_SignalListElement.c_Name.c_str());
-   tgl_assert(orc_SignalListElement.c_DataSetValues.size() > 0UL);
+   Q_ASSERT(orc_SignalListElement.c_DataSetValues.size() > 0UL);
    if (orc_SignalListElement.c_DataSetValues.size() > 0UL)
    {
       C_SdUtil::mh_AdaptDataElementToUnsignedType(orc_SignalListElement.c_DataSetValues[0], orc_AdaptationInfos,
@@ -2744,10 +2744,10 @@ void C_SdUtil::mh_AdaptSignalMaxToUnsignedType(C_OscNodeDataPoolContent & orc_Co
       float64_t f64_MaxValPrev;
       float64_t f64_MaxValNew;
 
-      tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Content, f64_MaxValPrev,
+      Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Content, f64_MaxValPrev,
                                                            0UL) == C_NO_ERR);
 
-      tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(c_Max, f64_MaxValNew,
+      Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(c_Max, f64_MaxValNew,
                                                            0UL) == C_NO_ERR);
       orc_Content = c_Max;
       orc_AdaptationInfos.append(static_cast<QString>("Max value of signal \"%1\" set from %2 to %3 because "
@@ -2772,7 +2772,7 @@ void C_SdUtil::mh_AdaptDataElementToUnsignedType(C_OscNodeDataPoolContent & orc_
 {
    float64_t f64_MinVal;
 
-   tgl_assert(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Content, f64_MinVal,
+   Q_ASSERT(C_SdNdeDpContentUtil::h_GetValueAsFloat64(orc_Content, f64_MinVal,
                                                         0UL) == C_NO_ERR);
    if (f64_MinVal < 0.0)
    {

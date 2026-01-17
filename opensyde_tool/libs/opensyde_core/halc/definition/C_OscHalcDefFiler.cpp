@@ -9,11 +9,11 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <cctype>
 #include <fstream>
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
@@ -24,7 +24,7 @@
 #include "C_OscHalcDefStructFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::scl;
 
 using namespace stw::errors;
@@ -60,7 +60,7 @@ int32_t C_OscHalcDefFiler::h_LoadFile(C_OscHalcDefBase & orc_IoData, const C_Scl
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if (TglFileExists(orc_Path) == true)
+   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
    {
       C_OscXmlParserLog c_XmlParser;
       s32_Retval = c_XmlParser.LoadFromFile(orc_Path);
@@ -77,7 +77,7 @@ int32_t C_OscHalcDefFiler::h_LoadFile(C_OscHalcDefBase & orc_IoData, const C_Scl
             //Save file to string
             C_OscUtils::h_FileToString(orc_Path, orc_IoData.c_FileString);
             //Remember name
-            orc_IoData.c_OriginalFileName = TglExtractFileName(orc_Path);
+            orc_IoData.c_OriginalFileName = QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).fileName().toStdString();
             //Trigger postprocessing before finish
             orc_IoData.HandleFileLoadPostProcessing();
          }
@@ -289,37 +289,37 @@ int32_t C_OscHalcDefFiler::h_SaveData(const C_OscHalcDefBase & orc_IoData, C_Osc
    int32_t s32_Retval = C_NO_ERR;
 
    //File version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("file-version") == "file-version");
    orc_XmlParser.SetNodeContent(C_SclString::IntToStr(mhu16_FILE_VERSION_1));
    //Return
    orc_XmlParser.SelectNodeParent();
    //Content version
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("content-version") == "content-version");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("content-version") == "content-version");
    orc_XmlParser.SetNodeContent(C_SclString::IntToStr(orc_IoData.u32_ContentVersion));
    //Return
    orc_XmlParser.SelectNodeParent();
    //Device
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("device-name") == "device-name");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("device-name") == "device-name");
    orc_XmlParser.SetNodeContent(orc_IoData.c_DeviceName);
    //Return
    orc_XmlParser.SelectNodeParent();
    //Safety mode
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("safety-mode") == "safety-mode");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("safety-mode") == "safety-mode");
    orc_XmlParser.SetNodeContent(mh_SafetyModeToString(orc_IoData.e_SafetyMode));
    //Return
    orc_XmlParser.SelectNodeParent();
    //Num copies
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(
                  "number-of-configuration-copies") == "number-of-configuration-copies");
    orc_XmlParser.SetNodeContent(stw::scl::C_SclString::IntToStr(orc_IoData.u8_NumConfigCopies));
    //Return
    orc_XmlParser.SelectNodeParent();
    //NVM config
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("nvm-config") == "nvm-config");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("nvm-config") == "nvm-config");
    orc_XmlParser.SetAttributeBool("active", orc_IoData.q_NvmBasedConfig);
    if (orc_IoData.q_NvmBasedConfig)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(
                     "datapools-start-address-offset") == "datapools-start-address-offset");
       for (uint32_t u32_It = 0UL; u32_It < orc_IoData.c_NvmNonSafeAddressOffset.size(); ++u32_It)
       {
@@ -334,9 +334,9 @@ int32_t C_OscHalcDefFiler::h_SaveData(const C_OscHalcDefBase & orc_IoData, C_Osc
          orc_XmlParser.SetAttributeUint32(c_AttributeName, orc_IoData.c_NvmSafeAddressOffset[u32_It]);
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "nvm-config");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "nvm-config");
    }
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(
                  "lists-reserved-size") == "lists-reserved-size");
    orc_XmlParser.SetAttributeUint32("parameters-list-size", orc_IoData.u32_NvmReservedListSizeParameters);
    orc_XmlParser.SetAttributeUint32("input-values-list-size",
@@ -346,17 +346,17 @@ int32_t C_OscHalcDefFiler::h_SaveData(const C_OscHalcDefBase & orc_IoData, C_Osc
    orc_XmlParser.SetAttributeUint32("status-values-list-size",
                                     orc_IoData.u32_NvmReservedListSizeStatusValues);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "nvm-config");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "nvm-config");
    //Return
    orc_XmlParser.SelectNodeParent();
    for (uint32_t u32_ItDomain = 0UL; (u32_ItDomain < orc_IoData.GetDomainSize()) && (s32_Retval == C_NO_ERR);
         ++u32_ItDomain)
    {
       const C_OscHalcDefDomain * const pc_Domain = orc_IoData.GetDomainDefDataConst(u32_ItDomain);
-      tgl_assert(pc_Domain != NULL);
+      Q_ASSERT(pc_Domain != NULL);
       if (pc_Domain != NULL)
       {
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("domain") == "domain");
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("domain") == "domain");
          s32_Retval = mh_SaveIoDomain(*pc_Domain, orc_XmlParser);
          //Return
          orc_XmlParser.SelectNodeParent();
@@ -698,37 +698,37 @@ int32_t C_OscHalcDefFiler::mh_SaveIoDomain(const C_OscHalcDefDomain & orc_IoData
 
    orc_XmlParser.SetAttributeString("id", orc_IoDataDomain.c_Id);
    //Name
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("name") == "name");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("name") == "name");
    orc_XmlParser.SetNodeContent(orc_IoDataDomain.c_Name);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
    //Singular name
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("singular-name") == "singular-name");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("singular-name") == "singular-name");
    orc_XmlParser.SetNodeContent(orc_IoDataDomain.c_SingularName);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
    //Category
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("category") == "category");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("category") == "category");
    orc_XmlParser.SetNodeContent(C_OscHalcDefFiler::mh_DomainCategoryEnumToString(orc_IoDataDomain.e_Category));
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
    //Channels
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("channels") == "channels");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("channels") == "channels");
    orc_XmlParser.SetAttributeUint32("count", static_cast<uint32_t>(orc_IoDataDomain.c_Channels.size()));
    for (uint32_t u32_ItChannel = 0UL; u32_ItChannel < orc_IoDataDomain.c_Channels.size(); ++u32_ItChannel)
    {
       const C_OscHalcDefChannelDef & rc_Channel = orc_IoDataDomain.c_Channels[u32_ItChannel];
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("channel") == "channel");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("channel") == "channel");
       orc_XmlParser.SetAttributeString("name", rc_Channel.c_Name);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "channels");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "channels");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
    //Channel Usecases
    if (orc_IoDataDomain.c_ChannelUseCases.size() > 0UL)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("channel-use-cases") == "channel-use-cases");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("channel-use-cases") == "channel-use-cases");
       for (uint32_t u32_ItCu = 0UL; (u32_ItCu < orc_IoDataDomain.c_ChannelUseCases.size()) && (s32_Retval == C_NO_ERR);
            ++u32_ItCu)
       {
@@ -739,18 +739,18 @@ int32_t C_OscHalcDefFiler::mh_SaveIoDomain(const C_OscHalcDefDomain & orc_IoData
             orc_XmlParser.SetAttributeString("type",
                                              C_OscHalcDefStructFiler::h_GetTypeString(rc_UseCase.c_Value.GetType()));
          }
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("channel-use-case") == "channel-use-case");
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("channel-use-case") == "channel-use-case");
          s32_Retval = mh_SaveUseCase(orc_IoDataDomain.c_ChannelUseCases[u32_ItCu], orc_XmlParser);
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "channel-use-cases");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "channel-use-cases");
          }
       }
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
       }
    }
    if (s32_Retval == C_NO_ERR)
@@ -762,7 +762,7 @@ int32_t C_OscHalcDefFiler::mh_SaveIoDomain(const C_OscHalcDefDomain & orc_IoData
    }
    if (s32_Retval == C_NO_ERR)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("domain-values") == "domain-values");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("domain-values") == "domain-values");
       s32_Retval = C_OscHalcDefStructFiler::h_SaveStructs(orc_IoDataDomain.c_DomainValues.c_InputValues,
                                                           orc_IoDataDomain.c_ChannelUseCases, orc_XmlParser,
                                                           "domain-values",
@@ -785,7 +785,7 @@ int32_t C_OscHalcDefFiler::mh_SaveIoDomain(const C_OscHalcDefDomain & orc_IoData
    if (s32_Retval == C_NO_ERR)
    {
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
 
       {
          s32_Retval = C_OscHalcDefStructFiler::h_SaveStructs(orc_IoDataDomain.c_ChannelValues.c_Parameters,
@@ -795,7 +795,7 @@ int32_t C_OscHalcDefFiler::mh_SaveIoDomain(const C_OscHalcDefDomain & orc_IoData
 
          if (s32_Retval == C_NO_ERR)
          {
-            tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("channel-values") == "channel-values");
+            Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("channel-values") == "channel-values");
             s32_Retval = C_OscHalcDefStructFiler::h_SaveStructs(orc_IoDataDomain.c_ChannelValues.c_InputValues,
                                                                 orc_IoDataDomain.c_ChannelUseCases, orc_XmlParser,
                                                                 "channel-values",
@@ -818,7 +818,7 @@ int32_t C_OscHalcDefFiler::mh_SaveIoDomain(const C_OscHalcDefDomain & orc_IoData
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
          }
       }
    }
@@ -848,7 +848,7 @@ int32_t C_OscHalcDefFiler::mh_LoadIoDataDomain(C_OscHalcDefDomain & orc_IoDataDo
       {
          orc_IoDataDomain.c_Name = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
       }
    }
    if (s32_Retval == C_NO_ERR)
@@ -857,7 +857,7 @@ int32_t C_OscHalcDefFiler::mh_LoadIoDataDomain(C_OscHalcDefDomain & orc_IoDataDo
       {
          orc_IoDataDomain.c_SingularName = orc_XmlParser.GetNodeContent();
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
       }
       else
       {
@@ -897,7 +897,7 @@ int32_t C_OscHalcDefFiler::mh_LoadIoDataDomain(C_OscHalcDefDomain & orc_IoDataDo
             orc_XmlParser.ReportErrorForNodeContentAppendXmlContext("Unknown value");
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
       }
       else
       {
@@ -948,7 +948,7 @@ int32_t C_OscHalcDefFiler::mh_LoadIoDataDomain(C_OscHalcDefDomain & orc_IoDataDo
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
          }
       }
    }
@@ -990,7 +990,7 @@ int32_t C_OscHalcDefFiler::mh_LoadIoDataDomain(C_OscHalcDefDomain & orc_IoDataDo
          if (s32_Retval == C_NO_ERR)
          {
             //Return
-            tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
          }
       }
    }
@@ -1161,7 +1161,7 @@ int32_t C_OscHalcDefFiler::mh_LoadChannels(std::vector<C_OscHalcDefChannelDef> &
             if (s32_Retval == C_NO_ERR)
             {
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "channels");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "channels");
             }
          }
          //Check
@@ -1176,7 +1176,7 @@ int32_t C_OscHalcDefFiler::mh_LoadChannels(std::vector<C_OscHalcDefChannelDef> &
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
       }
    }
    return s32_Retval;
@@ -1271,7 +1271,7 @@ int32_t C_OscHalcDefFiler::mh_LoadChannelUseCases(std::vector<C_OscHalcDefChanne
                   {
                      c_UseCase.c_Comment = orc_XmlParser.GetNodeContent();
                      //Return
-                     tgl_assert(orc_XmlParser.SelectNodeParent() == "channel-use-case");
+                     Q_ASSERT(orc_XmlParser.SelectNodeParent() == "channel-use-case");
                   }
                   orc_ChannelUsecases.push_back(c_UseCase);
                   c_NodeChannel = orc_XmlParser.SelectNodeNext("channel-use-case");
@@ -1281,14 +1281,14 @@ int32_t C_OscHalcDefFiler::mh_LoadChannelUseCases(std::vector<C_OscHalcDefChanne
             if (s32_Retval == C_NO_ERR)
             {
                //Return
-               tgl_assert(orc_XmlParser.SelectNodeParent() == "channel-use-cases");
+               Q_ASSERT(orc_XmlParser.SelectNodeParent() == "channel-use-cases");
             }
          }
       }
       if (s32_Retval == C_NO_ERR)
       {
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "domain");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "domain");
       }
    }
    return s32_Retval;
@@ -1827,10 +1827,10 @@ int32_t C_OscHalcDefFiler::mh_SaveUseCase(const C_OscHalcDefChannelUseCase & orc
                                           C_OscHalcDefFiler::mh_GetAvailabilityString(c_TmpAvailabilities, false));
       }
    }
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("comment") == "comment");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("comment") == "comment");
    orc_XmlParser.SetNodeContent(orc_UseCase.c_Comment);
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "channel-use-case");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "channel-use-case");
    return s32_Retval;
 }
 

@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Screen for pem file information
@@ -11,8 +11,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscSecurityPem.hpp"
@@ -20,7 +20,7 @@
 #include "ui_C_SyvUpPacPemFileInfoPopUp.h"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -64,7 +64,7 @@ C_SyvUpPacPemFileInfoPopUp::C_SyvUpPacPemFileInfoPopUp(stw::opensyde_gui_element
 
    InitStaticNames();
 
-   this->mrc_ParentDialog.SetSubTitle(TglExtractFileName(orc_Path.toStdString().c_str()).c_str());
+   this->mrc_ParentDialog.SetSubTitle(QFileInfo(QString::fromStdString(*orc_Path.toStdString(.AsStdString())).fileName().toStdString().c_str()).c_str());
 
    if (s32_Result == C_NO_ERR)
    {

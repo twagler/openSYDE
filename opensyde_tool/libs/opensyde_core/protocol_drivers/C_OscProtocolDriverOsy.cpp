@@ -14,14 +14,16 @@
 
 #include <iostream>
 #include <cstring>
+#include <QMutexLocker>
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_SclString.hpp"
 #include "C_SclChecksums.hpp"
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscProtocolDriverOsy.hpp"
-#include "TglTime.hpp"
-#include "TglUtils.hpp"
+#include <QElapsedTimer>
+#include <QThread>
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
@@ -399,161 +401,163 @@ int32_t C_OscProtocolDriverOsy::m_PollForSpecificServiceResponse(const uint8_t o
                                                                  const std::vector<uint8_t> * const opc_ExpectedErrData)
 {
    int32_t s32_Return = C_NO_ERR;
-   uint32_t u32_StartTime = stw::tgl::TglGetTickCount();
-   uint32_t u32_LastWaitTimeHandled = u32_StartTime;
+   QElapsedTimer c_Timer;
+   c_Timer.start();
+   uint32_t u32_LastWaitTimeHandled = 0;
    uint16_t u16_RxSize;
    bool q_Finished = false;
 
    //services cannot be > 16bit
-   tgl_assert(orc_Service.c_Data.size() <= 0xFFFFU);
+   Q_ASSERT(orc_Service.c_Data.size() <= 0xFFFFU);
 
    //lock access to "polling"
    //If another thread checking for async responses kicks in (calling ::Cycle) is could otherwise
    // snatch away the response we want to get.
-   mc_LockReception.Acquire();
-
-   while ((stw::tgl::TglGetTickCount() < (u32_StartTime + mu32_TimeoutPollingMs)) && (q_Finished == false))
    {
-      //trigger handling of Rx and Tx communication
-      s32_Return = this->m_Cycle(true, ou8_ExpectedServiceId, &orc_Service);
-      if (s32_Return == C_NO_ERR)
+      QMutexLocker c_Lock(&mc_LockReception);
+
+      while ((c_Timer.hasExpired(mu32_TimeoutPollingMs) == false) && (q_Finished == false))
       {
-         u16_RxSize = static_cast<uint16_t>(orc_Service.c_Data.size());
-
-         //Check error response first
-         // It might be a negative response with more information than UDS specified
-         if ((u16_RxSize >= 3U) && (orc_Service.c_Data[0] == mhu8_OSY_NR_SI))
+         //trigger handling of Rx and Tx communication
+         s32_Return = this->m_Cycle(true, ou8_ExpectedServiceId, &orc_Service);
+         if (s32_Return == C_NO_ERR)
          {
-            //is this a negative response to our request ?
-            if (orc_Service.c_Data[1] == ou8_ExpectedServiceId)
+            u16_RxSize = static_cast<uint16_t>(orc_Service.c_Data.size());
+
+            //Check error response first
+            // It might be a negative response with more information than UDS specified
+            if ((u16_RxSize >= 3U) && (orc_Service.c_Data[0] == mhu8_OSY_NR_SI))
             {
-               bool q_Match = true;
-
-               // Check only if it is a negative response with additional bytes
-               if ((opc_ExpectedErrData != NULL) && (u16_RxSize > 3U))
+               //is this a negative response to our request ?
+               if (orc_Service.c_Data[1] == ou8_ExpectedServiceId)
                {
-                  // Extended not UDS conform error response expected
-                  const uint32_t u32_NumberOfBytes = static_cast<uint32_t>(opc_ExpectedErrData->size());
+                  bool q_Match = true;
 
-                  // Enough bytes for comparing?
-                  if (orc_Service.c_Data.size() >= (static_cast<size_t>(u32_NumberOfBytes) + 3U))
+                  // Check only if it is a negative response with additional bytes
+                  if ((opc_ExpectedErrData != NULL) && (u16_RxSize > 3U))
                   {
-                     // Check all bytes for
-                     for (uint32_t u32_Counter = 0U; u32_Counter < u32_NumberOfBytes; ++u32_Counter)
+                     // Extended not UDS conform error response expected
+                     const uint32_t u32_NumberOfBytes = static_cast<uint32_t>(opc_ExpectedErrData->size());
+
+                     // Enough bytes for comparing?
+                     if (orc_Service.c_Data.size() >= (static_cast<size_t>(u32_NumberOfBytes) + 3U))
                      {
-                        if ((*opc_ExpectedErrData)[u32_Counter] !=
-                            orc_Service.c_Data[static_cast<size_t>(u32_Counter) + 3U])
+                        // Check all bytes for
+                        for (uint32_t u32_Counter = 0U; u32_Counter < u32_NumberOfBytes; ++u32_Counter)
                         {
-                           q_Match = false;
-                           //when starting cyclic calls we might interpret the first data transmission of the last call
-                           // as the response of the next cyclic service registration,
-                           // so we should not discard this message but instead handle the error accordingly
-                           if (orc_Service.c_Data[1] == mhu8_OSY_SI_READ_DATA_POOL_DATA_EVENT_DRIVEN)
+                           if ((*opc_ExpectedErrData)[u32_Counter] !=
+                               orc_Service.c_Data[static_cast<size_t>(u32_Counter) + 3U])
                            {
-                              //handle data error
-                              s32_Return = m_HandleAsyncResponse(orc_Service);
+                              q_Match = false;
+                              //when starting cyclic calls we might interpret the first data transmission of the last call
+                              // as the response of the next cyclic service registration,
+                              // so we should not discard this message but instead handle the error accordingly
+                              if (orc_Service.c_Data[1] == mhu8_OSY_SI_READ_DATA_POOL_DATA_EVENT_DRIVEN)
+                              {
+                                 //handle data error
+                                 s32_Return = m_HandleAsyncResponse(orc_Service);
+                              }
+                              else
+                              {
+                                 m_LogErrorWithHeader("Synchronous communication", "Sync negative response to expected "
+                                                      " service but unexpected data bytes received. Ignoring.",
+                                                      TGL_UTIL_FUNC_ID);
+                              }
+                              break;
                            }
-                           else
-                           {
-                              m_LogErrorWithHeader("Synchronous communication", "Sync negative response to expected "
-                                                   " service but unexpected data bytes received. Ignoring.",
-                                                   TGL_UTIL_FUNC_ID);
-                           }
-                           break;
                         }
                      }
+                     else
+                     {
+                        // Received message is too short
+                        q_Match = false;
+                        m_LogErrorWithHeader("Synchronous communication", "Sync negative response to expected service"
+                                             " but unexpected size received. Ignoring.", TGL_UTIL_FUNC_ID);
+                     }
                   }
-                  else
+
+                  if (q_Match == true)
                   {
-                     // Received message is too short
-                     q_Match = false;
-                     m_LogErrorWithHeader("Synchronous communication", "Sync negative response to expected service"
-                                          " but unexpected size received. Ignoring.", TGL_UTIL_FUNC_ID);
+                     // Matching error response found!
+                     // special handling for "responsePending": rewind Rx timeout expectation
+                     if (orc_Service.c_Data[2] == hu8_NR_CODE_RESPONSE_PENDING)
+                     {
+                        c_Timer.restart();
+                        // The response of the server resets the session timeouts
+                        u32_LastWaitTimeHandled = 0;
+                     }
+                     else
+                     {
+                        //other code: report to application
+                        oru8_NrCode = orc_Service.c_Data[2];
+                        s32_Return = C_WARN;
+                        q_Finished = true;
+                     }
                   }
                }
-
-               if (q_Match == true)
+               else
                {
-                  // Matching error response found!
-                  // special handling for "responsePending": rewind Rx timeout expectation
-                  if (orc_Service.c_Data[2] == hu8_NR_CODE_RESPONSE_PENDING)
+                  m_LogErrorWithHeader(TGL_UTIL_FUNC_ID, "Synchronous communication",
+                                       "Sync negative response to unexpected service received. Ignoring.");
+               }
+            }
+
+            if (q_Finished == false)
+            {
+               //check for response: is it as expected ?
+               if (((oq_ExactSizeExpected == true) && (u16_RxSize == ou16_ExpectedSize)) ||
+                   ((oq_ExactSizeExpected == false) && (u16_RxSize >= ou16_ExpectedSize)))
+               {
+                  //looks like a response to our request
+                  if (orc_Service.c_Data[0] == (ou8_ExpectedServiceId | 0x40U))
                   {
-                     u32_StartTime = stw::tgl::TglGetTickCount();
-                     // The response of the server resets the session timeouts
-                     u32_LastWaitTimeHandled = u32_StartTime;
-                  }
-                  else
-                  {
-                     //other code: report to application
-                     oru8_NrCode = orc_Service.c_Data[2];
-                     s32_Return = C_WARN;
+                     //OK response !
                      q_Finished = true;
                   }
                }
+               else
+               {
+                  //when initiating event driven transfers we might get a response to the expected service but it's
+                  // an actual data response to an already ongoing transfer
+                  if (orc_Service.c_Data[0] == (mhu8_OSY_SI_READ_DATA_POOL_DATA_EVENT_DRIVEN | 0x40U))
+                  {
+                     //last chance ...
+                     s32_Return = m_HandleAsyncResponse(orc_Service);
+                  }
+                  if (s32_Return != C_NO_ERR)
+                  {
+                     //unexpected response
+                     m_LogErrorWithHeader("Synchronous communication",
+                                          "Sync response with unexpected length received. Ignoring.", TGL_UTIL_FUNC_ID);
+                  }
+               }
             }
-            else
+         }
+         else if (s32_Return == C_COM)
+         {
+            // Communication error
+            break;
+         }
+         else
+         {
+            // Handle long waiting time by registered function
+            if (this->mpr_OnOsyWaitTime != NULL)
             {
-               m_LogErrorWithHeader(TGL_UTIL_FUNC_ID, "Synchronous communication",
-                                    "Sync negative response to unexpected service received. Ignoring.");
+               const uint32_t u32_CurrentTime = static_cast<uint32_t>(c_Timer.elapsed());
+               if (u32_CurrentTime > (u32_LastWaitTimeHandled + hu32_DEFAULT_HANDLE_WAIT_TIME))
+               {
+                  this->mpr_OnOsyWaitTime(this->mpv_OnOsyWaitTimeInstance);
+                  u32_LastWaitTimeHandled = u32_CurrentTime;
+               }
             }
          }
 
          if (q_Finished == false)
          {
-            //check for response: is it as expected ?
-            if (((oq_ExactSizeExpected == true) && (u16_RxSize == ou16_ExpectedSize)) ||
-                ((oq_ExactSizeExpected == false) && (u16_RxSize >= ou16_ExpectedSize)))
-            {
-               //looks like a response to our request
-               if (orc_Service.c_Data[0] == (ou8_ExpectedServiceId | 0x40U))
-               {
-                  //OK response !
-                  q_Finished = true;
-               }
-            }
-            else
-            {
-               //when initiating event driven transfers we might get a response to the expected service but it's
-               // an actual data response to an already ongoing transfer
-               if (orc_Service.c_Data[0] == (mhu8_OSY_SI_READ_DATA_POOL_DATA_EVENT_DRIVEN | 0x40U))
-               {
-                  //last chance ...
-                  s32_Return = m_HandleAsyncResponse(orc_Service);
-               }
-               if (s32_Return != C_NO_ERR)
-               {
-                  //unexpected response
-                  m_LogErrorWithHeader("Synchronous communication",
-                                       "Sync response with unexpected length received. Ignoring.", TGL_UTIL_FUNC_ID);
-               }
-            }
+            QThread::yieldCurrentThread(); //rescind CPU time to other threads ...
          }
-      }
-      else if (s32_Return == C_COM)
-      {
-         // Communication error
-         break;
-      }
-      else
-      {
-         // Handle long waiting time by registered function
-         if (this->mpr_OnOsyWaitTime != NULL)
-         {
-            const uint32_t u32_CurrentTime = stw::tgl::TglGetTickCount();
-            if ((u32_CurrentTime - hu32_DEFAULT_HANDLE_WAIT_TIME) > u32_LastWaitTimeHandled)
-            {
-               this->mpr_OnOsyWaitTime(this->mpv_OnOsyWaitTimeInstance);
-               u32_LastWaitTimeHandled = u32_CurrentTime;
-            }
-         }
-      }
-
-      if (q_Finished == false)
-      {
-         stw::tgl::TglSleepPolling(); //rescind CPU time to other threads ...
       }
    }
-   mc_LockReception.Release();
 
    if (s32_Return == C_COM)
    {
@@ -3571,7 +3575,7 @@ int32_t C_OscProtocolDriverOsy::Cycle(void)
    int32_t s32_Return = C_NO_ERR;
 
    //while we are checking for async responses, prevent other threads starting to poll
-   const bool q_LockClaimed = mc_LockReception.TryAcquire();
+   const bool q_LockClaimed = mc_LockReception.tryLock();
 
    if (q_LockClaimed == true)
    {
@@ -3581,7 +3585,7 @@ int32_t C_OscProtocolDriverOsy::Cycle(void)
          // Only C_CONFIG is relevant for an extern call
          s32_Return = C_NO_ERR;
       }
-      mc_LockReception.Release();
+      mc_LockReception.unlock();
    }
 
    return s32_Return;
@@ -4322,7 +4326,10 @@ int32_t C_OscProtocolDriverOsy::m_HandleAsyncOsyTunnelCanMessagesEvent(
          // Fill the struct
          c_CanMessage.u8_DLC = orc_ReceivedService.c_Data[5];
          (void)std::memcpy(&c_CanMessage.au8_Data[0], &orc_ReceivedService.c_Data[6], 8U);
-         c_CanMessage.u64_TimeStamp = stw::tgl::TglGetTickCountUs();
+         c_CanMessage.u64_TimeStamp =
+            static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::microseconds>(
+                                     std::chrono::steady_clock::now().time_since_epoch())
+                                     .count());
 
          if (this->mpr_OnOsyTunnelCanMessageReceived != NULL)
          {

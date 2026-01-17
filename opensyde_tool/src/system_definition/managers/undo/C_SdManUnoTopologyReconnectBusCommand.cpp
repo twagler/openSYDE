@@ -13,14 +13,14 @@
 #include "precomp_headers.hpp"
 
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdUtil.hpp"
 #include "C_GiLiBus.hpp"
 #include "C_SdManUnoTopologyReconnectBusCommand.hpp"
 #include "C_PuiSdHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::opensyde_gui_logic;
@@ -105,7 +105,7 @@ C_SdManUnoTopologyReconnectBusCommand::C_SdManUnoTopologyReconnectBusCommand(QGr
                   }
                }
             }
-            tgl_assert(this->mc_InitialProperties.size() == c_NodeIndices.size());
+            Q_ASSERT(this->mc_InitialProperties.size() == c_NodeIndices.size());
          }
       }
    }

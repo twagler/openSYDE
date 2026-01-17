@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for create/edit filter dialog. (implementation)
@@ -18,7 +18,7 @@
 #include "stwerrors.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_Uti.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgeWiCustomMessage.hpp"
 #include "C_CamProHandler.hpp"
 #include "C_CamDbHandler.hpp"
@@ -546,7 +546,7 @@ void C_CamMosFilterPopup::m_UpdateLineEdits(const uint32_t ou32_RowIndex) const
    const QList<C_CamProFilterItemData> c_Data = this->mpc_TableModel->GetFilterItemsData();
 
    // check if index is in range
-   tgl_assert(c_Data.size() >= static_cast<int32_t>(ou32_RowIndex));
+   Q_ASSERT(c_Data.size() >= static_cast<int32_t>(ou32_RowIndex));
    if (c_Data.size() >= static_cast<int32_t>(ou32_RowIndex))
    {
       const C_CamProFilterItemData c_FilterItem = c_Data[ou32_RowIndex];
@@ -738,7 +738,7 @@ void C_CamMosFilterPopup::m_OnRowChanged(const QModelIndex & orc_NewIndex, const
    const int32_t s32_SelectedRowIndex = orc_NewIndex.row();
 
    // if there is no selected index something really went wrong
-   tgl_assert(s32_SelectedRowIndex < rc_Data.size());
+   Q_ASSERT(s32_SelectedRowIndex < rc_Data.size());
    if ((s32_SelectedRowIndex >= 0) && (s32_SelectedRowIndex < rc_Data.size()))
    {
       this->m_UpdateSettingsSection(rc_Data[s32_SelectedRowIndex]);
@@ -756,7 +756,7 @@ void C_CamMosFilterPopup::m_OnTypeChanged(const int32_t os32_NewType) const
    const int32_t s32_CurrentRowIndex = this->m_GetCurrentSelectedRowIndex();
 
    // if there is no selected index something really went wrong
-   tgl_assert(s32_CurrentRowIndex >= 0);
+   Q_ASSERT(s32_CurrentRowIndex >= 0);
    if (s32_CurrentRowIndex >= 0)
    {
       // update data in column type and not in actual selected column
@@ -791,7 +791,7 @@ void C_CamMosFilterPopup::m_OnRadioButtonToggle(const bool oq_Checked) const
    const int32_t s32_CurrentRowIndex = this->m_GetCurrentSelectedRowIndex();
 
    // if there is no selected index something really went wrong
-   tgl_assert(s32_CurrentRowIndex >= 0);
+   Q_ASSERT(s32_CurrentRowIndex >= 0);
    if (s32_CurrentRowIndex >= 0)
    {
       // update data in column mode and not in actual selected column
@@ -810,7 +810,7 @@ void C_CamMosFilterPopup::m_OnStartIdEdited(void)
    const int32_t s32_CurrentRowIndex = this->m_GetCurrentSelectedRowIndex();
 
    // if there is no selected index something really went wrong
-   tgl_assert(s32_CurrentRowIndex >= 0);
+   Q_ASSERT(s32_CurrentRowIndex >= 0);
    if (s32_CurrentRowIndex >= 0)
    {
       QString c_ErrorDescription;
@@ -820,7 +820,7 @@ void C_CamMosFilterPopup::m_OnStartIdEdited(void)
       {
          // check if greater than end ID by comparing with data
          const QList<C_CamProFilterItemData> & rc_FilterItems =  this->mpc_TableModel->GetFilterItemsData();
-         tgl_assert(s32_CurrentRowIndex < rc_FilterItems.size());
+         Q_ASSERT(s32_CurrentRowIndex < rc_FilterItems.size());
          if (s32_CurrentRowIndex < rc_FilterItems.size())
          {
             const bool q_IsExtended = rc_FilterItems[s32_CurrentRowIndex].u8_ExtendedId == 1U;
@@ -863,7 +863,7 @@ void C_CamMosFilterPopup::m_OnEndIdEdited(void)
    const int32_t s32_CurrentRowIndex = this->m_GetCurrentSelectedRowIndex();
 
    // if there is no selected index something really went wrong
-   tgl_assert(s32_CurrentRowIndex >= 0);
+   Q_ASSERT(s32_CurrentRowIndex >= 0);
    if (s32_CurrentRowIndex >= 0)
    {
       QString c_ErrorDescription;
@@ -873,7 +873,7 @@ void C_CamMosFilterPopup::m_OnEndIdEdited(void)
       {
          // check if less than start ID by comparing with data
          const QList<C_CamProFilterItemData> & rc_FilterItems =  this->mpc_TableModel->GetFilterItemsData();
-         tgl_assert(s32_CurrentRowIndex < rc_FilterItems.size());
+         Q_ASSERT(s32_CurrentRowIndex < rc_FilterItems.size());
          if (s32_CurrentRowIndex < rc_FilterItems.size())
          {
             const bool q_IsExtended = rc_FilterItems[s32_CurrentRowIndex].u8_ExtendedId == 1U;
@@ -917,7 +917,7 @@ void C_CamMosFilterPopup::m_OnExtendedToggled(const bool oq_Checked)
    const int32_t s32_CurrentRowIndex = this->m_GetCurrentSelectedRowIndex();
 
    // if there is no selected index something really went wrong
-   tgl_assert(s32_CurrentRowIndex >= 0);
+   Q_ASSERT(s32_CurrentRowIndex >= 0);
    if (s32_CurrentRowIndex >= 0)
    {
       this->mpc_TableModel->SetFilterItemExtended(s32_CurrentRowIndex, oq_Checked);

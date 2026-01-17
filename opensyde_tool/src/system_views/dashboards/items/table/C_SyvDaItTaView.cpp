@@ -18,7 +18,7 @@
 
 #include "C_Uti.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OgeWiUtil.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_SyvDaItTaView.hpp"
@@ -336,7 +336,7 @@ void C_SyvDaItTaView::SetDisplayStyle(const C_PuiSvDbWidgetBase::E_Style oe_Styl
       this->setAlternatingRowColors(false);
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 }

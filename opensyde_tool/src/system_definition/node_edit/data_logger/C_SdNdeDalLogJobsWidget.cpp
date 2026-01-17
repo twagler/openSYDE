@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Base widget for log jobs list
@@ -24,7 +24,7 @@
 #include "C_PuiSdHandler.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_Uti.hpp"
-#include "TglUtils.hpp"
+
 #include "C_UsHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
@@ -269,7 +269,7 @@ void C_SdNdeDalLogJobsWidget::m_OnAddLogJob()
 {
    const C_OscDataLoggerJob c_LogJob;
 
-   tgl_assert(C_PuiSdHandler::h_GetInstance()->AddDataLogger(mu32_NodeIndex, c_LogJob, NULL) == C_NO_ERR);
+   Q_ASSERT(C_PuiSdHandler::h_GetInstance()->AddDataLogger(mu32_NodeIndex, c_LogJob, NULL) == C_NO_ERR);
 
    this->LoadLogJobs();
 
@@ -336,7 +336,7 @@ void C_SdNdeDalLogJobsWidget::m_OnPasteLogJob()
       {
          for (uint32_t u32_ItNew = 0UL; u32_ItNew < c_Data.size(); ++u32_ItNew)
          {
-            tgl_assert(C_PuiSdHandler::h_GetInstance()->AddDataLogger(mu32_NodeIndex, c_Data[u32_ItNew],
+            Q_ASSERT(C_PuiSdHandler::h_GetInstance()->AddDataLogger(mu32_NodeIndex, c_Data[u32_ItNew],
                                                                       NULL) == C_NO_ERR);
          }
 

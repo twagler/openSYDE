@@ -5,7 +5,7 @@
 #include <cstring>
 #include "stwtypes.hpp"
 #include "C_SclChecksums.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SclString.hpp"
 #include "CKFXVariableListBase.hpp"
 
@@ -84,7 +84,7 @@ void C_KFXVariableListBase::CalcCRCOverList(uint16_t & oru16_CRC, const bool oq_
    au8_Data[3] = static_cast<uint8_t>(this->u32_CheckSumAddress >> 24U);
    C_SclChecksums::CalcCRC16STW(&au8_Data[0], sizeof(au8_Data), oru16_CRC);
 
-   for (i = 0; i < this->VariableList.GetLength(); i++)
+   for (i = 0; i < this->VariableList.size(); i++)
    {
       this->VariableList[i].CalcCRCOverEntry(oru16_CRC, oq_SkipValues);
    }
@@ -97,7 +97,7 @@ uint16_t C_KFXVariableListBase::CountChangedValues(void) const
    int32_t i;
    uint16_t u16_Changed = 0U;
 
-   for (i = 0; i < this->VariableList.GetLength(); i++)
+   for (i = 0; i < this->VariableList.size(); i++)
    {
       if (VariableList[i].q_ValueChanged == true)
       {
@@ -115,7 +115,7 @@ void C_KFXVariableListBase::SetNumDefaults(const uint16_t ou16_NumDefaults)
 
    if (mu16_NumDefaults != ou16_NumDefaults)
    {
-      for (i = 0; i < this->VariableList.GetLength(); i++)
+      for (i = 0; i < this->VariableList.size(); i++)
       {
          VariableList[i].SetNumDefaults(ou16_NumDefaults);
       }
@@ -136,7 +136,7 @@ const C_KFXVariableBase * C_KFXVariableListBase::GetVariableByName(const C_SclSt
 {
    int32_t s32_VarIndex;
 
-   for (s32_VarIndex = 0; s32_VarIndex < VariableList.GetLength(); s32_VarIndex++)
+   for (s32_VarIndex = 0; s32_VarIndex < VariableList.size(); s32_VarIndex++)
    {
       if (VariableList[s32_VarIndex].c_Name == orc_VariableName)
       {
@@ -152,7 +152,7 @@ C_KFXVariableBase * C_KFXVariableListBase::GetVariableByName(const C_SclString &
 {
    int32_t s32_VarIndex;
 
-   for (s32_VarIndex = 0; s32_VarIndex < VariableList.GetLength(); s32_VarIndex++)
+   for (s32_VarIndex = 0; s32_VarIndex < VariableList.size(); s32_VarIndex++)
    {
       if (VariableList[s32_VarIndex].c_Name == orc_VariableName)
       {

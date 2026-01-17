@@ -11,12 +11,13 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QDir>
+#include <QFileInfo>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_SclString.hpp"
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscDeviceDefinitionFilerV1.hpp"
 #include "C_OscXmlParser.hpp"
 #include "C_OscLoggingHandler.hpp"
@@ -25,7 +26,7 @@
 
 using namespace stw::errors;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -223,8 +224,8 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
       }
       //expand the potentially relative image path to an absolute path
       // we will need it later to open the image in the UI
-      orc_DeviceDefinition.c_ImagePath = TglExpandFileName(orc_DeviceDefinition.c_ImagePath,
-                                                           TglExtractFilePath(orc_Path));
+      const QString c_BasePath = QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).absolutePath() + "/";
+      orc_DeviceDefinition.c_ImagePath = QDir(c_BasePath).absoluteFilePath(QString::fromStdString(*orc_DeviceDefinition.c_ImagePath.AsStdString())).toStdString();
       // also store file path
       // it is needed for creating service update package (see #24474)
       orc_DeviceDefinition.c_FilePath = orc_Path;
@@ -292,7 +293,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
    if (s32_Return == C_NO_ERR)
    {
       c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-      tgl_assert(c_Text == "opensyde-device-definition");
+      Q_ASSERT(c_Text == "opensyde-device-definition");
 
       c_Text = orc_Parser.SelectNodeChild("protocols-diagnostics");
       if (c_Text != "protocols-diagnostics")
@@ -322,7 +323,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
                }
             }
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "protocols-diagnostics");
+            Q_ASSERT(c_Text == "protocols-diagnostics");
          }
          c_Text = orc_Parser.SelectNodeChild("opensyde");
          if (c_Text != "opensyde")
@@ -335,10 +336,10 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
                                          c_SubDevice.q_DiagnosticProtocolOpenSydeEthernet);
 
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "protocols-diagnostics");
+            Q_ASSERT(c_Text == "protocols-diagnostics");
          }
          c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-         tgl_assert(c_Text == "opensyde-device-definition");
+         Q_ASSERT(c_Text == "opensyde-device-definition");
       }
 
       c_Text = orc_Parser.SelectNodeChild("protocols-flashloader");
@@ -380,7 +381,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
                                   " ms) for XML file \"" + orc_Path + "\".");
 
                c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-               tgl_assert(c_Text == "protocols-flashloader");
+               Q_ASSERT(c_Text == "protocols-flashloader");
             }
          }
          else
@@ -391,7 +392,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
             {
                c_SubDevice.u32_FlashloaderResetWaitTimeNoChangesCan = orc_Parser.GetAttributeUint32("value");
                c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-               tgl_assert(c_Text == "flashloader-reset-wait-times");
+               Q_ASSERT(c_Text == "flashloader-reset-wait-times");
             }
             else
             {
@@ -412,7 +413,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
                c_SubDevice.u32_FlashloaderResetWaitTimeNoChangesEthernet = orc_Parser.GetAttributeUint32(
                   "value");
                c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-               tgl_assert(c_Text == "flashloader-reset-wait-times");
+               Q_ASSERT(c_Text == "flashloader-reset-wait-times");
             }
             else
             {
@@ -433,7 +434,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
                c_SubDevice.u32_FlashloaderResetWaitTimeNoFundamentalChangesCan =
                   orc_Parser.GetAttributeUint32("value");
                c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-               tgl_assert(c_Text == "flashloader-reset-wait-times");
+               Q_ASSERT(c_Text == "flashloader-reset-wait-times");
             }
             else
             {
@@ -454,7 +455,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
                c_SubDevice.u32_FlashloaderResetWaitTimeNoFundamentalChangesEthernet =
                   orc_Parser.GetAttributeUint32("value");
                c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-               tgl_assert(c_Text == "flashloader-reset-wait-times");
+               Q_ASSERT(c_Text == "flashloader-reset-wait-times");
             }
             else
             {
@@ -475,7 +476,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
                c_SubDevice.u32_FlashloaderResetWaitTimeFundamentalChangesCan = orc_Parser.GetAttributeUint32(
                   "value");
                c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-               tgl_assert(c_Text == "flashloader-reset-wait-times");
+               Q_ASSERT(c_Text == "flashloader-reset-wait-times");
             }
             else
             {
@@ -496,7 +497,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
                c_SubDevice.u32_FlashloaderResetWaitTimeFundamentalChangesEthernet =
                   orc_Parser.GetAttributeUint32("value");
                c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-               tgl_assert(c_Text == "flashloader-reset-wait-times");
+               Q_ASSERT(c_Text == "flashloader-reset-wait-times");
             }
             else
             {
@@ -512,7 +513,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
             }
 
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "protocols-flashloader");
+            Q_ASSERT(c_Text == "protocols-flashloader");
          }
 
          //get sub-node
@@ -525,7 +526,7 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
          {
             mh_ParseStwFlashloaderAvailability(orc_Parser, c_SubDevice.q_FlashloaderStwCan);
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "protocols-flashloader");
+            Q_ASSERT(c_Text == "protocols-flashloader");
          }
          c_Text = orc_Parser.SelectNodeChild("opensyde");
          if (c_Text != "opensyde")
@@ -543,10 +544,10 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
                                                  c_SubDevice.q_FlashloaderOpenSydeIsFileBased);
 
             c_Text = orc_Parser.SelectNodeParent(); //back to parent ...
-            tgl_assert(c_Text == "protocols-flashloader");
+            Q_ASSERT(c_Text == "protocols-flashloader");
          }
          c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
-         tgl_assert(c_Text == "opensyde-device-definition");
+         Q_ASSERT(c_Text == "opensyde-device-definition");
       }
 
       c_Text = orc_Parser.SelectNodeChild("memory");

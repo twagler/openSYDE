@@ -296,10 +296,10 @@ int32_t C_OscRoutingCalculation::m_CheckTargetNodeConfig(void) const
    bool q_AtLeastOneFunctionActive = false;
    const C_OscNode * const pc_Node = &this->mrc_AllNodes[this->mu32_TargetNodeIndex];
 
-   tgl_assert(pc_Node->pc_DeviceDefinition != NULL);
+   Q_ASSERT(pc_Node->pc_DeviceDefinition != NULL);
    if (pc_Node->pc_DeviceDefinition != NULL)
    {
-      tgl_assert(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
+      Q_ASSERT(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
       if (pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size())
       {
          const C_OscSubDeviceDefinition & rc_SubDevDef =

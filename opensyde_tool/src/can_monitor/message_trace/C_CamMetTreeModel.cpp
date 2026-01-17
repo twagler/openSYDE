@@ -16,8 +16,8 @@
 #include <iomanip>
 
 #include <QBitArray>
+#include <QDateTime>
 
-#include "TglTime.hpp"
 #include "stwtypes.hpp"
 #include "constants.hpp"
 #include "C_CamMetUtil.hpp"
@@ -27,7 +27,6 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_logic;
 using namespace stw::opensyde_core;
@@ -116,8 +115,8 @@ void C_CamMetTreeModel::Continue(void)
 {
    // ms resolution is enough
    // Using US as base because we want to compare with the US value of the CAN message.
-   // The TglGetTickCountUs can have a difference of 1 to 2 seconds because of a different rounding
-   const uint32_t u32_CurrentTime = static_cast<uint32_t>(TglGetTickCountUs() / 1000ULL);
+   // QDateTime can have a difference of 1 to 2 seconds because of a different rounding
+   const uint32_t u32_CurrentTime = static_cast<uint32_t>(QDateTime::currentMSecsSinceEpoch());
    // Get the time interval of the entire pause
    const uint32_t u32_GrayOutPauseOffset = u32_CurrentTime - this->mu32_GrayOutPauseTimeStamp;
 
@@ -165,7 +164,7 @@ void C_CamMetTreeModel::Pause(void)
    // ms resolution is enough
    // Using US as base because we want to compare with the US value of the CAN message.
    // The TglGetTickCountUs can have a difference of 1 to 2 seconds because of a different rounding
-   this->mu32_GrayOutPauseTimeStamp = static_cast<uint32_t>(TglGetTickCountUs() / 1000ULL);
+   this->mu32_GrayOutPauseTimeStamp = static_cast<uint32_t>(QDateTime::currentMSecsSinceEpoch());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1990,7 +1989,7 @@ void C_CamMetTreeModel::m_GrayOutTimer(void)
       // ms resolution is enough
       // Using US as base because we want to compare with the US value of the CAN message.
       // The TglGetTickCountUs can have a difference of 1 to 2 seconds because of a different rounding
-      const uint32_t u32_CurrentTime = static_cast<uint32_t>(TglGetTickCountUs() / 1000ULL);
+      const uint32_t u32_CurrentTime = static_cast<uint32_t>(QDateTime::currentMSecsSinceEpoch());
       QMap<C_SclString, C_CamMetTreeLoggerData>::iterator c_It;
       int32_t s32_RowCounter = 0;
 

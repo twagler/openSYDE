@@ -22,7 +22,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 
 #include <string>
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 #include "C_SclString.hpp"
 #include "stwtypes.hpp"
 
@@ -46,7 +46,7 @@ public:
 class C_SCLResourceStrings
 {
 private:
-   C_SclDynamicArray<C_SclResourceString> mac_Strings;
+   QList<C_SclResourceString> mac_Strings;
    bool mq_Dirty;
 
 public:

@@ -17,12 +17,12 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscLoggingHandler.hpp"
-#include "TglUtils.hpp"
+
 #include "C_SdNdeUnoDataPoolListDataChangeCommand.hpp"
 #include "C_PuiSdHandler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
 using namespace stw::errors;
@@ -110,18 +110,18 @@ void C_SdNdeUnoDataPoolListDataChangeCommand::m_Change(QVariant & orc_PreviousDa
       switch (this->me_DataChangeType)
       {
       case C_SdNdeDpUtil::eLIST_NAME:
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->SetDataPoolListName(this->mu32_NodeIndex, this->mu32_DataPoolIndex,
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetDataPoolListName(this->mu32_NodeIndex, this->mu32_DataPoolIndex,
                                                                          this->mu32_DataPoolListIndex,
                                                                          orc_NewData.toString()) == C_NO_ERR);
          break;
       case C_SdNdeDpUtil::eLIST_COMMENT:
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->SetDataPoolListComment(this->mu32_NodeIndex,
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetDataPoolListComment(this->mu32_NodeIndex,
                                                                             this->mu32_DataPoolIndex,
                                                                             this->mu32_DataPoolListIndex,
                                                                             orc_NewData.toString()) == C_NO_ERR);
          break;
       case C_SdNdeDpUtil::eLIST_SIZE:
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->SetDataPoolListNvmSize(this->mu32_NodeIndex,
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetDataPoolListNvmSize(this->mu32_NodeIndex,
                                                                             this->mu32_DataPoolIndex,
                                                                             this->mu32_DataPoolListIndex,
                                                                             static_cast<uint32_t>(orc_NewData.
@@ -129,7 +129,7 @@ void C_SdNdeUnoDataPoolListDataChangeCommand::m_Change(QVariant & orc_PreviousDa
                     C_NO_ERR);
          break;
       case C_SdNdeDpUtil::eLIST_CRC:
-         tgl_assert(C_PuiSdHandler::h_GetInstance()->SetDataPoolListNvmCrc(this->mu32_NodeIndex,
+         Q_ASSERT(C_PuiSdHandler::h_GetInstance()->SetDataPoolListNvmCrc(this->mu32_NodeIndex,
                                                                            this->mu32_DataPoolIndex,
                                                                            this->mu32_DataPoolListIndex,
                                                                            orc_NewData.toBool()) == C_NO_ERR);

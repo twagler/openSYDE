@@ -13,8 +13,7 @@
 #include "precomp_headers.hpp"
 
 #include <cstdio>
-#include "TglFile.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscChecksummedXml.hpp"
 #include "C_OscNodeDataPoolFiler.hpp"
@@ -23,7 +22,7 @@
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::scl;
-using namespace stw::tgl;
+
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
@@ -169,7 +168,7 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadDataPools(
          }
          while ((c_SelectedNode == "datapool") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "interpreted");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "interpreted");
       }
       else
       {
@@ -184,7 +183,7 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadDataPools(
          s32_Retval = C_CONFIG;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
    }
    else
    {
@@ -208,16 +207,16 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadDataPools(
 void C_OscParamSetInterpretedNodeFiler::mh_SaveDataPools(
    const std::vector<C_OscParamSetInterpretedDataPool> & orc_DataPools, C_OscXmlParserBase & orc_XmlParser)
 {
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("interpreted") == "interpreted");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("interpreted") == "interpreted");
    for (uint32_t u32_Index = 0U; u32_Index < orc_DataPools.size(); u32_Index++)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("datapool") == "datapool");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("datapool") == "datapool");
       C_OscParamSetInterpretedNodeFiler::mh_SaveDataPool(orc_DataPools[u32_Index], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "interpreted");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "interpreted");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "node");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "node");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -301,7 +300,7 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadLists(std::vector<C_OscParamSe
          }
          while ((c_SelectedNode == "list") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "lists");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "lists");
       }
       else
       {
@@ -310,7 +309,7 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadLists(std::vector<C_OscParamSe
          s32_Retval = C_CONFIG;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "datapool");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "datapool");
    }
    else
    {
@@ -335,16 +334,16 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadLists(std::vector<C_OscParamSe
 void C_OscParamSetInterpretedNodeFiler::mh_SaveLists(const std::vector<C_OscParamSetInterpretedList> & orc_Lists,
                                                      C_OscXmlParserBase & orc_XmlParser)
 {
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("lists") == "lists");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("lists") == "lists");
    for (uint32_t u32_Index = 0U; u32_Index < orc_Lists.size(); u32_Index++)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("list") == "list");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("list") == "list");
       C_OscParamSetInterpretedNodeFiler::mh_SaveList(orc_Lists[u32_Index], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "lists");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "lists");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "datapool");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "datapool");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -371,7 +370,7 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadList(C_OscParamSetInterpretedL
    {
       orc_List.c_Name = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
    }
    else
    {
@@ -445,7 +444,7 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadElements(std::vector<C_OscPara
          }
          while ((c_SelectedNode == "element") && (s32_Retval == C_NO_ERR));
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "elements");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "elements");
       }
       else
       {
@@ -453,7 +452,7 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadElements(std::vector<C_OscPara
          s32_Retval = C_CONFIG;
       }
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
    }
    else
    {
@@ -477,16 +476,16 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadElements(std::vector<C_OscPara
 void C_OscParamSetInterpretedNodeFiler::mh_SaveElements(
    const std::vector<C_OscParamSetInterpretedElement> & orc_Elements, C_OscXmlParserBase & orc_XmlParser)
 {
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("elements") == "elements");
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("elements") == "elements");
    for (uint32_t u32_Index = 0U; u32_Index < orc_Elements.size(); u32_Index++)
    {
-      tgl_assert(orc_XmlParser.CreateAndSelectNodeChild("element") == "element");
+      Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild("element") == "element");
       C_OscParamSetInterpretedNodeFiler::mh_SaveElement(orc_Elements[u32_Index], orc_XmlParser);
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "elements");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "elements");
    }
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == "list");
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == "list");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -513,7 +512,7 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadElement(C_OscParamSetInterpret
    {
       orc_Element.c_Name = orc_XmlParser.GetNodeContent();
       //Return
-      tgl_assert(orc_XmlParser.SelectNodeParent() == "element");
+      Q_ASSERT(orc_XmlParser.SelectNodeParent() == "element");
    }
    else
    {
@@ -536,7 +535,7 @@ int32_t C_OscParamSetInterpretedNodeFiler::mh_LoadElement(C_OscParamSetInterpret
             s32_Retval = C_CONFIG;
          }
          //Return
-         tgl_assert(orc_XmlParser.SelectNodeParent() == "element");
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == "element");
       }
       else
       {

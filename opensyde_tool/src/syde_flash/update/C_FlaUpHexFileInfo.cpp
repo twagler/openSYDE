@@ -60,7 +60,7 @@ void C_FlaUpHexFileInfo::SetHexFileInfo(const QString & orc_File)
    C_OscHexFile c_HexFile;
    uint32_t u32_Result;
 
-   C_SclDynamicArray<stw::diag_lib::C_XFLECUInformation> c_InfoBlocks;
+   QList<stw::diag_lib::C_XFLECUInformation> c_InfoBlocks;
 
    c_BlockInfo.resize(0);
    c_HexFileInfo.s32_NumberOfBlocks = 0;
@@ -77,18 +77,18 @@ void C_FlaUpHexFileInfo::SetHexFileInfo(const QString & orc_File)
       c_HexFileInfo.c_Checksum = mh_GetMd5Hex(orc_File);
       c_HexFileInfo.c_NumberOfBytes = QString::number(c_HexFile.ByteCount());
       c_HexFileInfo.c_BitCrc = static_cast<QString>("0x%1").arg(c_HexFile.CalcFileChecksum(u32_Crc), 0, 16);
-      if (c_InfoBlocks.GetLength() > 0)
+      if (c_InfoBlocks.size() > 0)
       {
-         c_HexFileInfo.s32_NumberOfBlocks = c_InfoBlocks.GetLength();
+         c_HexFileInfo.s32_NumberOfBlocks = c_InfoBlocks.size();
       }
       else
       {
          c_HexFileInfo.s32_NumberOfBlocks = 0;
       }
-      if (c_InfoBlocks.GetLength() > 0)
+      if (c_InfoBlocks.size() > 0)
       {
-         c_BlockInfo.resize(c_InfoBlocks.GetLength());
-         for (int32_t s32_ItAppl = 0UL; s32_ItAppl < c_InfoBlocks.GetLength(); ++s32_ItAppl)
+         c_BlockInfo.resize(c_InfoBlocks.size());
+         for (int32_t s32_ItAppl = 0UL; s32_ItAppl < c_InfoBlocks.size(); ++s32_ItAppl)
          {
             const stw::diag_lib::C_XFLECUInformation & rc_CurInfo = c_InfoBlocks[s32_ItAppl];
             c_BlockInfo.at(s32_ItAppl).c_BlockType = rc_CurInfo.GetInfoLevelAsString().c_str();

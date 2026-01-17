@@ -14,6 +14,7 @@
 
 #include <QFileInfo>
 #include <QScreen>
+#include <QThread>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
@@ -21,8 +22,6 @@
 #include "C_CamMainWindow.hpp"
 #include "ui_C_CamMainWindow.h"
 
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
 #include "C_OscUtils.hpp"
 #include "C_Uti.hpp"
 #include "C_OgeWiUtil.hpp"
@@ -862,7 +861,7 @@ void C_CamMainWindow::mh_ThreadFunc(void * const opv_Instance)
    //lint -e{9079}  This class is the only one which registers itself at the caller of this function. It must match.
    C_CamMainWindow * const pc_Instance = reinterpret_cast<C_CamMainWindow *>(opv_Instance);
 
-   tgl_assert(pc_Instance != NULL);
+   Q_ASSERT(pc_Instance != NULL);
    if (pc_Instance != NULL)
    {
       pc_Instance->m_ThreadFunc();
@@ -879,7 +878,7 @@ void C_CamMainWindow::m_ThreadFunc(void)
    this->mc_ComDriver.DistributeMessages();
 
    //rescind CPU time to other threads ...
-   stw::tgl::TglSleep(1);
+   QThread::msleep(1);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1249,7 +1248,7 @@ void C_CamMainWindow::m_OnDatabaseLoadFinished(const int32_t os32_Result)
                   }
                   else
                   {
-                     tgl_assert(false);
+                     Q_ASSERT(false);
                   }
                }
             }
@@ -1268,7 +1267,7 @@ void C_CamMainWindow::m_OnDatabaseLoadFinished(const int32_t os32_Result)
                   }
                   else
                   {
-                     tgl_assert(false);
+                     Q_ASSERT(false);
                   }
                }
             }

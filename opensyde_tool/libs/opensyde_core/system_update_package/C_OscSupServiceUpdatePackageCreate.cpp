@@ -11,6 +11,7 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
+#include <QFileInfo>
 
 #include <fstream>
 #include <iterator>
@@ -26,7 +27,6 @@
 #include "C_OscDeviceDefinition.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
 #include "C_OscSuSequences.hpp"
-#include "TglFile.hpp"
 #include "C_SclIniFile.hpp"
 #include "C_OscSuSequences.hpp"
 #include "C_OscUtils.hpp"
@@ -43,7 +43,7 @@
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 using namespace stw::scl;
-using namespace stw::tgl;
+
 using namespace stw::diag_lib;
 using namespace std;
 using namespace stw::opensyde_core;
@@ -660,7 +660,7 @@ int32_t C_OscSupServiceUpdatePackageCreate::mh_SupDefParamAdapter(const uint32_t
            ++c_IterAppl)
       {
          // store application file names with relative path
-         const C_SclString c_Tmp = TglExtractFileName(*c_IterAppl);
+         const C_SclString c_Tmp = QFileInfo(QString::fromStdString(**c_IterAppl.AsStdString())).fileName().toStdString();
          c_SupDefNodeContent.c_ApplicationFileNames.push_back(c_Tmp);
       }
       // get parameter sets of node
@@ -670,14 +670,14 @@ int32_t C_OscSupServiceUpdatePackageCreate::mh_SupDefParamAdapter(const uint32_t
            ++c_IterParam)
       {
          // store application file names with relative path
-         const C_SclString c_Tmp = TglExtractFileName(*c_IterParam);
+         const C_SclString c_Tmp = QFileInfo(QString::fromStdString(**c_IterParam.AsStdString())).fileName().toStdString();
          c_SupDefNodeContent.c_NvmFileNames.push_back(c_Tmp);
       }
 
       // get PEM file and its settings of node
       if (orc_ApplicationsToWrite[u32_Pos].c_PemFile != "")
       {
-         const C_SclString c_Tmp = TglExtractFileName(orc_ApplicationsToWrite[u32_Pos].c_PemFile);
+         const C_SclString c_Tmp = QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u32_Pos].c_PemFile.AsStdString())).fileName().toStdString();
          c_SupDefNodeContent.c_PemFile = c_Tmp;
 
          c_SupDefNodeContent.q_SendSecurityEnabledState = orc_ApplicationsToWrite[u32_Pos].q_SendSecurityEnabledState;
@@ -761,7 +761,7 @@ void C_OscSupServiceUpdatePackageCreate::mh_AppendFlashFilesToSecureFileSections
    const std::vector<C_OscSuSequences::C_DoFlash> & orc_ApplicationsToWrite,
    const std::vector<C_SclString> & orc_NodeFoldersAbs, std::vector<std::set<C_SclString> > & orc_SecureFiles)
 {
-   tgl_assert(orc_ApplicationsToWrite.size() == orc_NodeFoldersAbs.size());
+   Q_ASSERT(orc_ApplicationsToWrite.size() == orc_NodeFoldersAbs.size());
    if (orc_ApplicationsToWrite.size() == orc_NodeFoldersAbs.size())
    {
       for (uint32_t u32_ItFolder = 0UL; u32_ItFolder < orc_ApplicationsToWrite.size(); ++u32_ItFolder)
@@ -896,7 +896,7 @@ int32_t C_OscSupServiceUpdatePackageCreate::mh_CreateNodesZip(const std::vector<
 {
    int32_t s32_Return = C_NO_ERR;
 
-   tgl_assert((orc_NodeFoldersAbs.size() == orc_SecFiles.size()) && ((orc_SecPackageFilesRel.size() ==
+   Q_ASSERT((orc_NodeFoldersAbs.size() == orc_SecFiles.size()) && ((orc_SecPackageFilesRel.size() ==
                                                                       orc_SecFiles.size()) &&
                                                                      ((
                                                                          orc_ActiveNodes.size() ==
@@ -977,7 +977,7 @@ int32_t C_OscSupServiceUpdatePackageCreate::mh_HandleNodeDefCreation(const std::
    mh_AdaptSignatureParameters(orc_AddSignatureNodes, c_Unused, ou32_NodeCount, c_AddSignatureNodes, c_Unused2);
 
    //Add sig files to nodes
-   tgl_assert((orc_ActiveNodes.size() == orc_SupDefNodes.size()) &&
+   Q_ASSERT((orc_ActiveNodes.size() == orc_SupDefNodes.size()) &&
               (orc_ActiveNodes.size() == c_AddSignatureNodes.size()));
    if ((orc_ActiveNodes.size() == orc_SupDefNodes.size()) && (orc_ActiveNodes.size() == c_AddSignatureNodes.size()))
    {
@@ -997,7 +997,7 @@ int32_t C_OscSupServiceUpdatePackageCreate::mh_HandleNodeDefCreation(const std::
    //Add new files
    if (s32_Return == C_NO_ERR)
    {
-      tgl_assert((orc_ActiveNodes.size() == orc_SecDefFilesRel.size()) &&
+      Q_ASSERT((orc_ActiveNodes.size() == orc_SecDefFilesRel.size()) &&
                  (orc_SecFiles.size() == orc_SecDefFilesRel.size()));
       if ((orc_ActiveNodes.size() == orc_SecDefFilesRel.size()) &&
           (orc_SecFiles.size() == orc_SecDefFilesRel.size()))
@@ -1043,7 +1043,7 @@ int32_t C_OscSupServiceUpdatePackageCreate::mh_HandleSignatureCreation(
    mh_AdaptSignatureParameters(orc_AddSignatureNodes, orc_NodeSignatureKeys, ou32_NodeCount, c_AddSignatureNodes,
                                c_NodeSignatureKeys);
 
-   tgl_assert((((orc_ActiveNodes.size() == orc_NodeFoldersAbs.size()) &&
+   Q_ASSERT((((orc_ActiveNodes.size() == orc_NodeFoldersAbs.size()) &&
                 (orc_ActiveNodes.size() == orc_SecFiles.size())) &&
                (orc_ActiveNodes.size() == c_AddSignatureNodes.size())) &&
               (orc_ActiveNodes.size() == c_NodeSignatureKeys.size()));
@@ -1129,7 +1129,7 @@ int32_t C_OscSupServiceUpdatePackageCreate::mh_CalcSig(const C_SclString & orc_S
          else
          {
             s32_Retval = c_Signature.GetAsDerString(orc_Signature);
-            tgl_assert(s32_Retval == C_NO_ERR); //the library gave us this signature; why would it not be valid ?
+            Q_ASSERT(s32_Retval == C_NO_ERR); //the library gave us this signature; why would it not be valid ?
 
             mh_DigestToString(au8_BinDigest, c_Log);
             osc_write_log_info("Creating Update Package", "security digest: " + c_Log);
@@ -1169,7 +1169,7 @@ int32_t C_OscSupServiceUpdatePackageCreate::mh_GetPemFileContent(const std::vect
    mh_AdaptPemFileParameters(orc_SignatureNodes, orc_NodeSignaturePemFiles, ou32_NumNodes, c_NodeSignaturePemFiles,
                              orc_PreparedSignatureNodes);
    orc_NodeSignatureKeys.reserve(orc_PreparedSignatureNodes.size());
-   tgl_assert(orc_PreparedSignatureNodes.size() == orc_ActiveNodes.size());
+   Q_ASSERT(orc_PreparedSignatureNodes.size() == orc_ActiveNodes.size());
    if (orc_PreparedSignatureNodes.size() == orc_ActiveNodes.size())
    {
       for (uint32_t u32_ItNode = 0UL; (u32_ItNode < orc_PreparedSignatureNodes.size()) && (s32_Retval == C_NO_ERR);

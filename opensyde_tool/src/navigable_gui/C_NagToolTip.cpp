@@ -17,7 +17,7 @@
 #include <QAbstractTextDocumentLayout>
 #include <QGraphicsDropShadowEffect>
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "constants.hpp"
 #include "C_OgeWiUtil.hpp"
 #include "C_NagToolTip.hpp"
@@ -145,7 +145,7 @@ void C_NagToolTip::SetType(const C_NagToolTip::E_Type oe_Type) const
       c_NewType = "ERROR";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
    C_OgeWiUtil::h_ApplyStylesheetProperty(this->mpc_Ui->mpc_GroupBox, "Type", c_NewType);

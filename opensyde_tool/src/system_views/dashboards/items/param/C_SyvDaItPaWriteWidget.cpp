@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for handling the process of writing changed NVM elements to the server.
@@ -664,7 +664,7 @@ void C_SyvDaItPaWriteWidget::m_ShowParameterValues(const bool oq_ShowReadValues)
                                                        (*c_ItItem).u32_DataPoolIndex,
                                                        (*c_ItItem).u32_ListIndex,
                                                        u32_ElementCounter);
-                  tgl_assert(pc_OscElement != NULL);
+                  Q_ASSERT(pc_OscElement != NULL);
                }
                else
                {
@@ -874,7 +874,7 @@ void C_SyvDaItPaWriteWidget::m_SendNextNotification(void)
       if (s32_Result == C_NO_ERR)
       {
          bool q_Ack;
-         tgl_assert(this->mrc_ComDriver.GetPollNvmNotifyOfChangesOutput(q_Ack) == C_NO_ERR);
+         Q_ASSERT(this->mrc_ComDriver.GetPollNvmNotifyOfChangesOutput(q_Ack) == C_NO_ERR);
          this->mc_NotificationResult.push_back(q_Ack);
          if (this->mc_NotificationIterator != this->mc_RelevantLists.end())
          {
@@ -886,7 +886,7 @@ void C_SyvDaItPaWriteWidget::m_SendNextNotification(void)
                (*this->mc_NotificationIterator).u32_NodeIndex,
                static_cast<uint8_t>((*this->mc_NotificationIterator).u32_DataPoolIndex),
                static_cast<uint16_t>((*this->mc_NotificationIterator).u32_ListIndex));
-            tgl_assert(s32_Tmp == C_NO_ERR);
+            Q_ASSERT(s32_Tmp == C_NO_ERR);
             //Important iterator step (strange notation because of lint)
             this->mc_NotificationIterator.operator ++();
          }
@@ -900,7 +900,7 @@ void C_SyvDaItPaWriteWidget::m_SendNextNotification(void)
             //Last one
             this->mc_Timer.stop();
 
-            tgl_assert(this->mc_NotificationResult.size() == this->mc_RelevantLists.size());
+            Q_ASSERT(this->mc_NotificationResult.size() == this->mc_RelevantLists.size());
 
             for (uint32_t u32_ItAck = 0; u32_ItAck < this->mc_NotificationResult.size(); ++u32_ItAck)
             {
@@ -1108,7 +1108,7 @@ bool C_SyvDaItPaWriteWidget::m_WasElementChanged(const uint32_t ou32_NodeIndex, 
       const std::map<stw::opensyde_core::C_OscNodeDataPoolListElementId,
                      stw::opensyde_gui_logic::C_SyvDaItPaValuePairs>::const_iterator c_It =
          this->mc_AllAffectedValues.find(c_ElementId);
-      tgl_assert(c_It != this->mc_AllAffectedValues.end());
+      Q_ASSERT(c_It != this->mc_AllAffectedValues.end());
       if (c_It != this->mc_AllAffectedValues.end())
       {
          q_Changed = c_It->second.q_Changed;
@@ -1142,7 +1142,7 @@ QString C_SyvDaItPaWriteWidget::m_GetSuspectElementReport(void) const
       {
          const C_OscNodeDataPoolListElement * const pc_Element =
             C_PuiSdHandler::h_GetInstance()->GetOscDataPoolListElement(c_It->first);
-         tgl_assert(pc_Element != NULL);
+         Q_ASSERT(pc_Element != NULL);
          if (pc_Element != NULL)
          {
             const QString c_Namespace = C_PuiSdUtil::h_GetNamespace(c_It->first);
@@ -1235,7 +1235,7 @@ void C_SyvDaItPaWriteWidget::m_ReportErrorNvmSafeWriteChangedValues(const int32_
    C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::E_Type::eERROR);
    const int32_t s32_Return = this->mrc_ComDriver.GetPollResultNrc(u8_Nrc);
 
-   tgl_assert(s32_Return == C_NO_ERR);
+   Q_ASSERT(s32_Return == C_NO_ERR);
    switch (os32_ErrorCode)
    {
    case C_NO_ERR:
@@ -1329,7 +1329,7 @@ void C_SyvDaItPaWriteWidget::m_ReportErrorNvmSafeReadValues(const int32_t os32_E
    C_OgeWiCustomMessage c_Message(this);
    const int32_t s32_Return = this->mrc_ComDriver.GetPollResultNrc(u8_Nrc);
 
-   tgl_assert(s32_Return == C_NO_ERR);
+   Q_ASSERT(s32_Return == C_NO_ERR);
 
    switch (os32_ErrorCode)
    {
@@ -1427,7 +1427,7 @@ void C_SyvDaItPaWriteWidget::m_ReportErrorNvmSafeWriteCrcs(const int32_t os32_Er
    C_OgeWiCustomMessage c_Message(this);
    const int32_t s32_Return = this->mrc_ComDriver.GetPollResultNrc(u8_Nrc);
 
-   tgl_assert(s32_Return == C_NO_ERR);
+   Q_ASSERT(s32_Return == C_NO_ERR);
 
    switch (os32_ErrorCode)
    {
@@ -1538,7 +1538,7 @@ void C_SyvDaItPaWriteWidget::m_ReportErrorNvmNotifyOfChanges(const int32_t os32_
    C_OgeWiCustomMessage c_Message(this);
    const int32_t s32_Return = this->mrc_ComDriver.GetPollResultNrc(u8_Nrc);
 
-   tgl_assert(s32_Return == C_NO_ERR);
+   Q_ASSERT(s32_Return == C_NO_ERR);
 
    switch (os32_ErrorCode)
    {
@@ -1629,7 +1629,7 @@ QString C_SyvDaItPaWriteWidget::m_ReadAndStoreUpdatedValues(void)
                                                                                    c_It->first.u32_DataPoolIndex,
                                                                                    c_It->first.u32_ListIndex,
                                                                                    c_It->first.u32_ElementIndex);
-      tgl_assert(pc_Element != NULL);
+      Q_ASSERT(pc_Element != NULL);
       if (pc_Element != NULL)
       {
          c_It->second.c_Actual = pc_Element->c_NvmValue;

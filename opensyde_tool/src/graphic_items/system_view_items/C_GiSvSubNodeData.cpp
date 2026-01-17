@@ -13,7 +13,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
+
 #include "C_OscLoggingHandler.hpp"
 #include "C_PuiSdHandler.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -329,7 +329,7 @@ bool C_GiSvSubNodeData::CheckUpdateDisabledState(void) const
             }
             else
             {
-               tgl_assert(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
+               Q_ASSERT(pc_Node->u32_SubDeviceIndex < pc_Node->pc_DeviceDefinition->c_SubDevices.size());
                if (pc_Node->pc_DeviceDefinition->c_SubDevices[pc_Node->u32_SubDeviceIndex].q_FlashloaderStwCan == true)
                {
                   //STW flashloader with no data block
@@ -870,10 +870,10 @@ void C_GiSvSubNodeData::m_CheckThirdParty(void)
    {
       const C_OscDeviceDefinition * const pc_Device = pc_Node->pc_DeviceDefinition;
       const uint32_t u32_SubDeviceIndex = pc_Node->u32_SubDeviceIndex;
-      tgl_assert(pc_Device != NULL);
+      Q_ASSERT(pc_Device != NULL);
       if (pc_Device != NULL)
       {
-         tgl_assert(u32_SubDeviceIndex < pc_Device->c_SubDevices.size());
+         Q_ASSERT(u32_SubDeviceIndex < pc_Device->c_SubDevices.size());
          if (u32_SubDeviceIndex < pc_Device->c_SubDevices.size())
          {
             if (((pc_Device->c_SubDevices[u32_SubDeviceIndex].q_FlashloaderStwCan == false) &&
@@ -917,7 +917,7 @@ void C_GiSvSubNodeData::m_InitPackageData(const C_OscNode & orc_Node, const C_Os
          //Register any HEX datablocks found (parameter set Data Blocks are handled together with PSI files)
          this->mq_AnyDatablockFound = true;
       }
-      tgl_assert(orc_Node.u32_SubDeviceIndex < orc_Node.pc_DeviceDefinition->c_SubDevices.size());
+      Q_ASSERT(orc_Node.u32_SubDeviceIndex < orc_Node.pc_DeviceDefinition->c_SubDevices.size());
       if (orc_Node.pc_DeviceDefinition->c_SubDevices[orc_Node.u32_SubDeviceIndex].q_FlashloaderOpenSydeIsFileBased
           ==
           false)
@@ -1120,7 +1120,7 @@ void C_GiSvSubNodeData::m_InitStatusFromPackage(
                this->mc_HexFileInfos[u32_ItFile];
             for (int32_t s32_ItDeviceInfoBlock = 0;
                  s32_ItDeviceInfoBlock <
-                 orc_DeviceApplicationInfos.pc_StwDevice->c_BasicInformation.c_DeviceInfoBlocks.GetLength();
+                 orc_DeviceApplicationInfos.pc_StwDevice->c_BasicInformation.c_DeviceInfoBlocks.size();
                  ++s32_ItDeviceInfoBlock)
             {
                const stw::diag_lib::C_XFLECUInformation & rc_StwDeviceInfo =

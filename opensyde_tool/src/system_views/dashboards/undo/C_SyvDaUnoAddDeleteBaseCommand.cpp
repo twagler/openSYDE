@@ -12,7 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglUtils.hpp"
+
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_PuiSvHandler.hpp"
@@ -30,7 +30,7 @@
 #include "C_SyvDaUnoAddDeleteBaseCommand.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_core;
@@ -124,9 +124,9 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_RestoreReadRailsOnly(void)
                   if (pc_View->CheckNonParamReadUsage(c_It.key()) == false)
                   {
                      //Re-add with new config
-                     tgl_assert(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(pc_Scene->GetViewIndex(),
+                     Q_ASSERT(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(pc_Scene->GetViewIndex(),
                                                                                         c_It.key()) == C_NO_ERR);
-                     tgl_assert(C_PuiSvHandler::h_GetInstance()->AddViewReadRailItem(pc_Scene->GetViewIndex(),
+                     Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddViewReadRailItem(pc_Scene->GetViewIndex(),
                                                                                      c_It.key(),
                                                                                      c_It.value()) == C_NO_ERR);
                   }
@@ -337,7 +337,7 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_SaveToData(void)
                               const C_PuiSvDbLabel * const pc_LabelData = pc_Dashboard->GetLabel(u32_Index);
                               if (pc_LabelData != NULL)
                               {
-                                 tgl_assert(this->mc_DataBackup.AddWidget(pc_LabelData,
+                                 Q_ASSERT(this->mc_DataBackup.AddWidget(pc_LabelData,
                                                                           C_PuiSvDbDataElement::eLABEL) == C_NO_ERR);
                                  this->mc_MapTypeAndIndexToId.insert(
                                     C_PuiBsTemporaryDataId(static_cast<int32_t>(C_PuiSvDbDataElement::eLABEL),
@@ -350,7 +350,7 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_SaveToData(void)
                               const C_PuiSvDbParam * const pc_ParamData = pc_Dashboard->GetParam(u32_Index);
                               if (pc_ParamData != NULL)
                               {
-                                 tgl_assert(this->mc_DataBackup.AddWidget(pc_ParamData,
+                                 Q_ASSERT(this->mc_DataBackup.AddWidget(pc_ParamData,
                                                                           C_PuiSvDbDataElement::ePARAM) == C_NO_ERR);
                                  this->mc_MapTypeAndIndexToId.insert(
                                     C_PuiBsTemporaryDataId(static_cast<int32_t>(C_PuiSvDbDataElement::ePARAM),
@@ -363,7 +363,7 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_SaveToData(void)
                               const C_PuiSvDbSpinBox * const pc_SpinBoxData = pc_Dashboard->GetSpinBox(u32_Index);
                               if (pc_SpinBoxData != NULL)
                               {
-                                 tgl_assert(this->mc_DataBackup.AddWidget(pc_SpinBoxData,
+                                 Q_ASSERT(this->mc_DataBackup.AddWidget(pc_SpinBoxData,
                                                                           C_PuiSvDbDataElement::eSPIN_BOX) ==
                                             C_NO_ERR);
                                  this->mc_MapTypeAndIndexToId.insert(
@@ -377,7 +377,7 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_SaveToData(void)
                               const C_PuiSvDbSlider * const pc_SliderData = pc_Dashboard->GetSlider(u32_Index);
                               if (pc_SliderData != NULL)
                               {
-                                 tgl_assert(this->mc_DataBackup.AddWidget(pc_SliderData,
+                                 Q_ASSERT(this->mc_DataBackup.AddWidget(pc_SliderData,
                                                                           C_PuiSvDbDataElement::eSLIDER) ==
                                             C_NO_ERR);
                                  this->mc_MapTypeAndIndexToId.insert(
@@ -393,7 +393,7 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_SaveToData(void)
                                     u32_Index);
                               if (pc_ProgressBarData != NULL)
                               {
-                                 tgl_assert(this->mc_DataBackup.AddWidget(pc_ProgressBarData,
+                                 Q_ASSERT(this->mc_DataBackup.AddWidget(pc_ProgressBarData,
                                                                           C_PuiSvDbDataElement::
                                                                           ePROGRESS_BAR) == C_NO_ERR);
                                  this->mc_MapTypeAndIndexToId.insert(
@@ -409,7 +409,7 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_SaveToData(void)
                                     u32_Index);
                               if (pc_ToggleData != NULL)
                               {
-                                 tgl_assert(this->mc_DataBackup.AddWidget(pc_ToggleData, C_PuiSvDbDataElement::
+                                 Q_ASSERT(this->mc_DataBackup.AddWidget(pc_ToggleData, C_PuiSvDbDataElement::
                                                                           eTOGGLE) == C_NO_ERR);
                                  this->mc_MapTypeAndIndexToId.insert(
                                     C_PuiBsTemporaryDataId(static_cast<int32_t>(C_PuiSvDbDataElement::eTOGGLE),
@@ -425,7 +425,7 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_SaveToData(void)
                                     u32_Index);
                               if (pc_PieChartData != NULL)
                               {
-                                 tgl_assert(this->mc_DataBackup.AddWidget(pc_PieChartData, C_PuiSvDbDataElement::
+                                 Q_ASSERT(this->mc_DataBackup.AddWidget(pc_PieChartData, C_PuiSvDbDataElement::
                                                                           ePIE_CHART) == C_NO_ERR);
                                  this->mc_MapTypeAndIndexToId.insert(
                                     C_PuiBsTemporaryDataId(static_cast<int32_t>(C_PuiSvDbDataElement::ePIE_CHART),
@@ -441,7 +441,7 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_SaveToData(void)
                                     u32_Index);
                               if (pc_TableData != NULL)
                               {
-                                 tgl_assert(this->mc_DataBackup.AddWidget(pc_TableData, C_PuiSvDbDataElement::
+                                 Q_ASSERT(this->mc_DataBackup.AddWidget(pc_TableData, C_PuiSvDbDataElement::
                                                                           eTABLE) == C_NO_ERR);
                                  this->mc_MapTypeAndIndexToId.insert(
                                     C_PuiBsTemporaryDataId(static_cast<int32_t>(C_PuiSvDbDataElement::eTABLE),
@@ -530,10 +530,10 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_Delete(void)
 
                   //Replace data
                   c_NewConfig.e_TransmissionMode = C_PuiSvReadDataConfiguration::eTM_ON_TRIGGER;
-                  tgl_assert(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(pc_Scene->GetViewIndex(),
+                  Q_ASSERT(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(pc_Scene->GetViewIndex(),
                                                                                      c_ItReadRailAssignment.key()) ==
                              C_NO_ERR);
-                  tgl_assert(C_PuiSvHandler::h_GetInstance()->AddViewReadRailItem(pc_Scene->GetViewIndex(),
+                  Q_ASSERT(C_PuiSvHandler::h_GetInstance()->AddViewReadRailItem(pc_Scene->GetViewIndex(),
                                                                                   c_ItReadRailAssignment.key(),
                                                                                   c_NewConfig) ==
                              C_NO_ERR);
@@ -544,7 +544,7 @@ void C_SyvDaUnoAddDeleteBaseCommand::m_Delete(void)
             else
             {
                //Delete data
-               tgl_assert(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(pc_Scene->GetViewIndex(),
+               Q_ASSERT(C_PuiSvHandler::h_GetInstance()->RemoveViewReadRailItem(pc_Scene->GetViewIndex(),
                                                                                   c_ItReadRailAssignment.key()) ==
                           C_NO_ERR);
                //Explicit iteration step

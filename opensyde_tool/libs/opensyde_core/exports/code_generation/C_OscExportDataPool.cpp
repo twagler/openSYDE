@@ -88,7 +88,7 @@ uint16_t C_OscExportDataPool::h_ConvertOverallCodeVersion(const uint16_t ou16_Ge
       break;
    default:
       // should never occur...
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -1160,7 +1160,7 @@ void C_OscExportDataPool::mh_AddModuleGlobal(C_SclStringList & orc_Data, const C
                             "_DataPoolValues,  ///< Pointer to pointer to struct containing all Datapool values");
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
          orc_Data.Append("   0x" + C_SclString::IntToHex(static_cast<int64_t>(u32_HashValue), 4U) +
@@ -1208,7 +1208,7 @@ void C_OscExportDataPool::mh_AddModuleGlobal(C_SclStringList & orc_Data, const C
          c_String += "NULL)";
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -1260,7 +1260,7 @@ void C_OscExportDataPool::mh_AddModuleGlobal(C_SclStringList & orc_Data, const C
       orc_Data.Append("   &mt_RemoteDataPoolInfo,  ///< info about remote Datapool");
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -1337,7 +1337,7 @@ C_SclString C_OscExportDataPool::mh_GetType(const C_OscNodeDataPoolContent::E_Ty
       c_Type += "float64";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -1416,7 +1416,7 @@ C_SclString C_OscExportDataPool::mh_GetElementValueString(const C_OscNodeDataPoo
          c_String += C_OscExportUti::h_FloatToStrGe(orc_Value.GetValueF64());
          break;
       default:
-         tgl_assert(false);
+         Q_ASSERT(false);
          break;
       }
    }
@@ -1477,7 +1477,7 @@ C_SclString C_OscExportDataPool::mh_GetElementValueString(const C_OscNodeDataPoo
             c_String += C_OscExportUti::h_FloatToStrGe(orc_Value.GetValueArrF64Element(u32_ArrayIndex));
             break;
          default:
-            tgl_assert(false);
+            Q_ASSERT(false);
             break;
          }
 
@@ -1545,7 +1545,7 @@ C_SclString C_OscExportDataPool::mh_GetElementSize(const C_OscNodeDataPoolConten
       u32_Size = 8U;
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 
@@ -1584,7 +1584,7 @@ C_SclString C_OscExportDataPool::mh_ConvertLinkageToString(const C_OscExportData
       c_Return = "REMOTE_PUBLIC";
       break;
    default:
-      tgl_assert(false);
+      Q_ASSERT(false);
       break;
    }
 

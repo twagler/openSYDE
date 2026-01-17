@@ -1,4 +1,4 @@
-﻿//----------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 /*!
    \file
    \brief       Widget for showing a specific parameter set image file as part of a node
@@ -14,7 +14,7 @@
 #include "stwerrors.hpp"
 
 #include "constants.hpp"
-#include "TglUtils.hpp"
+
 #include "C_PuiSvHandler.hpp"
 #include "C_OgePopUpDialog.hpp"
 
@@ -24,7 +24,7 @@
 #include "C_SyvUpPacParamSetFileAddPopUp.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_gui;
 using namespace stw::opensyde_gui_elements;
@@ -197,7 +197,7 @@ void C_SyvUpPacListNodeItemParamSetWidget::m_LoadFileInformation(bool & orq_File
                this->SetParamInfo(rc_ParamSetInfo);
 
                //Update data
-               tgl_assert(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationParamInfo(this->mu32_ViewIndex,
+               Q_ASSERT(C_PuiSvHandler::h_GetInstance()->SetNodeUpdateInformationParamInfo(this->mu32_ViewIndex,
                                                                                              this->mu32_NodeIndex,
                                                                                              this->GetAppNumber(),
                                                                                              rc_ParamSetInfo) ==

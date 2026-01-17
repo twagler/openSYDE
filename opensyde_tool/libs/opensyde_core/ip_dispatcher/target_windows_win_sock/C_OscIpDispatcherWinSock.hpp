@@ -20,11 +20,11 @@
 #include <map>
 #include <list>
 #include <winsock.h>
+#include <QRecursiveMutex>
 #include "stwtypes.hpp"
 #include "C_OscIpDispatcher.hpp"
 #include "C_SclString.hpp"
 #include "C_SclStringList.hpp"
-#include "TglTasks.hpp"
 
 /* -- Namespace ----------------------------------------------------------------------------------------------------- */
 namespace stw
@@ -79,7 +79,7 @@ private:
    stw::scl::C_SclStringList mc_PreferredInterfaceNames; ///< Optional preferred interfaces
 
    static std::map<C_BufferIdentifier, std::list<std::vector<uint8_t> > > mhc_TcpBuffer; ///< dispatcher buffer
-   static stw::tgl::C_TglCriticalSection mhc_LockBuffer;
+   static QRecursiveMutex mhc_LockBuffer;
 
    int32_t m_GetAllInstalledInterfaceIps(void);
    int32_t m_ConnectTcp(C_TcpConnection & orc_Connection) const;

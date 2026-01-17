@@ -18,7 +18,7 @@
 #include "C_CanDispatcher.hpp"
 #include "C_SclString.hpp"
 
-#include "C_SclDynamicArray.hpp"
+#include <QList>
 
 namespace stw
 {
@@ -73,7 +73,7 @@ public:
    int32_t CAN_Status(T_STWCAN_Status & orc_Status) const;
    int32_t CAN_DLL_Info(T_STWCAN_DLLInfo & orc_Info) const;
    int32_t CAN_Get_Supported_Bitrates(stw::scl::C_SclString & orc_Unit,
-                                      stw::scl::C_SclDynamicArray<uint32_t> & orc_Bitrates,
+                                      QList<uint32_t> & orc_Bitrates,
                                       uint32_t & oru32_MultiplicationFactor) const;
 
    //setter/getter functions

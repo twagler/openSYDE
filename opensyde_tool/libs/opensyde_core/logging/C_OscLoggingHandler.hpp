@@ -14,10 +14,10 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include <fstream>
 #include <map>
+#include <QRecursiveMutex>
 #include "C_SclString.hpp"
-#include "TglUtils.hpp"
-#include "TglTime.hpp"
-#include "TglTasks.hpp"
+#include <QDateTime>
+
 
 //PC-Lint suppressions: function-like macro is the only way to get file,func,line information into the text
 //lint -save -e9026
@@ -72,7 +72,7 @@ public:
 
    //Utility functions
    static void h_Flush(void);
-   static std::string h_UtilConvertDateTimeToString(const stw::tgl::C_TglDateTime & orc_DateTime);
+   static std::string h_UtilConvertDateTimeToString(const QDateTime & orc_DateTime);
 
 private:
    static bool mhq_WriteToFile;
@@ -81,10 +81,10 @@ private:
    static bool mhq_WriteToConsole;
    static bool mhq_MeasureTime;
    static bool mhq_LogInitErrorsToConsole;
-   static std::map<uint16_t, uint32_t> mhc_StartTimes; ///< first: Timer ID, second: start time
+   static std::map<uint16_t, qint64> mhc_StartTimes; ///< first: Timer ID, second: start time (ms since epoch)
    static stw::scl::C_SclString mhc_FileName;
-   static stw::tgl::C_TglCriticalSection mhc_ConsoleCriticalSection;
-   static stw::tgl::C_TglCriticalSection mhc_FileCriticalSection;
+   static QRecursiveMutex mhc_ConsoleCriticalSection;
+   static QRecursiveMutex mhc_FileCriticalSection;
    static std::ofstream mhc_File;
 
    static void mh_WriteLog(const stw::scl::C_SclString & orc_Type, const stw::scl::C_SclString & orc_Activity,

@@ -12,16 +12,15 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 
-#include "TglFile.hpp"
 #include "stwtypes.hpp"
-#include "TglUtils.hpp"
+
 #include "stwerrors.hpp"
 #include "C_OscXmlParser.hpp"
 #include "C_OscSupDefinitionFiler.hpp"
 #include "C_OscSupNodeDefinitionFiler.hpp"
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
-using namespace stw::tgl;
+
 using namespace stw::errors;
 using namespace stw::opensyde_core;
 
@@ -70,7 +69,7 @@ int32_t C_OscSupDefinitionFiler::h_CreateUpdatePackageDefFile(const stw::scl::C_
                                                               const C_OscSupDefinition & orc_SupDefContent,
                                                               const std::vector<stw::scl::C_SclString> & orc_Files)
 {
-   const stw::scl::C_SclString c_FileName = TglFileIncludeTrailingDelimiter(orc_Path) + hc_PACKAGE_UPDATE_DEF;
+   const stw::scl::C_SclString c_FileName = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_Path) + hc_PACKAGE_UPDATE_DEF;
    int32_t s32_Result;
 
    // fill update package definition
@@ -80,17 +79,17 @@ int32_t C_OscSupDefinitionFiler::h_CreateUpdatePackageDefFile(const stw::scl::C_
    c_XmlParser.CreateAndSelectNodeChild(mc_ROOT_NAME);
 
    //File version
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
    c_XmlParser.SetNodeContent(stw::scl::C_SclString::IntToStr(mu16_FILE_VERSION));
-   tgl_assert(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
 
    mh_SaveNodes(c_XmlParser, orc_SupDefContent.c_Nodes, orc_Files);
 
-   tgl_assert(c_XmlParser.CreateAndSelectNodeChild(mc_BUS_INDEX) == mc_BUS_INDEX);
+   Q_ASSERT(c_XmlParser.CreateAndSelectNodeChild(mc_BUS_INDEX) == mc_BUS_INDEX);
    c_XmlParser.SetNodeContent(stw::scl::C_SclString::IntToStr(orc_SupDefContent.u32_ActiveBusIndex));
 
    //Return
-   tgl_assert(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+   Q_ASSERT(c_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
 
    // save update package definition file
    s32_Result = c_XmlParser.SaveToFile(c_FileName);
@@ -140,32 +139,32 @@ int32_t C_OscSupDefinitionFiler::h_LoadUpdatePackageDefFile(const stw::scl::C_Sc
    }
    else
    {
-      orc_FilePackagePath = TglFileIncludeTrailingDelimiter(orc_PackagePath);
+      orc_FilePackagePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_PackagePath);
       s32_Retval = c_XmlParser.LoadFromFile(orc_FilePackagePath + C_OscSupDefinitionFiler::hc_PACKAGE_UPDATE_DEF);
    }
 
    if (s32_Retval == C_NO_ERR)
    {
-      tgl_assert(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and
+      Q_ASSERT(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and
       // compatible update package
 
       // file version
-      tgl_assert(c_XmlParser.SelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
+      Q_ASSERT(c_XmlParser.SelectNodeChild(mc_FILE_VERSION) == mc_FILE_VERSION);
       const stw::scl::C_SclString c_FileVersion = c_XmlParser.GetNodeContent();
       oru32_FileVersion = static_cast<uint32_t>(c_FileVersion.ToInt());
-      tgl_assert(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and
+      Q_ASSERT(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and
       // compatible update package
 
       if (oru32_FileVersion == mu16_FILE_VERSION)
       {
          // active bus index
-         tgl_assert(c_XmlParser.SelectNodeChild(mc_BUS_INDEX) == mc_BUS_INDEX);
+         Q_ASSERT(c_XmlParser.SelectNodeChild(mc_BUS_INDEX) == mc_BUS_INDEX);
          const stw::scl::C_SclString c_BusIndex = c_XmlParser.GetNodeContent();
          oru32_ActiveBusIndex = static_cast<uint32_t>(c_BusIndex.ToInt());
 
          // get active nodes with update positions and files to flash
 
-         tgl_assert(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and
+         Q_ASSERT(c_XmlParser.SelectRoot() == mc_ROOT_NAME); // we shall have a valid and
          // compatible update package
          mh_LoadNodes(c_XmlParser, orc_ActiveNodes, orc_UpdatePosition, orc_PackageFiles);
       }
@@ -191,10 +190,10 @@ void C_OscSupDefinitionFiler::mh_SaveNodes(C_OscXmlParserBase & orc_XmlParser,
                                            const std::vector<stw::scl::C_SclString> & orc_Files)
 {
    //Nodes
-   tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(mc_NODES) == mc_NODES);
+   Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(mc_NODES) == mc_NODES);
 
    //List nodes
-   tgl_assert(orc_Nodes.size() == orc_Files.size());
+   Q_ASSERT(orc_Nodes.size() == orc_Files.size());
    if (orc_Nodes.size() == orc_Files.size())
    {
       for (uint32_t u32_Pos = 0; u32_Pos < orc_Nodes.size(); u32_Pos++)
@@ -202,7 +201,7 @@ void C_OscSupDefinitionFiler::mh_SaveNodes(C_OscXmlParserBase & orc_XmlParser,
          const C_OscSupNodeDefinition c_CurrentNode = orc_Nodes[u32_Pos];
 
          //Node
-         tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(mc_NODE) == mc_NODE);
+         Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(mc_NODE) == mc_NODE);
          orc_XmlParser.SetAttributeUint32(mc_NODE_ACTIVE_ATTR, static_cast<uint32_t>(c_CurrentNode.u8_Active));
 
          // active node?
@@ -216,23 +215,23 @@ void C_OscSupDefinitionFiler::mh_SaveNodes(C_OscXmlParserBase & orc_XmlParser,
                //Update Position
                orc_XmlParser.SetAttributeUint32(mc_NODE_POSITION_ATTR, c_CurrentNode.u32_Position);
             }
-            tgl_assert(orc_XmlParser.CreateAndSelectNodeChild(mc_NODE_UPDATE) == mc_NODE_UPDATE);
+            Q_ASSERT(orc_XmlParser.CreateAndSelectNodeChild(mc_NODE_UPDATE) == mc_NODE_UPDATE);
 
             orc_XmlParser.SetAttributeString(mc_NODE_FILE_ATTR, orc_Files[u32_Pos]);
 
-            tgl_assert(orc_XmlParser.SelectNodeParent() == mc_NODE);
-            tgl_assert(orc_XmlParser.SelectNodeParent() == mc_NODES);
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_NODE);
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_NODES);
          }
          else
          {
             //Return for next node
-            tgl_assert(orc_XmlParser.SelectNodeParent() == mc_NODES);
+            Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_NODES);
          }
       }
    }
 
    //Return
-   tgl_assert(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
+   Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -248,9 +247,9 @@ void C_OscSupDefinitionFiler::mh_LoadNodes(C_OscXmlParserBase & orc_XmlParser, s
                                            std::vector<uint32_t> & orc_UpdatePosition,
                                            std::vector<stw::scl::C_SclString> & orc_PackageFiles)
 {
-   tgl_assert(orc_XmlParser.SelectNodeChild(mc_NODES) == mc_NODES);
+   Q_ASSERT(orc_XmlParser.SelectNodeChild(mc_NODES) == mc_NODES);
 
-   tgl_assert(orc_XmlParser.SelectNodeChild(mc_NODE) == mc_NODE);
+   Q_ASSERT(orc_XmlParser.SelectNodeChild(mc_NODE) == mc_NODE);
 
    // go through all nodes
    stw::scl::C_SclString c_SelectedNode;
@@ -266,9 +265,9 @@ void C_OscSupDefinitionFiler::mh_LoadNodes(C_OscXmlParserBase & orc_XmlParser, s
          // get update position
          u32_UpdatePosition  = static_cast<uint8_t>(
             orc_XmlParser.GetAttributeUint32(mc_NODE_POSITION_ATTR));
-         tgl_assert(orc_XmlParser.SelectNodeChild(mc_NODE_UPDATE) == mc_NODE_UPDATE);
+         Q_ASSERT(orc_XmlParser.SelectNodeChild(mc_NODE_UPDATE) == mc_NODE_UPDATE);
          c_File = orc_XmlParser.GetAttributeString(mc_NODE_FILE_ATTR);
-         tgl_assert(orc_XmlParser.SelectNodeParent() == mc_NODE);
+         Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_NODE);
       }
       orc_UpdatePosition.push_back(u32_UpdatePosition);
       orc_PackageFiles.push_back(c_File);
