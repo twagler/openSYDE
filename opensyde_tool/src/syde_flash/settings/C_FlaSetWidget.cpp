@@ -68,7 +68,7 @@ C_FlaSetWidget::C_FlaSetWidget(QWidget * const opc_Parent) :
 
    // connect hide signal of widgets
    connect(this->mpc_Ui->pc_WiProgress, &C_FlaSetProgressWidget::SigHide, this, &C_FlaSetWidget::m_HidePopupProgress);
-   connect(this->mpc_Ui->pc_WiDll, &C_CamMosDllWidget::SigHide, this, &C_FlaSetWidget::m_HidePopupDllConfig);
+   connect(this->mpc_Ui->pc_WiDll, &C_FlaBitrateWidget::SigHide, this, &C_FlaSetWidget::m_HidePopupDllConfig);
    connect(this->mpc_Ui->pc_WiAdvancedProperties, &C_FlaSetAdvancedPropertiesWidget::SigHide, this,
            &C_FlaSetWidget::m_HidePopupAdvSett);
 
@@ -77,7 +77,7 @@ C_FlaSetWidget::C_FlaSetWidget(QWidget * const opc_Parent) :
            this, &C_FlaSetWidget::m_OnExpandSettings);
 
    // forward information about new settings
-   connect(this->mpc_Ui->pc_WiDll, &C_CamMosDllWidget::SigCanDllConfigured,
+   connect(this->mpc_Ui->pc_WiDll, &C_FlaBitrateWidget::SigCanDllConfigured,
            this, &C_FlaSetWidget::SigCanDllConfigured);
 }
 
