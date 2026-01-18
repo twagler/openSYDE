@@ -38,5 +38,26 @@ The project includes both CHM documentation and markdown planning documents. The
 ## License
 The project is licensed under GPL v3.0, with additional license information in the `license.txt` and `gpl-3.0.txt` files.
 
+## AI Agent Workspace Rules
+
+**All AI agents working on this repository MUST follow these rules:**
+
+1. **Use the `plans/` directory** for all persistent artifacts:
+   - Implementation plans → `plans/implementation_plan.md`
+   - Task checklists → `plans/task.md`
+   - Walkthroughs → `plans/walkthrough.md`
+   - Scripts and utilities → `plans/scripts/`
+   - Research notes and documentation → `plans/`
+
+2. **Never use temporary directories** for work products. All artifacts should be saved to `plans/` so they persist across sessions and are available to other agents.
+
+3. **Naming conventions** for plan files:
+   - Use descriptive names: `<Feature>_<Type>.md` (e.g., `DBC_Export_Implementation_Plan.md`)
+   - Prefix active work items with dates if needed: `YYYY-MM-DD_<name>.md`
+
+4. **Cleanup responsibility**: When work is complete, consolidate or archive old plans rather than leaving orphaned files.
+
+---
+
 ## Development Context
 This appears to be a complex software development project with multiple components, documentation, and planning for potential replacements of various libraries and tools (such as FlexLexer, OpenSSL, QCustomPlot, and Qt).
