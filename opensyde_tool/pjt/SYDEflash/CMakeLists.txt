@@ -238,7 +238,7 @@ set(OPENSYDE_SOURCES
    ${PROJECT_ROOT}/src/syde_flash/properties/C_FlaPropWidget.cpp
    ${PROJECT_ROOT}/src/syde_flash/search_nodes/C_FlaSenDcBasicSequences.cpp
    ${PROJECT_ROOT}/src/syde_flash/search_nodes/C_FlaSenSearchNodePopup.cpp
-   ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaDllWidget.cpp
+   ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaBitrateWidget.cpp
    ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaSetAdvancedPropertiesWidget.cpp
    ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaSetProgressWidget.cpp
    ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaSetWidget.cpp
@@ -407,7 +407,7 @@ set(OPENSYDE_HEADERS
    ${PROJECT_ROOT}/src/syde_flash/properties/C_FlaPropWidget.hpp
    ${PROJECT_ROOT}/src/syde_flash/search_nodes/C_FlaSenDcBasicSequences.hpp
    ${PROJECT_ROOT}/src/syde_flash/search_nodes/C_FlaSenSearchNodePopup.hpp
-   ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaDllWidget.hpp
+   ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaBitrateWidget.hpp
    ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaSetAdvancedPropertiesWidget.hpp
    ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaSetProgressWidget.hpp
    ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaSetWidget.hpp
@@ -459,6 +459,7 @@ set(OPENSYDE_FORMS
    ${PROJECT_ROOT}/src/syde_flash/properties/C_FlaPropWidget.ui
    ${PROJECT_ROOT}/src/syde_flash/search_nodes/C_FlaSenSearchNodePopup.ui
    ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaSetAdvancedPropertiesWidget.ui
+   ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaBitrateWidget.ui
    ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaSetProgressWidget.ui
    ${PROJECT_ROOT}/src/syde_flash/settings/C_FlaSetWidget.ui
    ${PROJECT_ROOT}/src/syde_flash/update/C_FlaUpHexFileView.ui
