@@ -99,7 +99,7 @@ int32_t C_CieImportDbc::h_ImportNetwork(const C_SclString & orc_File,
    if ((s32_Return == C_NO_ERR) || (s32_Return == C_WARN))
    {
       uint32_t u32_Nodes = 0U;
-      stw::scl::C_SclString c_FileName = QFileInfo(QString::fromStdString(*orc_File.AsStdString())).fileName().toStdString();
+      stw::scl::C_SclString c_FileName = QFileInfo(orc_File.ToQString()).fileName().toStdString().c_str();
       c_FileName.SetLength(c_FileName.Length() - 4U); //no extension
 
       // add bus information
@@ -219,7 +219,7 @@ int32_t C_CieImportDbc::mh_ReadFile(const C_SclString & orc_File, Vector::DBC::N
    {
       s32_Return = C_RANGE;
    }
-   else if ((QFileInfo(QString::fromStdString(*orc_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_File.AsStdString())).isFile()) == false)
+   else if (QFileInfo(orc_File.ToQString()).exists() == false || QFileInfo(orc_File.ToQString()).isFile() == false)
    {
       mhc_ErrorMessage = "DBC file \"" + orc_File + "\" does not exist.";
       osc_write_log_error("DBC file import", mhc_ErrorMessage);

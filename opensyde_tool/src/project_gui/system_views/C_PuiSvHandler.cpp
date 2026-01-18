@@ -96,7 +96,7 @@ int32_t C_PuiSvHandler::SaveToFile(const QString & orc_Path, const bool oq_UseDe
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.toStdString(.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.toStdString(.AsStdString())).isFile()).c_str()) == true)
+   if (QFileInfo(orc_Path).exists() && QFileInfo(orc_Path).isFile())
    {
       //erase it:
       s32_Return = std::remove(orc_Path.toStdString().c_str());
@@ -3368,7 +3368,7 @@ int32_t C_PuiSvHandler::m_LoadFromFile(const QString & orc_Path,
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.toStdString(.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.toStdString(.AsStdString())).isFile()).c_str()) == true)
+   if (QFileInfo(orc_Path).exists() && QFileInfo(orc_Path).isFile())
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading views");

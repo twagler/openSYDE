@@ -924,7 +924,7 @@ QString C_Uti::h_ConvertVersionToStwStyle(const QString & orc_Version)
 QString C_Uti::h_ConcatPathIfNecessary(const QString & orc_BaseDir, const QString & orc_RelativeOrAbsolutePath)
 {
    QString c_Result = C_OscUtils::h_ConcatPathIfNecessary(orc_BaseDir.toStdString().c_str(),
-                                                          orc_RelativeOrAbsolutePath.toStdString().c_str()).c_str();
+                                                          orc_RelativeOrAbsolutePath.toStdString().c_str()).ToQString();
 
    // do some path beautifying
    if (c_Result.contains("%") == false)

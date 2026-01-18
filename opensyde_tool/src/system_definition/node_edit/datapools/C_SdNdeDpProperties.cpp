@@ -1143,7 +1143,7 @@ void C_SdNdeDpProperties::m_OnComTypeChange(void) const
 
    c_DatapoolName = C_PuiSdHandler::h_GetInstance()->GetUniqueDataPoolName(
       this->mu32_NodeIndex,
-      C_PuiSdUtil::h_ConvertProtocolTypeToDatapoolNameString(e_Type).toStdString().c_str()).c_str();
+      C_PuiSdUtil::h_ConvertProtocolTypeToDatapoolNameString(e_Type).toStdString().c_str()).ToQString();
 
    this->mpc_Ui->pc_LineEditDatapoolName->setText(c_DatapoolName);
 }

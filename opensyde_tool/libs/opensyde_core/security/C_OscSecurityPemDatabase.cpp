@@ -131,7 +131,7 @@ int32_t C_OscSecurityPemDatabase::AddLevel7PemFile(const std::string & orc_Path)
 {
    int32_t s32_Retval;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()))
+   if (QFileInfo(QString::fromStdString(orc_Path)).exists() && QFileInfo(QString::fromStdString(orc_Path)).isFile())
    {
       s32_Retval = C_OscSecurityPemDatabase::m_TryAddKeyFromPath(orc_Path, false);
    }
@@ -165,7 +165,7 @@ int32_t C_OscSecurityPemDatabase::ParseFolder(const std::string & orc_FolderPath
    // Remove previous results
    this->mc_StoredPemFiles.clear();
 
-   if (QFileInfo(QString::fromStdString(*c_FolderPathWithDelimiter.AsStdString())).isDir())
+   if (QFileInfo(QString::fromStdString(c_FolderPathWithDelimiter)).isDir())
    {
       const std::vector<std::string> c_Files = C_OscSecurityPemDatabase::mh_GetPemFiles(c_FolderPathWithDelimiter);
       for (uint32_t u32_It = 0UL; u32_It < c_Files.size(); ++u32_It)

@@ -57,7 +57,7 @@ int32_t C_OscTargetSupportPackageFiler::h_Load(C_OscTargetSupportPackage & orc_T
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       C_OscXmlParser c_XmlParser;
 

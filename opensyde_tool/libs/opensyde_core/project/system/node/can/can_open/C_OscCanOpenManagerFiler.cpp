@@ -70,7 +70,7 @@ int32_t C_OscCanOpenManagerFiler::h_LoadFile(std::map<uint8_t, C_OscCanOpenManag
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading CANopen manager data");
@@ -808,7 +808,7 @@ int32_t C_OscCanOpenManagerFiler::mh_LoadManagerSubDeviceEdsPart(C_OscCanOpenMan
          //EDS file is only loaded on demand, remember path:
          orc_Config.c_ProjectEdsFilePath = c_CompleteFileName;
 
-         if ((QFileInfo(QString::fromStdString(*c_CompleteFileName.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_CompleteFileName.AsStdString())).isFile()) == false)
+         if (!(QFileInfo(c_CompleteFileName.ToQString()).exists() && QFileInfo(c_CompleteFileName.ToQString()).isFile()))
          {
             //Issue a warning if file does not exist. Do not consider a hard error. As long as the content is not needed
             // having the file available is not strictly required.

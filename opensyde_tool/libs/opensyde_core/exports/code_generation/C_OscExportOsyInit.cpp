@@ -487,7 +487,7 @@ int32_t C_OscExportOsyInit::h_CreateSourceCode(const C_SclString & orc_FilePath,
             }
          }
          //remove final ",":
-         c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].removeAt(
+         c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].Delete(
             c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].Length(), 1U);
 
          c_Lines.Add("   };");
@@ -561,7 +561,7 @@ int32_t C_OscExportOsyInit::h_CreateSourceCode(const C_SclString & orc_FilePath,
             }
          }
          //remove final ",":
-         c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].removeAt(
+         c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].Delete(
             c_Lines.Strings[static_cast<int32_t>(c_Lines.GetCount()) - 1].Length(), 1U);
          c_Lines.Add("   };");
          c_Lines.Add("");

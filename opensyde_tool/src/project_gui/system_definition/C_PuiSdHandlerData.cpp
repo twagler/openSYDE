@@ -72,7 +72,7 @@ int32_t C_PuiSdHandlerData::LoadFromFile(const stw::scl::C_SclString & orc_Path,
 
    const uint16_t u16_TimerId = osc_write_log_performance_start();
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       C_OscXmlParser c_XmlParser;
       s32_Return = c_XmlParser.LoadFromFile(orc_Path);
@@ -240,7 +240,7 @@ int32_t C_PuiSdHandlerData::SaveToFile(const stw::scl::C_SclString & orc_Path, c
 
    const uint16_t u16_TimerId = osc_write_log_performance_start();
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       //erase it:
       int32_t s32_ReturnRemove;

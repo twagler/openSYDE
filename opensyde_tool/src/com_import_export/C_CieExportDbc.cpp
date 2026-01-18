@@ -109,7 +109,7 @@ int32_t C_CieExportDbc::h_ExportNetwork(const stw::scl::C_SclString & orc_File,
    mhc_ExportStatistic.u32_NumOfSignals = 0;
 
    // check file path
-   if (QFileInfo(QString::fromStdString(*(QFileInfo(QString::fromStdString(*orc_File.AsStdString(.AsStdString())).absolutePath() + "/").toStdString())).isDir()) == false)
+   if (QFileInfo(QFileInfo(orc_File.ToQString()).absolutePath()).isDir() == false)
    {
       orc_ErrorMessage = "Path \"" + orc_File + "\" does not exist.";
       osc_write_log_warning("DBC file export", orc_ErrorMessage);

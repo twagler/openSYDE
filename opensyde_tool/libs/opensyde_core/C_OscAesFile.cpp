@@ -86,7 +86,7 @@ int32_t C_OscAesFile::h_EncryptFile(const C_SclString & orc_Key, const C_SclStri
    Q_ASSERT(c_AesKey.Length() == 32); //really should be 16 bytes, resp. 32 hex characters
 
    //check whether input file exists:
-   if ((QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).isFile()) == false)
+   if (!QFileInfo(orc_InFilePath.ToQString()).exists() || !QFileInfo(orc_InFilePath.ToQString()).isFile())
    {
       s32_Return = C_RD_WR;
    }
@@ -95,7 +95,7 @@ int32_t C_OscAesFile::h_EncryptFile(const C_SclString & orc_Key, const C_SclStri
       //load data from input file:
       vector<uint8_t> c_InputData;
       std::ifstream c_InputFileStream;
-      const uint32_t u32_InputFileSize = static_cast<uint32_t>(static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).size()));
+      const uint32_t u32_InputFileSize = static_cast<uint32_t>(QFileInfo(orc_InFilePath.ToQString()).size());
       const uint8_t u8_Pkcs7Size = static_cast<uint8_t>(16U - (u32_InputFileSize % 16U));
 
       c_InputData.resize(static_cast<size_t>(u32_InputFileSize) + u8_Pkcs7Size);
@@ -220,7 +220,7 @@ int32_t C_OscAesFile::h_DecryptFile(const C_SclString & orc_Key, const C_SclStri
    Q_ASSERT(c_AesKey.Length() == 32); //really should be 16 bytes, resp. 32 hex characters
 
    //check whether input file exists:
-   if ((QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).isFile()) == false)
+   if (!QFileInfo(orc_InFilePath.ToQString()).exists() || !QFileInfo(orc_InFilePath.ToQString()).isFile())
    {
       s32_Return = C_RD_WR;
    }
@@ -229,7 +229,7 @@ int32_t C_OscAesFile::h_DecryptFile(const C_SclString & orc_Key, const C_SclStri
       //load data from input file:
       vector<uint8_t> c_InputData;
       std::ifstream c_InputFileStream;
-      const uint32_t u32_InputFileSize = static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).size());
+      const uint32_t u32_InputFileSize = static_cast<uint32_t>(QFileInfo(orc_InFilePath.ToQString()).size());
 
       //is the file correctly padded ?
       if ((u32_InputFileSize % 16U) != 0U)
@@ -238,7 +238,7 @@ int32_t C_OscAesFile::h_DecryptFile(const C_SclString & orc_Key, const C_SclStri
       }
       else
       {
-         c_InputData.resize(static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_InFilePath.AsStdString())).size()));
+         c_InputData.resize(static_cast<size_t>(QFileInfo(orc_InFilePath.ToQString()).size()));
 
          c_InputFileStream.open(orc_InFilePath.c_str(), std::ifstream::binary);
 

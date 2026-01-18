@@ -19,7 +19,7 @@
 #include "CXFLActions.hpp"
 
 #include "C_SclString.hpp"
-#include "C_SclIniFile.hpp"
+
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -109,51 +109,52 @@ C_XFLFlashWriteParameters::~C_XFLFlashWriteParameters(void)
    C_NO_ERR     data loaded
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_XFLFlashWriteParameters::LoadFromIni(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section)
+void C_XFLFlashWriteParameters::LoadFromIni(QSettings & orc_IniFile, const C_SclString & orc_Section)
 {
    int32_t s32_Return;
    C_SclString c_Temp2;
    int32_t s32_Value;
+   QString c_Section = orc_Section.ToQString();
 
-   c_WakeupConfig.u8_FLASHIntervalMs   = orc_IniFile.ReadUint8(orc_Section, "FLASHINTERVAL", 10U);
-   u8_HexRecordLength                  = orc_IniFile.ReadUint8(orc_Section, "HEXRECORDLENGTH", 0U);
-   s32_Value                           = orc_IniFile.ReadInteger(orc_Section, "DEV_ID_CHECK",
-                                                                 static_cast<int32_t>(eXFL_DEV_TYPE_CHECK_SCAN_HEX_FILE));
+   c_WakeupConfig.u8_FLASHIntervalMs   = orc_IniFile.value(c_Section + "/FLASHINTERVAL", 10U).toUInt();
+   u8_HexRecordLength                  = orc_IniFile.value(c_Section + "/HEXRECORDLENGTH", 0U).toUInt();
+   s32_Value                           = orc_IniFile.value(c_Section + "/DEV_ID_CHECK",
+                                                                 static_cast<int32_t>(eXFL_DEV_TYPE_CHECK_SCAN_HEX_FILE)).toInt();
    e_DevTypeCheck                      = static_cast<E_XFLDevTypeCheck>(s32_Value);
-   s32_Value                           = orc_IniFile.ReadInteger(orc_Section, "DEV_ID_CHECK_GET_ID_FAIL",
+   s32_Value                           = orc_IniFile.value(c_Section + "/DEV_ID_CHECK_GET_ID_FAIL",
                                                                  static_cast<int32_t>(
-                                                                    eXFL_DEV_TYPE_CHECK_GETID_FAIL_REACTION_ASK));
+                                                                    eXFL_DEV_TYPE_CHECK_GETID_FAIL_REACTION_ASK)).toInt();
    e_DevTypeCheckGetIDFailedReaction   = static_cast<E_XFLDevTypeCheckGetIDFailReaction>(s32_Value);
-   s32_Value                           = orc_IniFile.ReadInteger(orc_Section, "DEV_ID_CHECK_MATCH_ID_FAIL",
+   s32_Value                           = orc_IniFile.value(c_Section + "/DEV_ID_CHECK_MATCH_ID_FAIL",
                                                                  static_cast<int32_t>(
-                                                                    eXFL_DEV_TYPE_CHECK_MATCHID_FAIL_REACTION_ASK));
+                                                                    eXFL_DEV_TYPE_CHECK_MATCHID_FAIL_REACTION_ASK)).toInt();
    e_DevTypeCheckMatchIDFailedReaction = static_cast<E_XFLDevTypeCheckMatchIDFailReaction>(s32_Value);
-   c_WakeupConfig.u32_StartTimeMs      = static_cast<uint32_t>(orc_IniFile.ReadInteger(orc_Section, "STARTTIME", 3)) *
+   c_WakeupConfig.u32_StartTimeMs      = static_cast<uint32_t>(orc_IniFile.value(c_Section + "/STARTTIME", 3).toInt()) *
                                          1000U;
-   u32_SendID                          = orc_IniFile.ReadInteger(orc_Section, "SendID",    XFL_DEFAULT_SEND_ID);
+   u32_SendID                          = orc_IniFile.value(c_Section + "/SendID",    XFL_DEFAULT_SEND_ID).toUInt();
    u32_ReceiveID                       = u32_SendID + 1U;
-   q_XtdID                             = orc_IniFile.ReadBool(orc_Section, "XTDID",     false);
-   c_WakeupConfig.c_CompanyID          = orc_IniFile.ReadString(orc_Section, "CompanyID", "XX");
-   c_WakeupConfig.u8_LocalID           = orc_IniFile.ReadUint8(orc_Section, "LocalID",   0U);
-   c_Temp2                             = orc_IniFile.ReadString(orc_Section, "SNR", "000000000000");
+   q_XtdID                             = orc_IniFile.value(c_Section + "/XTDID",     false).toBool();
+   c_WakeupConfig.c_CompanyID          = C_SclString(orc_IniFile.value(c_Section + "/CompanyID", "XX").toString().toStdString());
+   c_WakeupConfig.u8_LocalID           = orc_IniFile.value(c_Section + "/LocalID",   0U).toUInt();
+   c_Temp2                             = C_SclString(orc_IniFile.value(c_Section + "/SNR", "000000000000").toString().toStdString());
    s32_Return = C_XFLActions::SNRStringToBytes(c_Temp2, c_WakeupConfig.au8_SNR);
    if ((s32_Return != C_NO_ERR) && (s32_Return != C_WARN)) //accept weird hex SNRs as well
    {
       (void)memset(&c_WakeupConfig.au8_SNR[0], 0, sizeof(c_WakeupConfig.au8_SNR));
    }
-   e_EraseMode           = static_cast<E_XFLEraseMode>(orc_IniFile.ReadInteger(orc_Section, "ProgType",  0));
-   c_UserDefinedSectors  = orc_IniFile.ReadString(orc_Section, "Sectors",   "1,2,3,4,5,6");
-   c_WakeupConfig.q_SendResetRQ         = orc_IniFile.ReadBool(orc_Section, "SENDRESETRQ", false);
-   c_WakeupConfig.t_ResetMsg.u8_XTD     = orc_IniFile.ReadUint8(orc_Section, "RESETMSGXTD", 0U);
-   c_WakeupConfig.t_ResetMsg.u32_ID     = orc_IniFile.ReadInteger(orc_Section, "RESETMSGID",  0);
-   c_WakeupConfig.t_ResetMsg.u8_DLC     = orc_IniFile.ReadUint8(orc_Section, "RESETMSGDLC", 0U);
+   e_EraseMode           = static_cast<E_XFLEraseMode>(orc_IniFile.value(c_Section + "/ProgType",  0).toInt());
+   c_UserDefinedSectors  = C_SclString(orc_IniFile.value(c_Section + "/Sectors",   "1,2,3,4,5,6").toString().toStdString());
+   c_WakeupConfig.q_SendResetRQ         = orc_IniFile.value(c_Section + "/SENDRESETRQ", false).toBool();
+   c_WakeupConfig.t_ResetMsg.u8_XTD     = orc_IniFile.value(c_Section + "/RESETMSGXTD", 0U).toUInt();
+   c_WakeupConfig.t_ResetMsg.u32_ID     = orc_IniFile.value(c_Section + "/RESETMSGID",  0).toUInt();
+   c_WakeupConfig.t_ResetMsg.u8_DLC     = orc_IniFile.value(c_Section + "/RESETMSGDLC", 0U).toUInt();
    c_WakeupConfig.t_ResetMsg.u8_RTR     = 0U; //make sure to have a clearly defined value
    for (uint8_t u8_Byte = 0; u8_Byte < 8; u8_Byte++)
    {
-      c_WakeupConfig.t_ResetMsg.au8_Data[u8_Byte] = orc_IniFile.ReadUint8(orc_Section, "RESETMSGDB" +
-                                                                          C_SclString::IntToStr(u8_Byte), 0U);
+      c_WakeupConfig.t_ResetMsg.au8_Data[u8_Byte] = orc_IniFile.value(c_Section + "/RESETMSGDB" +
+                                                                          C_SclString::IntToStr(u8_Byte).ToQString(), 0U).toUInt();
    }
-   c_HexFile = orc_IniFile.ReadString(orc_Section, "Filename", "");
+   c_HexFile = C_SclString(orc_IniFile.value(c_Section + "/Filename", "").toString().toStdString());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -193,35 +194,37 @@ void C_XFLFlashWriteParameters::LoadFromIni(C_SclIniFile & orc_IniFile, const C_
    else         could not write values
 */
 //----------------------------------------------------------------------------------------------------------------------
-int32_t C_XFLFlashWriteParameters::SaveToIni(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section) const
+int32_t C_XFLFlashWriteParameters::SaveToIni(QSettings & orc_IniFile, const C_SclString & orc_Section) const
 {
    try
    {
-      orc_IniFile.WriteInteger(orc_Section, "STARTTIME", static_cast<int32_t>(c_WakeupConfig.u32_StartTimeMs / 1000U));
-      orc_IniFile.WriteInteger(orc_Section, "SENDID",    u32_SendID);
-      orc_IniFile.WriteBool(orc_Section, "XTDID",     q_XtdID);
+      QString c_Section = orc_Section.ToQString();
 
-      orc_IniFile.WriteString(orc_Section, "COMPANYID", c_WakeupConfig.c_CompanyID);
-      orc_IniFile.WriteInteger(orc_Section, "LOCALID",   c_WakeupConfig.u8_LocalID);
-      orc_IniFile.WriteString(orc_Section, "FILENAME",  c_HexFile);
-      orc_IniFile.WriteInteger(orc_Section, "PROGTYPE",  static_cast<int32_t>(e_EraseMode));
-      orc_IniFile.WriteString(orc_Section, "SECTORS",   c_UserDefinedSectors);
-      orc_IniFile.WriteString(orc_Section, "SNR",       C_XFLActions::SNRBytesToString(c_WakeupConfig.au8_SNR, false));
+      orc_IniFile.setValue(c_Section + "/STARTTIME", static_cast<int32_t>(c_WakeupConfig.u32_StartTimeMs / 1000U));
+      orc_IniFile.setValue(c_Section + "/SENDID",    u32_SendID);
+      orc_IniFile.setValue(c_Section + "/XTDID",     q_XtdID);
 
-      orc_IniFile.WriteBool(orc_Section, "SENDRESETRQ", c_WakeupConfig.q_SendResetRQ);
-      orc_IniFile.WriteInteger(orc_Section, "RESETMSGXTD", c_WakeupConfig.t_ResetMsg.u8_XTD);
-      orc_IniFile.WriteInteger(orc_Section, "RESETMSGID",  static_cast<int32_t>(c_WakeupConfig.t_ResetMsg.u32_ID));
-      orc_IniFile.WriteInteger(orc_Section, "RESETMSGDLC", c_WakeupConfig.t_ResetMsg.u8_DLC);
+      orc_IniFile.setValue(c_Section + "/COMPANYID", c_WakeupConfig.c_CompanyID.ToQString());
+      orc_IniFile.setValue(c_Section + "/LOCALID",   c_WakeupConfig.u8_LocalID);
+      orc_IniFile.setValue(c_Section + "/FILENAME",  c_HexFile.ToQString());
+      orc_IniFile.setValue(c_Section + "/PROGTYPE",  static_cast<int32_t>(e_EraseMode));
+      orc_IniFile.setValue(c_Section + "/SECTORS",   c_UserDefinedSectors.ToQString());
+      orc_IniFile.setValue(c_Section + "/SNR",       C_XFLActions::SNRBytesToString(c_WakeupConfig.au8_SNR, false).ToQString());
+
+      orc_IniFile.setValue(c_Section + "/SENDRESETRQ", c_WakeupConfig.q_SendResetRQ);
+      orc_IniFile.setValue(c_Section + "/RESETMSGXTD", c_WakeupConfig.t_ResetMsg.u8_XTD);
+      orc_IniFile.setValue(c_Section + "/RESETMSGID",  static_cast<int32_t>(c_WakeupConfig.t_ResetMsg.u32_ID));
+      orc_IniFile.setValue(c_Section + "/RESETMSGDLC", c_WakeupConfig.t_ResetMsg.u8_DLC);
       for (uint8_t u8_Byte = 0; u8_Byte < 8; u8_Byte++)
       {
-         orc_IniFile.WriteInteger(orc_Section, "RESETMSGDB" + C_SclString::IntToStr(u8_Byte),
+         orc_IniFile.setValue(c_Section + "/RESETMSGDB" + C_SclString::IntToStr(u8_Byte).ToQString(),
                                   c_WakeupConfig.t_ResetMsg.au8_Data[u8_Byte]);
       }
 
-      orc_IniFile.WriteInteger(orc_Section, "DEV_ID_CHECK", static_cast<int32_t>(e_DevTypeCheck));
-      orc_IniFile.WriteInteger(orc_Section, "DEV_ID_CHECK_GET_ID_FAIL",
+      orc_IniFile.setValue(c_Section + "/DEV_ID_CHECK", static_cast<int32_t>(e_DevTypeCheck));
+      orc_IniFile.setValue(c_Section + "/DEV_ID_CHECK_GET_ID_FAIL",
                                static_cast<int32_t>(e_DevTypeCheckGetIDFailedReaction));
-      orc_IniFile.WriteInteger(orc_Section, "DEV_ID_CHECK_MATCH_ID_FAIL",
+      orc_IniFile.setValue(c_Section + "/DEV_ID_CHECK_MATCH_ID_FAIL",
                                static_cast<int32_t>(e_DevTypeCheckMatchIDFailedReaction));
    }
    catch (...)

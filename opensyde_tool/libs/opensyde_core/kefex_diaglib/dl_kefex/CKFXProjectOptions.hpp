@@ -13,7 +13,7 @@
 #include "stwtypes.hpp"
 #include "C_SclString.hpp"
 #include "C_SclStringList.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 #include "DiagLib_config.hpp"
 #include "CKFXVariableBase.hpp" //for KFX_DATA_MAX_NUM_LANGUAGES
 
@@ -32,7 +32,7 @@ public:
    C_KFXProjectMetaInfo(void);
    virtual ~C_KFXProjectMetaInfo(void);
 
-   void LoadFromINI(stw::scl::C_SclIniFile & orc_IniFile, const stw::scl::C_SclString & orc_Section);
+   void LoadFromINI(QSettings & orc_IniFile, const stw::scl::C_SclString & orc_Section);
 
    //We only use one stringlist, so the user can type anything he/she wants
    //This might greatly differ between each company / type of project so
@@ -63,7 +63,7 @@ public:
 
    bool operator !=(C_KFXProjectOptions & orc_Source);
 
-   void LoadConfigFromIni(stw::scl::C_SclIniFile & orc_IniFile);
+   void LoadConfigFromIni(QSettings & orc_IniFile);
 };
 
 /* -- Extern Global Variables --------------------------------------------------------------------------------------- */

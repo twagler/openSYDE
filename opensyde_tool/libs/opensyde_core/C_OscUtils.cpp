@@ -857,7 +857,7 @@ C_SclString C_OscUtils::h_MakeIndependentOfDbProjectPath(const C_SclString & orc
       // concatenate if placeholder-resolved path would be relative
       const C_SclString c_ResolvedPath = C_OscUtils::h_ResolvePlaceholderVariables(orc_Path, orc_OsydeProjectPath);
 
-      if (QDir::isRelativePath(QString::fromStdString(*c_ResolvedPath.AsStdString())) == true)
+      if (QDir::isRelativePath(c_ResolvedPath.ToQString()) == true)
       {
          //relative path
          c_Return = C_OscUtils::h_ConcatPathIfNecessary(orc_DbProjectPath, c_Return);
@@ -971,7 +971,7 @@ C_SclString C_OscUtils::h_ConcatPathIfNecessary(const C_SclString & orc_BaseDir,
 {
    C_SclString c_Retval;
 
-   const QString c_QPath = QString::fromStdString(*orc_RelativeOrAbsolutePath.AsStdString());
+   const QString c_QPath = orc_RelativeOrAbsolutePath.ToQString();
    const QString c_QPathDir = QFileInfo(c_QPath).absolutePath() + "/";
    const C_SclString c_Path = c_QPathDir.toStdString();
 

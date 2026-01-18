@@ -55,7 +55,7 @@ int32_t C_OscParamSetFilerBase::h_AddCrc(const C_SclString & orc_Path)
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       C_OscChecksummedXml c_XmlParser;
       s32_Return = c_XmlParser.LoadFromFile(orc_Path);

@@ -20,7 +20,7 @@
 #include "C_SclChecksums.hpp"
 #include "C_OscCanOpenObjectDictionary.hpp"
 #include "C_SclString.hpp"
-#include "C_SclIniFile.hpp"
+#include "C_SclString.hpp"
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
 using namespace stw::scl;
@@ -43,23 +43,7 @@ public:
 
 //----------------------------------------------------------------------------------------------------------------------
 
-///Utility wrapper to get direct access to mc_Sections:
-class C_EdsFile :
-   public C_SclIniFile
-{
-public:
-   C_EdsFile(const C_SclString & orc_FileName) :
-      C_SclIniFile(orc_FileName)
-   {
-   }
 
-   QList<C_SclIniSection> & GetIniSections()
-   {
-      //lint -e{1536}  //provide direct access to sections; alternative would require some refactoring
-      // and break the existing API
-      return this->mc_Sections;
-   }
-};
 
 /* -- Global Variables ---------------------------------------------------------------------------------------------- */
 
@@ -201,54 +185,55 @@ int32_t C_OscCanOpenObjectDictionary::LoadFromFile(const C_SclString & orc_File)
    mc_LastError = "";
    c_OdObjects.clear();
 
-   if ((QFileInfo(QString::fromStdString(*orc_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_File.AsStdString())).isFile()) == false)
+   if (!(QFileInfo(orc_File.ToQString()).exists() && QFileInfo(orc_File.ToQString()).isFile()))
    {
       s32_Return = C_RANGE;
    }
    else
    {
-      C_EdsFile c_IniFile(orc_File);
+      QSettings c_IniFile(orc_File.ToQString(), QSettings::IniFormat);
 
       //go through all sections and set up c_Objects
-      QList<C_SclIniSection> & rc_Sections = c_IniFile.GetIniSections();
+      QStringList c_Groups = c_IniFile.childGroups();
 
-      for (int32_t s32_Section = 0U; s32_Section < rc_Sections.size(); s32_Section++)
+      for (int32_t s32_Section = 0U; s32_Section < c_Groups.size(); s32_Section++)
       {
          //We are only interested in the sections describing objects or objects with subobjects.
          //All other sections will be ignored.
-         C_SclIniSection & rc_Section = rc_Sections[s32_Section];
-         const C_SclString & rc_SectionName = rc_Section.c_Name;
-         if (rc_SectionName.Length() == 4)
+         const QString c_QsSectionName = c_Groups[s32_Section];
+         const C_SclString c_SectionName = c_QsSectionName.toStdString().c_str();
+
+         if (c_SectionName.Length() == 4)
          {
             //Pattern: [<4 hex digits>sub<1 or 2 hex digits>, e.g. [12AB]
             try
             {
-               const uint16_t u16_Index = static_cast<uint16_t>(("0x" + rc_SectionName.SubString(1, 4)).ToInt());
+               const uint16_t u16_Index = static_cast<uint16_t>(("0x" + c_SectionName.SubString(1, 4)).ToInt());
                //create new map entry or use existing depending on sequence of sections in EDS file
                C_OscCanOpenObject & rc_Object = c_OdObjects[u16_Index];
 
-               s32_Return = m_GetObjectDescription(u16_Index, 0U, false, rc_Section, rc_Object);
+               s32_Return = m_GetObjectDescription(u16_Index, 0U, false, c_SectionName, c_IniFile, rc_Object);
             }
             catch (...)
             {
                //Do not handle as an error. Malformed entry or valid section with size of 4.
             }
          }
-         else if ((rc_SectionName.Length() > (4 + 3)) && (rc_SectionName.Pos("sub") == 5))
+         else if ((c_SectionName.Length() > (4 + 3)) && (c_SectionName.Pos("sub") == 5))
          {
             //Pattern: [<4 hex digits>sub<1 or 2 hex digits>, e.g. [12ABsubCD]
             try
             {
-               const uint16_t u16_Index = static_cast<uint16_t>(("0x" + rc_SectionName.SubString(1, 4)).ToInt());
+               const uint16_t u16_Index = static_cast<uint16_t>(("0x" + c_SectionName.SubString(1, 4)).ToInt());
                //1 or 2 characters:
-               const uint8_t u8_SubIndex = static_cast<uint8_t>(("0x" + rc_SectionName.SubString(8, 2)).ToInt());
+               const uint8_t u8_SubIndex = static_cast<uint8_t>(("0x" + c_SectionName.SubString(8, 2)).ToInt());
 
                //create new map entry or use existing
                C_OscCanOpenObject & rc_Object = c_OdObjects[u16_Index];
                //sub-object really should be created here as it should not be present multiple times
                C_OscCanOpenObjectData & rc_SubObject = rc_Object.c_SubObjects[u8_SubIndex];
 
-               s32_Return = m_GetObjectDescription(u16_Index, u8_SubIndex, true, rc_Section, rc_SubObject);
+               s32_Return = m_GetObjectDescription(u16_Index, u8_SubIndex, true, c_SectionName, c_IniFile, rc_SubObject);
             }
             catch (...)
             {
@@ -298,7 +283,7 @@ int32_t C_OscCanOpenObjectDictionary::LoadFromFile(const C_SclString & orc_File)
       if (s32_Return == C_NO_ERR)
       {
          //remember full original content of file
-         c_IniFile.GetFileAsStringList(this->c_TextFileContent);
+         this->c_TextFileContent.LoadFromFile(orc_File);
          this->m_RememberFileHash();
       }
    }
@@ -320,16 +305,17 @@ int32_t C_OscCanOpenObjectDictionary::LoadFromFile(const C_SclString & orc_File)
 */
 //----------------------------------------------------------------------------------------------------------------------
 int32_t C_OscCanOpenObjectDictionary::m_CheckForExistingObjects(const C_SclString & orc_Blockname,
-                                                                C_SclIniFile & orc_IniFile)
+                                                                QSettings & orc_IniFile)
 {
    int32_t s32_Return = C_NO_ERR;
 
-   const uint16_t u16_NumEntries = orc_IniFile.ReadUint16(orc_Blockname, "SupportedObjects", 0);
+   const QString c_Group = QString(orc_Blockname.c_str()) + "/";
+   const uint16_t u16_NumEntries = static_cast<uint16_t>(orc_IniFile.value(c_Group + "SupportedObjects", 0).toUInt());
 
    for (int32_t s32_Loop = 0; s32_Loop < u16_NumEntries; s32_Loop++)
    {
       const C_SclString c_Directive = C_SclString::IntToStr(s32_Loop + 1);
-      const C_SclString c_Index = orc_IniFile.ReadString(orc_Blockname, c_Directive, "");
+      const C_SclString c_Index = orc_IniFile.value(c_Group + QString(c_Directive.c_str()), "").toString().toStdString().c_str();
       if (c_Index == "")
       {
          mc_LastError = orc_Blockname + ": SupportedObjects inconsistent with object list !";
@@ -381,13 +367,12 @@ int32_t C_OscCanOpenObjectDictionary::m_CheckForExistingObjects(const C_SclStrin
 */
 //----------------------------------------------------------------------------------------------------------------------
 int32_t C_OscCanOpenObjectDictionary::m_GetObjectDescription(const uint16_t ou16_Index, const uint8_t ou8_SubIndex,
-                                                             const bool oq_IsSubIndex, C_SclIniSection & orc_Section,
-                                                             C_OscCanOpenObjectData & orc_Object)
+                                                             const bool oq_IsSubIndex, const stw::scl::C_SclString & orc_SectionName,
+                                                             QSettings & orc_IniFile, C_OscCanOpenObjectData & orc_Object)
 {
    const uint32_t u32_NUM_STRINGS_TO_SEARCH = 10U;
 
-   //Use table to speed up search. Using C_SclIniSection::GetValue could "circle" through the entries depending
-   // on their sequence in the file. Keep number of string comparisons to a minimum.
+   //Use table to speed up search.
    //upper case, so we only need to do this call on the side of the file content:
    const C_SclString ac_StringsToSearchFor[u32_NUM_STRINGS_TO_SEARCH] =
    {
@@ -433,10 +418,14 @@ int32_t C_OscCanOpenObjectDictionary::m_GetObjectDescription(const uint16_t ou16
    orc_Object.u8_DataType = C_OscCanOpenObjectData::hu8_DATA_TYPE_DOMAIN; //optional for "DOMAIN" objects
    orc_Object.q_IsMappableIntoPdo = false;
 
-   QList<C_SclIniKey> & rc_Keys = orc_Section.c_Keys;
-   for (int32_t s32_Key = 0; s32_Key < rc_Keys.size(); s32_Key++)
+   const QString c_QsSection = QString(orc_SectionName.c_str());
+   orc_IniFile.beginGroup(c_QsSection);
+   QStringList c_Keys = orc_IniFile.allKeys();
+
+   for (int32_t s32_Key = 0; s32_Key < c_Keys.size(); s32_Key++)
    {
-      const C_SclString c_KeyUpperCase = rc_Keys[s32_Key].c_Key.UpperCase();
+      const QString c_QsKey = c_Keys[s32_Key];
+      const C_SclString c_KeyUpperCase = c_QsKey.toUpper().toStdString().c_str();
 
       for (uint32_t u32_StringIndex = 0U; u32_StringIndex < u32_NUM_STRINGS_TO_SEARCH; u32_StringIndex++)
       {
@@ -444,7 +433,7 @@ int32_t C_OscCanOpenObjectDictionary::m_GetObjectDescription(const uint16_t ou16
              (c_KeyUpperCase == ac_StringsToSearchFor[u32_StringIndex]))
          {
             //got one !
-            const C_SclString & rc_Value = rc_Keys[s32_Key].c_Value;
+            const C_SclString rc_Value = orc_IniFile.value(c_QsKey, "").toString().toStdString().c_str();
             aq_StringsAlreadyFound[u32_StringIndex] = true; //no need to string compare this one again
 
             switch (u32_StringIndex)
@@ -536,6 +525,7 @@ int32_t C_OscCanOpenObjectDictionary::m_GetObjectDescription(const uint16_t ou16
          }
       }
    }
+   orc_IniFile.endGroup();
    return s32_Return;
 }
 

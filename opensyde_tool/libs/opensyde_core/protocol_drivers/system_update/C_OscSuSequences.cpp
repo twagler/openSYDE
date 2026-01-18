@@ -975,7 +975,7 @@ int32_t C_OscSuSequences::m_FlashOneFileOpenSydeFile(const C_SclString & orc_Fil
       const bool q_Abort = m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_FLASH_FILE_PREPARE_START, C_NO_ERR, 0U,
                                             mc_CurrentNode,
                                             "Preparing file system for file \"" +
-                                            QFileInfo(QString::fromStdString(*orc_FileToFlash.AsStdString())).fileName().toStdString() + "\"...");
+                                            C_SclString::FromQString(QFileInfo(orc_FileToFlash.ToQString()).fileName()) + "\"...");
 
       orc_StateOtherFile.e_FileLoaded = eSUSEQ_STATE_NO_ERR;
 
@@ -989,14 +989,14 @@ int32_t C_OscSuSequences::m_FlashOneFileOpenSydeFile(const C_SclString & orc_Fil
          (void)this->mpc_ComDriver->OsySetPollingTimeout(mc_CurrentNode, ou32_RequestDownloadTimeout);
 
          s32_Return = this->mpc_ComDriver->SendOsyRequestFileTransfer(
-            mc_CurrentNode, QFileInfo(QString::fromStdString(*orc_FileToFlash.AsStdString())).fileName().toStdString(), u32_TotalNumberOfBytes, u32_MaxBlockLength,
+            mc_CurrentNode, C_SclString::FromQString(QFileInfo(orc_FileToFlash.ToQString()).fileName()), u32_TotalNumberOfBytes, u32_MaxBlockLength,
             &u8_NrCode);
 
          if (s32_Return != C_NO_ERR)
          {
             C_SclString c_Error;
             c_Error.PrintFormatted("Preparing file system for file \"%s\" failed. Details: %s",
-                                   QFileInfo(QString::fromStdString(*orc_FileToFlash.AsStdString())).fileName().toStdString().c_str(),
+                                   C_SclString::FromQString(QFileInfo(orc_FileToFlash.ToQString()).fileName()).c_str(),
                                    C_OscProtocolDriverOsy::h_GetOpenSydeServiceErrorDetails(s32_Return,
                                                                                             u8_NrCode).c_str());
             (void)m_ReportProgress(eUPDATE_SYSTEM_OSY_NODE_FLASH_FILE_PREPARE_ERROR, s32_Return,
@@ -2261,7 +2261,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                     u16_File++)
                {
                   const C_SclString c_File = orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u16_File];
-                  if ((QFileInfo(QString::fromStdString(*c_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_File.AsStdString())).isFile()) == false)
+                  if (!QFileInfo(c_File.ToQString()).exists() || !QFileInfo(c_File.ToQString()).isFile())
                   {
                      s32_Return = C_RANGE;
                      if (opc_ErrorPath != NULL)
@@ -2276,7 +2276,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                     u16_File++)
                {
                   const C_SclString c_File = orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u16_File];
-                  if ((QFileInfo(QString::fromStdString(*c_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_File.AsStdString())).isFile()) == false)
+                  if (!QFileInfo(c_File.ToQString()).exists() || !QFileInfo(c_File.ToQString()).isFile())
                   {
                      s32_Return = C_RANGE;
                      if (opc_ErrorPath != NULL)
@@ -2290,7 +2290,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                if (orc_ApplicationsToWrite[u16_Node].c_PemFile != "")
                {
                   const C_SclString c_File = orc_ApplicationsToWrite[u16_Node].c_PemFile;
-                  if ((QFileInfo(QString::fromStdString(*c_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_File.AsStdString())).isFile()) == false)
+                  if (!QFileInfo(c_File.ToQString()).exists() || !QFileInfo(c_File.ToQString()).isFile())
                   {
                      s32_Return = C_RANGE;
                      if (opc_ErrorPath != NULL)
@@ -2315,7 +2315,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                //also: remove paths
                for (uint16_t u16_File = 0U; u16_File < c_Files.size(); u16_File++)
                {
-                  c_Files[u16_File] = QFileInfo(QString::fromStdString(*c_Files[u16_File].AsStdString())).fileName().toStdString().LowerCase();
+                  c_Files[u16_File] = C_SclString::FromQString(QFileInfo(c_Files[u16_File].ToQString()).fileName()).LowerCase();
                }
                //get same names next to each other:
                std::sort(c_Files.begin(), c_Files.end());
@@ -2339,9 +2339,9 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
    if (s32_Return == C_NO_ERR)
    {
       //erase target path if it exists:
-      if (QFileInfo(QString::fromStdString(*orc_TargetPath.AsStdString())).isDir() == true)
+      if (QFileInfo(orc_TargetPath.ToQString()).isDir())
       {
-         s32_Return = (QDir(QString::fromStdString(*orc_TargetPath.AsStdString())).removeRecursively() ? 0 : -1);
+         s32_Return = (QDir(orc_TargetPath.ToQString()).removeRecursively() ? 0 : -1);
          if (s32_Return != 0)
          {
             s32_Return = C_BUSY;
@@ -2379,7 +2379,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                   stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_TargetPath + C_OscUtils::h_NiceifyStringForFileName(
                                                      orc_Nodes[u16_Node].c_Properties.c_Name));
 
-               s32_Return = (QDir().mkpath(QString::fromStdString(*c_NodeTargetPaths[u16_Node].AsStdString())) ? 0 : -1);
+               s32_Return = (QDir().mkpath(c_NodeTargetPaths[u16_Node].ToQString()) ? 0 : -1);
                if (s32_Return != 0)
                {
                   if (opc_ErrorPath != NULL)
@@ -2417,7 +2417,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                {
                   // File based nodes need the unchanged file name and must be unique
                   c_TargetFileName = c_NodeTargetPaths[u16_Node] +
-                                     QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u16_File].AsStdString())).fileName().toStdString();
+                                     C_SclString::FromQString(QFileInfo(orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u16_File].ToQString()).fileName());
                }
                else
                {
@@ -2425,7 +2425,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                   // Add an counter to the target file name
                   c_TargetFileName = c_NodeTargetPaths[u16_Node] +
                                      C_SclString::IntToStr(static_cast<uint32_t>(u16_File) + 1U) + "_" +
-                                     QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u16_File].AsStdString())).fileName().toStdString();
+                                     C_SclString::FromQString(QFileInfo(orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u16_File].ToQString()).fileName());
                }
 
                //copy file
@@ -2451,7 +2451,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                const C_SclString c_TargetFileName =
                   c_NodeTargetPaths[u16_Node] +
                   C_SclString::IntToStr(static_cast<uint32_t>(u16_File) + 1U) + "_" +
-                  QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u16_File].AsStdString())).fileName().toStdString();
+                  C_SclString::FromQString(QFileInfo(orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u16_File].ToQString()).fileName());
 
                //copy file
                s32_Return = C_OscUtils::h_CopyFile(c_SourceFileName, c_TargetFileName, opc_ErrorPath);
@@ -2473,7 +2473,7 @@ int32_t C_OscSuSequences::h_CreateTemporaryFolder(const std::vector<C_OscNode> &
                //compose target file name
                const C_SclString c_TargetFileName =
                   c_NodeTargetPaths[u16_Node] +
-                  QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_PemFile.AsStdString())).fileName().toStdString();
+                  C_SclString::FromQString(QFileInfo(orc_ApplicationsToWrite[u16_Node].c_PemFile.ToQString()).fileName());
 
                //copy file
                s32_Return = C_OscUtils::h_CopyFile(c_SourceFileName, c_TargetFileName, opc_ErrorPath);
@@ -3653,10 +3653,10 @@ int32_t C_OscSuSequences::UpdateSystem(const std::vector<C_OscSuSequences::C_DoF
                      {
                         // Save the file name
                         pc_FileState->c_FileName =
-                           QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File].AsStdString())).fileName().toStdString();
+                           C_SclString::FromQString(QFileInfo(orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File].ToQString()).fileName());
                      }
 
-                     if ((QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File].AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File].AsStdString())).isFile()) == false)
+                     if (!QFileInfo(orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File].ToQString()).exists() || !QFileInfo(orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File].ToQString()).isFile())
                      {
                         osc_write_log_error("System Update", "Could not find file \"" +
                                             orc_ApplicationsToWrite[u16_Node].c_FilesToFlash[u32_File] + "\" !");
@@ -3681,9 +3681,9 @@ int32_t C_OscSuSequences::UpdateSystem(const std::vector<C_OscSuSequences::C_DoF
                   {
                      // Save the file name
                      rc_State.c_StatePsiFiles[u32_File].c_FileName =
-                        QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File].AsStdString())).fileName().toStdString();
+                        C_SclString::FromQString(QFileInfo(orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File].ToQString()).fileName());
 
-                     if ((QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File].AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File].AsStdString())).isFile()) == false)
+                     if (!QFileInfo(orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File].ToQString()).exists() || !QFileInfo(orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File].ToQString()).isFile())
                      {
                         osc_write_log_error("System Update", "Could not find file \"" +
                                             orc_ApplicationsToWrite[u16_Node].c_FilesToWriteToNvm[u32_File] + "\" !");
@@ -3699,8 +3699,8 @@ int32_t C_OscSuSequences::UpdateSystem(const std::vector<C_OscSuSequences::C_DoF
                   // PEM file
                   if (orc_ApplicationsToWrite[u16_Node].c_PemFile != "")
                   {
-                     rc_State.c_StatePemFile.c_FileName = QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_PemFile.AsStdString())).fileName().toStdString();
-                     if ((QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_PemFile.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u16_Node].c_PemFile.AsStdString())).isFile()) == false)
+                     rc_State.c_StatePemFile.c_FileName = C_SclString::FromQString(QFileInfo(orc_ApplicationsToWrite[u16_Node].c_PemFile.ToQString()).fileName());
+                     if (!QFileInfo(orc_ApplicationsToWrite[u16_Node].c_PemFile.ToQString()).exists() || !QFileInfo(orc_ApplicationsToWrite[u16_Node].c_PemFile.ToQString()).isFile())
                      {
                         osc_write_log_error("System Update", "Could not find file \"" +
                                             orc_ApplicationsToWrite[u16_Node].c_PemFile + "\" !");

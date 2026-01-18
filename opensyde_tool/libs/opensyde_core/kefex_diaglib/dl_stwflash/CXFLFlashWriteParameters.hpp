@@ -13,7 +13,7 @@
 
 #include "stwtypes.hpp"
 #include "C_SclString.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 #include "DiagLib_config.hpp"
 #include "CXFLActions.hpp"
 
@@ -152,8 +152,8 @@ public:
    E_XFLDevTypeCheckGetIDFailReaction e_DevTypeCheckGetIDFailedReaction;     ///< cf. comments at enum definition
    E_XFLDevTypeCheckMatchIDFailReaction e_DevTypeCheckMatchIDFailedReaction; ///< cf. comments at enum definition
 
-   void LoadFromIni(stw::scl::C_SclIniFile & orc_IniFile, const stw::scl::C_SclString & orc_Section);
-   int32_t SaveToIni(stw::scl::C_SclIniFile & orc_IniFile, const stw::scl::C_SclString & orc_Section) const;
+   void LoadFromIni(QSettings & orc_IniFile, const stw::scl::C_SclString & orc_Section);
+   int32_t SaveToIni(QSettings & orc_IniFile, const stw::scl::C_SclString & orc_Section) const;
 };
 
 //----------------------------------------------------------------------------------------------------------------------

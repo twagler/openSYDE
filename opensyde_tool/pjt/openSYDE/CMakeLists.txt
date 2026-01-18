@@ -25,6 +25,7 @@ set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 
 #signals emit etc. are in conflict with the DBC library
 add_definitions(-DQT_NO_KEYWORDS)
+add_definitions(-DQT_CORE_NO_INLINE_IMPL)
 add_definitions(-DUNICODE -D_UNICODE)
 add_definitions(-DQT_STATICPLUGIN)
 

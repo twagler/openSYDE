@@ -535,7 +535,7 @@ void C_SyvUpPacListWidget::ExportConfig(void)
       bool q_Continue = true;
       int32_t s32_Result;
 
-      this->mc_LastPath = (QFileInfo(QString::fromStdString(*c_FileName.toStdString(.AsStdString())).absolutePath() + "/").toStdString().c_str()).c_str();
+      this->mc_LastPath = QFileInfo(c_FileName).absolutePath() + "/";
 
       // Remove old file
       c_File.setFileName(c_FileName);
@@ -612,7 +612,7 @@ void C_SyvUpPacListWidget::ImportConfig(void)
       C_OgeWiCustomMessage::E_Outputs e_ReturnMessageBox;
       C_OgeWiCustomMessage c_MessageBox(this, C_OgeWiCustomMessage::E_Type::eQUESTION);
 
-      this->mc_LastPath = (QFileInfo(QString::fromStdString(*c_FileName.toStdString(.AsStdString())).absolutePath() + "/").toStdString().c_str()).c_str();
+      this->mc_LastPath = QFileInfo(c_FileName).absolutePath() + "/";
 
       c_MessageBox.SetHeading("Update Package configuration import");
       c_MessageBox.SetDescription("Do you really want to overwrite the current Update "
@@ -774,10 +774,10 @@ void C_SyvUpPacListWidget::CreateServiceUpdatePackage(const bool oq_SaveAsFile, 
    {
       int32_t s32_Return = C_NO_ERR;
 
-      this->mc_LastPath = (QFileInfo(QString::fromStdString(*c_FullPackagePath.toStdString(.AsStdString())).absolutePath() + "/").toStdString().c_str()).c_str();
+      this->mc_LastPath = QFileInfo(c_FullPackagePath).absolutePath() + "/";
 
       // check for old zip archive
-      if ((QFileInfo(QString::fromStdString(*c_FullPackagePath.toStdString(.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_FullPackagePath.toStdString(.AsStdString())).isFile()).c_str()) == true)
+      if (QFileInfo(c_FullPackagePath).exists() && QFileInfo(c_FullPackagePath).isFile())
       {
          // delete old zip archive
          if (remove(c_FullPackagePath.toStdString().c_str()) != 0)
@@ -1568,7 +1568,7 @@ void C_SyvUpPacListWidget::m_AddNewFile(const QString & orc_DialogCaption, const
             }
 
             // remember last path
-            this->mc_LastPath = (QFileInfo(QString::fromStdString(*c_Files.last(.AsStdString())).absolutePath() + "/").toStdString().toStdString().c_str()).c_str();
+            this->mc_LastPath = QFileInfo(c_Files.last()).absolutePath() + "/";
          }
       }
    }
@@ -1629,7 +1629,7 @@ void C_SyvUpPacListWidget::m_SelectFile(void)
             if (c_File != "")
             {
                // remember path
-               this->mc_LastPath = (QFileInfo(QString::fromStdString(*c_File.toStdString(.AsStdString())).absolutePath() + "/").toStdString().c_str()).c_str();
+               this->mc_LastPath = QFileInfo(c_File).absolutePath() + "/";
 
                // check if relative path is possible and appreciated
                c_File = C_ImpUtil::h_AskUserToSaveRelativePath(this, c_File,
@@ -1862,7 +1862,7 @@ QString C_SyvUpPacListWidget::m_GetDialogPath(void)
    if (this->mpc_SelectedApp != NULL)
    {
       this->mc_LastPath =
-         (QFileInfo(QString::fromStdString(*this->mpc_SelectedApp->GetAppAbsoluteFilePath(.AsStdString())).absolutePath() + "/").toStdString().toStdString().c_str()).c_str();
+         QFileInfo(this->mpc_SelectedApp->GetAppAbsoluteFilePath()).absolutePath() + "/";
    }
 
    c_File.setFile(this->mc_LastPath);

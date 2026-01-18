@@ -5,7 +5,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "CKFXProjectOptions.hpp"
-#include "C_SclIniFile.hpp"
+
 
 //--------------------------------------------------------------
 
@@ -43,19 +43,24 @@ C_KFXProjectMetaInfo & C_KFXProjectMetaInfo::operator =(const C_KFXProjectMetaIn
    return (*this);
 }
 
-//--------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 
-//load (usually from .def file)
-void C_KFXProjectMetaInfo::LoadFromINI(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section)
+void C_KFXProjectMetaInfo::LoadFromINI(QSettings & orc_IniFile, const C_SclString & orc_Section)
 {
-   uint32_t u32_NumOfLines;
-   uint32_t u32_Index;
+   C_SclString c_Temp;
+   int32_t s32_Count = 0;
+   QString c_Section = orc_Section.ToQString();
 
-   u32_NumOfLines = orc_IniFile.ReadInteger(orc_Section, "META_NUM_LINES", 0);
+   c_Text.Clear();
+   c_Temp = C_SclString(orc_IniFile.value(c_Section + "/Line_" + C_SclString::IntToStr(s32_Count).ToQString(),
+                             "").toString().toStdString());
 
-   for (u32_Index = 0U; u32_Index < u32_NumOfLines; u32_Index++)
+   while (c_Temp.Length() > 0)
    {
-      (void)this->c_Text.Add(orc_IniFile.ReadString(orc_Section, "META_LINE_" + C_SclString::IntToStr(u32_Index), ""));
+      c_Text.Append(c_Temp);
+      s32_Count++;
+      c_Temp = C_SclString(orc_IniFile.value(c_Section + "/Line_" + C_SclString::IntToStr(s32_Count).ToQString(),
+                                "").toString().toStdString());
    }
 }
 
@@ -66,70 +71,72 @@ bool C_KFXProjectMetaInfo::operator !=(C_KFXProjectMetaInfo & orc_Source)
    return (this->c_Text.GetText() != orc_Source.c_Text.GetText());
 }
 
-//--------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 
-C_KFXProjectOptions::C_KFXProjectOptions()
+C_KFXProjectOptions::C_KFXProjectOptions(void) :
+   u16_MaxDesignatorLength(32U),
+   u16_ProjectIndex(1U),
+   u16_ListOffset(0U),
+   u16_DataVersion(1U),
+   c_DeviceName("Generic Node")
 {
-   uint8_t u8_Index;
+   ac_CommentDescriptions[0] = "";
+   ac_CommentDescriptions[1] = "";
+   ac_CommentDescriptions[2] = "";
 
-   u16_MaxDesignatorLength = 200U;
-   c_DeviceName     = "";
-   u16_ProjectIndex = 0U;
-   u16_ListOffset   = 0U;
-   u16_DataVersion  = 0U;
-   for (u8_Index = 0U; u8_Index < KFX_DATA_MAX_NUM_LANGUAGES; u8_Index++)
+   for (int32_t s32_Loop = 0; s32_Loop < KFX_NUM_ACCESS_GROUPS; s32_Loop++)
    {
-      ac_CommentDescriptions[u8_Index] = "";
-   }
-   for (u8_Index = 0U; u8_Index < KFX_NUM_ACCESS_GROUPS; u8_Index++)
-   {
-      aq_UserMayWriteKDX[u8_Index] = false;
+      aq_UserMayWriteKDX[s32_Loop] = true;
    }
 }
 
-//--------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 
 bool C_KFXProjectOptions::operator !=(C_KFXProjectOptions & orc_Source)
 {
-   bool q_Diff;
-   uint32_t u32_Index;
-
-   q_Diff =            (orc_Source.u16_MaxDesignatorLength != u16_MaxDesignatorLength);
-   q_Diff = q_Diff || (orc_Source.u16_ProjectIndex        != u16_ProjectIndex);
-   q_Diff = q_Diff || (orc_Source.u16_ListOffset          != u16_ListOffset);
-   q_Diff = q_Diff || (orc_Source.u16_DataVersion         != u16_DataVersion);
-   q_Diff = q_Diff || (orc_Source.c_DeviceName            != c_DeviceName);
-   for (u32_Index = 0U; u32_Index < KFX_DATA_MAX_NUM_LANGUAGES; u32_Index++)
+   //ac_CommentDescriptions are not handled by this class
+   bool q_Result = false;
+   if ((u16_MaxDesignatorLength != orc_Source.u16_MaxDesignatorLength) ||
+       (u16_ProjectIndex != orc_Source.u16_ProjectIndex) ||
+       (u16_ListOffset != orc_Source.u16_ListOffset) ||
+       (u16_DataVersion != orc_Source.u16_DataVersion) ||
+       (c_DeviceName != orc_Source.c_DeviceName) ||
+       (c_MetaInfo != orc_Source.c_MetaInfo))
    {
-      q_Diff = q_Diff || (orc_Source.ac_CommentDescriptions[u32_Index] != ac_CommentDescriptions[u32_Index]);
+      q_Result = true;
    }
-   for (u32_Index = 0U; u32_Index < KFX_NUM_ACCESS_GROUPS; u32_Index++)
+   else
    {
-      q_Diff = q_Diff || (orc_Source.aq_UserMayWriteKDX[u32_Index] != aq_UserMayWriteKDX[u32_Index]);
+      for (int32_t i = 0; i < KFX_NUM_ACCESS_GROUPS; i++)
+      {
+         if (aq_UserMayWriteKDX[i] != orc_Source.aq_UserMayWriteKDX[i])
+         {
+            q_Result = true;
+            break;
+         }
+      }
    }
-   q_Diff = q_Diff || (orc_Source.c_MetaInfo.operator !=(c_MetaInfo));
-   return q_Diff;
+   return q_Result;
 }
 
 //--------------------------------------------------------------
+//--------------------------------------------------------------
 
-void C_KFXProjectOptions::LoadConfigFromIni(C_SclIniFile & orc_IniFile)
+void C_KFXProjectOptions::LoadConfigFromIni(QSettings & orc_IniFile)
 {
    uint8_t u8_Index;
 
-   u16_MaxDesignatorLength  = orc_IniFile.ReadUint16("EDIT",   "DESIGNATOR_MAX_LENGTH", 200U);
-   c_DeviceName             = orc_IniFile.ReadString("CONFIG", "DEVICENAME",            "");
-   u16_DataVersion          = orc_IniFile.ReadUint16("CONFIG", "RAMDATAVERSION",        0U);
-   u16_ListOffset           = orc_IniFile.ReadUint16("CONFIG", "LISTOFFSET",            0U);
-   u16_ProjectIndex         = orc_IniFile.ReadUint16("CONFIG", "PROJECTINDEX",          0U);
+   u16_MaxDesignatorLength  = static_cast<uint16_t>(orc_IniFile.value("EDIT/DESIGNATOR_MAX_LENGTH", 200U).toUInt());
+   c_DeviceName             = stw::scl::C_SclString::FromQString(orc_IniFile.value("CONFIG/DEVICENAME", "").toString());
+   u16_DataVersion          = static_cast<uint16_t>(orc_IniFile.value("CONFIG/RAMDATAVERSION", 0U).toUInt());
+   u16_ListOffset           = static_cast<uint16_t>(orc_IniFile.value("CONFIG/LISTOFFSET", 0U).toUInt());
+   u16_ProjectIndex         = static_cast<uint16_t>(orc_IniFile.value("CONFIG/PROJECTINDEX", 0U).toUInt());
    for (u8_Index = 0U; u8_Index < KFX_NUM_ACCESS_GROUPS; u8_Index++)
    {
-      aq_UserMayWriteKDX[u8_Index]  = orc_IniFile.ReadBool("CONFIG",
-                                                           "KDX_WRITE_PERMITTED" + C_SclString::IntToStr(u8_Index),
-                                                           false);
+      aq_UserMayWriteKDX[u8_Index] = orc_IniFile.value("CONFIG/KDX_WRITE_PERMITTED" + QString::number(u8_Index),
+                                                       false).toBool();
    }
    c_MetaInfo.LoadFromINI(orc_IniFile, "META_DATA");
-   //ac_CommentDescriptions are not handled by this class
 }
 
 //--------------------------------------------------------------

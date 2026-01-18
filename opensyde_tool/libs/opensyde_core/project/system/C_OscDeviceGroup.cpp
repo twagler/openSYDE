@@ -12,6 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 #include <QFileInfo>
+#include <QSettings>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
@@ -157,7 +158,7 @@ bool C_OscDeviceGroup::PreCheckDevice(const C_SclString & orc_DeviceName, const 
    C_RD_WR    could not load information
 */
 //----------------------------------------------------------------------------------------------------------------------
-int32_t C_OscDeviceGroup::LoadGroup(C_SclIniFile & orc_Ini, const C_SclString & orc_BasePath)
+int32_t C_OscDeviceGroup::LoadGroup(QSettings & orc_Ini, const C_SclString & orc_BasePath)
 {
    C_SclString c_DevicePath;
    int32_t s32_NumDevices;
@@ -165,14 +166,17 @@ int32_t C_OscDeviceGroup::LoadGroup(C_SclIniFile & orc_Ini, const C_SclString & 
 
    this->mc_Devices.clear();
    //Check number of devices in group
-   s32_NumDevices = orc_Ini.ReadInteger(this->mc_GroupName, "DeviceCount", 0);
+   //Using GroupName as section
+   QString c_Section = this->mc_GroupName.ToQString();
+   s32_NumDevices = orc_Ini.value(c_Section + "/DeviceCount", 0).toInt();
+
    if (s32_NumDevices > 0)
    {
       this->mc_Devices.reserve(s32_NumDevices);
       //Read in all devices in the list in order
       for (int32_t s32_ItDevice = 0; s32_ItDevice < s32_NumDevices; ++s32_ItDevice)
       {
-         c_DevicePath = orc_Ini.ReadString(this->mc_GroupName, "Device" + C_SclString::IntToStr(s32_ItDevice + 1), "");
+         c_DevicePath = orc_Ini.value(c_Section + "/Device" + QString::number(s32_ItDevice + 1), "").toString().toStdString();
          if (c_DevicePath == "")
          {
             osc_write_log_error("Load device descriptions", "Empty name of \"Device" + C_SclString::IntToStr(
@@ -183,7 +187,7 @@ int32_t C_OscDeviceGroup::LoadGroup(C_SclIniFile & orc_Ini, const C_SclString & 
          {
             C_SclString c_FullDevicePath;
             C_OscDeviceDefinition c_DeviceDefinition;
-            if ((QFileInfo(QString::fromStdString(*c_DevicePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_DevicePath.AsStdString())).isFile()) == 0)
+            if (!(QFileInfo(c_DevicePath.ToQString()).exists() && QFileInfo(c_DevicePath.ToQString()).isFile()))
             {
                c_FullDevicePath = orc_BasePath + c_DevicePath;
             }

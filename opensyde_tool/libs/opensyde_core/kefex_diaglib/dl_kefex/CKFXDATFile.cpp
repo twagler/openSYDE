@@ -154,7 +154,7 @@ int32_t C_KFXDATFile::LoadDATList(const C_SclString & orc_FileName, const C_SclS
       return C_RANGE;
    }
 
-   s32_NumBytes = static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_FileName.c_str(.AsStdString())).size()));
+   s32_NumBytes = static_cast<int32_t>(QFileInfo(orc_FileName.ToQString()).size());
 
    pt_FileHandle = std::fopen(orc_FileName.c_str(), "rb");
    if (pt_FileHandle == NULL)

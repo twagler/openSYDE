@@ -25,6 +25,7 @@
 
 using namespace stw::errors;
 using namespace stw::opensyde_core;
+using namespace stw::scl;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
 
@@ -86,7 +87,7 @@ int32_t C_OscSpaServicePackageLoadUtil::h_CheckParamsToProcessZipPackage(const s
    int32_t s32_Return = C_NO_ERR;
 
    // check if zip archive exists
-   if ((QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isFile()) == false)
+   if (!QFileInfo(orc_PackagePath.ToQString()).exists() || !QFileInfo(orc_PackagePath.ToQString()).isFile())
    {
       orc_ErrorMessage = "Zip archive \"" + orc_PackagePath + "\" does not exist.";
       osc_write_log_error(orc_UseCase, orc_ErrorMessage);
@@ -96,9 +97,9 @@ int32_t C_OscSpaServicePackageLoadUtil::h_CheckParamsToProcessZipPackage(const s
    //erase target path if it exists
    if (s32_Return == C_NO_ERR)
    {
-      if (QFileInfo(QString::fromStdString(*orc_TargetUnzipPath.AsStdString())).isDir() == true)
+      if (QFileInfo(orc_TargetUnzipPath.ToQString()).isDir())
       {
-         s32_Return = (QDir(QString::fromStdString(*orc_TargetUnzipPath.AsStdString())).removeRecursively() ? 0 : -1);
+         s32_Return = (QDir(orc_TargetUnzipPath.ToQString()).removeRecursively() ? 0 : -1);
          if (s32_Return != 0)
          {
             orc_ErrorMessage = "Could not remove folder \"" + orc_TargetUnzipPath +
@@ -161,7 +162,7 @@ int32_t C_OscSpaServicePackageLoadUtil::h_SearchFilesInPath(const stw::scl::C_Sc
          break;
       }
       
-      const stw::scl::C_SclString c_FileExt = ("." + QFileInfo(QString::fromStdString(*orc_NecessaryFiles[u32_It].AsStdString())).suffix()).toStdString();
+      const stw::scl::C_SclString c_FileExt = ("." + QFileInfo(orc_NecessaryFiles[u32_It].ToQString()).suffix()).toStdString();
       QStringList c_Filter;
       c_Filter << "*" + QString(c_FileExt.c_str());
       
@@ -171,7 +172,7 @@ int32_t C_OscSpaServicePackageLoadUtil::h_SearchFilesInPath(const stw::scl::C_Sc
       if (c_InfoList.count() == 1)
       {
          //if the correct amount of files is present, we need to have a match on the exact name, otherwise -> fail.
-         if (c_InfoList.at(0).fileName().toStdString().c_str() != orc_NecessaryFiles[u32_It])
+         if (C_SclString::FromQString(c_InfoList.at(0).fileName()) != orc_NecessaryFiles[u32_It])
          {
             s32_Return = C_DEFAULT;
          }

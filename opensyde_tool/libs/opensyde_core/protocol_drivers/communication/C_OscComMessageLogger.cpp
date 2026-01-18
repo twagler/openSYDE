@@ -272,7 +272,7 @@ int32_t C_OscComMessageLogger::AddOsySysDef(const C_SclString & orc_PathSystemDe
 int32_t C_OscComMessageLogger::AddOsySysDef(const C_SclString & orc_PathSystemDefinition, const uint32_t ou32_BusIndex,
                                             std::vector<C_OscSystemBus> & orc_Buses)
 {
-   const QString c_QExtension = "." + QFileInfo(QString::fromStdString(*orc_PathSystemDefinition.AsStdString())).suffix();
+   const QString c_QExtension = "." + QFileInfo(orc_PathSystemDefinition.ToQString()).suffix();
    const C_SclString c_FileExtension = c_QExtension.toStdString().c_str();
    int32_t s32_Return = C_RANGE;
 

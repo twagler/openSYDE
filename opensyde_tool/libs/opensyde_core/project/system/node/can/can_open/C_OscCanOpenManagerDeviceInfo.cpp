@@ -110,7 +110,7 @@ const C_OscCanOpenObjectDictionary & C_OscCanOpenManagerDeviceInfo::GetEdsFileCo
 {
    if (this->mq_EdsFileContentLoaded == false)
    {
-      if ((QFileInfo(QString::fromStdString(*this->c_ProjectEdsFilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*this->c_ProjectEdsFilePath.AsStdString())).isFile()))
+      if (QFileInfo(this->c_ProjectEdsFilePath.ToQString()).exists() && QFileInfo(this->c_ProjectEdsFilePath.ToQString()).isFile())
       {
          const int32_t s32_Retval = this->mc_EdsFileContent.LoadFromFile(this->c_ProjectEdsFilePath);
          if (s32_Retval != C_NO_ERR)

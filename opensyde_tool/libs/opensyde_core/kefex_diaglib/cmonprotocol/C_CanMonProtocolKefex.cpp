@@ -16,7 +16,8 @@
 #include "stwerrors.hpp"
 #include "C_CanMonProtocolKefex.hpp"
 
-//---------------------------------------------------------------------------
+#include "C_CanMonProtocolKefex.hpp"
+#include <QSettings>
 
 using namespace stw::errors;
 using namespace stw::cmon_protocol;
@@ -100,14 +101,15 @@ void C_CanMonProtocolKefex::SetBaseId(const uint16_t ou16_BaseId)
    C_RD_WR   -> error writing data
 */
 //-----------------------------------------------------------------------------
-int32_t C_CanMonProtocolKefex::SaveParamsToIni(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section)
+int32_t C_CanMonProtocolKefex::SaveParamsToIni(QSettings & orc_IniFile, const C_SclString & orc_Section)
 {
    int32_t s32_Error = C_NO_ERR;
+   QString c_Section = orc_Section.ToQString();
 
    try
    {
-      orc_IniFile.WriteInteger(orc_Section, "PP_KFX_BASE_ID",     this->mu16_KfxBaseID);
-      orc_IniFile.WriteInteger(orc_Section, "PP_KFX_LIST_OFFSET", this->mu16_KfxListOffset);
+      orc_IniFile.setValue(c_Section + "/PP_KFX_BASE_ID",     this->mu16_KfxBaseID);
+      orc_IniFile.setValue(c_Section + "/PP_KFX_LIST_OFFSET", this->mu16_KfxListOffset);
       //const t_RAMLists *m_ptKFXLists; No easy way to save this.
    }
    catch (...)
@@ -131,12 +133,14 @@ int32_t C_CanMonProtocolKefex::SaveParamsToIni(C_SclIniFile & orc_IniFile, const
    C_RD_WR   -> error reading data
 */
 //-----------------------------------------------------------------------------
-int32_t C_CanMonProtocolKefex::LoadParamsFromIni(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section)
+int32_t C_CanMonProtocolKefex::LoadParamsFromIni(QSettings & orc_IniFile, const C_SclString & orc_Section)
 {
-   this->mu16_KfxBaseID     = static_cast<uint16_t>(orc_IniFile.ReadInteger(orc_Section, "PP_KFX_BASE_ID",
-                                                                            this->mu16_KfxBaseID));
-   this->mu16_KfxListOffset = static_cast<uint16_t>(orc_IniFile.ReadInteger(orc_Section, "PP_KFX_LIST_OFFSET",
-                                                                            this->mu16_KfxListOffset));
+   QString c_Section = orc_Section.ToQString();
+
+   this->mu16_KfxBaseID     = static_cast<uint16_t>(orc_IniFile.value(c_Section + "/PP_KFX_BASE_ID",
+                                                                            this->mu16_KfxBaseID).toUInt());
+   this->mu16_KfxListOffset = static_cast<uint16_t>(orc_IniFile.value(c_Section + "/PP_KFX_LIST_OFFSET",
+                                                                            this->mu16_KfxListOffset).toUInt());
    //const t_RAMLists *m_ptKFXLists; No easy way to load this.
    return C_NO_ERR;
 }

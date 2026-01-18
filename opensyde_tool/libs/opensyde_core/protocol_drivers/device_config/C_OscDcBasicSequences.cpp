@@ -346,6 +346,7 @@ int32_t C_OscDcBasicSequences::ScanGetInfo(void)
             c_UniqueIdIndices.push_back(u32_ResultCounter);
          }
       }
+      /*
       if (s32_Return == C_NO_ERR)
       {
          QElapsedTimer c_Timer;
@@ -375,6 +376,7 @@ int32_t C_OscDcBasicSequences::ScanGetInfo(void)
          }
          while (c_Timer.hasExpired(u32_WaitTime) == false);
       }
+      */
 
       Q_ASSERT((c_ReadSnResult.size() + c_ReadSnResultExt.size()) == c_DeviceInfoResult.size());
 

@@ -63,10 +63,12 @@ C_SclIniFile::C_SclIniFile(const C_SclString & orc_FileName) :
    ms32_PreviousSectionIndex(0),
    FileName(orc_FileName)
 {
-   QString c_QsFileName = QString::fromStdString(*orc_FileName.AsStdString());
-   mpc_Settings = new QSettings(c_QsFileName, QSettings::IniFormat);
-   
-   if (orc_FileName != "")
+   if (orc_FileName == "")
+   {
+      //empty in-memory file
+      mc_Sections.SetLength(0);
+   }
+   else
    {
       (void)m_Load(FileName);
    }
@@ -88,7 +90,6 @@ C_SclIniFile::~C_SclIniFile() SCL_WILL_THROW
    {
       UpdateFile();
    }
-   delete mpc_Settings;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -125,35 +126,81 @@ void C_SclIniFile::mh_CopyLessTrim(C_SclString & orc_String)
 //----------------------------------------------------------------------------------------------------------------------
 bool C_SclIniFile::m_Load(const C_SclString & orc_FileName)
 {
-   mc_Sections.resize(0);
-   mq_Dirty = false;
+   C_SclString c_Comment;
+   C_SclIniSection * pc_CurrentSection = NULL;
+   int32_t s32_Index;
+   uint16_t u16_NumSections = 0;
+   uint16_t u16_NumKeysAdded = 0U;
+   C_SclStringList c_List;
 
-   if (mpc_Settings != NULL)
+   try
    {
-      delete mpc_Settings;
+      c_List.LoadFromFile(orc_FileName);
    }
-   mpc_Settings = new QSettings(QString::fromStdString(*orc_FileName.AsStdString()), QSettings::IniFormat);
-
-   // Populate mc_Sections from QSettings for API compatibility (C_EdsFile etc)
-   QStringList c_Groups = mpc_Settings->childGroups();
-   mc_Sections.resize(c_Groups.count());
-   
-   for (int i = 0; i < c_Groups.count(); ++i)
+   catch (...)
    {
-      C_SclIniSection & rc_Section = mc_Sections[i];
-      rc_Section.c_Name = c_Groups.at(i).toStdString();
-      
-      mpc_Settings->beginGroup(c_Groups.at(i));
-      QStringList c_Keys = mpc_Settings->allKeys();
-      rc_Section.c_Keys.resize(c_Keys.count());
-      
-      for (int j = 0; j < c_Keys.count(); ++j)
+      //ignore: not a problem, file does probably not exist (yet) !
+      mc_Sections.SetLength(0);
+      return false;
+   }
+
+   //Go through file and parse.
+   //A two-pass scan was considered to be able to dimension the vectors once instead
+   // of resizing them when new values are added.
+   //But performance tests showed better performance with this single pass approach.
+   //So all the string checking only needs to be done once.
+   for (s32_Index = 0; s32_Index < c_List.Strings.size(); s32_Index++)
+   {
+      C_SclIniFile::mh_CopyLessTrim(c_List.Strings[s32_Index]);
+      const C_SclString & rc_Line = c_List.Strings[s32_Index];
+
+      if (rc_Line.Length() > 0)
       {
-         C_SclIniKey & rc_Key = rc_Section.c_Keys[j];
-         rc_Key.c_Key = c_Keys.at(j).toStdString();
-         rc_Key.c_Value = mpc_Settings->value(c_Keys.at(j)).toString().toStdString();
+         //don't use c_Line.Pos to check for characters at specific positions as this would search through the whole
+         // line needlessly
+         if (rc_Line[1] == mcn_CommentIndicator)
+         {
+            c_Comment += (rc_Line + "\n");
+         }
+         else if (rc_Line[1] == '[') // new section
+         {
+            mc_Sections.IncLength();
+            pc_CurrentSection = &mc_Sections[u16_NumSections];
+            //get everything between the brackets:
+            pc_CurrentSection->c_Name = rc_Line.SubString(2, rc_Line.Length() - 2);
+            pc_CurrentSection->c_Comment = c_Comment;
+
+            u16_NumSections++;
+            c_Comment = "";
+            u16_NumKeysAdded = 0U;
+         }
+         else // in this case this should be a key, add this key/value pair
+         {
+            if (pc_CurrentSection != NULL)
+            {
+               C_SclString c_Key;
+               C_SclString c_Value;
+               mh_GetNextPair(rc_Line, c_Key, c_Value);
+
+               if (c_Key.Length() > 0U)
+               {
+                  C_SclIniKey * pc_NewKey;
+                  pc_CurrentSection->c_Keys.IncLength();
+                  pc_NewKey = &pc_CurrentSection->c_Keys[u16_NumKeysAdded];
+                  pc_NewKey->c_Key     = c_Key;
+                  pc_NewKey->c_Value   = c_Value;
+                  pc_NewKey->c_Comment = c_Comment;
+
+                  u16_NumKeysAdded++;
+                  c_Comment = "";
+               }
+            }
+         }
       }
-      mpc_Settings->endGroup();
+      else
+      {
+         //empty line
+      }
    }
 
    return true;
@@ -170,12 +217,23 @@ bool C_SclIniFile::m_Load(const C_SclString & orc_FileName)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SclIniFile::UpdateFile(void)
 {
+   C_SclStringList c_Strings;
+
    if (FileName.Length() == 0U)
    {
       throw "C_SclIniFile::UpdateFile failed !";
    }
 
-   mpc_Settings->sync();
+   this->GetFileAsStringList(c_Strings);
+   try
+   {
+      c_Strings.SaveToFile(FileName);
+   }
+   catch (...)
+   {
+      throw "C_SclIniFile::UpdateFile: could not write to file !";
+   }
+
    mq_Dirty = false;
 }
 
@@ -202,47 +260,46 @@ void C_SclIniFile::UpdateFile(void)
 */
 //----------------------------------------------------------------------------------------------------------------------
 bool C_SclIniFile::m_SetValue(const C_SclString & orc_Section, const C_SclString & orc_Key,
-                               const C_SclString & orc_Value, const bool oq_ForceAppend)
+                              const C_SclString & orc_Value, const bool oq_ForceAppend)
 {
+   C_SclIniKey * pc_Key = NULL;
+   C_SclIniSection * pc_Section;
+
    if ((orc_Section == "") || (orc_Key == ""))
    {
       return false;
    }
 
-   QString c_QsSection = QString::fromStdString(*orc_Section.AsStdString());
-   QString c_QsKey = QString::fromStdString(*orc_Key.AsStdString());
-   QString c_QsValue = QString::fromStdString(*orc_Value.AsStdString());
-
-   mpc_Settings->setValue(c_QsSection + "/" + c_QsKey, c_QsValue);
-   mq_Dirty = true;
-
-   // does the section already exist ?
-   C_SclIniSection * pc_Section = m_GetSection(orc_Section);
+   //does the section already exist ?
+   pc_Section = m_GetSection(orc_Section);
    if (pc_Section != NULL)
    {
-      C_SclIniKey * pc_Key = NULL;
       if (oq_ForceAppend == false)
       {
          pc_Key = pc_Section->GetKey(orc_Key);
       }
-      
-      if (pc_Key == NULL)
-      {
-         pc_Section->c_Keys.resize(pc_Section->c_Keys.size() + 1);
-         pc_Key = &pc_Section->c_Keys[(pc_Section->c_Keys.size() > 0 ? pc_Section->c_Keys.size() - 1 : 0)];
-         pc_Key->c_Key = orc_Key;
-      }
-      pc_Key->c_Value = orc_Value;
    }
    else
    {
-      // no: create new section in cache
+      //no: create new section
       pc_Section = m_CreateSection(orc_Section);
-      pc_Section->c_Keys.resize(pc_Section->c_Keys.size() + 1);
-      pc_Section->c_Keys[0].c_Key = orc_Key;
-      pc_Section->c_Keys[0].c_Value = orc_Value;
    }
 
+   mq_Dirty = true;
+
+   // if the key does not exist in that section, then add the new key.
+   if (pc_Key == NULL)
+   {
+      pc_Section->c_Keys.IncLength();
+      pc_Section->c_Keys[pc_Section->c_Keys.GetHigh()].c_Key     = orc_Key;
+      pc_Section->c_Keys[pc_Section->c_Keys.GetHigh()].c_Value   = orc_Value;
+      pc_Section->c_Keys[pc_Section->c_Keys.GetHigh()].c_Comment = "";
+   }
+   else
+   {
+      //existing key:
+      pc_Key->c_Value = orc_Value;
+   }
    return true;
 }
 
@@ -586,25 +643,19 @@ bool C_SclIniFile::ReadBool(const C_SclString & orc_Section, const C_SclString &
 float64_t C_SclIniFile::ReadFloat(const C_SclString & orc_Section, const C_SclString & orc_Key,
                                   const float64_t of64_Default)
 {
-   QString c_QsSection = QString::fromStdString(*orc_Section.AsStdString());
-   QString c_QsKey = QString::fromStdString(*orc_Key.AsStdString());
-   
-   QVariant c_Val = mpc_Settings->value(c_QsSection + "/" + c_QsKey);
-   if (!c_Val.isValid() || c_Val.toString() == "")
+   C_SclString c_String;
+   float64_t f64_Return;
+
+   c_String = m_GetValue(orc_Key, orc_Section);
+   if (c_String == "") //not found or empty
    {
-      return of64_Default;
+      f64_Return = of64_Default;
    }
-   
-   bool q_Ok = false;
-   float64_t f64_Ret = c_Val.toDouble(&q_Ok);
-   if (!q_Ok)
+   else
    {
-      // Handle comma as decimal separator
-      QString c_Qs = c_Val.toString().replace(",", ".");
-      f64_Ret = c_Qs.toDouble(&q_Ok);
+      f64_Return = c_String.ToDouble();
    }
-   
-   return q_Ok ? f64_Ret : of64_Default;
+   return f64_Return;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -618,15 +669,14 @@ float64_t C_SclIniFile::ReadFloat(const C_SclString & orc_Section, const C_SclSt
 //----------------------------------------------------------------------------------------------------------------------
 void C_SclIniFile::EraseSection(const C_SclString & orc_Section)
 {
-   QString c_QsSection = QString::fromStdString(*orc_Section.AsStdString());
-   mpc_Settings->remove(c_QsSection);
-   mq_Dirty = true;
+   int32_t s32_Index;
 
-   for (int32_t s32_Index = 0; s32_Index < mc_Sections.size(); s32_Index++)
+   for (s32_Index = 0; s32_Index < mc_Sections.GetLength(); s32_Index++)
    {
       if (mc_Sections[s32_Index].c_Name.AnsiCompareIc(orc_Section) == 0)
       {
-         mc_Sections.removeAt(s32_Index);
+         mc_Sections.Delete(s32_Index);
+         mq_Dirty = true;
          ms32_PreviousSectionIndex = 0;
          return;
       }
@@ -647,21 +697,21 @@ void C_SclIniFile::EraseSection(const C_SclString & orc_Section)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SclIniFile::DeleteKey(const C_SclString & orc_Section, const C_SclString & orc_Key)
 {
-   QString c_QsSection = QString::fromStdString(*orc_Section.AsStdString());
-   QString c_QsKey = QString::fromStdString(*orc_Key.AsStdString());
-   mpc_Settings->remove(c_QsSection + "/" + c_QsKey);
-   mq_Dirty = true;
-
+   int32_t s32_Index;
    C_SclIniSection * const pc_Section = m_GetSection(orc_Section);
-   if (pc_Section != NULL)
+
+   if (pc_Section == NULL)
    {
-      for (int32_t s32_Index = 0; s32_Index < pc_Section->c_Keys.size(); s32_Index++)
+      return;
+   }
+
+   for (s32_Index = 0; s32_Index < pc_Section->c_Keys.GetLength(); s32_Index++)
+   {
+      if (pc_Section->c_Keys[s32_Index].c_Key.AnsiCompareIc(orc_Key) == 0)
       {
-         if (pc_Section->c_Keys[s32_Index].c_Key.AnsiCompareIc(orc_Key) == 0)
-         {
-            pc_Section->c_Keys.removeAt(s32_Index);
-            return;
-         }
+         pc_Section->c_Keys.Delete(s32_Index);
+         mq_Dirty = true;
+         return;
       }
    }
 }
@@ -680,13 +730,13 @@ void C_SclIniFile::DeleteKey(const C_SclString & orc_Section, const C_SclString 
 //----------------------------------------------------------------------------------------------------------------------
 C_SclIniSection * C_SclIniFile::m_CreateSection(const C_SclString & orc_Section)
 {
-   mc_Sections.resize(mc_Sections.size() + 1);
-   mc_Sections[(mc_Sections.size() > 0 ? mc_Sections.size() - 1 : 0)].c_Name    = orc_Section;
-   mc_Sections[(mc_Sections.size() > 0 ? mc_Sections.size() - 1 : 0)].c_Comment = "";
+   mc_Sections.IncLength();
+   mc_Sections[mc_Sections.GetHigh()].c_Name    = orc_Section;
+   mc_Sections[mc_Sections.GetHigh()].c_Comment = "";
    mq_Dirty = true;
    ms32_PreviousSectionIndex = 0;
 
-   return &mc_Sections[(mc_Sections.size() > 0 ? mc_Sections.size() - 1 : 0)];
+   return &mc_Sections[mc_Sections.GetHigh()];
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -753,7 +803,7 @@ C_SclIniKey * C_SclIniSection::GetKey(const C_SclString & orc_Key)
    s32_LastIndex = ms32_PreviousKeyIndex;
 
    //Search from last successful point to the end
-   for (s32_Index = s32_LastIndex; s32_Index < this->c_Keys.size(); s32_Index++)
+   for (s32_Index = s32_LastIndex; s32_Index < this->c_Keys.GetLength(); s32_Index++)
    {
       if (this->c_Keys[s32_Index].c_Key.AnsiCompareIc(orc_Key) == 0)
       {
@@ -816,7 +866,7 @@ C_SclIniSection * C_SclIniFile::m_GetSection(const C_SclString & orc_Section)
    s32_LastIndex = ms32_PreviousSectionIndex;
 
    //Search from last successful point to the end
-   for (s32_Index = s32_LastIndex; s32_Index < mc_Sections.size(); s32_Index++)
+   for (s32_Index = s32_LastIndex; s32_Index < mc_Sections.GetLength(); s32_Index++)
    {
       if (mc_Sections[s32_Index].c_Name.AnsiCompareIc(orc_Section) == 0)
       {
@@ -891,8 +941,8 @@ void C_SclIniFile::ReadSection(const C_SclString & orc_Section, C_SclStringList 
 
    if (pc_Section != NULL)
    {
-      opc_Strings->Strings.resize(static_cast<int32_t>(u32_OldLength) + pc_Section->c_Keys.size());
-      for (s32_Loop = 0; s32_Loop < pc_Section->c_Keys.size(); s32_Loop++)
+      opc_Strings->Strings.resize(static_cast<int32_t>(u32_OldLength) + pc_Section->c_Keys.GetLength());
+      for (s32_Loop = 0; s32_Loop < pc_Section->c_Keys.GetLength(); s32_Loop++)
       {
          opc_Strings->Strings[static_cast<int32_t>(u32_OldLength) + s32_Loop] = pc_Section->c_Keys[s32_Loop].c_Key;
       }
@@ -929,8 +979,8 @@ void C_SclIniFile::ReadSectionValues(const C_SclString & orc_Section, C_SclStrin
 
    if (pc_Section != NULL)
    {
-      opc_Strings->Strings.resize(static_cast<int32_t>(u32_OldLength) + pc_Section->c_Keys.size());
-      for (s32_Loop = 0; s32_Loop < pc_Section->c_Keys.size(); s32_Loop++)
+      opc_Strings->Strings.resize(static_cast<int32_t>(u32_OldLength) + pc_Section->c_Keys.GetLength());
+      for (s32_Loop = 0; s32_Loop < pc_Section->c_Keys.GetLength(); s32_Loop++)
       {
          opc_Strings->Strings[static_cast<int32_t>(u32_OldLength) + s32_Loop] =
             pc_Section->c_Keys[s32_Loop].c_Key + "=" + pc_Section->c_Keys[s32_Loop].c_Value;
@@ -962,8 +1012,8 @@ void C_SclIniFile::ReadSections(C_SclStringList * const opc_Strings, const bool 
       u32_OldLength = 0U;
    }
 
-   opc_Strings->Strings.resize(static_cast<int32_t>(u32_OldLength) + mc_Sections.size());
-   for (s32_Loop = 0; s32_Loop < mc_Sections.size(); s32_Loop++)
+   opc_Strings->Strings.resize(static_cast<int32_t>(u32_OldLength) + mc_Sections.GetLength());
+   for (s32_Loop = 0; s32_Loop < mc_Sections.GetLength(); s32_Loop++)
    {
       opc_Strings->Strings[static_cast<int32_t>(u32_OldLength) + s32_Loop] = mc_Sections[s32_Loop].c_Name;
    }
@@ -1016,7 +1066,7 @@ void C_SclIniFile::GetFileAsStringList(C_SclStringList & orc_Strings) const
 
    orc_Strings.Clear();
 
-   for (s32_Section = 0; s32_Section < mc_Sections.size(); s32_Section++)
+   for (s32_Section = 0; s32_Section < mc_Sections.GetLength(); s32_Section++)
    {
       pc_Section = &mc_Sections[s32_Section];
 
@@ -1030,7 +1080,7 @@ void C_SclIniFile::GetFileAsStringList(C_SclStringList & orc_Strings) const
          orc_Strings.Add("[" + pc_Section->c_Name + "]");
       }
 
-      s32_NumKeys = pc_Section->c_Keys.size();
+      s32_NumKeys = pc_Section->c_Keys.GetLength();
       for (s32_Key = 0; s32_Key < s32_NumKeys; s32_Key++)
       {
          pc_Key = &pc_Section->c_Keys[s32_Key];
@@ -1046,7 +1096,7 @@ void C_SclIniFile::GetFileAsStringList(C_SclStringList & orc_Strings) const
       }
 
       //add one blank line after every section (increases readability; required by some parsers)
-      if (s32_Section < (mc_Sections.size() - 1))
+      if (s32_Section < (mc_Sections.GetLength() - 1))
       {
          orc_Strings.Add("");
       }

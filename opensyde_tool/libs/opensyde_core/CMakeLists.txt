@@ -39,6 +39,7 @@ set(OPENSYDE_CORE_COMMON_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers/precomp_headers.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscBinaryHash.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscChecksummedIniFile.cpp
+
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscUtils.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/dl_string_resources/C_SclResourceStrings.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/dl_string_resources/DLStrings.cpp
@@ -46,7 +47,9 @@ set(OPENSYDE_CORE_COMMON_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/logging/C_OscLoggingHandler.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/md5/C_Md5Checksum.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclChecksums.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclDateTime.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclIniFile.cpp
+
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclString.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclStringList.cpp
    ${CMAKE_CURRENT_SOURCE_DIR}/xml_parser/C_OscXmlParser.cpp
@@ -55,6 +58,7 @@ set(OPENSYDE_CORE_COMMON_SOURCES
 
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscBinaryHash.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscChecksummedIniFile.hpp
+
    ${CMAKE_CURRENT_SOURCE_DIR}/C_OscUtils.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/DiagLib_config.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/kefex_diaglib/dl_string_resources/C_SclResourceStrings.hpp
@@ -63,7 +67,10 @@ set(OPENSYDE_CORE_COMMON_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/logging/C_OscLoggingHandler.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/md5/C_Md5Checksum.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclChecksums.hpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclDateTime.hpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclDynamicArray.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclIniFile.hpp
+
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclString.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/scl/C_SclStringList.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/stwerrors/stwerrors.hpp

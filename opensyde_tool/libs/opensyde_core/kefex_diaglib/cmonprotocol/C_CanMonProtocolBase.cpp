@@ -37,7 +37,7 @@ using namespace stw::scl;
    else      -> error writing data
 */
 //-----------------------------------------------------------------------------
-int32_t C_CanMonProtocolBase::SaveParamsToIni(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section)
+int32_t C_CanMonProtocolBase::SaveParamsToIni(QSettings & orc_IniFile, const C_SclString & orc_Section)
 {
    (void)orc_IniFile;
    (void)orc_Section;
@@ -59,7 +59,7 @@ int32_t C_CanMonProtocolBase::SaveParamsToIni(C_SclIniFile & orc_IniFile, const 
    else      -> error reading data
 */
 //-----------------------------------------------------------------------------
-int32_t C_CanMonProtocolBase::LoadParamsFromIni(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section)
+int32_t C_CanMonProtocolBase::LoadParamsFromIni(QSettings & orc_IniFile, const C_SclString & orc_Section)
 {
    (void)orc_IniFile;
    (void)orc_Section;

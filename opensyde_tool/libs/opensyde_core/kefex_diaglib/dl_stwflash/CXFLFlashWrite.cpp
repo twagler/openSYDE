@@ -278,7 +278,7 @@ int32_t C_XFLFlashWrite::ExecuteWrite(const C_XFLFlashWriteParameters & orc_Para
 
    TRG_ReportStatus("<<<CLRALL", gu8_DL_REPORT_STATUS_TYPE_INFORMATION);
 
-   if ((QFileInfo(QString::fromStdString(*orc_Params.c_HexFile.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Params.c_HexFile.AsStdString())).isFile()) == false)
+   if (!(QFileInfo(orc_Params.c_HexFile.ToQString()).exists() && QFileInfo(orc_Params.c_HexFile.ToQString()).isFile()))
    {
       TRG_ReportStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_FILE_NOT_FOUND) + " (" + orc_Params.c_HexFile + ")",
                        gu8_DL_REPORT_STATUS_TYPE_ERROR);
@@ -1309,12 +1309,12 @@ int32_t C_XFLFlashWrite::m_FlashESXLokalID(const C_SclString & orc_DeviceId,
       //get file information:
       int32_t s32_Size;
 
-      s32_Size = static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_Params.c_HexFile.AsStdString())).size());
+      s32_Size = static_cast<int32_t>(QFileInfo(orc_Params.c_HexFile.ToQString()).size());
       if (s32_Size != -1)
       {
          m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_FILESIZE) + " " + C_SclString::IntToStr(s32_Size) +
                                stw::opensyde_core::C_OscUtils::h_LoadString(STR_FDL_BYTES));
-         const QFileInfo c_FileInfo(QString::fromStdString(*orc_Params.c_HexFile.AsStdString()));
+         const QFileInfo c_FileInfo(orc_Params.c_HexFile.ToQString());
          c_Text = c_FileInfo.lastModified().toString("dd.MM.yyyy HH:mm:ss").toStdString().c_str();
          m_ReportVerboseStatus(stw::opensyde_core::C_OscUtils::h_LoadString(STR_TIMESTAMP) + " " + c_Text);
       }

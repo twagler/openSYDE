@@ -83,7 +83,14 @@ int32_t C_UsFiler::h_Save(const C_UsHandler & orc_UserSettings, const QString & 
       try
       {
          //Parse ini
-         C_SclIniFile c_Ini(orc_Path.toStdString().c_str());
+         QSettings c_Ini(orc_Path, QSettings::IniFormat);
+         // Ensure we might want to clear if we are saving fresh? 
+         // But h_Save usually updates.
+         // Original code created C_SclIniFile c_Ini(path).
+         // If C_SclIniFile reads the existing file by default, then QSettings is fine.
+         // If C_SclIniFile creates a NEW file, we might need to clear.
+         // Assuming it loads existing.
+         
          mh_SaveCommon(orc_UserSettings, c_Ini);
          mh_SaveEnvironment(orc_UserSettings, c_Ini);
          mh_SaveColors(orc_UserSettings, c_Ini);
@@ -91,6 +98,7 @@ int32_t C_UsFiler::h_Save(const C_UsHandler & orc_UserSettings, const QString & 
          mh_SaveRecentProjects(orc_UserSettings, c_Ini);
          mh_SaveProjectIndependentSection(orc_UserSettings, c_Ini);
          mh_SaveProjectDependentSection(orc_UserSettings, c_Ini, orc_ActiveProject);
+         c_Ini.sync();
       }
       catch (...)
       {
@@ -128,7 +136,7 @@ int32_t C_UsFiler::h_Load(C_UsHandler & orc_UserSettings, const QString & orc_Pa
    {
       try
       {
-         C_SclIniFile c_Ini(orc_Path.toStdString().c_str());
+         QSettings c_Ini(orc_Path, QSettings::IniFormat);
          s32_Retval = C_NO_ERR;
 
          orc_UserSettings.SetDefault();
@@ -170,7 +178,7 @@ int32_t C_UsFiler::h_Load(C_UsHandler & orc_UserSettings, const QString & orc_Pa
    \param[in]      orc_Node         Node data
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveNode(C_SclIniFile & orc_Ini, const QString & orc_SectionName, const QString & orc_NodeIdBase,
+void C_UsFiler::mh_SaveNode(QSettings & orc_Ini, const QString & orc_SectionName, const QString & orc_NodeIdBase,
                             const QString & orc_NodeName, const C_UsNode & orc_Node)
 {
    const QString c_NodeIdName = static_cast<QString>("%1Name").arg(orc_NodeIdBase);
@@ -212,21 +220,20 @@ void C_UsFiler::mh_SaveNode(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    int32_t s32_ItDatapool = 0;
 
    //Name
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_NodeIdName.toStdString().c_str(),
-                       orc_NodeName.toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" + c_NodeIdName, orc_NodeName);
 
    //Selected datapool name
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_NodeIdSelectedDatapoolName.toStdString().c_str(),
-                       orc_Node.GetSelectedDatapoolName().toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" + c_NodeIdSelectedDatapoolName,
+                        orc_Node.GetSelectedDatapoolName());
 
    //Selected protocol
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_NodeIdSelectedProtocol.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_NodeIdSelectedProtocol,
                         static_cast<int32_t>(orc_Node.GetSelectedProtocol()));
 
    //Selected interface
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_NodeIdSelectedInterface.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_NodeIdSelectedInterface,
                         static_cast<int32_t>(orc_Node.GetSelectedInterface()));
 
    //CANopen colums
@@ -240,35 +247,35 @@ void C_UsFiler::mh_SaveNode(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    for (std::map<uint8_t, bool>::const_iterator c_ItInterface = c_Interfaces.begin();
         c_ItInterface != c_Interfaces.end(); ++c_ItInterface)
    {
-      orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
+      orc_Ini.setValue(orc_SectionName + "/" +
                            (c_CanOpenExpandedCanOpenManager + QString::number(
-                               u32_InterfaceCounter) + "InterfaceNumber").toStdString().c_str(),
+                               u32_InterfaceCounter) + "InterfaceNumber"),
                            c_ItInterface->first);
-      orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
+      orc_Ini.setValue(orc_SectionName + "/" +
                         (c_CanOpenExpandedCanOpenManager + QString::number(
-                            u32_InterfaceCounter)).toStdString().c_str(), c_ItInterface->second);
+                            u32_InterfaceCounter)), c_ItInterface->second);
       u32_InterfaceCounter++;
    }
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_CanOpenExpandedCanOpenManagerCounter.toStdString().c_str(),
-                        c_Interfaces.size());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_CanOpenExpandedCanOpenManagerCounter,
+                        static_cast<int>(c_Interfaces.size()));
    uint32_t u32_DevicesCounter = 0UL;
    std::map<uint8_t, bool> c_Devices = orc_Node.GetExpandedCanOpenDevices();
    for (std::map<uint8_t, bool>::const_iterator c_ItDevices = c_Devices.begin();
         c_ItDevices != c_Devices.end(); ++c_ItDevices)
    {
-      orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
+      orc_Ini.setValue(orc_SectionName + "/" +
                            (c_CanOpenExpandedCanOpenDevices + QString::number(
-                               u32_DevicesCounter) + "InterfaceNumber").toStdString().c_str(),
+                               u32_DevicesCounter) + "InterfaceNumber"),
                            c_ItDevices->first);
-      orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
+      orc_Ini.setValue(orc_SectionName + "/" +
                         (c_CanOpenExpandedCanOpenDevices + QString::number(
-                            u32_DevicesCounter)).toStdString().c_str(), c_ItDevices->second);
+                            u32_DevicesCounter)), c_ItDevices->second);
       u32_DevicesCounter++;
    }
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_CanOpenExpandedCanOpenDevicesCounter.toStdString().c_str(),
-                        c_Devices.size());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_CanOpenExpandedCanOpenDevicesCounter,
+                        static_cast<int>(c_Devices.size()));
    uint32_t u32_DeviceCounter = 0UL;
    std::map<std::pair<uint8_t, std::pair<uint8_t, stw::scl::C_SclString> >,
             bool> c_Device = orc_Node.GetExpandedCanOpenDevice();
@@ -277,58 +284,58 @@ void C_UsFiler::mh_SaveNode(C_SclIniFile & orc_Ini, const QString & orc_SectionN
         c_ItDevice != c_Device.end();
         ++c_ItDevice)
    {
-      orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
+      orc_Ini.setValue(orc_SectionName + "/" +
                            (c_CanOpenExpandedCanOpenDevice +
-                            QString::number(u32_DeviceCounter) + "InterfaceNumber").toStdString().c_str(),
+                            QString::number(u32_DeviceCounter) + "InterfaceNumber"),
                            c_ItDevice->first.first);
-      orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
+      orc_Ini.setValue(orc_SectionName + "/" +
                            (c_CanOpenExpandedCanOpenDevice +
-                            QString::number(u32_DeviceCounter) + "DeviceInterfaceNumber").toStdString().c_str(),
+                            QString::number(u32_DeviceCounter) + "DeviceInterfaceNumber"),
                            c_ItDevice->first.second.first);
-      orc_Ini.WriteString(orc_SectionName.toStdString().c_str(),
+      orc_Ini.setValue(orc_SectionName + "/" +
                           (c_CanOpenExpandedCanOpenDevice +
-                           QString::number(u32_DeviceCounter) + "DeviceNodeName").toStdString().c_str(),
-                          c_ItDevice->first.second.second.AsStdString()->c_str());
-      orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
+                           QString::number(u32_DeviceCounter) + "DeviceNodeName"),
+                           QString(c_ItDevice->first.second.second.c_str()));
+      orc_Ini.setValue(orc_SectionName + "/" +
                         (c_CanOpenExpandedCanOpenDevice +
-                         QString::number(u32_DeviceCounter)).toStdString().c_str(),
+                         QString::number(u32_DeviceCounter)),
                         c_ItDevice->second);
       u32_DeviceCounter++;
    }
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_CanOpenExpandedCanOpenDeviceCounter.toStdString().c_str(),
-                        c_Device.size());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_CanOpenSelectedCanOpenManager.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_CanOpenExpandedCanOpenDeviceCounter,
+                        static_cast<int>(c_Device.size()));
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_CanOpenSelectedCanOpenManager,
                         static_cast<int32_t>(orc_Node.GetSelectedCanOpenManager()));
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_CanOpenSelectedCanOpenDeviceInterfaceNumber.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_CanOpenSelectedCanOpenDeviceInterfaceNumber,
                         static_cast<int32_t>(orc_Node.GetSelectedCanOpenDeviceInterfaceNumber()));
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(),
-                       c_CanOpenSelectedCanOpenDeviceNodeName.toStdString().c_str(),
-                       orc_Node.GetSelectedCanOpenDeviceNodeName().toStdString().c_str());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_CanOpenSelectedCanOpenDeviceUseCaseIndex.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                       c_CanOpenSelectedCanOpenDeviceNodeName,
+                       orc_Node.GetSelectedCanOpenDeviceNodeName());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_CanOpenSelectedCanOpenDeviceUseCaseIndex,
                         static_cast<int32_t>(orc_Node.GetSelectedCanOpenDeviceUseCaseIndex()));
 
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_CanOpenSelectedUseCaseOrInterface.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_CanOpenSelectedUseCaseOrInterface,
                      orc_Node.GetCanOpenSelectedUseCaseOrInterface());
 
    //Selected HALC domain & channel
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_NodeIdSelectedHalcDomain.toStdString().c_str(),
-                       orc_Node.GetSelectedHalcDomainName().toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" + c_NodeIdSelectedHalcDomain,
+                       orc_Node.GetSelectedHalcDomainName());
 
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_NodeIdSelectedHalcChannel.toStdString().c_str(),
-                       orc_Node.GetSelectedHalcChannel().toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" + c_NodeIdSelectedHalcChannel,
+                       orc_Node.GetSelectedHalcChannel());
 
    // HALC columns
    C_UsFiler::mh_SaveColumns(orc_Ini, orc_SectionName, c_HalcOvColumnId, orc_Node.GetHalcOverviewColumnWidth());
    C_UsFiler::mh_SaveColumns(orc_Ini, orc_SectionName, c_HalcConfigColumnId, orc_Node.GetHalcConfigColumnWidth());
 
    //Datapool count
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_NodeIdDatapoolCount.toStdString().c_str(),
-                        c_DatapoolKeyList.size());
+   orc_Ini.setValue(orc_SectionName + "/" + c_NodeIdDatapoolCount,
+                        static_cast<int>(c_DatapoolKeyList.size()));
    for (QList<QString>::const_iterator c_ItDatapoolKey = c_DatapoolKeyList.begin();
         c_ItDatapoolKey != c_DatapoolKeyList.end(); ++c_ItDatapoolKey)
    {
@@ -341,12 +348,12 @@ void C_UsFiler::mh_SaveNode(C_SclIniFile & orc_Ini, const QString & orc_SectionN
       ++s32_ItDatapool;
    }
    //DataLogger LogJob Index
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_NodeIdSelectedDataLoggerLogJobIndex.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_NodeIdSelectedDataLoggerLogJobIndex,
                         static_cast<int32_t>(orc_Node.GetSelectedDataLoggerLogJobIndex()));
    //DataLogger Overview widget selected
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_DataLoggerOverviewWidgetSelected.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_DataLoggerOverviewWidgetSelected,
                      orc_Node.GetIsOverviewWidgetSelected());
 }
 
@@ -360,7 +367,7 @@ void C_UsFiler::mh_SaveNode(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    \param[in]      orc_Bus          Bus data
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveBus(C_SclIniFile & orc_Ini, const QString & orc_SectionName, const QString & orc_BusIdBase,
+void C_UsFiler::mh_SaveBus(QSettings & orc_Ini, const QString & orc_SectionName, const QString & orc_BusIdBase,
                            const QString & orc_BusName, const C_UsCommunication & orc_Bus)
 {
    const QString c_BusIdName = static_cast<QString>("%1Name").arg(orc_BusIdBase);
@@ -380,27 +387,27 @@ void C_UsFiler::mh_SaveBus(C_SclIniFile & orc_Ini, const QString & orc_SectionNa
    QString c_SignalName;
 
    //Name
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(),
-                       c_BusIdName.toStdString().c_str(), orc_BusName.toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                       c_BusIdName, orc_BusName);
 
    //Other
    orc_Bus.GetLastSelectedMessage(e_SelectedProtocol, q_MessageSelected, c_MessageName, q_SignalSelected, c_SignalName);
 
    C_UsFiler::mh_SaveColumns(orc_Ini, orc_SectionName, c_BusIdMessageOverview, orc_Bus.GetMessageOverviewColumnWidth());
    C_UsFiler::mh_SaveColumns(orc_Ini, orc_SectionName, c_BusIdSignalOverview, orc_Bus.GetSignalOverviewColumnWidth());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_BusIdSelectedComProtocol.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_BusIdSelectedComProtocol,
                         static_cast<int32_t>(e_SelectedProtocol));
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_BusIdMessageSelected.toStdString().c_str(), q_MessageSelected);
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(),
-                       c_BusIdSelectedMessageName.toStdString().c_str(),
-                       c_MessageName.toStdString().c_str());
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_BusIdSignalSelected.toStdString().c_str(), q_SignalSelected);
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(),
-                       c_BusIdSelectedSignalName.toStdString().c_str(),
-                       c_SignalName.toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_BusIdMessageSelected, q_MessageSelected);
+   orc_Ini.setValue(orc_SectionName + "/" +
+                       c_BusIdSelectedMessageName,
+                       c_MessageName);
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_BusIdSignalSelected, q_SignalSelected);
+   orc_Ini.setValue(orc_SectionName + "/" +
+                       c_BusIdSelectedSignalName,
+                       c_SignalName);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -413,7 +420,7 @@ void C_UsFiler::mh_SaveBus(C_SclIniFile & orc_Ini, const QString & orc_SectionNa
    \param[in]      orc_Datapool        Node datapool data
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveDatapool(C_SclIniFile & orc_Ini, const QString & orc_SectionName,
+void C_UsFiler::mh_SaveDatapool(QSettings & orc_Ini, const QString & orc_SectionName,
                                 const QString & orc_DatapoolIdBase, const QString & orc_DatapoolName,
                                 const C_UsNodeDatapool & orc_Datapool)
 {
@@ -437,12 +444,12 @@ void C_UsFiler::mh_SaveDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
       static_cast<QString>("%1Lists_count").arg(orc_DatapoolIdBase);
 
    //Name
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_DatapoolIdName.toStdString().c_str(),
-                       orc_DatapoolName.toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" + c_DatapoolIdName,
+                       orc_DatapoolName);
 
    //Expanded list names
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_DatapoolIdExpandedListNameCount.toStdString().c_str(),
-                        rc_ExpandedListNames.size());
+   orc_Ini.setValue(orc_SectionName + "/" + c_DatapoolIdExpandedListNameCount,
+                        static_cast<int>(rc_ExpandedListNames.size()));
 
    for (uint32_t u32_ItExpandedList = 0; u32_ItExpandedList < rc_ExpandedListNames.size(); ++u32_ItExpandedList)
    {
@@ -451,13 +458,13 @@ void C_UsFiler::mh_SaveDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
          u32_ItExpandedList);
       const QString c_DatapoolIdExpandedListNameId = static_cast<QString>("%1Name").arg(
          c_DatapoolIdExpandedListNameBaseId);
-      orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_DatapoolIdExpandedListNameId.toStdString().c_str(),
-                          rc_ExpandedListNames[u32_ItExpandedList].toStdString().c_str());
+      orc_Ini.setValue(orc_SectionName + "/" + c_DatapoolIdExpandedListNameId,
+                          rc_ExpandedListNames[u32_ItExpandedList]);
    }
 
    //Selected list names
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_DatapoolIdSelectedListNameCount.toStdString().c_str(),
-                        rc_SelectedListNames.size());
+   orc_Ini.setValue(orc_SectionName + "/" + c_DatapoolIdSelectedListNameCount,
+                        static_cast<int>(rc_SelectedListNames.size()));
 
    for (uint32_t u32_ItSelectedList = 0; u32_ItSelectedList < rc_SelectedListNames.size(); ++u32_ItSelectedList)
    {
@@ -466,14 +473,14 @@ void C_UsFiler::mh_SaveDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
          u32_ItSelectedList);
       const QString c_DatapoolIdSelectedListNameId = static_cast<QString>("%1Name").arg(
          c_DatapoolIdSelectedListNameBaseId);
-      orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_DatapoolIdSelectedListNameId.toStdString().c_str(),
-                          rc_SelectedListNames[u32_ItSelectedList].toStdString().c_str());
+      orc_Ini.setValue(orc_SectionName + "/" + c_DatapoolIdSelectedListNameId,
+                          rc_SelectedListNames[u32_ItSelectedList]);
    }
 
    //Selected variable names
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_DatapoolIdSelectedVariableNameCount.toStdString().c_str(),
-                        rc_SelectedVariableNames.size());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_DatapoolIdSelectedVariableNameCount,
+                        static_cast<int>(rc_SelectedVariableNames.size()));
 
    for (uint32_t u32_ItSelectedVariable = 0; u32_ItSelectedVariable < rc_SelectedVariableNames.size();
         ++u32_ItSelectedVariable)
@@ -483,14 +490,14 @@ void C_UsFiler::mh_SaveDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
             u32_ItSelectedVariable);
       const QString c_DatapoolIdSelectedVariableNameId = static_cast<QString>("%1Name").arg(
          c_DatapoolIdSelectedVariableNameBaseId);
-      orc_Ini.WriteString(orc_SectionName.toStdString().c_str(),
-                          c_DatapoolIdSelectedVariableNameId.toStdString().c_str(),
-                          rc_SelectedVariableNames[u32_ItSelectedVariable].toStdString().c_str());
+      orc_Ini.setValue(orc_SectionName + "/" +
+                          c_DatapoolIdSelectedVariableNameId,
+                          rc_SelectedVariableNames[u32_ItSelectedVariable]);
    }
 
    //Interfaces
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_DatapoolIdInterfaceCount.toStdString().c_str(), c_Interfaces.size());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_DatapoolIdInterfaceCount, static_cast<int>(c_Interfaces.size()));
 
    for (QList<QString>::const_iterator c_ItBusKey = c_Interfaces.begin(); c_ItBusKey != c_Interfaces.end();
         ++c_ItBusKey)
@@ -504,8 +511,8 @@ void C_UsFiler::mh_SaveDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
    }
 
    //Lists
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_DatapoolIdListCount.toStdString().c_str(), rc_Lists.size());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_DatapoolIdListCount, static_cast<int>(rc_Lists.size()));
 
    for (QList<QString>::const_iterator c_ItListKey = rc_Lists.begin(); c_ItListKey != rc_Lists.end();
         ++c_ItListKey)
@@ -529,15 +536,15 @@ void C_UsFiler::mh_SaveDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
    \param[in]      orc_List         List
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveList(C_SclIniFile & orc_Ini, const QString & orc_SectionName, const QString & orc_ListIdBase,
+void C_UsFiler::mh_SaveList(QSettings & orc_Ini, const QString & orc_SectionName, const QString & orc_ListIdBase,
                             const QString & orc_ListName, const C_UsNodeDatapoolList & orc_List)
 {
    const QString c_ListIdName = static_cast<QString>("%1Name").arg(orc_ListIdBase);
    const std::vector<int32_t> & rc_ColumnWidths = orc_List.GetColumnWidths();
 
    //Name
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(),
-                       c_ListIdName.toStdString().c_str(), orc_ListName.toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                       c_ListIdName, orc_ListName);
 
    //ColumnNumber
    C_UsFiler::mh_SaveColumns(orc_Ini, orc_SectionName, orc_ListIdBase, rc_ColumnWidths);
@@ -553,7 +560,7 @@ void C_UsFiler::mh_SaveList(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    \param[in]      orc_View         View data
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveView(C_SclIniFile & orc_Ini, const QString & orc_SectionName, const QString & orc_ViewIdBase,
+void C_UsFiler::mh_SaveView(QSettings & orc_Ini, const QString & orc_SectionName, const QString & orc_ViewIdBase,
                             const QString & orc_ViewName, const C_UsSystemView & orc_View)
 {
    const QString c_ViewIdName = static_cast<QString>("%1Name").arg(orc_ViewIdBase);
@@ -602,73 +609,73 @@ void C_UsFiler::mh_SaveView(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    int32_t s32_Iterator;
 
    //Name
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_ViewIdName.toStdString().c_str(),
-                       orc_ViewName.toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdName,
+                       orc_ViewName);
    //Navigation
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(), c_ViewIdNavigationExpandedStatus.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdNavigationExpandedStatus,
                      orc_View.GetNavigationExpandedStatus());
    //Setup pos
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdSetupPosHorizontal.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdSetupPosHorizontal,
                         orc_View.c_SetupViewPos.x());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdSetupPosVertical.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdSetupPosVertical,
                         orc_View.c_SetupViewPos.y());
    //Setup zoom
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdSetupZoom.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdSetupZoom,
                         orc_View.s32_SetupViewZoom);
    //Update pos
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdUpdatePosHorizontal.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdUpdatePosHorizontal,
                         orc_View.c_UpdateViewPos.x());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdUpdatePosVertical.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdUpdatePosVertical,
                         orc_View.c_UpdateViewPos.y());
    //Update zoom
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdUpdateZoom.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdUpdateZoom,
                         orc_View.s32_UpdateViewZoom);
 
    //Param
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_ViewIdParamExportPath.toStdString().c_str(),
-                       orc_View.c_ParamExportPath.toStdString().c_str());
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_ViewIdParamImportPath.toStdString().c_str(),
-                       orc_View.c_ParamImportPath.toStdString().c_str());
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_ViewIdParamRecordPath.toStdString().c_str(),
-                       orc_View.c_ParamRecordPath.toStdString().c_str());
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_ViewIdParamRecordFileName.toStdString().c_str(),
-                       orc_View.c_ParamRecordFileName.toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdParamExportPath,
+                       orc_View.c_ParamExportPath);
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdParamImportPath,
+                       orc_View.c_ParamImportPath);
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdParamRecordPath,
+                       orc_View.c_ParamRecordPath);
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdParamRecordFileName,
+                       orc_View.c_ParamRecordFileName);
 
    //Splitter
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdUpdateSplitterHorizontal.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdUpdateSplitterHorizontal,
                         orc_View.GetUpdateSplitterHorizontal());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_ViewIdUpdateHorizontalSplitterVertical.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_ViewIdUpdateHorizontalSplitterVertical,
                         orc_View.GetUpdateHorizontalSplitterVertical());
 
    //Progress log
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_ViewIdUpdateProgressLogPositionHorizontal.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_ViewIdUpdateProgressLogPositionHorizontal,
                         orc_View.GetUpdateProgressLogPos().x());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_ViewIdUpdateProgressLogPositionVertical.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_ViewIdUpdateProgressLogPositionVertical,
                         orc_View.GetUpdateProgressLogPos().y());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdUpdateProgressLogSizeWidth.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdUpdateProgressLogSizeWidth,
                         orc_View.GetUpdateProgressLogSize().width());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_ViewIdUpdateProgressLogSizeHeight.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_ViewIdUpdateProgressLogSizeHeight,
                         orc_View.GetUpdateProgressLogSize().height());
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_ViewIdUpdateProgressLogIsMaximized.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_ViewIdUpdateProgressLogIsMaximized,
                      orc_View.GetUpdateProgressLogMaximized());
 
    //Update summary style
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(), c_ViewIdUpdateSummaryBig.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdUpdateSummaryBig,
                      orc_View.GetUpdateSummaryBig());
 
    // Update package sections visibility of empty optional sections
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_ViewIdUpdateEmptyOptionalSectionsVisible.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_ViewIdUpdateEmptyOptionalSectionsVisible,
                      orc_View.GetUpdatePackEmptyOptionalSectionsVisible());
 
    // View nodes
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdNodesCount.toStdString().c_str(),
-                        rc_NodesKeyList.size());
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdNodesCount,
+                        static_cast<int>(rc_NodesKeyList.size()));
    s32_Iterator = 0;
    for (QList<QString>::const_iterator c_ItNodesKey = rc_NodesKeyList.begin(); c_ItNodesKey != rc_NodesKeyList.end();
         ++c_ItNodesKey)
@@ -682,28 +689,28 @@ void C_UsFiler::mh_SaveView(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    }
 
    //Toolbox
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_ViewIdDashboardToolboxPositionHorizontal.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_ViewIdDashboardToolboxPositionHorizontal,
                         orc_View.GetDashboardToolboxPos().x());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_ViewIdDashboardToolboxPositionVertical.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_ViewIdDashboardToolboxPositionVertical,
                         orc_View.GetDashboardToolboxPos().y());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdDashboardToolboxSizeWidth.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdDashboardToolboxSizeWidth,
                         orc_View.GetDashboardToolboxSize().width());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdDashboardToolboxSizeHeight.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdDashboardToolboxSizeHeight,
                         orc_View.GetDashboardToolboxSize().height());
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_ViewIdDashboardToolboxIsMaximized.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_ViewIdDashboardToolboxIsMaximized,
                      orc_View.GetDashboardToolboxMaximized());
 
    //General
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_ViewIdDashboardSelectedTabIndex.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_ViewIdDashboardSelectedTabIndex,
                         orc_View.GetDashboardSelectedTabIndex());
 
    //Dashboard count
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_ViewIdDashboardCount.toStdString().c_str(),
-                        rc_DashboardKeyList.size());
+   orc_Ini.setValue(orc_SectionName + "/" + c_ViewIdDashboardCount,
+                        static_cast<int>(rc_DashboardKeyList.size()));
    s32_Iterator = 0;
    for (QList<QString>::const_iterator c_ItDashboardKey = rc_DashboardKeyList.begin();
         c_ItDashboardKey != rc_DashboardKeyList.end(); ++c_ItDashboardKey)
@@ -718,12 +725,12 @@ void C_UsFiler::mh_SaveView(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    }
 
    //Permissions
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_ViewIdSetupPermission.toStdString().c_str(), orc_View.GetSetupPermission());
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_ViewIdUpdatePermission.toStdString().c_str(), orc_View.GetUpdatePermission());
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_ViewIdDashboardPermission.toStdString().c_str(), orc_View.GetDashboardPermission());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_ViewIdSetupPermission, orc_View.GetSetupPermission());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_ViewIdUpdatePermission, orc_View.GetUpdatePermission());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_ViewIdDashboardPermission, orc_View.GetDashboardPermission());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -735,7 +742,7 @@ void C_UsFiler::mh_SaveView(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    \param[in]      orc_Node                     Node
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveDataRatesPerNode(C_SclIniFile & orc_Ini, const QString & orc_SectionName,
+void C_UsFiler::mh_SaveDataRatesPerNode(QSettings & orc_Ini, const QString & orc_SectionName,
                                         const QString & orc_DataRatePerNodeIdBase, const C_UsSystemViewNode & orc_Node)
 {
    int32_t s32_ItDataRate = 0;
@@ -743,8 +750,8 @@ void C_UsFiler::mh_SaveDataRatesPerNode(C_SclIniFile & orc_Ini, const QString & 
    const QMap<uint32_t, float64_t > & rc_UpdateDataRateHistory = orc_Node.GetUpdateDataRateHistory();
 
    //Data rate count
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_DataRateIdCount.toStdString().c_str(),
-                        rc_UpdateDataRateHistory.size());
+   orc_Ini.setValue(orc_SectionName + "/" + c_DataRateIdCount,
+                        static_cast<int>(rc_UpdateDataRateHistory.size()));
    //Per checksum section
    for (QMap<uint32_t, float64_t >::const_iterator c_ItDataRateKey = rc_UpdateDataRateHistory.begin();
         c_ItDataRateKey != rc_UpdateDataRateHistory.end(); ++c_ItDataRateKey)
@@ -755,10 +762,10 @@ void C_UsFiler::mh_SaveDataRatesPerNode(C_SclIniFile & orc_Ini, const QString & 
       const QString c_DataRateIdCurrentValue = static_cast<QString>("%1_value").arg(c_DataRateIdBase);
 
       //Key
-      orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_DataRateIdChecksum.toStdString().c_str(),
-                          QString::number(c_ItDataRateKey.key()).toStdString().c_str());
+      orc_Ini.setValue(orc_SectionName + "/" + c_DataRateIdChecksum,
+                          QString::number(c_ItDataRateKey.key()));
       //Value count
-      orc_Ini.WriteFloat(orc_SectionName.toStdString().c_str(), c_DataRateIdCurrentValue.toStdString().c_str(),
+      orc_Ini.setValue(orc_SectionName + "/" + c_DataRateIdCurrentValue,
                          c_ItDataRateKey.value());
 
       //Important iterator step
@@ -776,7 +783,7 @@ void C_UsFiler::mh_SaveDataRatesPerNode(C_SclIniFile & orc_Ini, const QString & 
    \param[in]      orc_ViewNode        View node data
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveViewNode(C_SclIniFile & orc_Ini, const QString & orc_SectionName,
+void C_UsFiler::mh_SaveViewNode(QSettings & orc_Ini, const QString & orc_SectionName,
                                 const QString & orc_ViewNodeIdBase, const QString & orc_NodeName,
                                 const C_UsSystemViewNode & orc_ViewNode)
 {
@@ -788,19 +795,19 @@ void C_UsFiler::mh_SaveViewNode(C_SclIniFile & orc_Ini, const QString & orc_Sect
    QString c_NodeIdExpandedFlag;
 
    // Name
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(),
-                       c_NodeIdName.toStdString().c_str(), orc_NodeName.toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                       c_NodeIdName, orc_NodeName);
 
    //Section expanded flags
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        static_cast<QString>("%1SectionCount").arg(orc_ViewNodeIdBase).toStdString().c_str(),
-                        rc_ExpandedFlags.size());
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        static_cast<QString>("%1SectionCount").arg(orc_ViewNodeIdBase),
+                        static_cast<int>(rc_ExpandedFlags.size()));
    for (s32_SectionCounter = 0; s32_SectionCounter < rc_ExpandedFlags.size(); ++s32_SectionCounter)
    {
       c_NodeIdExpandedFlag = static_cast<QString>("%1Section%2").arg(orc_ViewNodeIdBase).arg(s32_SectionCounter);
 
-      orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                        c_NodeIdExpandedFlag.toStdString().c_str(),
+      orc_Ini.setValue(orc_SectionName + "/" +
+                        c_NodeIdExpandedFlag,
                         rc_ExpandedFlags.at(s32_SectionCounter));
    }
 
@@ -818,7 +825,7 @@ void C_UsFiler::mh_SaveViewNode(C_SclIniFile & orc_Ini, const QString & orc_Sect
    \param[in]      orc_Dashboard          View dashboard data
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveDashboard(C_SclIniFile & orc_Ini, const QString & orc_SectionName,
+void C_UsFiler::mh_SaveDashboard(QSettings & orc_Ini, const QString & orc_SectionName,
                                  const QString & orc_DashboardIdBase, const QString & orc_DashboardName,
                                  const C_UsSystemViewDashboard & orc_Dashboard)
 {
@@ -835,37 +842,37 @@ void C_UsFiler::mh_SaveDashboard(C_SclIniFile & orc_Ini, const QString & orc_Sec
    const QString c_DashboardIdSceneZoom = static_cast<QString>("%1_scene_zoom").arg(orc_DashboardIdBase);
 
    //Name
-   orc_Ini.WriteString(orc_SectionName.toStdString().c_str(), c_DashboardIdName.toStdString().c_str(),
-                       orc_DashboardName.toStdString().c_str());
+   orc_Ini.setValue(orc_SectionName + "/" + c_DashboardIdName,
+                       orc_DashboardName);
    //Torn off flag
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_DashboardIdTornOffFlag.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_DashboardIdTornOffFlag,
                      orc_Dashboard.q_TornOff);
    //Window pos
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_DashboardIdWindowPosHorizontal.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_DashboardIdWindowPosHorizontal,
                         orc_Dashboard.c_TornOffWindowPosition.x());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_DashboardIdWindowPosVertical.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_DashboardIdWindowPosVertical,
                         orc_Dashboard.c_TornOffWindowPosition.y());
    //Size
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_DashboardIdSizeWidth.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_DashboardIdSizeWidth,
                         orc_Dashboard.c_TornOffWindowSize.width());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_DashboardIdSizeHeight.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" +
+                        c_DashboardIdSizeHeight,
                         orc_Dashboard.c_TornOffWindowSize.height());
    //Flags
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_DashboardIdMinFlag.toStdString().c_str(), orc_Dashboard.q_TornOffWindowMinimized);
-   orc_Ini.WriteBool(orc_SectionName.toStdString().c_str(),
-                     c_DashboardIdMaxFlag.toStdString().c_str(), orc_Dashboard.q_TornOffWindowMaximized);
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_DashboardIdMinFlag, orc_Dashboard.q_TornOffWindowMinimized);
+   orc_Ini.setValue(orc_SectionName + "/" +
+                     c_DashboardIdMaxFlag, orc_Dashboard.q_TornOffWindowMaximized);
 
    //Scene pos
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_DashboardIdScenePosHorizontal.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_DashboardIdScenePosHorizontal,
                         orc_Dashboard.c_ScenePos.x());
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_DashboardIdScenePosVertical.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_DashboardIdScenePosVertical,
                         orc_Dashboard.c_ScenePos.y());
    //Zoom
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_DashboardIdSceneZoom.toStdString().c_str(),
+   orc_Ini.setValue(orc_SectionName + "/" + c_DashboardIdSceneZoom,
                         orc_Dashboard.s32_SceneZoom);
 }
 
@@ -876,16 +883,16 @@ void C_UsFiler::mh_SaveDashboard(C_SclIniFile & orc_Ini, const QString & orc_Sec
    \param[in,out]  orc_Ini             Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveCommon(const C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_SaveCommon(const C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    //Language
-   orc_Ini.WriteString("Common", "Language", orc_UserSettings.GetLanguage().toStdString().c_str());
+   orc_Ini.setValue("Common/Language", orc_UserSettings.GetLanguage());
 
    //Save As
-   orc_Ini.WriteString("Common", "SaveAsLocation", orc_UserSettings.GetCurrentSaveAsPath().toStdString().c_str());
+   orc_Ini.setValue("Common/SaveAsLocation", orc_UserSettings.GetCurrentSaveAsPath());
 
    // Performance measurement
-   orc_Ini.WriteBool("Common", "PerformanceMeasurementActive", orc_UserSettings.GetPerformanceActive());
+   orc_Ini.setValue("Common/PerformanceMeasurementActive", orc_UserSettings.GetPerformanceActive());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -895,13 +902,13 @@ void C_UsFiler::mh_SaveCommon(const C_UsHandler & orc_UserSettings, C_SclIniFile
    \param[in,out]  orc_Ini             Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveEnvironment(const C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_SaveEnvironment(const C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    //Path handling
-   orc_Ini.WriteString("Environment", "PathHandlingSelection",
-                       orc_UserSettings.GetPathHandlingSelection().toStdString().c_str());
-   orc_Ini.WriteString("Environment", "SkipTspImportSelection",
-                       orc_UserSettings.GetSkipTspSelection().toStdString().c_str());
+   orc_Ini.setValue("Environment/PathHandlingSelection",
+                       orc_UserSettings.GetPathHandlingSelection());
+   orc_Ini.setValue("Environment/SkipTspImportSelection",
+                       orc_UserSettings.GetSkipTspSelection());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -911,7 +918,7 @@ void C_UsFiler::mh_SaveEnvironment(const C_UsHandler & orc_UserSettings, C_SclIn
    \param[in,out]  orc_Ini             Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveColors(const C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_SaveColors(const C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    // Colors
    int32_t s32_Counter = 0;
@@ -922,13 +929,13 @@ void C_UsFiler::mh_SaveColors(const C_UsHandler & orc_UserSettings, C_SclIniFile
    {
       ++s32_Counter;
 
-      orc_Ini.WriteInteger("RecentColors", "ColorNr" + C_SclString::IntToStr(s32_Counter) +
+      orc_Ini.setValue("RecentColors/ColorNr" + QString::number(s32_Counter) +
                            "_Red", pc_ItColor->red());
-      orc_Ini.WriteInteger("RecentColors", "ColorNr" + C_SclString::IntToStr(s32_Counter) +
+      orc_Ini.setValue("RecentColors/ColorNr" + QString::number(s32_Counter) +
                            "_Green", pc_ItColor->green());
-      orc_Ini.WriteInteger("RecentColors", "ColorNr" + C_SclString::IntToStr(s32_Counter) +
+      orc_Ini.setValue("RecentColors/ColorNr" + QString::number(s32_Counter) +
                            "_Blue", pc_ItColor->blue());
-      orc_Ini.WriteInteger("RecentColors", "ColorNr" + C_SclString::IntToStr(s32_Counter) +
+      orc_Ini.setValue("RecentColors/ColorNr" + QString::number(s32_Counter) +
                            "_Alpha", pc_ItColor->alpha());
    }
 }
@@ -940,10 +947,10 @@ void C_UsFiler::mh_SaveColors(const C_UsHandler & orc_UserSettings, C_SclIniFile
    \param[in,out]  orc_Ini             Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveNextRecentColorButtonNumber(const C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_SaveNextRecentColorButtonNumber(const C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    // Next recent color button number
-   orc_Ini.WriteInteger("RecentColors", "NextRecentColorButtonNumber",
+   orc_Ini.setValue("RecentColors/NextRecentColorButtonNumber",
                         orc_UserSettings.GetNextRecentColorButtonNumber());
 }
 
@@ -954,21 +961,20 @@ void C_UsFiler::mh_SaveNextRecentColorButtonNumber(const C_UsHandler & orc_UserS
    \param[in,out]  orc_Ini             Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveRecentProjects(const C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_SaveRecentProjects(const C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    const QStringList c_List = orc_UserSettings.GetRecentProjects();
 
    // clear recent projects section (the ini file can only add keys and does not delete keys that do not exist anymore)
-   if (orc_Ini.SectionExists("RecentProjects") == true)
+   if (orc_Ini.childGroups().contains("RecentProjects"))
    {
-      orc_Ini.EraseSection("RecentProjects");
+      orc_Ini.remove("RecentProjects");
    }
 
    //Recent projects
    for (uint8_t u8_It = 0; u8_It < c_List.count(); ++u8_It)
    {
-      orc_Ini.WriteString("RecentProjects", C_SclString::IntToStr(
-                             u8_It), c_List.at(u8_It).toStdString().c_str());
+      orc_Ini.setValue("RecentProjects/" + QString::number(u8_It), c_List.at(u8_It));
    }
 }
 
@@ -979,50 +985,50 @@ void C_UsFiler::mh_SaveRecentProjects(const C_UsHandler & orc_UserSettings, C_Sc
    \param[in,out]  orc_Ini             Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveProjectIndependentSection(const C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_SaveProjectIndependentSection(const C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    //Screen position
-   orc_Ini.WriteInteger("Screen", "Position_x", orc_UserSettings.GetScreenPos().x());
-   orc_Ini.WriteInteger("Screen", "Position_y", orc_UserSettings.GetScreenPos().y());
+   orc_Ini.setValue("Screen/Position_x", orc_UserSettings.GetScreenPos().x());
+   orc_Ini.setValue("Screen/Position_y", orc_UserSettings.GetScreenPos().y());
 
    // Application size
-   orc_Ini.WriteInteger("Screen", "Size_width", orc_UserSettings.GetAppSize().width());
-   orc_Ini.WriteInteger("Screen", "Size_height", orc_UserSettings.GetAppSize().height());
+   orc_Ini.setValue("Screen/Size_width", orc_UserSettings.GetAppSize().width());
+   orc_Ini.setValue("Screen/Size_height", orc_UserSettings.GetAppSize().height());
 
    // Application maximizing flag
-   orc_Ini.WriteBool("Screen", "Size_maximized", orc_UserSettings.GetAppMaximized());
+   orc_Ini.setValue("Screen/Size_maximized", orc_UserSettings.GetAppMaximized());
 
    // Application screen index
-   orc_Ini.WriteInteger("Screen", "Screen_index", orc_UserSettings.GetAppScreenIndex());
+   orc_Ini.setValue("Screen/Screen_index", orc_UserSettings.GetAppScreenIndex());
 
    // Sys def topology toolbox position
-   orc_Ini.WriteInteger("SdTopologyToolbox", "Position_x", orc_UserSettings.GetSdTopologyToolboxPos().x());
-   orc_Ini.WriteInteger("SdTopologyToolbox", "Position_y", orc_UserSettings.GetSdTopologyToolboxPos().y());
+   orc_Ini.setValue("SdTopologyToolbox/Position_x", orc_UserSettings.GetSdTopologyToolboxPos().x());
+   orc_Ini.setValue("SdTopologyToolbox/Position_y", orc_UserSettings.GetSdTopologyToolboxPos().y());
 
    // Sys def topology toolbox size
-   orc_Ini.WriteInteger("SdTopologyToolbox", "Size_width", orc_UserSettings.GetSdTopologyToolboxSize().width());
-   orc_Ini.WriteInteger("SdTopologyToolbox", "Size_height",
+   orc_Ini.setValue("SdTopologyToolbox/Size_width", orc_UserSettings.GetSdTopologyToolboxSize().width());
+   orc_Ini.setValue("SdTopologyToolbox/Size_height",
                         orc_UserSettings.GetSdTopologyToolboxSize().height());
 
    // Sys def topology toolbox maximizing flag
-   orc_Ini.WriteBool("SdTopologyToolbox", "Size_maximized", orc_UserSettings.GetSdTopologyToolboxMaximized());
+   orc_Ini.setValue("SdTopologyToolbox/Size_maximized", orc_UserSettings.GetSdTopologyToolboxMaximized());
 
    // Sys def node edit splitter
-   orc_Ini.WriteInteger("SdNodeEdit", "SplitterX", orc_UserSettings.GetSdNodeEditSplitterHorizontal());
+   orc_Ini.setValue("SdNodeEdit/SplitterX", orc_UserSettings.GetSdNodeEditSplitterHorizontal());
 
    // Sys def node edit HALC splitter
-   orc_Ini.WriteInteger("SdNodeEdit", "HalcSplitterX", orc_UserSettings.GetSdNodeEditHalcSplitterHorizontal());
+   orc_Ini.setValue("SdNodeEdit/HalcSplitterX", orc_UserSettings.GetSdNodeEditHalcSplitterHorizontal());
    // Sys def node edit CANopen Manager splitter
-   orc_Ini.WriteInteger("SdNodeEdit", "CoManagerSplitterX",
+   orc_Ini.setValue("SdNodeEdit/CoManagerSplitterX",
                         orc_UserSettings.GetSdNodeEditCoManagerSplitterHorizontal());
    // Sys def node edit data logger splitter
-   orc_Ini.WriteInteger("SdNodeEdit", "DataLoggerSplitterX",
+   orc_Ini.setValue("SdNodeEdit/DataLoggerSplitterX",
                         orc_UserSettings.GetSdNodeEditDataLoggerSplitterHorizontal());
 
    // Sys def bus edit splitters
-   orc_Ini.WriteInteger("SdBusEdit", "TreeSplitterX", orc_UserSettings.GetSdBusEditTreeSplitterHorizontal());
-   orc_Ini.WriteInteger("SdBusEdit", "TreeSplitterX2", orc_UserSettings.GetSdBusEditTreeSplitterHorizontal2());
-   orc_Ini.WriteInteger("SdBusEdit", "LayoutSplitterX", orc_UserSettings.GetSdBusEditLayoutSplitterHorizontal());
+   orc_Ini.setValue("SdBusEdit/TreeSplitterX", orc_UserSettings.GetSdBusEditTreeSplitterHorizontal());
+   orc_Ini.setValue("SdBusEdit/TreeSplitterX2", orc_UserSettings.GetSdBusEditTreeSplitterHorizontal2());
+   orc_Ini.setValue("SdBusEdit/LayoutSplitterX", orc_UserSettings.GetSdBusEditLayoutSplitterHorizontal());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -1034,7 +1040,7 @@ void C_UsFiler::mh_SaveProjectIndependentSection(const C_UsHandler & orc_UserSet
                                        Empty string results in saving no informations
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini,
+void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSettings, QSettings & orc_Ini,
                                                const QString & orc_ActiveProject)
 {
    if (orc_ActiveProject != "")
@@ -1056,103 +1062,103 @@ void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSetti
 
       // project specific settings
       // Mode
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjMode", orc_UserSettings.GetProjLastMode());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjMode", orc_UserSettings.GetProjLastMode());
 
       // Navi bar
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "navigation-width",
+      orc_Ini.setValue(orc_ActiveProject + "/navigation-width",
                            orc_UserSettings.GetNaviBarSize());
-      orc_Ini.WriteInteger(
-         orc_ActiveProject.toStdString().c_str(), "navigation-node-section-width",
+      orc_Ini.setValue(
+         orc_ActiveProject + "/navigation-node-section-width",
          orc_UserSettings.GetNaviBarNodeSectionSize());
 
       // Sys def topology view port position
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "SdTopologyView_x",
+      orc_Ini.setValue(orc_ActiveProject + "/SdTopologyView_x",
                            orc_UserSettings.GetProjSdTopologyViewPos().x());
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "SdTopologyView_y",
+      orc_Ini.setValue(orc_ActiveProject + "/SdTopologyView_y",
                            orc_UserSettings.GetProjSdTopologyViewPos().y());
       // Sys def topology view zoom value
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "SdTopologyViewZoom_value",
+      orc_Ini.setValue(orc_ActiveProject + "/SdTopologyViewZoom_value",
                            orc_UserSettings.GetProjSdTopologyViewZoom());
 
       // Last screen mode
       orc_UserSettings.GetProjLastScreenMode(s32_SysDefSubMode, u32_SysDefIndex, u32_SysDefFlag,
                                              s32_SysViewSubMode, u32_SysViewIndex, u32_SysViewFlag);
 
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdSubMode_value",
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdSubMode_value",
                            static_cast<int32_t>(s32_SysDefSubMode));
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdSubIndex_value",
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdSubIndex_value",
                            static_cast<int32_t>(u32_SysDefIndex));
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdSubFlag_value",
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdSubFlag_value",
                            static_cast<int32_t>(u32_SysDefFlag));
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSvSubMode_value",
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSvSubMode_value",
                            static_cast<int32_t>(s32_SysViewSubMode));
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSvSubIndex_value",
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSvSubIndex_value",
                            static_cast<int32_t>(u32_SysViewIndex));
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSvSubFlag_value",
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSvSubFlag_value",
                            static_cast<int32_t>(u32_SysViewFlag));
 
       //TSP
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_tsp_path",
-                          orc_UserSettings.GetProjSdTopologyLastKnownTspPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdTopology_last_known_tsp_path",
+                          orc_UserSettings.GetProjSdTopologyLastKnownTspPath());
 
       //File generation
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_code_export_path",
-                          orc_UserSettings.GetProjSdTopologyLastKnownCodeExportPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdTopology_last_known_code_export_path",
+                          orc_UserSettings.GetProjSdTopologyLastKnownCodeExportPath());
 
       //Import
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_import_path",
-                          orc_UserSettings.GetProjSdTopologyLastKnownImportPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdTopology_last_known_import_path",
+                          orc_UserSettings.GetProjSdTopologyLastKnownImportPath());
 
       //Import CANopen
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_CANopen_EDS_path",
-                          orc_UserSettings.GetProjSdTopologyLastKnownCanOpenEdsPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdTopology_last_known_CANopen_EDS_path",
+                          orc_UserSettings.GetProjSdTopologyLastKnownCanOpenEdsPath());
 
       //Export
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_export_path",
-                          orc_UserSettings.GetProjSdTopologyLastKnownExportPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdTopology_last_known_export_path",
+                          orc_UserSettings.GetProjSdTopologyLastKnownExportPath());
 
       //Last path from where a .syde_devdef file was loaded
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_device_definition_path",
-                          orc_UserSettings.GetProjSdTopologyLastKnownDeviceDefPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdTopology_last_known_device_definition_path",
+                          orc_UserSettings.GetProjSdTopologyLastKnownDeviceDefPath());
 
       //RTF File Export
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_rtf_path",
-                          orc_UserSettings.GetProjSdTopologyLastKnownRtfPath().toStdString().c_str());
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_rtf_company_name",
-                          orc_UserSettings.GetProjSdTopologyLastKnownRtfCompanyName().toStdString().c_str());
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_rtf_company_logo_path",
-                          orc_UserSettings.GetProjSdTopologyLastKnownRtfCompanyLogoPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdTopology_last_known_rtf_path",
+                          orc_UserSettings.GetProjSdTopologyLastKnownRtfPath());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdTopology_last_known_rtf_company_name",
+                          orc_UserSettings.GetProjSdTopologyLastKnownRtfCompanyName());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdTopology_last_known_rtf_company_logo_path",
+                          orc_UserSettings.GetProjSdTopologyLastKnownRtfCompanyLogoPath());
 
       //HALC Paths
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_halc_def_path",
-                          orc_UserSettings.GetLastKnownHalcDefPath().toStdString().c_str());
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_halc_import_path",
-                          orc_UserSettings.GetLastKnownHalcImportPath().toStdString().c_str());
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_halc_export_path",
-                          orc_UserSettings.GetLastKnownHalcExportPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_halc_def_path",
+                          orc_UserSettings.GetLastKnownHalcDefPath());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_halc_import_path",
+                          orc_UserSettings.GetLastKnownHalcImportPath());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_halc_export_path",
+                          orc_UserSettings.GetLastKnownHalcExportPath());
       //Service Project Path
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_service_project_path",
-                          orc_UserSettings.GetLastKnownServiceProjectPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_service_project_path",
+                          orc_UserSettings.GetLastKnownServiceProjectPath());
       //RAMView Project Import Path
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_ramview_project_path",
-                          orc_UserSettings.GetLastKnownRamViewProjectPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_ramview_project_path",
+                          orc_UserSettings.GetLastKnownRamViewProjectPath());
 
       // J1939 Catalog Path
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_j1939_catalog_path",
-                          orc_UserSettings.GetLastKnownJ1939CatalogPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_j1939_catalog_path",
+                          orc_UserSettings.GetLastKnownJ1939CatalogPath());
 
       // CSV Export Path
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_csv_export_path",
-                          orc_UserSettings.GetLastKnownCsvExportPath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_csv_export_path",
+                          orc_UserSettings.GetLastKnownCsvExportPath());
 
       // Last tab index in system definition
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdNodeEditTabIndex_value",
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdNodeEditTabIndex_value",
                            orc_UserSettings.GetProjLastSysDefNodeTabIndex());
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdBusEditTabIndex_value",
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdBusEditTabIndex_value",
                            orc_UserSettings.GetProjLastSysDefBusTabIndex());
 
       //System definition
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdNode_count", c_NodeKeyList.size());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdNode_count", static_cast<int>(c_NodeKeyList.size()));
 
       for (QList<QString>::const_iterator c_ItNodeKey = c_NodeKeyList.begin(); c_ItNodeKey != c_NodeKeyList.end();
            ++c_ItNodeKey)
@@ -1166,7 +1172,7 @@ void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSetti
          ++s32_ItNode;
       }
 
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdBus_count", c_BusKeyList.size());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSdBus_count", static_cast<int>(c_BusKeyList.size()));
 
       for (QList<QString>::const_iterator c_ItBusKey = c_BusKeyList.begin(); c_ItBusKey != c_BusKeyList.end();
            ++c_ItBusKey)
@@ -1181,7 +1187,7 @@ void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSetti
       }
 
       //System views
-      orc_Ini.WriteInteger(orc_ActiveProject.toStdString().c_str(), "ProjSvSetupView_count", c_ViewKeyList.size());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSvSetupView_count", static_cast<int>(c_ViewKeyList.size()));
 
       for (QList<QString>::const_iterator c_ItViewKey = c_ViewKeyList.begin(); c_ItViewKey != c_ViewKeyList.end();
            ++c_ItViewKey)
@@ -1196,39 +1202,39 @@ void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSetti
       }
 
       // public PEM File Path
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_public_pem_file_path",
-                          orc_UserSettings.GetLastKnownPublicPemFilePath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_public_pem_file_path",
+                          orc_UserSettings.GetLastKnownPublicPemFilePath());
 
       // Add PEM File Path
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_pem_file_path",
-                          orc_UserSettings.GetLastKnownAddPemFilePath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_pem_file_path",
+                          orc_UserSettings.GetLastKnownAddPemFilePath());
 
       // public secure certificate package path
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_secure_certificate_package_path",
-                          orc_UserSettings.GetLastKnownSecureCertificatePackagePath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_secure_certificate_package_path",
+                          orc_UserSettings.GetLastKnownSecureCertificatePackagePath());
 
       // PEM file password
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_pem_file_password",
-                          orc_UserSettings.GetLastKnownPemFilePassword().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/ProjSd_last_known_pem_file_password",
+                          orc_UserSettings.GetLastKnownPemFilePassword());
 
       // Add PEM file state
-      orc_Ini.WriteBool(
-         orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_Add_pem_file_state",
+      orc_Ini.setValue(
+         orc_ActiveProject + "/ProjSd_last_known_Add_pem_file_state",
          orc_UserSettings.GetLastKnownAddPemFileState());
 
       // secure update config state
-      orc_Ini.WriteBool(
-         orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_secure_update_config_state",
+      orc_Ini.setValue(
+         orc_ActiveProject + "/ProjSd_last_known_secure_update_config_state",
          orc_UserSettings.GetLastKnownSecureUpdateConfigState());
 
       // Values from Update widget
-      orc_Ini.WriteInteger("Update", "PemFileCount", c_PemFilePaths.size());
+      orc_Ini.setValue("Update/PemFileCount", static_cast<int>(c_PemFilePaths.size()));
       for (int32_t s32_SectionCounter = 0; s32_SectionCounter < static_cast<int32_t>(c_PemFilePaths.size());
            ++s32_SectionCounter)
       {
          const std::string c_PemFilePath = c_PemFilePaths[s32_SectionCounter].toStdString();
-         orc_Ini.WriteString("Update", "PemFiles_" + std::to_string(s32_SectionCounter),
-                             c_PemFilePath);
+         orc_Ini.setValue("Update/PemFiles_" + QString::number(s32_SectionCounter),
+                             QString::fromStdString(c_PemFilePath));
       }
    }
 }
@@ -1243,7 +1249,7 @@ void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSetti
    \param[in,out]  orc_UserSettings    User settings to load
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadNode(C_SclIniFile & orc_Ini, const QString & orc_SectionName, const QString & orc_NodeIdBase,
+void C_UsFiler::mh_LoadNode(QSettings & orc_Ini, const QString & orc_SectionName, const QString & orc_NodeIdBase,
                             const QString & orc_NodeName, C_UsHandler & orc_UserSettings)
 {
    QString c_Tmp;
@@ -1289,23 +1295,23 @@ void C_UsFiler::mh_LoadNode(C_SclIniFile & orc_Ini, const QString & orc_SectionN
       orc_NodeIdBase);
 
    //Selected datapool name
-   c_Tmp = orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                              c_NodeIdSelectedDatapoolName.toStdString().c_str(), "").c_str();
+   c_Tmp = orc_Ini.value(orc_SectionName + "/" +
+                               c_NodeIdSelectedDatapoolName, "").toString();
    orc_UserSettings.SetProjSdNodeSelectedDatapoolName(orc_NodeName, c_Tmp);
    //Selected protocol
    e_Tmp = static_cast<stw::opensyde_core::C_OscCanProtocol::E_Type>(
-      orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(), c_NodeIdSelectedProtocol.toStdString().c_str(), 0));
+      orc_Ini.value(orc_SectionName + "/" + c_NodeIdSelectedProtocol, 0).toInt());
    orc_UserSettings.SetProjSdNodeSelectedProtocol(orc_NodeName, e_Tmp);
    //Selected interface
-   u32_Tmp = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                 c_NodeIdSelectedInterface.toStdString().c_str(), 0);
+   u32_Tmp = orc_Ini.value(orc_SectionName + "/" +
+                                 c_NodeIdSelectedInterface, 0).toUInt();
    orc_UserSettings.SetProjSdNodeSelectedInterface(orc_NodeName, u32_Tmp);
    //Selected HALC domain & channel
-   c_Tmp = orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                              c_NodeIdSelectedHalcDomain.toStdString().c_str(), "").c_str();
+   c_Tmp = orc_Ini.value(orc_SectionName + "/" +
+                               c_NodeIdSelectedHalcDomain, "").toString();
    orc_UserSettings.SetProjSdNodeSelectedHalcDomain(orc_NodeName, c_Tmp);
-   c_Tmp = orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                              c_NodeIdSelectedHalcChannel.toStdString().c_str(), "").c_str();
+   c_Tmp = orc_Ini.value(orc_SectionName + "/" +
+                               c_NodeIdSelectedHalcChannel, "").toString();
    orc_UserSettings.SetProjSdNodeSelectedHalcChannel(orc_NodeName, c_Tmp);
    //CANopen columns
    c_Columns.clear();
@@ -1319,74 +1325,74 @@ void C_UsFiler::mh_LoadNode(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    std::map<uint8_t, bool> c_LoadInterfaces;
    std::map<uint8_t, bool> c_LoadDevices;
    std::map<std::pair<uint8_t, std::pair<uint8_t, stw::scl::C_SclString> >, bool> c_LoadDevice;
-   u32_Tmp = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                 c_CanOpenExpandedCanOpenManagerCounter.toStdString().c_str(), 0);
+   u32_Tmp = orc_Ini.value(orc_SectionName + "/" +
+                                 c_CanOpenExpandedCanOpenManagerCounter, 0).toUInt();
    for (uint32_t u32_InterfaceCounter = 0UL; u32_InterfaceCounter < u32_Tmp; u32_InterfaceCounter++)
    {
-      c_LoadInterfaces[static_cast<uint8_t>(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
+      c_LoadInterfaces[static_cast<uint8_t>(orc_Ini.value(orc_SectionName + "/" +
                                                                 (c_CanOpenExpandedCanOpenManager +
                                                                  QString::number(u32_InterfaceCounter) +
-                                                                 "InterfaceNumber").toStdString().c_str(), 0))] =
-         orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                          (c_CanOpenExpandedCanOpenManager +
-                           QString::number(u32_InterfaceCounter)).toStdString().c_str(), false);
+                                                                 "InterfaceNumber"), 0).toUInt())] =
+         orc_Ini.value(orc_SectionName + "/" +
+                           (c_CanOpenExpandedCanOpenManager +
+                            QString::number(u32_InterfaceCounter)), false).toBool();
    }
-   const uint32_t u32_TmpDevices = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                                       c_CanOpenExpandedCanOpenDevicesCounter.toStdString().c_str(),
-                                                       0);
+   const uint32_t u32_TmpDevices = orc_Ini.value(orc_SectionName + "/" +
+                                                       c_CanOpenExpandedCanOpenDevicesCounter,
+                                                       0).toUInt();
    for (uint32_t u32_DevicesCounter = 0UL; u32_DevicesCounter < u32_TmpDevices; u32_DevicesCounter++)
    {
-      c_LoadDevices[static_cast<uint8_t>(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
+      c_LoadDevices[static_cast<uint8_t>(orc_Ini.value(orc_SectionName + "/" +
                                                              (c_CanOpenExpandedCanOpenDevices +
                                                               QString::number(u32_DevicesCounter) +
-                                                              "InterfaceNumber").toStdString().c_str(), 0))] =
-         orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                          (c_CanOpenExpandedCanOpenDevices +
-                           QString::number(u32_DevicesCounter)).toStdString().c_str(), false);
+                                                              "InterfaceNumber"), 0).toUInt())] =
+         orc_Ini.value(orc_SectionName + "/" +
+                           (c_CanOpenExpandedCanOpenDevices +
+                            QString::number(u32_DevicesCounter)), false).toBool();
    }
-   const uint32_t u32_TmpDevice = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                                      c_CanOpenExpandedCanOpenDeviceCounter.toStdString().c_str(),
-                                                      0);
+   const uint32_t u32_TmpDevice = orc_Ini.value(orc_SectionName + "/" +
+                                                      c_CanOpenExpandedCanOpenDeviceCounter,
+                                                      0).toUInt();
    for (uint32_t u32_DeviceCounter = 0UL; u32_DeviceCounter < u32_TmpDevice; u32_DeviceCounter++)
    {
-      const std::pair<uint8_t, stw::scl::C_SclString> c_PairInterfaceId(static_cast<uint8_t>(orc_Ini.ReadInteger(
-                                                                                                orc_SectionName.toStdString().c_str(),
+      const std::pair<uint8_t, stw::scl::C_SclString> c_PairInterfaceId(static_cast<uint8_t>(orc_Ini.value(
+                                                                                                orc_SectionName + "/" +
                                                                                                 (c_CanOpenExpandedCanOpenDevice + QString::number(
                                                                                                     u32_DeviceCounter) +
-                                                                                                 "DeviceInterfaceNumber").toStdString().c_str(), 0)),
-                                                                        orc_Ini.ReadString(
-                                                                           orc_SectionName.toStdString().c_str(),
+                                                                                                 "DeviceInterfaceNumber"), 0).toUInt()),
+                                                                        stw::scl::C_SclString(orc_Ini.value(
+                                                                           orc_SectionName + "/" +
                                                                            (c_CanOpenExpandedCanOpenDevice + QString::number(
                                                                                u32_DeviceCounter) +
-                                                                            "DeviceNodeName").toStdString().c_str(),
-                                                                           ""));
+                                                                            "DeviceNodeName"),
+                                                                           "").toString().toStdString()));
       const std::pair<uint8_t, std::pair<uint8_t, stw::scl::C_SclString> > c_Pair(
-         static_cast<uint8_t>(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
+         static_cast<uint8_t>(orc_Ini.value(orc_SectionName + "/" +
                                                   (c_CanOpenExpandedCanOpenManager +
                                                    QString::number(u32_DeviceCounter) +
-                                                   "InterfaceNumber").toStdString().c_str(), 0)),
+                                                   "InterfaceNumber"), 0).toUInt()),
          c_PairInterfaceId);
-      c_LoadDevice[c_Pair] = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                                              (c_CanOpenExpandedCanOpenDevice +
-                                               QString::number(u32_DeviceCounter)).toStdString().c_str(), false);
+      c_LoadDevice[c_Pair] = orc_Ini.value(orc_SectionName + "/" +
+                                               (c_CanOpenExpandedCanOpenDevice +
+                                                QString::number(u32_DeviceCounter)), false).toBool();
    }
    orc_UserSettings.SetProjSdNodeExpandedCanOpenTree(orc_NodeName, c_LoadInterfaces, c_LoadDevices, c_LoadDevice);
-   u32_Tmp = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                 c_CanOpenSelectedCanOpenManager.toStdString().c_str(), 0);
+   u32_Tmp = orc_Ini.value(orc_SectionName + "/" +
+                                 c_CanOpenSelectedCanOpenManager, 0).toUInt();
    orc_UserSettings.SetProjSdNodeSelectedCanOpenManager(orc_NodeName, static_cast<uint8_t>(u32_Tmp));
-   u32_Tmp = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                 c_CanOpenSelectedCanOpenDeviceInterfaceNumber.toStdString().c_str(), 0);
-   c_Tmp = orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                              c_CanOpenSelectedCanOpenDeviceNodeName.toStdString().c_str(), "").c_str();
+   u32_Tmp = orc_Ini.value(orc_SectionName + "/" +
+                                 c_CanOpenSelectedCanOpenDeviceInterfaceNumber, 0).toUInt();
+   c_Tmp = orc_Ini.value(orc_SectionName + "/" +
+                               c_CanOpenSelectedCanOpenDeviceNodeName, "").toString();
    orc_UserSettings.SetProjSdNodeSelectedCanOpenDevice(orc_NodeName, static_cast<uint8_t>(u32_Tmp), c_Tmp);
-   u32_Tmp = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                 c_CanOpenSelectedCanOpenDeviceUseCaseIndex.toStdString().c_str(), 0);
+   u32_Tmp = orc_Ini.value(orc_SectionName + "/" +
+                                 c_CanOpenSelectedCanOpenDeviceUseCaseIndex, 0).toUInt();
    orc_UserSettings.SetProjSdNodeSelectedCanOpenDeviceUseCaseIndex(orc_NodeName, u32_Tmp);
 
    orc_UserSettings.SetProjSdNodeCanOpenSelectedUseCaseOrInterface(
       orc_NodeName,
-      orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                       c_CanOpenSelectedUseCaseOrInterface.toStdString().c_str(), false));
+      orc_Ini.value(orc_SectionName + "/" +
+                       c_CanOpenSelectedUseCaseOrInterface, false).toBool());
 
    //HALC columns
    c_Columns.clear();
@@ -1397,8 +1403,8 @@ void C_UsFiler::mh_LoadNode(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    orc_UserSettings.SetProjSdNodeHalcConfigColumnWidth(orc_NodeName, c_Columns);
 
    //Datapool count
-   const int32_t s32_DatapoolCount = orc_Ini.ReadInteger(
-      orc_SectionName.toStdString().c_str(), c_NodeIdDatapoolCount.toStdString().c_str(), 0);
+   const int32_t s32_DatapoolCount = orc_Ini.value(
+      orc_SectionName + "/" + c_NodeIdDatapoolCount, 0).toInt();
 
    //Datapool
    for (int32_t s32_ItDatapool = 0; s32_ItDatapool < s32_DatapoolCount; ++s32_ItDatapool)
@@ -1407,13 +1413,13 @@ void C_UsFiler::mh_LoadNode(C_SclIniFile & orc_Ini, const QString & orc_SectionN
       mh_LoadDatapool(orc_Ini, orc_SectionName, c_DatapoolIdBase, orc_NodeName, orc_UserSettings);
    }
    //DataLogger LogJob Index
-   u32_Tmp = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                 c_NodeIdSelectedDataLoggerLogJobIndex.toStdString().c_str(), 0);
+   u32_Tmp = orc_Ini.value(orc_SectionName + "/" +
+                                 c_NodeIdSelectedDataLoggerLogJobIndex, 0).toUInt();
    orc_UserSettings.SetProjSdNodeSelectedDataLoggerLogJobIndex(orc_NodeName, u32_Tmp);
    //DataLogger Overview widget selected
-   const bool q_IsOverviewWidgetSelected = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                                                            c_DataLoggerOverviewWidgetSelected.toStdString().c_str(),
-                                                            false);
+   const bool q_IsOverviewWidgetSelected = orc_Ini.value(orc_SectionName + "/" +
+                                                            c_DataLoggerOverviewWidgetSelected,
+                                                            false).toBool();
    orc_UserSettings.SetProjSdNodeIsOverviewWidgetSelected(orc_NodeName, q_IsOverviewWidgetSelected);
 }
 
@@ -1430,7 +1436,7 @@ void C_UsFiler::mh_LoadNode(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    \param[in]      orc_DataPoolName    If not used on a bus the node data pool name is required
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadBus(C_SclIniFile & orc_Ini, const QString & orc_SectionName, const QString & orc_BusIdBase,
+void C_UsFiler::mh_LoadBus(QSettings & orc_Ini, const QString & orc_SectionName, const QString & orc_BusIdBase,
                            const QString & orc_BusName, C_UsHandler & orc_UserSettings, const bool oq_IsBus,
                            const QString & orc_NodeName, const QString & orc_DataPoolName)
 {
@@ -1454,18 +1460,17 @@ void C_UsFiler::mh_LoadBus(C_SclIniFile & orc_Ini, const QString & orc_SectionNa
    C_UsFiler::mh_LoadColumns(orc_Ini, orc_SectionName, c_BusIdMessageOverview, c_MessageColumns);
    C_UsFiler::mh_LoadColumns(orc_Ini, orc_SectionName, c_BusIdSignalOverview, c_SignalColumns);
 
-   e_SelectedProtocol = static_cast<stw::opensyde_core::C_OscCanProtocol::E_Type>(orc_Ini.ReadInteger(
-                                                                                     orc_SectionName.toStdString().c_str(),
-                                                                                     c_BusIdSelectedComProtocol.
-                                                                                     toStdString().c_str(), 0));
-   q_MessageSelected = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                                        c_BusIdMessageSelected.toStdString().c_str(), false);
-   c_MessageName = orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                                      c_BusIdSelectedMessageName.toStdString().c_str(), "").c_str();
-   q_SignalSelected = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                                       c_BusIdSignalSelected.toStdString().c_str(), false);
-   c_SignalName = orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                                     c_BusIdSelectedSignalName.toStdString().c_str(), "").c_str();
+   e_SelectedProtocol = static_cast<stw::opensyde_core::C_OscCanProtocol::E_Type>(orc_Ini.value(
+                                                                                     orc_SectionName + "/" +
+                                                                                     c_BusIdSelectedComProtocol, 0).toInt());
+   q_MessageSelected = orc_Ini.value(orc_SectionName + "/" +
+                                        c_BusIdMessageSelected, false).toBool();
+   c_MessageName = orc_Ini.value(orc_SectionName + "/" +
+                                      c_BusIdSelectedMessageName, "").toString();
+   q_SignalSelected = orc_Ini.value(orc_SectionName + "/" +
+                                       c_BusIdSignalSelected, false).toBool();
+   c_SignalName = orc_Ini.value(orc_SectionName + "/" +
+                                     c_BusIdSelectedSignalName, "").toString();
 
    if (oq_IsBus == true)
    {
@@ -1496,13 +1501,13 @@ void C_UsFiler::mh_LoadBus(C_SclIniFile & orc_Ini, const QString & orc_SectionNa
    \param[in,out]  orc_UserSettings    User settings to load
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadDatapool(C_SclIniFile & orc_Ini, const QString & orc_SectionName,
+void C_UsFiler::mh_LoadDatapool(QSettings & orc_Ini, const QString & orc_SectionName,
                                 const QString & orc_DatapoolIdBase, const QString & orc_NodeName,
                                 C_UsHandler & orc_UserSettings)
 {
    const QString c_DatapoolIdName = static_cast<QString>("%1Name").arg(orc_DatapoolIdBase);
-   const QString c_DatapoolName = orc_Ini.ReadString(
-      orc_SectionName.toStdString().c_str(), c_DatapoolIdName.toStdString().c_str(), "").c_str();
+   const QString c_DatapoolName = orc_Ini.value(
+      orc_SectionName + "/" + c_DatapoolIdName, "").toString();
 
    if (c_DatapoolName.compare("") != 0)
    {
@@ -1521,12 +1526,12 @@ void C_UsFiler::mh_LoadDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
       std::vector<QString> c_ExpandedListNames;
       std::vector<QString> c_SelectedListNames;
       std::vector<QString> c_SelectedVariableNames;
-      const int32_t s32_ExpandedListNameCount = orc_Ini.ReadInteger(
-         orc_SectionName.toStdString().c_str(), c_DatapoolIdExpandedListNameCount.toStdString().c_str(), 0);
-      const int32_t s32_SelectedListNameCount = orc_Ini.ReadInteger(
-         orc_SectionName.toStdString().c_str(), c_DatapoolIdSelectedListNameCount.toStdString().c_str(), 0);
-      const int32_t s32_SelectedVariableNameCount = orc_Ini.ReadInteger(
-         orc_SectionName.toStdString().c_str(), c_DatapoolIdSelectedVariableNameCount.toStdString().c_str(), 0);
+      const int32_t s32_ExpandedListNameCount = orc_Ini.value(
+         orc_SectionName + "/" + c_DatapoolIdExpandedListNameCount, 0).toInt();
+      const int32_t s32_SelectedListNameCount = orc_Ini.value(
+         orc_SectionName + "/" + c_DatapoolIdSelectedListNameCount, 0).toInt();
+      const int32_t s32_SelectedVariableNameCount = orc_Ini.value(
+         orc_SectionName + "/" + c_DatapoolIdSelectedVariableNameCount, 0).toInt();
 
       //Expanded lists
       c_ExpandedListNames.reserve(s32_ExpandedListNameCount);
@@ -1537,8 +1542,8 @@ void C_UsFiler::mh_LoadDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
             static_cast<QString>("%1ExpandedListName%2").arg(orc_DatapoolIdBase).arg(s32_ItExpandedListName);
          const QString c_DatapoolIdExpandedListNameId =
             static_cast<QString>("%1Name").arg(c_DatapoolIdExpandedListNameBaseId);
-         const QString c_DatapoolIdExpandedListName = orc_Ini.ReadString(
-            orc_SectionName.toStdString().c_str(), c_DatapoolIdExpandedListNameId.toStdString().c_str(), "").c_str();
+         const QString c_DatapoolIdExpandedListName = orc_Ini.value(
+            orc_SectionName + "/" + c_DatapoolIdExpandedListNameId, "").toString();
          if (c_DatapoolIdExpandedListName.compare("") != 0)
          {
             c_ExpandedListNames.push_back(c_DatapoolIdExpandedListName);
@@ -1555,8 +1560,8 @@ void C_UsFiler::mh_LoadDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
             static_cast<QString>("%1SelectedListName%2").arg(orc_DatapoolIdBase).arg(s32_ItSelectedListName);
          const QString c_DatapoolIdSelectedListNameId =
             static_cast<QString>("%1Name").arg(c_DatapoolIdSelectedListNameBaseId);
-         const QString c_DatapoolIdSelectedListName = orc_Ini.ReadString(
-            orc_SectionName.toStdString().c_str(), c_DatapoolIdSelectedListNameId.toStdString().c_str(), "").c_str();
+         const QString c_DatapoolIdSelectedListName = orc_Ini.value(
+            orc_SectionName + "/" + c_DatapoolIdSelectedListNameId, "").toString();
          if (c_DatapoolIdSelectedListName.compare("") != 0)
          {
             c_SelectedListNames.push_back(c_DatapoolIdSelectedListName);
@@ -1574,9 +1579,9 @@ void C_UsFiler::mh_LoadDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
             s32_ItSelectedVariableName);
          const QString c_DatapoolIdSelectedVariableNameId =
             static_cast<QString>("%1Name").arg(c_DatapoolIdSelectedVariableNameBaseId);
-         const QString c_DatapoolIdSelectedVariableName = orc_Ini.ReadString(
-            orc_SectionName.toStdString().c_str(), c_DatapoolIdSelectedVariableNameId.toStdString().c_str(),
-            "").c_str();
+         const QString c_DatapoolIdSelectedVariableName = orc_Ini.value(
+            orc_SectionName + "/" + c_DatapoolIdSelectedVariableNameId,
+            "").toString();
          if (c_DatapoolIdSelectedVariableName.compare("") != 0)
          {
             c_SelectedVariableNames.push_back(c_DatapoolIdSelectedVariableName);
@@ -1586,14 +1591,14 @@ void C_UsFiler::mh_LoadDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
                                                                   c_SelectedVariableNames);
 
       //Interfaces
-      s32_SystemBusCount = orc_Ini.ReadInteger(
-         orc_SectionName.toStdString().c_str(), c_DatapoolIdInterfaceCount.toStdString().c_str(), 0);
+      s32_SystemBusCount = orc_Ini.value(
+         orc_SectionName + "/" + c_DatapoolIdInterfaceCount, 0).toInt();
       for (int32_t s32_ItBus = 0; s32_ItBus < s32_SystemBusCount; ++s32_ItBus)
       {
          const QString c_BusIdBase = static_cast<QString>("%1Interface%2").arg(orc_DatapoolIdBase).arg(s32_ItBus);
          const QString c_BusIdName = static_cast<QString>("%1Name").arg(c_BusIdBase);
-         const QString c_BusName = orc_Ini.ReadString(
-            orc_SectionName.toStdString().c_str(), c_BusIdName.toStdString().c_str(), "").c_str();
+         const QString c_BusName = orc_Ini.value(
+            orc_SectionName + "/" + c_BusIdName, "").toString();
          if (c_BusName.compare("") != 0)
          {
             mh_LoadBus(orc_Ini, orc_SectionName, c_BusIdBase, c_BusName, orc_UserSettings, false, orc_NodeName,
@@ -1602,8 +1607,8 @@ void C_UsFiler::mh_LoadDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
       }
 
       //Lists
-      s32_ListCount = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                          c_DatapoolIdListCount.toStdString().c_str(), 0);
+      s32_ListCount = orc_Ini.value(orc_SectionName + "/" +
+                                          c_DatapoolIdListCount, 0).toInt();
       for (int32_t s32_ItList = 0; s32_ItList < s32_ListCount; ++s32_ItList)
       {
          const QString c_ListIdBase = static_cast<QString>("%1List%2").arg(orc_DatapoolIdBase).arg(s32_ItList);
@@ -1623,13 +1628,13 @@ void C_UsFiler::mh_LoadDatapool(C_SclIniFile & orc_Ini, const QString & orc_Sect
    \param[in,out]  orc_UserSettings    User settings to load
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadList(C_SclIniFile & orc_Ini, const QString & orc_SectionName, const QString & orc_ListIdBase,
+void C_UsFiler::mh_LoadList(QSettings & orc_Ini, const QString & orc_SectionName, const QString & orc_ListIdBase,
                             const QString & orc_NodeName, const QString & orc_DataPoolName,
                             C_UsHandler & orc_UserSettings)
 {
    const QString c_ListIdName = static_cast<QString>("%1Name").arg(orc_ListIdBase);
-   const QString c_ListName = orc_Ini.ReadString(
-      orc_SectionName.toStdString().c_str(), c_ListIdName.toStdString().c_str(), "").c_str();
+   const QString c_ListName = orc_Ini.value(
+      orc_SectionName + "/" + c_ListIdName, "").toString();
 
    if (c_ListName.compare("") != 0)
    {
@@ -1649,7 +1654,7 @@ void C_UsFiler::mh_LoadList(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    \param[in,out]  orc_UserSettings    User settings to load
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadView(C_SclIniFile & orc_Ini, const QString & orc_SectionName, const QString & orc_ViewIdBase,
+void C_UsFiler::mh_LoadView(QSettings & orc_Ini, const QString & orc_SectionName, const QString & orc_ViewIdBase,
                             const QString & orc_ViewName, C_UsHandler & orc_UserSettings)
 {
    const QString c_ViewIdNavigationExpandedStatus =
@@ -1700,88 +1705,86 @@ void C_UsFiler::mh_LoadView(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    std::array<bool, 3> c_ViewConfigs;
 
    //Navigation
-   q_Value = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                              c_ViewIdNavigationExpandedStatus.toStdString().c_str(), false);
+   q_Value = orc_Ini.value(orc_SectionName + "/" +
+                           c_ViewIdNavigationExpandedStatus, false).toBool();
    orc_UserSettings.SetProjSvNavigationExpandedStatus(orc_ViewName, q_Value);
 
    //Setup pos
-   c_Pos.setX(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                  c_ViewIdSetupPosHorizontal.toStdString().c_str(), 0));
-   c_Pos.setY(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                  c_ViewIdSetupPosVertical.toStdString().c_str(), 0));
+   c_Pos.setX(orc_Ini.value(orc_SectionName + "/" +
+                            c_ViewIdSetupPosHorizontal, 0).toInt());
+   c_Pos.setY(orc_Ini.value(orc_SectionName + "/" +
+                            c_ViewIdSetupPosVertical, 0).toInt());
 
    //Setup zoom
-   s32_Value = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                   c_ViewIdSetupZoom.toStdString().c_str(), 100);
+   s32_Value = orc_Ini.value(orc_SectionName + "/" +
+                             c_ViewIdSetupZoom, 100).toInt();
 
    //Setup set
    orc_UserSettings.SetProjSvSetupViewZoom(orc_ViewName, s32_Value);
    orc_UserSettings.SetProjSvSetupViewPos(orc_ViewName, c_Pos);
 
    //Update pos
-   c_Pos.setX(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                  c_ViewIdUpdatePosHorizontal.toStdString().c_str(), 0));
-   c_Pos.setY(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                  c_ViewIdUpdatePosVertical.toStdString().c_str(), 0));
+   c_Pos.setX(orc_Ini.value(orc_SectionName + "/" +
+                            c_ViewIdUpdatePosHorizontal, 0).toInt());
+   c_Pos.setY(orc_Ini.value(orc_SectionName + "/" +
+                            c_ViewIdUpdatePosVertical, 0).toInt());
 
    //Update zoom
-   s32_Value = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                   c_ViewIdUpdateZoom.toStdString().c_str(), 100);
+   s32_Value = orc_Ini.value(orc_SectionName + "/" +
+                             c_ViewIdUpdateZoom, 100).toInt();
 
    //Update set
    orc_UserSettings.SetProjSvUpdateViewZoom(orc_ViewName, s32_Value);
    orc_UserSettings.SetProjSvUpdateViewPos(orc_ViewName, c_Pos);
 
    //Param
-   orc_UserSettings.SetProjSvParamExport(orc_ViewName, orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                                                                          c_ViewIdParamExportPath.toStdString().c_str(),
-                                                                          "").c_str());
-   orc_UserSettings.SetProjSvParamImport(orc_ViewName, orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                                                                          c_ViewIdParamImportPath.toStdString().c_str(),
-                                                                          "").c_str());
-   orc_UserSettings.SetProjSvParamRecord(orc_ViewName, orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                                                                          c_ViewIdParamRecordPath.toStdString().c_str(),
-                                                                          "").c_str(),
-                                         orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                                                            c_ViewIdParamRecordFileName.toStdString().c_str(),
-                                                            "").c_str());
+   orc_UserSettings.SetProjSvParamExport(orc_ViewName, orc_Ini.value(orc_SectionName + "/" +
+                                                                     c_ViewIdParamExportPath,
+                                                                     "").toString());
+   orc_UserSettings.SetProjSvParamImport(orc_ViewName, orc_Ini.value(orc_SectionName + "/" +
+                                                                     c_ViewIdParamImportPath,
+                                                                     "").toString());
+   orc_UserSettings.SetProjSvParamRecord(orc_ViewName, orc_Ini.value(orc_SectionName + "/" +
+                                                                     c_ViewIdParamRecordPath,
+                                                                     "").toString(),
+                                         orc_Ini.value(orc_SectionName + "/" +
+                                                       c_ViewIdParamRecordFileName,
+                                                       "").toString());
 
    //Splitter
    orc_UserSettings.SetProjSvUpdateSplitterHorizontal(orc_ViewName,
-                                                      orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                                                          c_ViewIdUpdateSplitterHorizontal.
-                                                                          toStdString().
-                                                                          c_str(), -1));
+                                                      orc_Ini.value(orc_SectionName + "/" +
+                                                                    c_ViewIdUpdateSplitterHorizontal, -1).toInt());
    orc_UserSettings.SetProjSvUpdateHorizontalSplitterVertical(
-      orc_ViewName, orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                        c_ViewIdUpdateHorizontalSplitterVertical.toStdString().c_str(), -1));
+      orc_ViewName, orc_Ini.value(orc_SectionName + "/" +
+                                  c_ViewIdUpdateHorizontalSplitterVertical, -1).toInt());
 
    //Progress log
-   c_Pos.setX(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                  c_ViewIdUpdateProgressLogPositionHorizontal.toStdString().c_str(), -1));
-   c_Pos.setY(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                  c_ViewIdUpdateProgressLogPositionVertical.toStdString().c_str(), -1));
-   c_Size.setWidth(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                       c_ViewIdUpdateProgressLogSizeWidth.toStdString().c_str(), 600));
-   c_Size.setHeight(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                        c_ViewIdUpdateProgressLogSizeHeight.toStdString().c_str(), 400));
-   q_Value = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                              c_ViewIdUpdateProgressLogIsMaximized.toStdString().c_str(), false);
+   c_Pos.setX(orc_Ini.value(orc_SectionName + "/" +
+                            c_ViewIdUpdateProgressLogPositionHorizontal, -1).toInt());
+   c_Pos.setY(orc_Ini.value(orc_SectionName + "/" +
+                            c_ViewIdUpdateProgressLogPositionVertical, -1).toInt());
+   c_Size.setWidth(orc_Ini.value(orc_SectionName + "/" +
+                                 c_ViewIdUpdateProgressLogSizeWidth, 600).toInt());
+   c_Size.setHeight(orc_Ini.value(orc_SectionName + "/" +
+                                  c_ViewIdUpdateProgressLogSizeHeight, 400).toInt());
+   q_Value = orc_Ini.value(orc_SectionName + "/" +
+                           c_ViewIdUpdateProgressLogIsMaximized, false).toBool();
    orc_UserSettings.SetProjSvUpdateProgressLog(orc_ViewName, c_Pos, c_Size, q_Value);
 
    //Update summary type
-   q_Value = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                              c_ViewIdUpdateSummaryBig.toStdString().c_str(), true);
+   q_Value = orc_Ini.value(orc_SectionName + "/" +
+                           c_ViewIdUpdateSummaryBig, true).toBool();
    orc_UserSettings.SetProjSvUpdateSummaryBig(orc_ViewName, q_Value);
 
    // Update package sections visibility of empty optional sections
-   q_Value = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                              c_ViewIdUpdateEmptyOptionalSectionsVisible.toStdString().c_str(), true);
+   q_Value = orc_Ini.value(orc_SectionName + "/" +
+                           c_ViewIdUpdateEmptyOptionalSectionsVisible, true).toBool();
    orc_UserSettings.SetProjSvUpdateEmptyOptionalSectionsVisible(orc_ViewName, q_Value);
 
    // View nodes
-   s32_Value = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                   c_ViewIdNodesCount.toStdString().c_str(), 0);
+   s32_Value = orc_Ini.value(orc_SectionName + "/" +
+                             c_ViewIdNodesCount, 0).toInt();
    for (int32_t s32_ItNodes = 0; s32_ItNodes < s32_Value; ++s32_ItNodes)
    {
       const QString c_DashboardIdBase = static_cast<QString>("%1Node%2").arg(orc_ViewIdBase).arg(s32_ItNodes);
@@ -1789,26 +1792,26 @@ void C_UsFiler::mh_LoadView(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    }
 
    //Toolbox
-   c_Pos.setX(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                  c_ViewIdDashboardToolboxPositionHorizontal.toStdString().c_str(), -1));
-   c_Pos.setY(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                  c_ViewIdDashboardToolboxPositionVertical.toStdString().c_str(), -1));
-   c_Size.setWidth(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                       c_ViewIdDashboardToolboxSizeWidth.toStdString().c_str(), 600));
-   c_Size.setHeight(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                        c_ViewIdDashboardToolboxSizeHeight.toStdString().c_str(), 400));
-   q_Value = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                              c_ViewIdDashboardToolboxIsMaximized.toStdString().c_str(), false);
+   c_Pos.setX(orc_Ini.value(orc_SectionName + "/" +
+                            c_ViewIdDashboardToolboxPositionHorizontal, -1).toInt());
+   c_Pos.setY(orc_Ini.value(orc_SectionName + "/" +
+                            c_ViewIdDashboardToolboxPositionVertical, -1).toInt());
+   c_Size.setWidth(orc_Ini.value(orc_SectionName + "/" +
+                                 c_ViewIdDashboardToolboxSizeWidth, 600).toInt());
+   c_Size.setHeight(orc_Ini.value(orc_SectionName + "/" +
+                                  c_ViewIdDashboardToolboxSizeHeight, 400).toInt());
+   q_Value = orc_Ini.value(orc_SectionName + "/" +
+                           c_ViewIdDashboardToolboxIsMaximized, false).toBool();
    orc_UserSettings.SetProjSvDashboardToolbox(orc_ViewName, c_Pos, c_Size, q_Value);
 
    //General
-   s32_Value = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                   c_ViewIdDashboardSelectedTabIndex.toStdString().c_str(), -1);
+   s32_Value = orc_Ini.value(orc_SectionName + "/" +
+                             c_ViewIdDashboardSelectedTabIndex, -1).toInt();
    orc_UserSettings.SetProjSvDashboardSelectedTabIndex(orc_ViewName, s32_Value);
 
    //Dashboards
-   s32_Value = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                   c_ViewIdDashboardCount.toStdString().c_str(), 0);
+   s32_Value = orc_Ini.value(orc_SectionName + "/" +
+                             c_ViewIdDashboardCount, 0).toInt();
    for (int32_t s32_ItDashboard = 0; s32_ItDashboard < s32_Value; ++s32_ItDashboard)
    {
       const QString c_DashboardIdBase = static_cast<QString>("%1Dashboard%2").arg(orc_ViewIdBase).arg(s32_ItDashboard);
@@ -1816,15 +1819,15 @@ void C_UsFiler::mh_LoadView(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    }
 
    //Permissions
-   c_ViewConfigs[0] = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                                       c_ViewIdSetupPermission.toStdString().c_str(),
-                                       false);
-   c_ViewConfigs[1] = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                                       c_ViewIdUpdatePermission.toStdString().c_str(),
-                                       false);
-   c_ViewConfigs[2] = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                                       c_ViewIdDashboardPermission.toStdString().c_str(),
-                                       false);
+   c_ViewConfigs[0] = orc_Ini.value(orc_SectionName + "/" +
+                                    c_ViewIdSetupPermission,
+                                    false).toBool();
+   c_ViewConfigs[1] = orc_Ini.value(orc_SectionName + "/" +
+                                    c_ViewIdUpdatePermission,
+                                    false).toBool();
+   c_ViewConfigs[2] = orc_Ini.value(orc_SectionName + "/" +
+                                    c_ViewIdDashboardPermission,
+                                    false).toBool();
    orc_UserSettings.SetViewPermission(orc_ViewName, c_ViewConfigs);
 }
 
@@ -1839,13 +1842,13 @@ void C_UsFiler::mh_LoadView(C_SclIniFile & orc_Ini, const QString & orc_SectionN
    \param[in,out]  orc_UserSettings             User settings to load
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadDataRatesPerNode(C_SclIniFile & orc_Ini, const QString & orc_SectionName,
+void C_UsFiler::mh_LoadDataRatesPerNode(QSettings & orc_Ini, const QString & orc_SectionName,
                                         const QString & orc_DataRatePerNodeIdBase, const QString & orc_ViewName,
                                         const QString & orc_NodeName, C_UsHandler & orc_UserSettings)
 {
    const QString c_DataRateIdCount = static_cast<QString>("%1_count").arg(orc_DataRatePerNodeIdBase);
-   const int32_t s32_ItDataRate = orc_Ini.ReadInteger(
-      orc_SectionName.toStdString().c_str(), c_DataRateIdCount.toStdString().c_str(), 0);
+   const int32_t s32_ItDataRate = orc_Ini.value(
+      orc_SectionName + "/" + c_DataRateIdCount, 0).toInt();
 
    //Data rate count
    //Per checksum section
@@ -1855,11 +1858,11 @@ void C_UsFiler::mh_LoadDataRatesPerNode(C_SclIniFile & orc_Ini, const QString & 
       const QString c_DataRateIdChecksum = static_cast<QString>("%1_checksum").arg(c_DataRateIdBase);
       const QString c_DataRateIdCurrentValue = static_cast<QString>("%1_value").arg(c_DataRateIdBase);
       //Key
-      const QString c_Checksum = orc_Ini.ReadString(
-         orc_SectionName.toStdString().c_str(), c_DataRateIdChecksum.toStdString().c_str(), "").c_str();
+      const QString c_Checksum = orc_Ini.value(
+         orc_SectionName + "/" + c_DataRateIdChecksum, "").toString();
       //Value count
-      const float64_t f64_Value = orc_Ini.ReadFloat(
-         orc_SectionName.toStdString().c_str(), c_DataRateIdCurrentValue.toStdString().c_str(), 0.0);
+      const float64_t f64_Value = orc_Ini.value(
+         orc_SectionName + "/" + c_DataRateIdCurrentValue, 0.0).toDouble();
       //String to uint32_t
       if (c_Checksum.compare("") != 0)
       {
@@ -1884,32 +1887,32 @@ void C_UsFiler::mh_LoadDataRatesPerNode(C_SclIniFile & orc_Ini, const QString & 
    \param[in,out]  orc_UserSettings    User settings to load
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadViewNode(C_SclIniFile & orc_Ini, const QString & orc_SectionName,
+void C_UsFiler::mh_LoadViewNode(QSettings & orc_Ini, const QString & orc_SectionName,
                                 const QString & orc_ViewNodeIdBase, const QString & orc_ViewName,
                                 C_UsHandler & orc_UserSettings)
 {
    const QString c_ViewNodeIdName = static_cast<QString>("%1Name").arg(orc_ViewNodeIdBase);
    const QString c_NodeIdUpdateDataRateBaseId = static_cast<QString>("%1_update_data_rate").arg(orc_ViewNodeIdBase);
-   const QString c_ViewNodeName = orc_Ini.ReadString(orc_SectionName.toStdString().c_str(),
-                                                     c_ViewNodeIdName.toStdString().c_str(), "").c_str();
+   const QString c_ViewNodeName = orc_Ini.value(orc_SectionName + "/" +
+                                                     c_ViewNodeIdName, "").toString();
 
    if (c_ViewNodeName.compare("") != 0)
    {
       QVector<bool> c_ExpandedFlags;
       int32_t s32_SectionCounter;
-      const int32_t s32_SectionCount = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
+      const int32_t s32_SectionCount = orc_Ini.value(orc_SectionName + "/" +
                                                            static_cast<QString>("%1SectionCount").
-                                                           arg(orc_ViewNodeIdBase).toStdString().c_str(), 1);
+                                                           arg(orc_ViewNodeIdBase), 1).toInt();
       c_ExpandedFlags.resize(s32_SectionCount);
 
       //Section expanded flags
       for (s32_SectionCounter = 0; s32_SectionCounter < s32_SectionCount; ++s32_SectionCounter)
       {
          c_ExpandedFlags[s32_SectionCounter] =
-            orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                             static_cast<QString>("%1Section%2").
-                             arg(orc_ViewNodeIdBase).
-                             arg(s32_SectionCounter).toStdString().c_str(), true);
+            orc_Ini.value(orc_SectionName + "/" +
+                              static_cast<QString>("%1Section%2").
+                              arg(orc_ViewNodeIdBase).
+                              arg(s32_SectionCounter), true).toBool();
       }
 
       // Append
@@ -1932,13 +1935,13 @@ void C_UsFiler::mh_LoadViewNode(C_SclIniFile & orc_Ini, const QString & orc_Sect
    \param[in,out]  orc_UserSettings       User settings to load
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadDashboard(C_SclIniFile & orc_Ini, const QString & orc_SectionName,
+void C_UsFiler::mh_LoadDashboard(QSettings & orc_Ini, const QString & orc_SectionName,
                                  const QString & orc_DashboardIdBase, const QString & orc_ViewName,
                                  C_UsHandler & orc_UserSettings)
 {
    const QString c_DashboardIdName = static_cast<QString>("%1Name").arg(orc_DashboardIdBase);
-   const QString c_DashboardName = orc_Ini.ReadString(
-      orc_SectionName.toStdString().c_str(), c_DashboardIdName.toStdString().c_str(), "").c_str();
+   const QString c_DashboardName = orc_Ini.value(
+      orc_SectionName + "/" + c_DashboardIdName, "").toString();
 
    if (c_DashboardName.compare("") != 0)
    {
@@ -1951,8 +1954,7 @@ void C_UsFiler::mh_LoadDashboard(C_SclIniFile & orc_Ini, const QString & orc_Sec
       const QString c_DashboardIdSceneZoom = static_cast<QString>("%1_scene_zoom").arg(orc_DashboardIdBase);
 
       //Torn off flag
-      if (orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                           c_DashboardIdTornOffFlag.toStdString().c_str(), false) == true)
+      if (orc_Ini.value(orc_SectionName + "/" + c_DashboardIdTornOffFlag, false).toBool() == true)
       {
          const QString c_DashboardIdWindowPosHorizontal = static_cast<QString>("%1_window_x").arg(orc_DashboardIdBase);
          const QString c_DashboardIdWindowPosVertical = static_cast<QString>("%1_window_y").arg(orc_DashboardIdBase);
@@ -1963,20 +1965,14 @@ void C_UsFiler::mh_LoadDashboard(C_SclIniFile & orc_Ini, const QString & orc_Sec
          bool q_Min;
          bool q_Max;
          //Window pos
-         c_Pos.setX(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                        c_DashboardIdWindowPosHorizontal.toStdString().c_str(), 0));
-         c_Pos.setY(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                        c_DashboardIdWindowPosVertical.toStdString().c_str(), 0));
+         c_Pos.setX(orc_Ini.value(orc_SectionName + "/" + c_DashboardIdWindowPosHorizontal, 0).toInt());
+         c_Pos.setY(orc_Ini.value(orc_SectionName + "/" + c_DashboardIdWindowPosVertical, 0).toInt());
          //Size
-         c_Size.setWidth(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                             c_DashboardIdSizeWidth.toStdString().c_str(), 0));
-         c_Size.setHeight(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                              c_DashboardIdSizeHeight.toStdString().c_str(), 0));
+         c_Size.setWidth(orc_Ini.value(orc_SectionName + "/" + c_DashboardIdSizeWidth, 0).toInt());
+         c_Size.setHeight(orc_Ini.value(orc_SectionName + "/" + c_DashboardIdSizeHeight, 0).toInt());
          //Flags
-         q_Min = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                                  c_DashboardIdMinFlag.toStdString().c_str(), false);
-         q_Max = orc_Ini.ReadBool(orc_SectionName.toStdString().c_str(),
-                                  c_DashboardIdMaxFlag.toStdString().c_str(), false);
+         q_Min = orc_Ini.value(orc_SectionName + "/" + c_DashboardIdMinFlag, false).toBool();
+         q_Max = orc_Ini.value(orc_SectionName + "/" + c_DashboardIdMaxFlag, false).toBool();
 
          //Apply
          orc_UserSettings.SetProjSvDashboardTearOffPosition(orc_ViewName, c_DashboardName, c_Pos, c_Size, q_Min,
@@ -1987,14 +1983,11 @@ void C_UsFiler::mh_LoadDashboard(C_SclIniFile & orc_Ini, const QString & orc_Sec
          orc_UserSettings.SetProjSvDashboardMainTab(orc_ViewName, c_DashboardName);
       }
       //Scene pos
-      c_Pos.setX(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                     c_DashboardIdScenePosHorizontal.toStdString().c_str(), 0));
-      c_Pos.setY(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                     c_DashboardIdScenePosVertical.toStdString().c_str(), 0));
+      c_Pos.setX(orc_Ini.value(orc_SectionName + "/" + c_DashboardIdScenePosHorizontal, 0).toInt());
+      c_Pos.setY(orc_Ini.value(orc_SectionName + "/" + c_DashboardIdScenePosVertical, 0).toInt());
 
       //Zoom
-      s32_Value = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                      c_DashboardIdSceneZoom.toStdString().c_str(), 100);
+      s32_Value = orc_Ini.value(orc_SectionName + "/" + c_DashboardIdSceneZoom, 100).toInt();
       //Apply
       orc_UserSettings.SetProjSvDashboardScenePositionAndZoom(orc_ViewName, c_DashboardName, c_Pos, s32_Value);
    }
@@ -2007,12 +2000,12 @@ void C_UsFiler::mh_LoadDashboard(C_SclIniFile & orc_Ini, const QString & orc_Sec
    \param[in,out]  orc_Ini             Current ini
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadCommon(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_LoadCommon(C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    QString c_Tmp;
 
    //Language
-   c_Tmp = orc_Ini.ReadString("Common", "Language", "American english").c_str();
+   c_Tmp = orc_Ini.value("Common/Language", "American english").toString();
    if (C_UsHandler::h_CheckLanguageExists(c_Tmp) != 0)
    {
       c_Tmp = "American english";
@@ -2020,10 +2013,10 @@ void C_UsFiler::mh_LoadCommon(C_UsHandler & orc_UserSettings, C_SclIniFile & orc
    orc_UserSettings.SetLanguage(c_Tmp);
 
    //Save As
-   orc_UserSettings.SetCurrentSaveAsPath(orc_Ini.ReadString("Common", "SaveAsLocation", "").c_str());
+   orc_UserSettings.SetCurrentSaveAsPath(orc_Ini.value("Common/SaveAsLocation", "").toString());
 
    // Performance measurement
-   orc_UserSettings.SetPerformanceActive(orc_Ini.ReadBool("Common", "PerformanceMeasurementActive", false));
+   orc_UserSettings.SetPerformanceActive(orc_Ini.value("Common/PerformanceMeasurementActive", false).toBool());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2033,14 +2026,13 @@ void C_UsFiler::mh_LoadCommon(C_UsHandler & orc_UserSettings, C_SclIniFile & orc
    \param[in,out]  orc_Ini             Current ini
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadEnvironment(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_LoadEnvironment(C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    //Path handling
-   orc_UserSettings.SetPathHandlingSelection(orc_Ini.ReadString("Environment", "PathHandlingSelection", "").c_str());
+   orc_UserSettings.SetPathHandlingSelection(orc_Ini.value("Environment/PathHandlingSelection", "").toString());
 
    //Skip TSP import
-   orc_UserSettings.SetSkipTspSelection(orc_Ini.ReadString("Environment", "SkipTspImportSelection",
-                                                           "").c_str());
+   orc_UserSettings.SetSkipTspSelection(orc_Ini.value("Environment/SkipTspImportSelection", "").toString());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -2050,152 +2042,137 @@ void C_UsFiler::mh_LoadEnvironment(C_UsHandler & orc_UserSettings, C_SclIniFile 
    \param[in,out]  orc_Ini             Current ini
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadColors(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_LoadColors(C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    QVector<QColor> c_RecentColorsVector;
 
-   //Colors
-   for (int32_t s32_Counter = 1; s32_Counter <= 6; s32_Counter++)
+   for (int32_t s32_Counter = 0; s32_Counter < 16; s32_Counter++)
    {
       QColor c_Color;
-      c_Color.setRed(orc_Ini.ReadInteger("RecentColors",
-                                         "ColorNr" + C_SclString::IntToStr(s32_Counter) +
-                                         "_Red", 255));
-      c_Color.setGreen(orc_Ini.ReadInteger("RecentColors",
-                                           "ColorNr" + C_SclString::IntToStr(s32_Counter) +
-                                           "_Green", 255));
-      c_Color.setBlue(orc_Ini.ReadInteger("RecentColors",
-                                          "ColorNr" + C_SclString::IntToStr(s32_Counter) +
-                                          "_Blue", 255));
-      c_Color.setAlpha(orc_Ini.ReadInteger("RecentColors",
-                                           "ColorNr" + C_SclString::IntToStr(s32_Counter) +
-                                           "_Alpha", 255));
-      c_RecentColorsVector.push_back(c_Color);
+      c_Color.setRed(orc_Ini.value("RecentColors/ColorNr" + QString::number(s32_Counter) + "_Red",
+                                   255).toInt());
+      c_Color.setGreen(orc_Ini.value(
+                          "RecentColors/ColorNr" + QString::number(s32_Counter) + "_Green", 255).toInt());
+      c_Color.setBlue(orc_Ini.value("RecentColors/ColorNr" + QString::number(s32_Counter) + "_Blue",
+                                    255).toInt());
+      c_RecentColorsVector.append(c_Color);
    }
 
    orc_UserSettings.SetRecentColors(c_RecentColorsVector);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/*! \brief   Load INI recent colors section
+/*! \brief   Load load next recent color button user settings
 
-   \param[in,out]  orc_UserSettings    User settings
-   \param[in,out]  orc_Ini             Current ini
+   \param[in,out]  orc_UserSettings    User settings to load
+   \param[in,out]  orc_Ini             Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadNextRecentColorButtonNumber(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_LoadNextRecentColorButtonNumber(C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
-   //Next recent color button
-   orc_UserSettings.SetNextRecentColorButtonNumber(orc_Ini.ReadInteger("RecentColors",
-                                                                       "NextRecentColorButtonNumber", 1));
+   orc_UserSettings.SetNextRecentColorButtonNumber(orc_Ini.value("RecentColors/NextButtonNr", 0).toInt());
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/*! \brief   Load INI recent projects section
+/*! \brief   Load recent projects part of user settings
 
-   \param[in,out]  orc_UserSettings    User settings
-   \param[in,out]  orc_Ini             Current ini
+   \param[in,out]  orc_UserSettings    User settings to load
+   \param[in,out]  orc_Ini             Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadRecentProjects(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_LoadRecentProjects(C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
-   QStringList c_List;
-   QString c_Cur;
+   int32_t s32_Count;
+   QString c_Tmp;
 
-   //Recent projects
-   c_List.clear();
-   for (uint8_t u8_It = 0; u8_It < C_UsHandler::h_GetMaxRecentProjects(); ++u8_It)
+   s32_Count = orc_Ini.value("RecentProjects/Count", 0).toInt();
+
+   orc_UserSettings.ClearRecentProjects();
+
+   for (int32_t s32_Counter = 0; s32_Counter < s32_Count; s32_Counter++)
    {
-      c_Cur =
-         orc_Ini.ReadString("RecentProjects", C_SclString::IntToStr(u8_It), "").c_str();
-      if (c_Cur.compare("") != 0)
+      c_Tmp = orc_Ini.value("RecentProjects/Project" + QString::number(s32_Counter), "").toString();
+      if ((c_Tmp != "") && (QFile::exists(c_Tmp)))
       {
-         QFileInfo c_File;
-         if (c_Cur.startsWith(".") == true)
-         {
-            c_File.setFile(C_Uti::h_GetExePath() + c_Cur);
-         }
-         else
-         {
-            c_File.setFile(c_Cur);
-         }
-         if (c_File.exists() == true)
-         {
-            c_List.append(c_File.absoluteFilePath());
-         }
+         orc_UserSettings.AddToRecentProjects(c_Tmp);
       }
    }
-   orc_UserSettings.SetRecentProjects(c_List);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-/*! \brief   Load INI project independent section
+/*! \brief   Load project independent part of user settings
 
-   \param[in,out]  orc_UserSettings    User settings
-   \param[in,out]  orc_Ini             Current ini
+   \param[in,out]  orc_UserSettings    User settings to load
+   \param[in,out]  orc_Ini             Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadProjectIndependentSection(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_LoadProjectIndependentSection(C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
+   mh_LoadCommon(orc_UserSettings, orc_Ini);
+   mh_LoadEnvironment(orc_UserSettings, orc_Ini);
+   mh_LoadColors(orc_UserSettings, orc_Ini);
+   mh_LoadNextRecentColorButtonNumber(orc_UserSettings, orc_Ini);
+   mh_LoadRecentProjects(orc_UserSettings, orc_Ini);
+   //mh_LoadScreenshotGifSucessTimeout(orc_UserSettings, orc_Ini); // This function is not in the original code, so I'm commenting it out.
    QPoint c_Pos;
    QSize c_Size;
    bool q_Flag;
    int32_t s32_Value;
 
    //Screen position
-   c_Pos.setX(orc_Ini.ReadInteger("Screen", "Position_x", 50));
-   c_Pos.setY(orc_Ini.ReadInteger("Screen", "Position_y", 50));
+   c_Pos.setX(orc_Ini.value("Screen/Position_x", 50).toInt());
+   c_Pos.setY(orc_Ini.value("Screen/Position_y", 50).toInt());
    orc_UserSettings.SetScreenPos(c_Pos);
 
    // Application size
-   c_Size.setWidth(orc_Ini.ReadInteger("Screen", "Size_width", 1000));
-   c_Size.setHeight(orc_Ini.ReadInteger("Screen", "Size_height", 700));
+   c_Size.setWidth(orc_Ini.value("Screen/Size_width", 1000).toInt());
+   c_Size.setHeight(orc_Ini.value("Screen/Size_height", 700).toInt());
    orc_UserSettings.SetAppSize(c_Size);
 
    // Application maximizing flag
-   q_Flag = orc_Ini.ReadBool("Screen", "Size_maximized", true);
+   q_Flag = orc_Ini.value("Screen/Size_maximized", true).toBool();
    orc_UserSettings.SetAppMaximized(q_Flag);
 
    // Application screen index
-   s32_Value = orc_Ini.ReadInteger("Screen", "Screen_index", 0);
+   s32_Value = orc_Ini.value("Screen/Screen_index", 0).toInt();
    orc_UserSettings.SetAppScreenIndex(static_cast<uint32_t>(s32_Value));
 
    // Sys def topology toolbox position
-   c_Pos.setX(orc_Ini.ReadInteger("SdTopologyToolbox", "Position_x", -1));
-   c_Pos.setY(orc_Ini.ReadInteger("SdTopologyToolbox", "Position_y", -1));
+   c_Pos.setX(orc_Ini.value("SdTopologyToolbox/Position_x", -1).toInt());
+   c_Pos.setY(orc_Ini.value("SdTopologyToolbox/Position_y", -1).toInt());
    orc_UserSettings.SetSdTopologyToolboxPos(c_Pos);
 
    // Sys def topology toolbox size
-   c_Size.setWidth(orc_Ini.ReadInteger("SdTopologyToolbox", "Size_width", 600));
-   c_Size.setHeight(orc_Ini.ReadInteger("SdTopologyToolbox", "Size_height", 400));
+   c_Size.setWidth(orc_Ini.value("SdTopologyToolbox/Size_width", 600).toInt());
+   c_Size.setHeight(orc_Ini.value("SdTopologyToolbox/Size_height", 400).toInt());
    orc_UserSettings.SetSdTopologyToolboxSize(c_Size);
 
    // Sys def topology toolbox maximizing flag
-   q_Flag = orc_Ini.ReadBool("SdTopologyToolbox", "Size_maximized", true);
+   q_Flag = orc_Ini.value("SdTopologyToolbox/Size_maximized", true).toBool();
    orc_UserSettings.SetSdTopologyToolboxMaximized(q_Flag);
 
    // Sys def node edit splitter (Default: 1242; Fits perfect when using full hd resolution)
-   s32_Value = orc_Ini.ReadInteger("SdNodeEdit", "SplitterX", 1242);
+   s32_Value = orc_Ini.value("SdNodeEdit/SplitterX", 1242).toInt();
    orc_UserSettings.SetSdNodeEditSplitterHorizontal(s32_Value);
 
    // Sys def node edit HALC splitter
-   s32_Value = orc_Ini.ReadInteger("SdNodeEdit", "HalcSplitterX", 400);
+   s32_Value = orc_Ini.value("SdNodeEdit/HalcSplitterX", 400).toInt();
    orc_UserSettings.SetSdNodeEditHalcSplitterHorizontal(s32_Value);
 
    // Sys def node edit CANopen Manager splitter
-   s32_Value = orc_Ini.ReadInteger("SdNodeEdit", "CoManagerSplitterX", 400);
+   s32_Value = orc_Ini.value("SdNodeEdit/CoManagerSplitterX", 400).toInt();
    orc_UserSettings.SetSdNodeEditCoManagerSplitterHorizontal(s32_Value);
 
    // Sys def node edit data logger splitter
-   s32_Value = orc_Ini.ReadInteger("SdNodeEdit", "DataLoggerSplitterX", 400);
+   s32_Value = orc_Ini.value("SdNodeEdit/DataLoggerSplitterX", 400).toInt();
    orc_UserSettings.SetSdNodeEditDataLoggerSplitterHorizontal(s32_Value);
 
    // Sys def bus edit splitters
-   s32_Value = orc_Ini.ReadInteger("SdBusEdit", "TreeSplitterX", 0);
+   s32_Value = orc_Ini.value("SdBusEdit/TreeSplitterX", 0).toInt();
    orc_UserSettings.SetSdBusEditTreeSplitterHorizontal(s32_Value);
-   s32_Value = orc_Ini.ReadInteger("SdBusEdit", "TreeSplitterX2", 0);
+   s32_Value = orc_Ini.value("SdBusEdit/TreeSplitterX2", 0).toInt();
    orc_UserSettings.SetSdBusEditTreeSplitterHorizontal2(s32_Value);
-   s32_Value = orc_Ini.ReadInteger("SdBusEdit", "LayoutSplitterX", 0);
+   s32_Value = orc_Ini.value("SdBusEdit/LayoutSplitterX", 0).toInt();
    orc_UserSettings.SetSdBusEditLayoutSplitterHorizontal(s32_Value);
 }
 
@@ -2208,176 +2185,150 @@ void C_UsFiler::mh_LoadProjectIndependentSection(C_UsHandler & orc_UserSettings,
                                        Empty string results in default values
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadProjectDependentSection(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini,
+void C_UsFiler::mh_LoadProjectDependentSection(C_UsHandler & orc_UserSettings, QSettings & orc_Ini,
                                                const QString & orc_ActiveProject)
 {
-   QPoint c_Pos;
-
    if (orc_ActiveProject != "")
    {
-      // project specific settings
-      int32_t s32_Value;
-      int32_t s32_SystemBusCount;
       int32_t s32_SystemNodeCount;
+      int32_t s32_SystemBusCount;
       int32_t s32_SystemViewCount;
-      int32_t s32_SysDefSubMode;
-      uint32_t u32_SysDefIndex;
-      uint32_t u32_SysDefFlag;
-      int32_t s32_SysViewSubMode;
-      uint32_t u32_SysViewIndex;
-      uint32_t u32_SysViewFlag;
+      int32_t s32_Value;
+      QPoint c_Pos;
       QStringList c_PemFilePaths;
 
+      // project specific settings
       // Mode
-      s32_Value = orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "ProjMode", 0);
-      orc_UserSettings.SetProjLastMode(s32_Value);
+      orc_UserSettings.SetProjLastMode(
+         orc_Ini.value(orc_ActiveProject + "/ProjMode", 0).toInt());
 
       // Navi bar
-      s32_Value = orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "navigation-width", 300);
-      orc_UserSettings.SetNaviBarSize(s32_Value);
-      s32_Value = orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "navigation-node-section-width", 200);
-      orc_UserSettings.SetNaviBarNodeSectionSize(s32_Value);
+      orc_UserSettings.SetNaviBarSize(
+         orc_Ini.value(orc_ActiveProject + "/navigation-width", 300).toInt());
+      orc_UserSettings.
+      SetNaviBarNodeSectionSize(
+         orc_Ini.value(orc_ActiveProject + "/navigation-node-section-width", 200).toInt());
 
       // Sys def topology view port position
-      c_Pos.setX(orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "SdTopologyView_x", 0));
-      c_Pos.setY(orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "SdTopologyView_y", 0));
+      c_Pos.setX(orc_Ini.value(orc_ActiveProject + "/SdTopologyView_x", 0).toInt());
+      c_Pos.setY(orc_Ini.value(orc_ActiveProject + "/SdTopologyView_y", 0).toInt());
       orc_UserSettings.SetProjSdTopologyViewPos(c_Pos);
 
       // Sys def topology view zoom value
-      s32_Value = orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "SdTopologyViewZoom_value", 100);
-      orc_UserSettings.SetProjSdTopologyViewZoom(s32_Value);
+      orc_UserSettings.SetProjSdTopologyViewZoom(
+         orc_Ini.value(orc_ActiveProject + "/SdTopologyViewZoom_value", 100).toInt());
 
       // Last screen mode
-      s32_SysDefSubMode =
-         static_cast<int32_t>(orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdSubMode_value", 0));
-      u32_SysDefIndex =
-         static_cast<uint32_t>(orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdSubIndex_value", 0));
-      u32_SysDefFlag =
-         static_cast<uint32_t>(orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdSubFlag_value", 0));
-      s32_SysViewSubMode =
-         static_cast<int32_t>(orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "ProjSvSubMode_value", 0));
-      u32_SysViewIndex =
-         static_cast<uint32_t>(orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "ProjSvSubIndex_value", 0));
-      u32_SysViewFlag =
-         static_cast<uint32_t>(orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "ProjSvSubFlag_value", 0));
-
-      orc_UserSettings.SetProjLastScreenMode(s32_SysDefSubMode, u32_SysDefIndex, u32_SysDefFlag,
-                                             s32_SysViewSubMode, u32_SysViewIndex, u32_SysViewFlag);
+      orc_UserSettings.SetProjLastScreenMode(
+         orc_Ini.value(orc_ActiveProject + "/ProjSdSubMode_value", 0).toInt(),
+         orc_Ini.value(orc_ActiveProject + "/ProjSdSubIndex_value", 0).toUInt(),
+         orc_Ini.value(orc_ActiveProject + "/ProjSdSubFlag_value", 0).toUInt(),
+         orc_Ini.value(orc_ActiveProject + "/ProjSvSubMode_value", 0).toInt(),
+         orc_Ini.value(orc_ActiveProject + "/ProjSvSubIndex_value", 0).toUInt(),
+         orc_Ini.value(orc_ActiveProject + "/ProjSvSubFlag_value", 0).toUInt());
 
       //TSP
       orc_UserSettings.SetProjSdTopologyLastKnownTspPath(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_tsp_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSdTopology_last_known_tsp_path", "").toString());
 
       //File generation
       orc_UserSettings.SetProjSdTopologyLastKnownCodeExportPath(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_code_export_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSdTopology_last_known_code_export_path",
+                       "").toString());
 
       //Import
       orc_UserSettings.SetProjSdTopologyLastKnownImportPath(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_import_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSdTopology_last_known_import_path", "").toString());
 
       //Import CANopen
       orc_UserSettings.SetProjSdTopologyLastKnownCanOpenEdsPath(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_CANopen_EDS_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSdTopology_last_known_CANopen_EDS_path",
+                       "").toString());
 
       //Export
       orc_UserSettings.SetProjSdTopologyLastKnownExportPath(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_export_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSdTopology_last_known_export_path", "").toString());
 
       //Last path from where a .syde_devdef file was loaded
       orc_UserSettings.SetProjSdTopologyLastKnownDeviceDefPath(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_device_definition_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSdTopology_last_known_device_definition_path",
+                       "").toString());
 
       //RTF File Export
       orc_UserSettings.SetProjSdTopologyLastKnownRtfPath(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_rtf_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSdTopology_last_known_rtf_path", "").toString());
       orc_UserSettings.SetProjSdTopologyLastKnownRtfCompanyName(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_rtf_company_name", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSdTopology_last_known_rtf_company_name",
+                       "").toString());
       orc_UserSettings.SetProjSdTopologyLastKnownRtfCompanyLogoPath(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSdTopology_last_known_rtf_company_logo_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSdTopology_last_known_rtf_company_logo_path",
+                       "").toString());
 
       //HALC Paths
       orc_UserSettings.SetLastKnownHalcDefPath(
-         orc_Ini.ReadString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_halc_def_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_halc_def_path", "").toString());
       orc_UserSettings.SetLastKnownHalcImportPath(
-         orc_Ini.ReadString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_halc_import_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_halc_import_path", "").toString());
       orc_UserSettings.SetLastKnownHalcExportPath(
-         orc_Ini.ReadString(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_halc_export_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_halc_export_path", "").toString());
 
       //Service Project Path
       orc_UserSettings.SetLastKnownServiceProjectPath(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_service_project_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_service_project_path", "").toString());
 
-      //RAMView Project Import Path
+      //RAMView Project Path
       orc_UserSettings.SetLastKnownRamViewProjectPath(
-         orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_ramview_project_path", "").c_str());
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_ramview_project_path", "").toString());
 
       // J1939 Catalog Path
-      orc_UserSettings.SetLastKnownJ1939CatalogPath(orc_Ini.ReadString(
-                                                       orc_ActiveProject.toStdString().c_str(),
-                                                       "ProjSd_last_known_j1939_catalog_path", "").c_str());
+      orc_UserSettings.SetLastKnownJ1939CatalogPath(
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_j1939_catalog_path", "").toString());
 
-      // Chart data as CSV Export
-      orc_UserSettings.SetLastKnownCsvExportPath(orc_Ini.ReadString(
-                                                    orc_ActiveProject.toStdString().c_str(),
-                                                    "ProjSd_last_known_csv_export_path", "").c_str());
+      // CSV Export Path
+      orc_UserSettings.SetLastKnownCsvExportPath(
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_csv_export_path", "").toString());
 
-      // public PEM file path
-      orc_UserSettings.SetLastKnownPublicPemFilePath(orc_Ini.ReadString(
-                                                        orc_ActiveProject.toStdString().c_str(),
-                                                        "ProjSd_last_known_public_pem_file_path", "").c_str());
+      // Last tab index in system definition
+      orc_UserSettings.SetProjLastSysDefNodeTabIndex(
+         orc_Ini.value(orc_ActiveProject + "/ProjSdNodeEditTabIndex_value", 0).toInt());
+      orc_UserSettings.SetProjLastSysDefBusTabIndex(
+         orc_Ini.value(orc_ActiveProject + "/ProjSdBusEditTabIndex_value", 0).toInt());
 
-      // Add PEM file path
-      orc_UserSettings.SetLastKnownAddPemFilePath(orc_Ini.ReadString(
-                                                     orc_ActiveProject.toStdString().c_str(),
-                                                     "ProjSd_last_known_pem_file_path", "").c_str());
+      // public PEM File Path
+      orc_UserSettings.SetLastKnownPublicPemFilePath(
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_public_pem_file_path", "").toString());
 
-      // secure certificate package path
-      orc_UserSettings.SetLastKnownSecureCertificatePackagePath(orc_Ini.ReadString(
-                                                                   orc_ActiveProject.toStdString().c_str(),
-                                                                   "ProjSd_last_known_secure_certificate_package_path",
-                                                                   "").c_str());
+      // Add PEM File Path
+      orc_UserSettings.
+      SetLastKnownAddPemFilePath(
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_pem_file_path", "").toString());
+
+      // public secure certificate package path
+      orc_UserSettings.SetLastKnownSecureCertificatePackagePath(
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_secure_certificate_package_path",
+                       "").toString());
 
       // PEM file password
-      orc_UserSettings.SetLastKnownPemFilePassword(orc_Ini.ReadString(
-                                                      orc_ActiveProject.toStdString().c_str(),
-                                                      "ProjSd_last_known_pem_file_password", "").c_str());
+      orc_UserSettings.SetLastKnownPemFilePassword(
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_pem_file_password", "").toString());
 
       // Add PEM file state
       orc_UserSettings.SetLastKnownAddPemFileState(
-         orc_Ini.ReadBool(orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_Add_pem_file_state", false));
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_Add_pem_file_state", false).toBool());
 
       // secure update config state
       orc_UserSettings.SetLastKnownSecureUpdateConfigState(
-         orc_Ini.ReadBool(
-            orc_ActiveProject.toStdString().c_str(), "ProjSd_last_known_secure_update_config_state", false));
-
-      // Last tab index in system definition
-      s32_Value = orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdNodeEditTabIndex_value", 0);
-      orc_UserSettings.SetProjLastSysDefNodeTabIndex(s32_Value);
-      s32_Value = orc_Ini.ReadInteger(orc_ActiveProject.toStdString().c_str(), "ProjSdBusEditTabIndex_value", 0);
-      orc_UserSettings.SetProjLastSysDefBusTabIndex(s32_Value);
+         orc_Ini.value(orc_ActiveProject + "/ProjSd_last_known_secure_update_config_state",
+                       false).toBool());
 
       //System nodes
-      s32_SystemNodeCount = orc_Ini.ReadInteger(
-         orc_ActiveProject.toStdString().c_str(), "ProjSdNode_count", 0);
+      s32_SystemNodeCount = orc_Ini.value(orc_ActiveProject + "/ProjSdNode_count", 0).toInt();
       for (int32_t s32_ItNode = 0; s32_ItNode < s32_SystemNodeCount; ++s32_ItNode)
       {
          const QString c_NodeIdBase = static_cast<QString>("SdNode%1").arg(s32_ItNode);
          const QString c_NodeIdName = static_cast<QString>("%1Name").arg(c_NodeIdBase);
-         const QString c_NodeName = orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), c_NodeIdName.toStdString().c_str(), "").c_str();
+         const QString c_NodeName = orc_Ini.value(orc_ActiveProject + "/" + c_NodeIdName,
+                                                  "").toString();
          if (c_NodeName.compare("") != 0)
          {
             mh_LoadNode(orc_Ini, orc_ActiveProject, c_NodeIdBase, c_NodeName, orc_UserSettings);
@@ -2385,14 +2336,13 @@ void C_UsFiler::mh_LoadProjectDependentSection(C_UsHandler & orc_UserSettings, C
       }
 
       //System buses
-      s32_SystemBusCount = orc_Ini.ReadInteger(
-         orc_ActiveProject.toStdString().c_str(), "ProjSdBus_count", 0);
+      s32_SystemBusCount = orc_Ini.value(orc_ActiveProject + "/ProjSdBus_count", 0).toInt();
       for (int32_t s32_ItBus = 0; s32_ItBus < s32_SystemBusCount; ++s32_ItBus)
       {
          const QString c_BusIdBase = static_cast<QString>("SdBus%1").arg(s32_ItBus);
          const QString c_BusIdName = static_cast<QString>("%1Name").arg(c_BusIdBase);
-         const QString c_BusName = orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), c_BusIdName.toStdString().c_str(), "").c_str();
+         const QString c_BusName = orc_Ini.value(orc_ActiveProject + "/" + c_BusIdName,
+                                                 "").toString();
          if (c_BusName.compare("") != 0)
          {
             mh_LoadBus(orc_Ini, orc_ActiveProject, c_BusIdBase, c_BusName, orc_UserSettings, true, "", "");
@@ -2400,14 +2350,14 @@ void C_UsFiler::mh_LoadProjectDependentSection(C_UsHandler & orc_UserSettings, C
       }
 
       //System views
-      s32_SystemViewCount = orc_Ini.ReadInteger(
-         orc_ActiveProject.toStdString().c_str(), "ProjSvSetupView_count", 0);
+      s32_SystemViewCount = orc_Ini.value(orc_ActiveProject + "/ProjSvSetupView_count",
+                                          0).toInt();
       for (int32_t s32_ItView = 0; s32_ItView < s32_SystemViewCount; ++s32_ItView)
       {
          const QString c_ViewIdBase = static_cast<QString>("SvSetupView%1").arg(s32_ItView);
          const QString c_ViewIdName = static_cast<QString>("%1Name").arg(c_ViewIdBase);
-         const QString c_ViewName = orc_Ini.ReadString(
-            orc_ActiveProject.toStdString().c_str(), c_ViewIdName.toStdString().c_str(), "").c_str();
+         const QString c_ViewName = orc_Ini.value(orc_ActiveProject + "/" + c_ViewIdName,
+                                                  "").toString();
          if (c_ViewName.compare("") != 0)
          {
             mh_LoadView(orc_Ini, orc_ActiveProject, c_ViewIdBase, c_ViewName, orc_UserSettings);
@@ -2415,16 +2365,18 @@ void C_UsFiler::mh_LoadProjectDependentSection(C_UsHandler & orc_UserSettings, C
       }
 
       // Values from Update widget
-      s32_Value = orc_Ini.ReadInteger("Update", "PemFileCount", 0);
+      s32_Value = orc_Ini.value("Update/PemFileCount", 0).toInt();
       for (int32_t s32_SectionCounter = 0; s32_SectionCounter < s32_Value; ++s32_SectionCounter)
       {
          c_PemFilePaths.append(
-            orc_Ini.ReadString("Update", "PemFiles_" + C_SclString::IntToStr(s32_SectionCounter), "").c_str());
+            orc_Ini.value("Update/PemFiles_" + QString::number(s32_SectionCounter), "").toString());
       }
       orc_UserSettings.SetLastKnownUpdatePemFilePaths(c_PemFilePaths);
    }
    else
    {
+      QPoint c_Pos;
+
       // Mode
       orc_UserSettings.SetProjLastMode(0); // default is SD (network topology)
 
@@ -2478,18 +2430,17 @@ void C_UsFiler::mh_LoadProjectDependentSection(C_UsHandler & orc_UserSettings, C
    \param[in]      orc_ColumnWidths    Column widths
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveColumns(C_SclIniFile & orc_Ini, const QString & orc_SectionName, const QString & orc_IdBase,
+void C_UsFiler::mh_SaveColumns(QSettings & orc_Ini, const QString & orc_SectionName, const QString & orc_IdBase,
                                const std::vector<int32_t> & orc_ColumnWidths)
 {
    const QString c_IdColumnCount = static_cast<QString>("%1Column_Count").arg(orc_IdBase);
 
-   orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(),
-                        c_IdColumnCount.toStdString().c_str(), orc_ColumnWidths.size());
+   orc_Ini.setValue(orc_SectionName + "/" + c_IdColumnCount, static_cast<int>(orc_ColumnWidths.size()));
    for (uint32_t u32_ItCol = 0; u32_ItCol < orc_ColumnWidths.size(); ++u32_ItCol)
    {
       const QString c_IdColumn = static_cast<QString>("%1Column%2").arg(orc_IdBase).arg(u32_ItCol);
-      orc_Ini.WriteInteger(orc_SectionName.toStdString().c_str(), c_IdColumn.toStdString().c_str(),
-                           orc_ColumnWidths[u32_ItCol]);
+      orc_Ini.setValue(orc_SectionName + "/" + c_IdColumn,
+                       orc_ColumnWidths[u32_ItCol]);
    }
 }
 
@@ -2502,19 +2453,19 @@ void C_UsFiler::mh_SaveColumns(C_SclIniFile & orc_Ini, const QString & orc_Secti
    \param[in,out]  orc_ColumnWidths    Column widths
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadColumns(C_SclIniFile & orc_Ini, const QString & orc_SectionName, const QString & orc_IdBase,
+void C_UsFiler::mh_LoadColumns(QSettings & orc_Ini, const QString & orc_SectionName, const QString & orc_IdBase,
                                std::vector<int32_t> & orc_ColumnWidths)
 {
    const QString c_IdColumnCount = static_cast<QString>("%1Column_Count").arg(orc_IdBase);
-   const int32_t s32_ColumnCount = orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                                       c_IdColumnCount.toStdString().c_str(), 0);
+   const int32_t s32_ColumnCount = orc_Ini.value(orc_SectionName + "/" +
+                                                 c_IdColumnCount, 0).toInt();
 
    orc_ColumnWidths.reserve(s32_ColumnCount);
    for (int32_t s32_ItCol = 0; s32_ItCol < s32_ColumnCount; ++s32_ItCol)
    {
       const QString c_IdColumn = static_cast<QString>("%1Column%2").arg(orc_IdBase).arg(s32_ItCol);
-      orc_ColumnWidths.push_back(orc_Ini.ReadInteger(orc_SectionName.toStdString().c_str(),
-                                                     c_IdColumn.toStdString().c_str(), 0));
+      orc_ColumnWidths.push_back(orc_Ini.value(orc_SectionName + "/" +
+                                               c_IdColumn, 0).toInt());
    }
 }
 
@@ -2525,7 +2476,8 @@ void C_UsFiler::mh_LoadColumns(C_SclIniFile & orc_Ini, const QString & orc_Secti
    \param[in,out]  orc_Ini             Current ini
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadScreenshotGifSucessTimeout(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_LoadScreenshotGifSucessTimeout(C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
-   orc_UserSettings.SetScreenshotGifSucessTimeout(orc_Ini.ReadInteger("Common", "ScreenshotGifSucessTimeout", 3000));
+   orc_UserSettings.
+   SetScreenshotGifSucessTimeout(orc_Ini.value("Common/ScreenshotGifSucessTimeout", 3000).toInt());
 }

@@ -11,7 +11,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "stwtypes.hpp"
 #include "C_SclString.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 
 /* -- Namespace ----------------------------------------------------------------------------------------------------- */
 namespace stw
@@ -54,27 +54,27 @@ public:
    bool q_LssSupported;    ///< The value indicates information whether LSS functionality is supported.
 
    void CalcHash(uint32_t & oru32_HashValue) const;
-   int32_t LoadFromIni(stw::scl::C_SclIniFile & orc_File, stw::scl::C_SclString & orc_LastError);
+   int32_t LoadFromIni(QSettings & orc_File, stw::scl::C_SclString & orc_LastError);
 
    uint8_t GetGranularity(void) const;
 
-   static int32_t h_LoadStringValueFromIniFile(stw::scl::C_SclIniFile & orc_File,
+   static int32_t h_LoadStringValueFromIniFile(QSettings & orc_File,
                                                const stw::scl::C_SclString & orc_SectionName,
                                                const stw::scl::C_SclString & orc_KeyName,
                                                stw::scl::C_SclString & orc_OutputValue,
                                                stw::scl::C_SclString & orc_ErrorMessage,
                                                const stw::scl::C_SclString & orc_DefaultValue = "");
-   static int32_t h_LoadU8ValueFromIniFile(stw::scl::C_SclIniFile & orc_File,
+   static int32_t h_LoadU8ValueFromIniFile(QSettings & orc_File,
                                            const stw::scl::C_SclString & orc_SectionName,
                                            const stw::scl::C_SclString & orc_KeyName, uint8_t & oru8_OutputValue,
                                            stw::scl::C_SclString & orc_ErrorMessage,
                                            const uint8_t ou8_DefaultValue = 0);
-   static int32_t h_LoadU16ValueFromIniFile(stw::scl::C_SclIniFile & orc_File,
+   static int32_t h_LoadU16ValueFromIniFile(QSettings & orc_File,
                                             const stw::scl::C_SclString & orc_SectionName,
                                             const stw::scl::C_SclString & orc_KeyName, uint16_t & oru16_OutputValue,
                                             stw::scl::C_SclString & orc_ErrorMessage,
                                             const uint16_t ou16_DefaultValue = 0);
-   static int32_t h_LoadBoolValueFromIniFile(stw::scl::C_SclIniFile & orc_File,
+   static int32_t h_LoadBoolValueFromIniFile(QSettings & orc_File,
                                              const stw::scl::C_SclString & orc_SectionName,
                                              const stw::scl::C_SclString & orc_KeyName, bool & orq_OutputValue,
                                              stw::scl::C_SclString & orc_ErrorMessage,

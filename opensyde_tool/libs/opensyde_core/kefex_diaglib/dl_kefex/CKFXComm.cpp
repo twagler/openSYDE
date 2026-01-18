@@ -5,7 +5,8 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "CKFXComm.hpp"
-#include "C_SclString.hpp"
+#include <QSettings>
+
 
 //---------------------------------------------------------------------------
 
@@ -169,14 +170,14 @@ C_SclString C_KFXCommunicationBase::GetProtocolName(void)
 
 //---------------------------------------------------------------------------
 
-int32_t C_KFXCommunicationBase::LoadConfigFromINI(C_SclIniFile * const opc_File, const C_SclString & orc_Section)
+int32_t C_KFXCommunicationBase::LoadConfigFromINI(QSettings * const opc_File, const C_SclString & orc_Section)
 {
    return mt_Configuration.LoadConfigFromINI(*opc_File, orc_Section);
 }
 
 //---------------------------------------------------------------------------
 
-int32_t C_KFXCommunicationBase::SaveConfigToINI(C_SclIniFile * const opc_File, const C_SclString & orc_Section) const
+int32_t C_KFXCommunicationBase::SaveConfigToINI(QSettings * const opc_File, const C_SclString & orc_Section) const
 {
    return mt_Configuration.SaveConfigToINI(*opc_File, orc_Section);
 }

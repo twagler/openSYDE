@@ -5,7 +5,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "CKFXCommunicationKEFEX.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 
 #include "C_SclChecksums.hpp"
 
@@ -857,7 +857,7 @@ int32_t C_KFXCommunicationKEFEX::TerminateAllCyclicTransmissions(const bool oq_W
 
 //---------------------------------------------------------------------------
 
-int32_t C_KFXCommunicationKEFEX::LoadConfigFromINI(C_SclIniFile * const opc_File, const C_SclString & orc_Section)
+int32_t C_KFXCommunicationKEFEX::LoadConfigFromINI(QSettings * const opc_File, const C_SclString & orc_Section)
 {
    int32_t s32_Return;
 

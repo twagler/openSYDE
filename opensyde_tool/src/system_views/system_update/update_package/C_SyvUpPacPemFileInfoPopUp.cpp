@@ -64,7 +64,7 @@ C_SyvUpPacPemFileInfoPopUp::C_SyvUpPacPemFileInfoPopUp(stw::opensyde_gui_element
 
    InitStaticNames();
 
-   this->mrc_ParentDialog.SetSubTitle(QFileInfo(QString::fromStdString(*orc_Path.toStdString(.AsStdString())).fileName().toStdString().c_str()).c_str());
+   this->mrc_ParentDialog.SetSubTitle(QFileInfo(orc_Path).fileName());
 
    if (s32_Result == C_NO_ERR)
    {

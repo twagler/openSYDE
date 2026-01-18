@@ -11,7 +11,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "C_OscCanOpenEdsFileInfoBlock.hpp"
 #include "C_OscCanOpenEdsDeviceInfoBlock.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 
 /* -- Namespace ----------------------------------------------------------------------------------------------------- */
 namespace stw
@@ -31,7 +31,7 @@ public:
    C_OscCanOpenEdsDeviceInfoBlock c_DeviceInfo;
 
    void CalcHash(uint32_t & oru32_HashValue) const;
-   int32_t LoadFromFile(stw::scl::C_SclIniFile & orc_File, stw::scl::C_SclString & orc_LastError);
+   int32_t LoadFromFile(QSettings & orc_File, stw::scl::C_SclString & orc_LastError);
 
    uint8_t GetGranularity(void) const;
 };

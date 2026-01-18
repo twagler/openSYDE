@@ -1619,7 +1619,7 @@ C_SclString C_KFXVariableBase::GetTypeDependentValueString(const bool oq_Hex, co
             c_Help = "-0x" + C_SclString::IntToHex(s64_Temp, 0);
             if (oq_LeadingZeroes == true)
             {
-               c_Help.insert(C_SclString::StringOfChar('0', (3 + (this->GetSize() * 2)) - c_Help.Length()), 4);
+               c_Help.Insert(C_SclString::StringOfChar('0', (3 + (this->GetSize() * 2)) - c_Help.Length()), 4);
             }
          }
          else
@@ -1627,7 +1627,7 @@ C_SclString C_KFXVariableBase::GetTypeDependentValueString(const bool oq_Hex, co
             c_Help = "0x" + C_SclString::IntToHex(s64_Temp, 0);
             if (oq_LeadingZeroes == true)
             {
-               c_Help.insert(C_SclString::StringOfChar('0', (2 + (this->GetSize() * 2)) - c_Help.Length()), 3);
+               c_Help.Insert(C_SclString::StringOfChar('0', (2 + (this->GetSize() * 2)) - c_Help.Length()), 3);
             }
          }
       }
@@ -1695,7 +1695,7 @@ C_SclString C_KFXVariableBase::GetTypeDependentDefaultString(const bool oq_Hex, 
             c_Help = "-0x" + C_SclString::IntToHex(s64_Temp, 0);
             if (oq_LeadingZeroes == true)
             {
-               c_Help.insert(C_SclString::StringOfChar('0', (3 + (this->GetSize() * 2)) - c_Help.Length()), 4);
+               c_Help.Insert(C_SclString::StringOfChar('0', (3 + (this->GetSize() * 2)) - c_Help.Length()), 4);
             }
          }
          else
@@ -1703,7 +1703,7 @@ C_SclString C_KFXVariableBase::GetTypeDependentDefaultString(const bool oq_Hex, 
             c_Help = "0x" + C_SclString::IntToHex(s64_Temp, 0);
             if (oq_LeadingZeroes == true)
             {
-               c_Help.insert(C_SclString::StringOfChar('0', (2 + (this->GetSize() * 2)) - c_Help.Length()), 3);
+               c_Help.Insert(C_SclString::StringOfChar('0', (2 + (this->GetSize() * 2)) - c_Help.Length()), 3);
             }
          }
       }

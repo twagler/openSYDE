@@ -84,7 +84,7 @@ int32_t C_UsFiler::h_Save(const C_UsHandler & orc_UserSettings, const QString & 
       try
       {
          //Parse ini
-         C_SclIniFile c_Ini(orc_Path.toStdString().c_str());
+         QSettings c_Ini(orc_Path, QSettings::IniFormat);
          mh_SaveRecentProjects(orc_UserSettings, c_Ini);
          mh_SaveProjectIndependentSection(orc_UserSettings, c_Ini);
          mh_SaveProjectDependentSection(orc_UserSettings, c_Ini, orc_ActiveProject);
@@ -125,7 +125,7 @@ int32_t C_UsFiler::h_Load(C_UsHandler & orc_UserSettings, const QString & orc_Pa
    {
       try
       {
-         C_SclIniFile c_Ini(orc_Path.toStdString().c_str());
+         QSettings c_Ini(orc_Path, QSettings::IniFormat);
          s32_Retval = C_NO_ERR;
 
          orc_UserSettings.SetDefault();
@@ -157,22 +157,20 @@ int32_t C_UsFiler::h_Load(C_UsHandler & orc_UserSettings, const QString & orc_Pa
    \param[in,out] orc_Ini          Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveRecentProjects(const C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_SaveRecentProjects(const C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    const QStringList c_List = orc_UserSettings.GetRecentProjects();
 
-   // clear recent projects section (the ini file can only add keys and does not delete keys that do not exist anymore)
-   if (orc_Ini.SectionExists("RecentProjects") == true)
-   {
-      orc_Ini.EraseSection("RecentProjects");
-   }
+   // clear recent projects section
+   orc_Ini.remove("RecentProjects");
 
    //Recent projects
+   orc_Ini.beginGroup("RecentProjects");
    for (uint8_t u8_It = 0; u8_It < c_List.count(); ++u8_It)
    {
-      orc_Ini.WriteString("RecentProjects", C_SclString::IntToStr(
-                             u8_It), c_List.at(u8_It).toStdString().c_str());
+      orc_Ini.setValue(QString::number(u8_It), c_List.at(u8_It));
    }
+   orc_Ini.endGroup();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -182,52 +180,52 @@ void C_UsFiler::mh_SaveRecentProjects(const C_UsHandler & orc_UserSettings, C_Sc
    \param[in,out] orc_Ini          Ini handler
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveProjectIndependentSection(const C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_SaveProjectIndependentSection(const C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    //Screen position
-   orc_Ini.WriteInteger("Screen", "Position_x", orc_UserSettings.GetScreenPos().x());
-   orc_Ini.WriteInteger("Screen", "Position_y", orc_UserSettings.GetScreenPos().y());
+   orc_Ini.setValue("Screen/Position_x", orc_UserSettings.GetScreenPos().x());
+   orc_Ini.setValue("Screen/Position_y", orc_UserSettings.GetScreenPos().y());
 
    // Application size
-   orc_Ini.WriteInteger("Screen", "Size_width", orc_UserSettings.GetAppSize().width());
-   orc_Ini.WriteInteger("Screen", "Size_height", orc_UserSettings.GetAppSize().height());
+   orc_Ini.setValue("Screen/Size_width", orc_UserSettings.GetAppSize().width());
+   orc_Ini.setValue("Screen/Size_height", orc_UserSettings.GetAppSize().height());
 
    // Application maximizing flag
-   orc_Ini.WriteBool("Screen", "Size_maximized", orc_UserSettings.GetAppMaximized());
+   orc_Ini.setValue("Screen/Size_maximized", orc_UserSettings.GetAppMaximized());
 
    // Application screen index
-   orc_Ini.WriteInteger("Screen", "Screen_index", orc_UserSettings.GetAppScreenIndex());
+   orc_Ini.setValue("Screen/Screen_index", orc_UserSettings.GetAppScreenIndex());
 
    //Buttons
-   orc_Ini.WriteBool("Buttons", "Hex", orc_UserSettings.GetButtonHexActive());
-   orc_Ini.WriteBool("Buttons", "TimeStamp", orc_UserSettings.GetButtonRelativeTimeStampActive());
-   orc_Ini.WriteBool("Buttons", "Unique", orc_UserSettings.GetButtonUniqueViewActive());
+   orc_Ini.setValue("Buttons/Hex", orc_UserSettings.GetButtonHexActive());
+   orc_Ini.setValue("Buttons/TimeStamp", orc_UserSettings.GetButtonRelativeTimeStampActive());
+   orc_Ini.setValue("Buttons/Unique", orc_UserSettings.GetButtonUniqueViewActive());
 
    //Trace settings
-   orc_Ini.WriteBool("Trace_Settings", "TimeStampAbsoluteTimeOfDay",
+   orc_Ini.setValue("Trace_Settings/TimeStampAbsoluteTimeOfDay",
                      orc_UserSettings.GetTraceSettingDisplayTimestampAbsoluteTimeOfDay());
-   orc_Ini.WriteInteger("Trace_Settings", "TraceBufferSize", orc_UserSettings.GetTraceSettingBufferSize());
+   orc_Ini.setValue("Trace_Settings/TraceBufferSize", orc_UserSettings.GetTraceSettingBufferSize());
 
    //Protocol
-   orc_Ini.WriteInteger("Protocol", "Value", orc_UserSettings.GetSelectedProtocolIndex());
+   orc_Ini.setValue("Protocol/Value", orc_UserSettings.GetSelectedProtocolIndex());
 
    // Message generator splitter
-   orc_Ini.WriteInteger("Layout", "MessageGenSplitter_y", orc_UserSettings.GetSplitterMessageGenVertical());
-   orc_Ini.WriteBool("Layout", "MessageGen_expanded", orc_UserSettings.GetMessageGenIsExpanded());
+   orc_Ini.setValue("Layout/MessageGenSplitter_y", orc_UserSettings.GetSplitterMessageGenVertical());
+   orc_Ini.setValue("Layout/MessageGen_expanded", orc_UserSettings.GetMessageGenIsExpanded());
 
    // Settings splitter
-   orc_Ini.WriteInteger("Layout", "SettingsSplitter_x", orc_UserSettings.GetSplitterSettingsHorizontal());
-   orc_Ini.WriteBool("Layout", "Settings_expanded", orc_UserSettings.GetSettingsAreExpanded());
+   orc_Ini.setValue("Layout/SettingsSplitter_x", orc_UserSettings.GetSplitterSettingsHorizontal());
+   orc_Ini.setValue("Layout/Settings_expanded", orc_UserSettings.GetSettingsAreExpanded());
 
    // Messages signals splitter
-   orc_Ini.WriteInteger("Layout", "MessagesSignalsSplitter_x", orc_UserSettings.GetSplitterMesSigHorizontal());
+   orc_Ini.setValue("Layout/MessagesSignalsSplitter_x", orc_UserSettings.GetSplitterMesSigHorizontal());
 
    // Settings expanded collapsed
-   orc_Ini.WriteBool("Settings", "DatabaseExpanded", orc_UserSettings.GetWiDatabaseExpanded());
+   orc_Ini.setValue("Settings/DatabaseExpanded", orc_UserSettings.GetWiDatabaseExpanded());
 
-   orc_Ini.WriteBool("Settings", "FilterExpanded", orc_UserSettings.GetWiFilterExpanded());
-   orc_Ini.WriteBool("Settings", "LoggingExpanded", orc_UserSettings.GetWiLoggingExpanded());
-   orc_Ini.WriteInteger("Settings", "PopOpenSection", static_cast<int32_t>(orc_UserSettings.GetPopOpenSection()));
+   orc_Ini.setValue("Settings/FilterExpanded", orc_UserSettings.GetWiFilterExpanded());
+   orc_Ini.setValue("Settings/LoggingExpanded", orc_UserSettings.GetWiLoggingExpanded());
+   orc_Ini.setValue("Settings/PopOpenSection", static_cast<int32_t>(orc_UserSettings.GetPopOpenSection()));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -239,7 +237,7 @@ void C_UsFiler::mh_SaveProjectIndependentSection(const C_UsHandler & orc_UserSet
                                    Empty string results in saving no information
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini,
+void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSettings, QSettings & orc_Ini,
                                                const QString & orc_ActiveProject)
 {
    if (orc_ActiveProject != "")
@@ -248,24 +246,23 @@ void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSetti
 
       // message generator
       mh_SaveColumns(orc_Ini,
-                     orc_ActiveProject.toStdString().c_str(), C_UsFiler::mhc_TRACE_COL_WIDTH_IDENTIFIER,
+                     orc_ActiveProject, C_UsFiler::mhc_TRACE_COL_WIDTH_IDENTIFIER,
                      orc_UserSettings.GetTraceColWidths());
       mh_SaveColumns(orc_Ini,
-                     orc_ActiveProject.toStdString().c_str(), C_UsFiler::mhc_TRACE_COL_POSITION_IDENTIFIER,
+                     orc_ActiveProject, C_UsFiler::mhc_TRACE_COL_POSITION_IDENTIFIER,
                      orc_UserSettings.GetTraceColPositions());
       mh_SaveColumns(orc_Ini,
-                     orc_ActiveProject.toStdString().c_str(), C_UsFiler::mhc_MESSAGE_GENERATOR_IDENTIFIER,
+                     orc_ActiveProject, C_UsFiler::mhc_MESSAGE_GENERATOR_IDENTIFIER,
                      orc_UserSettings.GetMessageColWidths());
       mh_SaveColumns(orc_Ini,
-                     orc_ActiveProject.toStdString().c_str(), C_UsFiler::mhc_MESSAGE_GENERATOR_SIGNALS_IDENTIFIER,
+                     orc_ActiveProject, C_UsFiler::mhc_MESSAGE_GENERATOR_SIGNALS_IDENTIFIER,
                      orc_UserSettings.GetSignalsColWidths());
       mh_SaveColumns(orc_Ini,
-                     orc_ActiveProject.toStdString().c_str(), C_UsFiler::mhc_MESSAGE_GENERATOR_SELECTION_IDENTIFIER,
+                     orc_ActiveProject, C_UsFiler::mhc_MESSAGE_GENERATOR_SELECTION_IDENTIFIER,
                      orc_UserSettings.GetSelectedMessages());
 
       // settings section
-      orc_Ini.WriteString(orc_ActiveProject.toStdString().c_str(), "LastKnownDatabasePath",
-                          orc_UserSettings.GetLastKnownDatabasePath().toStdString().c_str());
+      orc_Ini.setValue(orc_ActiveProject + "/LastKnownDatabasePath", orc_UserSettings.GetLastKnownDatabasePath());
    }
 
    //lint -e1764 This function is necessary for future use so keep interface as necessary
@@ -278,17 +275,18 @@ void C_UsFiler::mh_SaveProjectDependentSection(const C_UsHandler & orc_UserSetti
    \param[in,out] orc_Ini          Current ini
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadRecentProjects(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_LoadRecentProjects(C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    QStringList c_List;
    QString c_Cur;
 
    //Recent projects
    c_List.clear();
+   orc_Ini.beginGroup("RecentProjects");
    for (uint8_t u8_It = 0; u8_It < C_UsHandler::h_GetMaxRecentProjects(); ++u8_It)
    {
       c_Cur =
-         orc_Ini.ReadString("RecentProjects", C_SclString::IntToStr(u8_It), "").c_str();
+         orc_Ini.value(QString::number(u8_It), "").toString();
       if (c_Cur.compare("") != 0)
       {
          QFileInfo c_File;
@@ -306,6 +304,7 @@ void C_UsFiler::mh_LoadRecentProjects(C_UsHandler & orc_UserSettings, C_SclIniFi
          }
       }
    }
+   orc_Ini.endGroup();
    orc_UserSettings.SetRecentProjects(c_List);
 }
 
@@ -316,7 +315,7 @@ void C_UsFiler::mh_LoadRecentProjects(C_UsHandler & orc_UserSettings, C_SclIniFi
    \param[in,out] orc_Ini          Current ini
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadProjectIndependentSection(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini)
+void C_UsFiler::mh_LoadProjectIndependentSection(C_UsHandler & orc_UserSettings, QSettings & orc_Ini)
 {
    QPoint c_Pos;
    QSize c_Size;
@@ -324,67 +323,67 @@ void C_UsFiler::mh_LoadProjectIndependentSection(C_UsHandler & orc_UserSettings,
    int32_t s32_Value;
 
    // Screen position
-   c_Pos.setX(orc_Ini.ReadInteger("Screen", "Position_x", 50));
-   c_Pos.setY(orc_Ini.ReadInteger("Screen", "Position_y", 50));
+   c_Pos.setX(orc_Ini.value("Screen/Position_x", 50).toInt());
+   c_Pos.setY(orc_Ini.value("Screen/Position_y", 50).toInt());
    orc_UserSettings.SetScreenPos(c_Pos);
 
    // Application size
-   c_Size.setWidth(orc_Ini.ReadInteger("Screen", "Size_width", 1000));
-   c_Size.setHeight(orc_Ini.ReadInteger("Screen", "Size_height", 700));
+   c_Size.setWidth(orc_Ini.value("Screen/Size_width", 1000).toInt());
+   c_Size.setHeight(orc_Ini.value("Screen/Size_height", 700).toInt());
    orc_UserSettings.SetAppSize(c_Size);
 
    // Application maximizing flag
-   q_Flag = orc_Ini.ReadBool("Screen", "Size_maximized", true);
+   q_Flag = orc_Ini.value("Screen/Size_maximized", true).toBool();
    orc_UserSettings.SetAppMaximized(q_Flag);
 
    // Application screen index
-   s32_Value = orc_Ini.ReadInteger("Screen", "Screen_index", 0);
+   s32_Value = orc_Ini.value("Screen/Screen_index", 0).toInt();
    orc_UserSettings.SetAppScreenIndex(static_cast<uint32_t>(s32_Value));
 
    // Buttons
-   q_Flag = orc_Ini.ReadBool("Buttons", "Hex", true);
+   q_Flag = orc_Ini.value("Buttons/Hex", true).toBool();
    orc_UserSettings.SetButtonHexActive(q_Flag);
-   q_Flag = orc_Ini.ReadBool("Buttons", "TimeStamp", false);
+   q_Flag = orc_Ini.value("Buttons/TimeStamp", false).toBool();
    orc_UserSettings.SetButtonRelativeTimeStampActive(q_Flag);
-   q_Flag = orc_Ini.ReadBool("Buttons", "Unique", true);
+   q_Flag = orc_Ini.value("Buttons/Unique", true).toBool();
    orc_UserSettings.SetButtonUniqueViewActive(q_Flag);
 
    //Trace settings
-   q_Flag = orc_Ini.ReadBool("Trace_Settings", "TimeStampAbsoluteTimeOfDay", false);
+   q_Flag = orc_Ini.value("Trace_Settings/TimeStampAbsoluteTimeOfDay", false).toBool();
    orc_UserSettings.SetTraceSettingDisplayTimestampAbsoluteTimeOfDay(q_Flag);
-   s32_Value = orc_Ini.ReadInteger("Trace_Settings", "TraceBufferSize", 1000);
+   s32_Value = orc_Ini.value("Trace_Settings/TraceBufferSize", 1000).toInt();
    orc_UserSettings.SetTraceSettingBufferSize(static_cast<uint32_t>(s32_Value));
 
    // Protocol
-   s32_Value = orc_Ini.ReadInteger("Protocol", "Value", 0);
+   s32_Value = orc_Ini.value("Protocol/Value", 0).toInt();
    orc_UserSettings.SetSelectedProtocolIndex(s32_Value);
 
    // Message Generator splitter
-   s32_Value = orc_Ini.ReadInteger("Layout", "MessageGenSplitter_y", 348);
+   s32_Value = orc_Ini.value("Layout/MessageGenSplitter_y", 348).toInt();
    orc_UserSettings.SetSplitterMessageGenVertical(s32_Value);
-   q_Flag = orc_Ini.ReadBool("Layout", "MessageGen_expanded", true);
+   q_Flag = orc_Ini.value("Layout/MessageGen_expanded", true).toBool();
    orc_UserSettings.SetMessageGenIsExpanded(q_Flag);
 
    // Settings splitter
-   s32_Value = orc_Ini.ReadInteger("Layout", "SettingsSplitter_x", 0);
+   s32_Value = orc_Ini.value("Layout/SettingsSplitter_x", 0).toInt();
    orc_UserSettings.SetSplitterSettingsHorizontal(s32_Value);
-   q_Flag = orc_Ini.ReadBool("Layout", "Settings_expanded", true);
+   q_Flag = orc_Ini.value("Layout/Settings_expanded", true).toBool();
    orc_UserSettings.SetSettingsAreExpanded(q_Flag);
 
    // Messages signals splitter
-   s32_Value = orc_Ini.ReadInteger("Layout", "MessagesSignalsSplitter_x", 1005);
+   s32_Value = orc_Ini.value("Layout/MessagesSignalsSplitter_x", 1005).toInt();
    orc_UserSettings.SetSplitterMesSigHorizontal(s32_Value);
 
    // Settings expanded collapsed
-   q_Flag = orc_Ini.ReadBool("Settings", "DatabaseExpanded", true);
+   q_Flag = orc_Ini.value("Settings/DatabaseExpanded", true).toBool();
    orc_UserSettings.SetWiDatabaseExpanded(q_Flag);
 
-   q_Flag = orc_Ini.ReadBool("Settings", "FilterExpanded", true);
+   q_Flag = orc_Ini.value("Settings/FilterExpanded", true).toBool();
    orc_UserSettings.SetWiFilterExpanded(q_Flag);
-   q_Flag = orc_Ini.ReadBool("Settings", "LoggingExpanded", true);
+   q_Flag = orc_Ini.value("Settings/LoggingExpanded", true).toBool();
    orc_UserSettings.SetWiLoggingExpanded(q_Flag);
-   s32_Value = orc_Ini.ReadInteger("Settings", "PopOpenSection",
-                                   static_cast<int32_t>(C_UsHandler::E_SettingsSubSection::eNONE));
+   s32_Value = orc_Ini.value("Settings/PopOpenSection",
+                                   static_cast<int32_t>(C_UsHandler::E_SettingsSubSection::eNONE)).toInt();
    orc_UserSettings.SetPopOpenSection(static_cast< C_UsHandler::E_SettingsSubSection>(s32_Value));
 }
 
@@ -397,7 +396,7 @@ void C_UsFiler::mh_LoadProjectIndependentSection(C_UsHandler & orc_UserSettings,
                                     Empty string results in default values
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadProjectDependentSection(C_UsHandler & orc_UserSettings, C_SclIniFile & orc_Ini,
+void C_UsFiler::mh_LoadProjectDependentSection(C_UsHandler & orc_UserSettings, QSettings & orc_Ini,
                                                const QString & orc_ActiveProject)
 {
    if (orc_ActiveProject != "")
@@ -407,26 +406,25 @@ void C_UsFiler::mh_LoadProjectDependentSection(C_UsHandler & orc_UserSettings, C
 
       // message generator
       mh_LoadColumns(orc_Ini,
-                     orc_ActiveProject.toStdString().c_str(), C_UsFiler::mhc_TRACE_COL_WIDTH_IDENTIFIER, c_Columns);
+                     orc_ActiveProject, C_UsFiler::mhc_TRACE_COL_WIDTH_IDENTIFIER, c_Columns);
       orc_UserSettings.SetTraceColWidths(c_Columns);
       mh_LoadColumns(orc_Ini,
-                     orc_ActiveProject.toStdString().c_str(), C_UsFiler::mhc_TRACE_COL_POSITION_IDENTIFIER, c_Columns);
+                     orc_ActiveProject, C_UsFiler::mhc_TRACE_COL_POSITION_IDENTIFIER, c_Columns);
       orc_UserSettings.SetTraceColPositions(c_Columns);
       mh_LoadColumns(orc_Ini,
-                     orc_ActiveProject.toStdString().c_str(), C_UsFiler::mhc_MESSAGE_GENERATOR_IDENTIFIER, c_Columns);
+                     orc_ActiveProject, C_UsFiler::mhc_MESSAGE_GENERATOR_IDENTIFIER, c_Columns);
       orc_UserSettings.SetMessageColWidths(c_Columns);
       mh_LoadColumns(orc_Ini,
-                     orc_ActiveProject.toStdString().c_str(), C_UsFiler::mhc_MESSAGE_GENERATOR_SIGNALS_IDENTIFIER,
+                     orc_ActiveProject, C_UsFiler::mhc_MESSAGE_GENERATOR_SIGNALS_IDENTIFIER,
                      c_Columns);
       orc_UserSettings.SetSignalsColWidths(c_Columns);
       mh_LoadColumns(orc_Ini,
-                     orc_ActiveProject.toStdString().c_str(), C_UsFiler::mhc_MESSAGE_GENERATOR_SELECTION_IDENTIFIER,
+                     orc_ActiveProject, C_UsFiler::mhc_MESSAGE_GENERATOR_SELECTION_IDENTIFIER,
                      c_Columns);
       orc_UserSettings.SetSelectedMessages(c_Columns);
 
       // settings section
-      orc_UserSettings.SetLastKnownDatabasePath(orc_Ini.ReadString(orc_ActiveProject.toStdString().c_str(),
-                                                                   "LastKnownDatabasePath", "").c_str());
+      orc_UserSettings.SetLastKnownDatabasePath(orc_Ini.value(orc_ActiveProject + "/LastKnownDatabasePath", "").toString());
    }
    else
    {
@@ -445,16 +443,16 @@ void C_UsFiler::mh_LoadProjectDependentSection(C_UsHandler & orc_UserSettings, C
    \param[in]     orc_Columns            Columns
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_SaveColumns(C_SclIniFile & orc_Ini, const C_SclString & orc_SectionName,
+void C_UsFiler::mh_SaveColumns(QSettings & orc_Ini, const QString & orc_SectionName,
                                const std::string & orc_IdentifierBaseName, const std::vector<int32_t> & orc_Columns)
 {
    const QString c_CountId = static_cast<QString>("%1_count").arg(orc_IdentifierBaseName.c_str());
 
-   orc_Ini.WriteInteger(orc_SectionName.c_str(), c_CountId.toStdString().c_str(), orc_Columns.size());
+   orc_Ini.setValue(orc_SectionName + "/" + c_CountId, static_cast<int>(orc_Columns.size()));
    for (uint32_t u32_ItCol = 0UL; u32_ItCol < orc_Columns.size(); ++u32_ItCol)
    {
       const QString c_ItemId = static_cast<QString>("%1_%2").arg(orc_IdentifierBaseName.c_str()).arg(u32_ItCol);
-      orc_Ini.WriteInteger(orc_SectionName.c_str(), c_ItemId.toStdString().c_str(), orc_Columns[u32_ItCol]);
+      orc_Ini.setValue(orc_SectionName + "/" + c_ItemId, orc_Columns[u32_ItCol]);
    }
 }
 
@@ -467,18 +465,18 @@ void C_UsFiler::mh_SaveColumns(C_SclIniFile & orc_Ini, const C_SclString & orc_S
    \param[in,out] orc_Columns            Columns
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_UsFiler::mh_LoadColumns(C_SclIniFile & orc_Ini, const C_SclString & orc_SectionName,
+void C_UsFiler::mh_LoadColumns(QSettings & orc_Ini, const QString & orc_SectionName,
                                const std::string & orc_IdentifierBaseName, std::vector<int32_t> & orc_Columns)
 {
    const QString c_CountId = static_cast<QString>("%1_count").arg(orc_IdentifierBaseName.c_str());
-   const int32_t s32_Count = orc_Ini.ReadInteger(orc_SectionName.c_str(), c_CountId.toStdString().c_str(), 0);
+   const int32_t s32_Count = orc_Ini.value(orc_SectionName + "/" + c_CountId, 0).toInt();
 
    orc_Columns.clear();
    orc_Columns.reserve(s32_Count);
    for (int32_t s32_ItCol = 0L; s32_ItCol < s32_Count; ++s32_ItCol)
    {
       const QString c_ItemId = static_cast<QString>("%1_%2").arg(orc_IdentifierBaseName.c_str()).arg(s32_ItCol);
-      const int32_t s32_Value = orc_Ini.ReadInteger(orc_SectionName.c_str(), c_ItemId.toStdString().c_str(), 50);
+      const int32_t s32_Value = orc_Ini.value(orc_SectionName + "/" + c_ItemId, 50).toInt();
       orc_Columns.push_back(s32_Value);
    }
 }

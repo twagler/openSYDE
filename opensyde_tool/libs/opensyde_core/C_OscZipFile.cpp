@@ -90,7 +90,7 @@ int32_t C_OscZipFile::h_CreateZipFile(const C_SclString & orc_SourcePath, const 
    for (c_Iter = orc_SupFiles.begin(); c_Iter != orc_SupFiles.end(); ++c_Iter)
    {
       const C_SclString c_AbsPath = orc_SourcePath + (*c_Iter);
-      if (((QFileInfo(QString::fromStdString(*c_AbsPath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_AbsPath.AsStdString())).isFile()) == false) && (QFileInfo(QString::fromStdString(*c_AbsPath.AsStdString())).isDir() == false))
+      if (((QFileInfo(c_AbsPath.ToQString()).exists() && QFileInfo(c_AbsPath.ToQString()).isFile()) == false) && (QFileInfo(c_AbsPath.ToQString()).isDir() == false))
       {
          if (opc_ErrorText != NULL)
          {
@@ -105,7 +105,7 @@ int32_t C_OscZipFile::h_CreateZipFile(const C_SclString & orc_SourcePath, const 
    for (c_Iter = orc_SupFiles.begin(); (c_Iter != orc_SupFiles.end()) && (s32_Return == C_NO_ERR); ++c_Iter)
    {
       const C_SclString c_FileName = *c_Iter;
-      if ((QFileInfo(QString::fromStdString(*orc_SourcePath + c_FileName.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_SourcePath + c_FileName.AsStdString())).isFile()))
+      if ((QFileInfo((orc_SourcePath + c_FileName).ToQString()).exists() && QFileInfo((orc_SourcePath + c_FileName).ToQString()).isFile()))
       {
          const C_SclString c_AbsPath = orc_SourcePath + c_FileName;                  // absolute path
          ifstream c_FileStream(c_AbsPath.c_str(), ifstream::binary | ifstream::ate); // open file and set pos
@@ -231,11 +231,11 @@ int32_t C_OscZipFile::h_UnpackZipFile(const C_SclString & orc_SourcePath, const 
          if (pv_Data != NULL)
          {
             // get complete file path of current file
-            const C_SclString c_CompleteFilePath = QDir(QString(orc_TargetUnzipPath.c_str())).filePath(QString::fromUtf8(c_Iter->m_filename)).toStdString().c_str();
+            const C_SclString c_CompleteFilePath = QDir(orc_TargetUnzipPath.ToQString()).filePath(QString::fromUtf8(c_Iter->m_filename)).toStdString().c_str();
 
             // check if we have to create a subfolder
-            const C_SclString c_Path = (QFileInfo(QString::fromStdString(*c_CompleteFilePath.AsStdString())).absolutePath() + "/").toStdString();
-            if (QFileInfo(QString::fromStdString(*c_Path.AsStdString())).isDir() == false)
+            const C_SclString c_Path = (QFileInfo(c_CompleteFilePath.ToQString()).absolutePath() + "/").toStdString();
+            if (QFileInfo(c_Path.ToQString()).isDir() == false)
             {
                // create subfolder
                s32_Return = C_OscUtils::h_CreateFolderRecursively(c_Path);
@@ -345,7 +345,7 @@ int32_t C_OscZipFile::h_IsZipFile(const C_SclString & orc_FilePath)
 {
    int32_t s32_Return;
 
-   if ((QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).isFile()) == false)
+   if ((QFileInfo(orc_FilePath.ToQString()).exists() && QFileInfo(orc_FilePath.ToQString()).isFile()) == false)
    {
       s32_Return = C_CONFIG;
    }

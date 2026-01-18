@@ -1034,10 +1034,10 @@ void C_SyvUpSequences::m_ReportOpenSydeFlashloaderInformationRead(const C_OsyDev
 {
    // Save the device information
    // Using the signals only for primitive data types when using multi-threading
-   this->mpc_Lock->Acquire();
+   this->mpc_Lock->lock();
    this->mc_ReportOsyDeviceInformationNodeIndex.push_back(ou32_NodeIndex);
    this->mc_ReportOsyDeviceInformation.push_back(orc_Info);
-   this->mpc_Lock->Release();
+   this->mpc_Lock->unlock();
 
    Q_EMIT (this->SigReportOpenSydeFlashloaderInformationRead());
 }
@@ -1057,10 +1057,10 @@ void C_SyvUpSequences::m_ReportStwFlashloaderInformationRead(const C_XflDeviceIn
 {
    // Save the device information
    // Using the signals only for primitive data types when using multi-threading
-   this->mpc_Lock->Acquire();
+   this->mpc_Lock->lock();
    this->mc_ReportXflDeviceInformationNodeIndex.push_back(ou32_NodeIndex);
    this->mc_ReportXflDeviceInformation.push_back(orc_Info);
-   this->mpc_Lock->Release();
+   this->mpc_Lock->unlock();
 
    Q_EMIT (this->SigReportStwFlashloaderInformationRead());
 }

@@ -93,7 +93,7 @@ int32_t C_OscXmlParser::LoadFromFile(const C_SclString & orc_FileName)
    int32_t s32_Return = C_NO_ERR;
    mc_Document.clear();
 
-   QFile c_File(QString::fromStdString(*orc_FileName.AsStdString()));
+   QFile c_File(orc_FileName.ToQString());
    if (!c_File.open(QIODevice::ReadOnly | QIODevice::Text))
    {
       s32_Return = C_NOACT;
@@ -101,11 +101,8 @@ int32_t C_OscXmlParser::LoadFromFile(const C_SclString & orc_FileName)
    }
    else
    {
-      QString c_ErrorMsg;
-      int s32_ErrorLine;
-      int s32_ErrorCol;
-      //setContent handles the rest
-      if (!mc_Document.setContent(&c_File, &c_ErrorMsg, &s32_ErrorLine, &s32_ErrorCol))
+      QDomDocument::ParseResult c_ParseResult = mc_Document.setContent(&c_File, QDomDocument::ParseOption::Default);
+      if (!c_ParseResult)
       {
          s32_Return = C_NOACT;
          m_Init();
@@ -122,7 +119,7 @@ int32_t C_OscXmlParser::LoadFromFile(const C_SclString & orc_FileName)
 int32_t C_OscXmlParser::SaveToFile(const C_SclString & orc_FileName)
 {
    int32_t s32_Return = C_NO_ERR;
-   QFile c_File(QString::fromStdString(*orc_FileName.AsStdString()));
+   QFile c_File(orc_FileName.ToQString());
    if (!c_File.open(QIODevice::WriteOnly | QIODevice::Text))
    {
       s32_Return = C_NOACT;
@@ -180,7 +177,7 @@ C_SclString C_OscXmlParserBase::SelectNodeNext(const C_SclString & orc_Name)
    {
       if (orc_Name != "")
       {
-         mc_CurrentElement = mc_CurrentElement.nextSiblingElement(QString::fromStdString(*orc_Name.AsStdString()));
+         mc_CurrentElement = mc_CurrentElement.nextSiblingElement(orc_Name.ToQString());
       }
       else
       {
@@ -225,7 +222,7 @@ C_SclString C_OscXmlParserBase::SelectNodeChild(const C_SclString & orc_Name)
       }
       else
       {
-         c_Element = c_Element.firstChildElement(QString::fromStdString(*orc_Name.AsStdString()));
+         c_Element = c_Element.firstChildElement(orc_Name.ToQString());
       }
    }
 
@@ -297,7 +294,7 @@ bool C_OscXmlParserBase::AttributeExists(const C_SclString & orc_Name) const
 
    if (!mc_CurrentElement.isNull())
    {
-      q_Return = mc_CurrentElement.hasAttribute(QString::fromStdString(*orc_Name.AsStdString()));
+      q_Return = mc_CurrentElement.hasAttribute(orc_Name.ToQString());
    }
    return q_Return;
 }
@@ -331,7 +328,7 @@ C_SclString C_OscXmlParserBase::GetAttributeString(const C_SclString & orc_Name,
 
    if (!mc_CurrentElement.isNull())
    {
-      QString c_AttrName = QString::fromStdString(*orc_Name.AsStdString());
+      QString c_AttrName = orc_Name.ToQString();
       if (mc_CurrentElement.hasAttribute(c_AttrName))
       {
          c_Value = mc_CurrentElement.attribute(c_AttrName).toStdString();
@@ -414,13 +411,13 @@ uint64_t C_OscXmlParserBase::GetAttributeUint64(const C_SclString & orc_Name, co
    if (c_Text != "")
    {
       bool q_Ok = false;
-      if (QString::fromStdString(*c_Text.AsStdString()).startsWith("0x"))
+      if (c_Text.ToQString().startsWith("0x"))
       {
-         u64_Value = QString::fromStdString(*c_Text.AsStdString()).toULongLong(&q_Ok, 16);
+         u64_Value = c_Text.ToQString().toULongLong(&q_Ok, 16);
       }
       else
       {
-         u64_Value = QString::fromStdString(*c_Text.AsStdString()).toULongLong(&q_Ok, 10);
+         u64_Value = c_Text.ToQString().toULongLong(&q_Ok, 10);
       }
       if (!q_Ok)
       {
@@ -440,7 +437,7 @@ bool C_OscXmlParserBase::GetAttributeBool(const C_SclString & orc_Name, const bo
    C_SclString c_Text = this->GetAttributeString(orc_Name);
    if (c_Text != "")
    {
-      QString c_Qs = QString::fromStdString(*c_Text.AsStdString()).toLower();
+      QString c_Qs = c_Text.ToQString().toLower();
       if (c_Qs == "true" || c_Qs == "1")
       {
          q_Value = true;
@@ -464,7 +461,7 @@ float32_t C_OscXmlParserBase::GetAttributeFloat32(const C_SclString & orc_Name, 
    if (c_Text != "")
    {
       bool q_Ok = false;
-      f32_Value = QString::fromStdString(*c_Text.AsStdString()).toFloat(&q_Ok);
+      f32_Value = c_Text.ToQString().toFloat(&q_Ok);
       if (!q_Ok)
       {
          f32_Value = of32_Default;
@@ -484,7 +481,7 @@ float64_t C_OscXmlParserBase::GetAttributeFloat64(const C_SclString & orc_Name, 
    if (c_Text != "")
    {
       bool q_Ok = false;
-      f64_Value = QString::fromStdString(*c_Text.AsStdString()).toDouble(&q_Ok);
+      f64_Value = c_Text.ToQString().toDouble(&q_Ok);
       if (!q_Ok)
       {
          f64_Value = of64_Default;
@@ -735,10 +732,10 @@ std::vector<C_OscXmlAttribute> C_OscXmlParserBase::GetAttributes(void) const
 //----------------------------------------------------------------------------------------------------------------------
 void C_OscXmlParserBase::CreateNodeChild(const C_SclString & orc_Name, const C_SclString & orc_Content)
 {
-   QDomElement c_NewNode = mc_Document.createElement(QString::fromStdString(*orc_Name.AsStdString()));
+   QDomElement c_NewNode = mc_Document.createElement(orc_Name.ToQString());
    if (orc_Content != "")
    {
-      c_NewNode.appendChild(mc_Document.createTextNode(QString::fromStdString(*orc_Content.AsStdString())));
+      c_NewNode.appendChild(mc_Document.createTextNode(orc_Content.ToQString()));
    }
    
    if (!mc_CurrentElement.isNull())
@@ -813,7 +810,7 @@ void C_OscXmlParserBase::SetNodeContent(const C_SclString & orc_Content)
             --i;
          }
       }
-      mc_CurrentElement.appendChild(mc_Document.createTextNode(QString::fromStdString(*orc_Content.AsStdString())));
+      mc_CurrentElement.appendChild(mc_Document.createTextNode(orc_Content.ToQString()));
    }
 }
 
@@ -825,8 +822,8 @@ void C_OscXmlParserBase::SetAttributeString(const C_SclString & orc_Name, const 
 {
    if (!mc_CurrentElement.isNull())
    {
-      mc_CurrentElement.setAttribute(QString::fromStdString(*orc_Name.AsStdString()), 
-                                     QString::fromStdString(*orc_Value.AsStdString()));
+      mc_CurrentElement.setAttribute(orc_Name.ToQString(), 
+                                     orc_Value.ToQString());
    }
 }
 
@@ -838,7 +835,7 @@ void C_OscXmlParserBase::SetAttributeSint32(const C_SclString & orc_Name, const 
 {
    if (!mc_CurrentElement.isNull())
    {
-      mc_CurrentElement.setAttribute(QString::fromStdString(*orc_Name.AsStdString()), os32_Value);
+      mc_CurrentElement.setAttribute(orc_Name.ToQString(), os32_Value);
    }
 }
 
@@ -850,7 +847,7 @@ void C_OscXmlParserBase::SetAttributeUint32(const C_SclString & orc_Name, const 
 {
    if (!mc_CurrentElement.isNull())
    {
-      mc_CurrentElement.setAttribute(QString::fromStdString(*orc_Name.AsStdString()), ou32_Value);
+      mc_CurrentElement.setAttribute(orc_Name.ToQString(), ou32_Value);
    }
 }
 
@@ -862,7 +859,7 @@ void C_OscXmlParserBase::SetAttributeSint64(const C_SclString & orc_Name, const 
 {
    if (!mc_CurrentElement.isNull())
    {
-      mc_CurrentElement.setAttribute(QString::fromStdString(*orc_Name.AsStdString()), static_cast<long long>(os64_Value));
+      mc_CurrentElement.setAttribute(orc_Name.ToQString(), static_cast<long long>(os64_Value));
    }
 }
 
@@ -874,7 +871,7 @@ void C_OscXmlParserBase::SetAttributeUint64(const C_SclString & orc_Name, const 
 {
    if (!mc_CurrentElement.isNull())
    {
-      mc_CurrentElement.setAttribute(QString::fromStdString(*orc_Name.AsStdString()), static_cast<unsigned long long>(ou64_Value));
+      mc_CurrentElement.setAttribute(orc_Name.ToQString(), static_cast<unsigned long long>(ou64_Value));
    }
 }
 
@@ -886,7 +883,7 @@ void C_OscXmlParserBase::SetAttributeBool(const C_SclString & orc_Name, const bo
 {
    if (!mc_CurrentElement.isNull())
    {
-      mc_CurrentElement.setAttribute(QString::fromStdString(*orc_Name.AsStdString()), oq_Value ? "true" : "false");
+      mc_CurrentElement.setAttribute(orc_Name.ToQString(), oq_Value ? "true" : "false");
    }
 }
 
@@ -898,7 +895,7 @@ void C_OscXmlParserBase::SetAttributeFloat32(const C_SclString & orc_Name, const
 {
    if (!mc_CurrentElement.isNull())
    {
-      mc_CurrentElement.setAttribute(QString::fromStdString(*orc_Name.AsStdString()), static_cast<double>(of32_Value));
+      mc_CurrentElement.setAttribute(orc_Name.ToQString(), static_cast<double>(of32_Value));
    }
 }
 
@@ -910,7 +907,7 @@ void C_OscXmlParserBase::SetAttributeFloat64(const C_SclString & orc_Name, const
 {
    if (!mc_CurrentElement.isNull())
    {
-      mc_CurrentElement.setAttribute(QString::fromStdString(*orc_Name.AsStdString()), of64_Value);
+      mc_CurrentElement.setAttribute(orc_Name.ToQString(), of64_Value);
    }
 }
 
@@ -923,10 +920,8 @@ int32_t C_OscXmlParser::LoadFromString(const C_SclString & orc_String)
    int32_t s32_Return = C_NO_ERR;
    mc_Document.clear();
 
-   QString c_ErrorMsg;
-   int s32_ErrorLine;
-   int s32_ErrorCol;
-   if (!mc_Document.setContent(QString::fromStdString(*orc_String.AsStdString()), &c_ErrorMsg, &s32_ErrorLine, &s32_ErrorCol))
+   QDomDocument::ParseResult c_ParseResult = mc_Document.setContent(orc_String.ToQString(), QDomDocument::ParseOption::Default);
+   if (!c_ParseResult)
    {
       s32_Return = C_NOACT;
       m_Init();

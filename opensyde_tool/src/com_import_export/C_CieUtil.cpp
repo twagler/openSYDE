@@ -310,7 +310,7 @@ void C_CieUtil::h_AdaptName(C_SclString & orc_Name, C_SclString & orc_Comment, c
    //cut string:
    if (c_NewName.Length() > C_PuiSdHandler::h_GetInstance()->GetNameMaxCharLimit())
    {
-      c_NewName.removeAt(C_PuiSdHandler::h_GetInstance()->GetNameMaxCharLimit() + 1, c_NewName.Length());
+      c_NewName.SetLength(C_PuiSdHandler::h_GetInstance()->GetNameMaxCharLimit());
    }
 
    if ((orc_Name == c_NewName) && (oq_AlwaysAppendNameInComment == false))

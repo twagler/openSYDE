@@ -13,6 +13,7 @@
 #include "precomp_headers.hpp"
 #include <QFileInfo>
 #include <QDir>
+#include <QSettings>
 
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
@@ -68,8 +69,8 @@ int32_t C_OscSpaServicePackageCreateUtil::h_CheckPackagePathParam(const C_SclStr
    int32_t s32_Return = C_NO_ERR;
 
    // does package already exist ?
-   const bool q_FileExists = (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isFile());
-   const bool q_DirectoryExists = QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isDir();
+   const bool q_FileExists = (QFileInfo(orc_PackagePath.ToQString()).exists() && QFileInfo(orc_PackagePath.ToQString()).isFile());
+   const bool q_DirectoryExists = QFileInfo(orc_PackagePath.ToQString()).isDir();
 
    if ((oq_CheckFileExist) && ((q_FileExists == true) || (q_DirectoryExists == true)))
    {
@@ -81,11 +82,11 @@ int32_t C_OscSpaServicePackageCreateUtil::h_CheckPackagePathParam(const C_SclStr
    // does target directory for package exist ?
    if (s32_Return == C_NO_ERR)
    {
-      const C_SclString c_TargetDir = (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).absolutePath() + "/").toStdString();
+      const C_SclString c_TargetDir = C_SclString::FromQString(QFileInfo(orc_PackagePath.ToQString()).absolutePath() + "/");
 
       // package name without path or './' leads to target directory "",
       // which should not lead to error as it will result in creating package next to executable
-      if ((c_TargetDir.IsEmpty() == false) && (QFileInfo(QString::fromStdString(*c_TargetDir.AsStdString())).isDir() == false))
+      if ((c_TargetDir.IsEmpty() == false) && (QFileInfo(c_TargetDir.ToQString()).isDir() == false))
       {
          orc_ErrorMessage = "Target directory \"" + c_TargetDir + "\" does not exist.";
          osc_write_log_error(orc_UseCase, orc_ErrorMessage);
@@ -114,7 +115,7 @@ int32_t C_OscSpaServicePackageCreateUtil::h_CheckPackagePathParam(const C_SclStr
                                      orc_PackageExtensionTmp;
       // add trailing path delimiter to temporary folder if not present
       c_TmpPackagePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(c_TmpPackagePath);
-      if (((QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).isFile()) == true) || (QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).isDir() == true))
+      if (QFileInfo(c_TmpPackagePath.ToQString()).exists() || QFileInfo(c_TmpPackagePath.ToQString()).isDir())
       {
          orc_ErrorMessage = "Temporary result folder \"" + c_TmpPackagePath +
                             "\" to create zip archive already exists.";
@@ -152,11 +153,11 @@ void C_OscSpaServicePackageCreateUtil::h_GetTempFolderName(const C_SclString & o
    {
       // use sub folder named like package
       orc_UsedTempPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_TemporaryDirectory) +
-                         QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).fileName().toStdString();
+                         C_SclString::FromQString(QFileInfo(orc_PackagePath.ToQString()).fileName());
       // QDir(QString::fromStdString(*but our path does not yet exist,
       // so we need to expand the path manually
    }
-   orc_UsedTempPath = orc_UsedTempPath.SubString(1, orc_UsedTempPath.Pos(orc_PackageExtension.AsStdString())).absoluteFilePath(QString::fromStdString(*) might only work for existing paths.AsStdString())).toStdString() - 1) +
+   orc_UsedTempPath = orc_UsedTempPath.SubString(1, orc_UsedTempPath.Pos(orc_PackageExtension) - 1) +
                       orc_TemporaryPackageExtension;
 
    // add trailing path delimiter to temporary folder if not present
@@ -199,9 +200,9 @@ int32_t C_OscSpaServicePackageCreateUtil::h_CreateTempFolderAndSubFolders(const 
                                                          orc_TemporaryPackageExtension, orc_UsedTempPath);
 
    //erase target path if it exists:
-   if (QFileInfo(QString::fromStdString(*orc_UsedTempPath.AsStdString())).isDir() == true)
+   if (QFileInfo(orc_UsedTempPath.ToQString()).isDir())
    {
-      s32_Return = (QDir(QString::fromStdString(*orc_UsedTempPath.AsStdString())).removeRecursively() ? 0 : -1);
+      s32_Return = (QDir(orc_UsedTempPath.ToQString()).removeRecursively() ? 0 : -1);
    }
 
    if (s32_Return == C_NO_ERR)
@@ -339,14 +340,14 @@ int32_t C_OscSpaServicePackageCreateUtil::h_SaveDeviceDefinitionsAndIni(
            (c_Iter != c_DeviceDefinitionFiles.end()) && (s32_Return == C_NO_ERR);
            ++c_Iter)
       {
-         const C_SclString c_TargetFileName = QFileInfo(QString::fromStdString(**c_Iter.AsStdString())).fileName().toStdString();
+         const C_SclString c_TargetFileName = C_SclString::FromQString(QFileInfo(c_Iter->ToQString()).fileName());
          const C_SclString c_TargetFilePath = orc_UsedTempPath + c_TargetFileName;
          orc_AllCreatedFiles.insert(orc_OutFilePrefix + c_TargetFileName);
          s32_Return = C_OscUtils::h_CopyFile(*c_Iter, c_TargetFilePath, NULL, &orc_ErrorMessage);
          if (s32_Return != C_NO_ERR)
          {
             orc_ErrorMessage = "Could not save device definition file \"" +
-                               QFileInfo(QString::fromStdString(*c_TargetFilePath.AsStdString())).fileName().toStdString() + "\" to path \"" + orc_UsedTempPath + "\".";
+                               C_SclString::FromQString(QFileInfo(c_TargetFilePath.ToQString()).fileName()) + "\" to path \"" + orc_UsedTempPath + "\".";
             osc_write_log_error(orc_UseCase, orc_ErrorMessage);
             s32_Return = C_RD_WR;
          }
@@ -402,7 +403,7 @@ void C_OscSpaServicePackageCreateUtil::h_CleanUpTempFolder(const C_SclString & o
                                                            const C_SclString & orc_UsedTempPath, int32_t & ors32_ErrVal,
                                                            C_SclString & orc_ErrorMessage)
 {
-   const int32_t s32_Tmp = (QDir(QString::fromStdString(*orc_UsedTempPath.AsStdString())).removeRecursively() ? 0 : -1);
+   const int32_t s32_Tmp = (QDir(orc_UsedTempPath.ToQString()).removeRecursively() ? 0 : -1);
 
    if (s32_Tmp != 0)
    {
@@ -456,24 +457,24 @@ int32_t C_OscSpaServicePackageCreateUtil::mh_CreateDeviceIniFile(const C_SclStri
    // build up devices.ini --> device definitions are in the same folder
    try
    {
-      C_SclIniFile c_IniFile(c_IniDevPath); // devices.ini
+      QSettings c_IniFile(c_IniDevPath.ToQString(), QSettings::IniFormat); // devices.ini
       uint32_t u32_DeviceCounter = 1;
       // write header section
-      c_IniFile.WriteInteger(c_HEAD_SECTION, c_FIRST_KEY, s32_FIRST_VALUE);
-      c_IniFile.WriteString(c_HEAD_SECTION, c_SECOND_KEY, c_DEVICE_SECTION);
+      c_IniFile.setValue(c_HEAD_SECTION.ToQString() + "/" + c_FIRST_KEY.ToQString(), s32_FIRST_VALUE);
+      c_IniFile.setValue(c_HEAD_SECTION.ToQString() + "/" + c_SECOND_KEY.ToQString(), c_DEVICE_SECTION.ToQString());
 
       // write content section
-      c_IniFile.WriteInteger(c_DEVICE_SECTION, c_DEVICE_COUNT, static_cast<int32_t>(orc_DeviceDefinitionPaths.size()));
+      c_IniFile.setValue(c_DEVICE_SECTION.ToQString() + "/" + c_DEVICE_COUNT.ToQString(), static_cast<int32_t>(orc_DeviceDefinitionPaths.size()));
       // fill up with device definitions
       std::set<C_SclString>::const_iterator c_Iter;
       for (c_Iter = orc_DeviceDefinitionPaths.begin(); c_Iter != orc_DeviceDefinitionPaths.end(); ++c_Iter)
       {
          const C_SclString c_Key = c_DEVICE_KEY + C_SclString::IntToStr(u32_DeviceCounter);
-         const C_SclString c_Value = QFileInfo(QString::fromStdString(**c_Iter.AsStdString())).fileName().toStdString();
-         c_IniFile.WriteString(c_DEVICE_SECTION, c_Key, c_Value);
+         const C_SclString c_Value = C_SclString::FromQString(QFileInfo(c_Iter->ToQString()).fileName());
+         c_IniFile.setValue(c_DEVICE_SECTION.ToQString() + "/" + c_Key.ToQString(), c_Value.ToQString());
          u32_DeviceCounter++;
       }
-      c_IniFile.UpdateFile(); // make data persistent
+      c_IniFile.sync(); // make data persistent
    }
    catch (...)
    {

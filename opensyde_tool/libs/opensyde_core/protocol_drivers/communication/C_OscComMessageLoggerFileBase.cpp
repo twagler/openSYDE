@@ -71,10 +71,10 @@ C_OscComMessageLoggerFileBase::~C_OscComMessageLoggerFileBase(void)
 int32_t C_OscComMessageLoggerFileBase::OpenFile(void)
 {
    int32_t s32_Return = C_NO_ERR;
-   const C_SclString c_FolderPath = (QFileInfo(QString::fromStdString(*this->mc_FilePath.AsStdString())).absolutePath() + "/").toStdString();
+   const C_SclString c_FolderPath = C_SclString::FromQString(QFileInfo(this->mc_FilePath.ToQString()).absolutePath() + "/");
 
    // Check and create folder
-   if (QFileInfo(QString::fromStdString(*c_FolderPath.AsStdString())).isDir() == false)
+   if (!QFileInfo(c_FolderPath.ToQString()).isDir())
    {
       s32_Return = C_OscUtils::h_CreateFolderRecursively(c_FolderPath);
 
@@ -83,7 +83,7 @@ int32_t C_OscComMessageLoggerFileBase::OpenFile(void)
          s32_Return = C_RD_WR;
       }
    }
-   else if ((QFileInfo(QString::fromStdString(*this->mc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*this->mc_FilePath.AsStdString())).isFile()) == true)
+   else if (QFileInfo(this->mc_FilePath.ToQString()).exists() && QFileInfo(this->mc_FilePath.ToQString()).isFile())
    {
       // Delete the old file
       if (remove(this->mc_FilePath.c_str()) != 0)

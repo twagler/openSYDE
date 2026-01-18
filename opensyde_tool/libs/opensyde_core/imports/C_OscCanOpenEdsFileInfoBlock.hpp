@@ -11,7 +11,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "stwtypes.hpp"
 #include "C_SclString.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 
 /* -- Namespace ----------------------------------------------------------------------------------------------------- */
 namespace stw
@@ -40,7 +40,7 @@ public:
    stw::scl::C_SclString c_ModifiedBy;       ///< Name or description of file creator, max 244 characters
 
    void CalcHash(uint32_t & oru32_HashValue) const;
-   int32_t LoadFromIni(stw::scl::C_SclIniFile & orc_File, stw::scl::C_SclString & orc_LastError);
+   int32_t LoadFromIni(QSettings & orc_File, stw::scl::C_SclString & orc_LastError);
 };
 
 /* -- Extern Global Variables --------------------------------------------------------------------------------------- */

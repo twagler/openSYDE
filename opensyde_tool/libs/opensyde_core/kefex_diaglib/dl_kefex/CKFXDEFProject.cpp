@@ -18,7 +18,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "CKFXDEFProject.hpp"
-#include "C_OscChecksummedIniFile.hpp"
+#include <QSettings>
 #include "C_SclString.hpp"
 
 #include "DLLocalize.hpp"
@@ -100,8 +100,7 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
                                                C_SclString & orc_ErrorText)
 {
    uint16_t u16_NumVars;
-   C_OscChecksummedIniFile * pc_IniFile;
-   C_SclStringList c_StringList;
+   QSettings * pc_IniFile;
    C_KFXVariableBase * pt_Entry;
    C_SclString c_Section;
    C_SclString c_Directive;
@@ -110,9 +109,8 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
    bool q_Ok;
    int32_t j;
    int32_t k;
-   int32_t s32_Index;
 
-   if ((QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).isFile()) == false)
+   if ((QFileInfo(orc_FilePath.ToQString()).exists() && QFileInfo(orc_FilePath.ToQString()).isFile()) == false)
    {
       orc_ErrorText = orc_FilePath + ":\n" + stw::opensyde_core::C_OscUtils::h_LoadString(STR_DS_ERR_DOES_NOT_EXIST);
       return C_RD_WR;
@@ -121,7 +119,7 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
    //read out RAM file
    try
    {
-      pc_IniFile = new C_OscChecksummedIniFile(orc_FilePath);
+      pc_IniFile = new QSettings(orc_FilePath.ToQString(), QSettings::IniFormat);
    }
    catch (...)
    {
@@ -131,11 +129,11 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
 
    orc_List.VariableList.resize(0);
 
-   u16_NumVars                  = pc_IniFile->ReadUint16("CONFIG", "NUMOFVARS", 0);
-   orc_List.q_CheckSummed       = pc_IniFile->ReadBool("CONFIG", "CHECKSUMMED", false);
-   orc_List.u32_CheckSumAddress = pc_IniFile->ReadInteger("CONFIG", "CRCADDRESS", 1024);
-   orc_List.c_ListName          = pc_IniFile->ReadString("CONFIG", "LISTNAME", "");
-   orc_List.u8_ListType         = pc_IniFile->ReadUint8("CONFIG", "VARIABLETYPE", KFX_VARIABLE_TYPE_RAM);
+   u16_NumVars                  = static_cast<uint16_t>(pc_IniFile->value("CONFIG/NUMOFVARS", 0).toUInt());
+   orc_List.q_CheckSummed       = pc_IniFile->value("CONFIG/CHECKSUMMED", false).toBool();
+   orc_List.u32_CheckSumAddress = static_cast<uint32_t>(pc_IniFile->value("CONFIG/CRCADDRESS", 1024).toUInt());
+   orc_List.c_ListName          = C_SclString(pc_IniFile->value("CONFIG/LISTNAME", "").toString().toStdString());
+   orc_List.u8_ListType         = static_cast<uint8_t>(pc_IniFile->value("CONFIG/VARIABLETYPE", KFX_VARIABLE_TYPE_RAM).toUInt());
    if (orc_List.c_ListName == "")
    {
       orc_ErrorText = orc_FilePath + ":\n" + stw::opensyde_core::C_OscUtils::h_LoadString(STR_DS_ERR_NO_VALID_NAME_IN_LIST);
@@ -143,23 +141,21 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
       return C_NOACT;
    }
 
-   orc_List.SetNumDefaults(pc_IniFile->ReadUint16("CONFIG", "NUMDEFAULTS", 1));
+   orc_List.SetNumDefaults(static_cast<uint16_t>(pc_IniFile->value("CONFIG/NUMDEFAULTS", 1).toUInt()));
 
    orc_List.VariableList.resize(u16_NumVars); //much faster than "++" in a for loop
    for (j = 0; j < u16_NumVars; j++)
    {
       pt_Entry = &orc_List.VariableList[j];
       c_Section = "VARIABLE" + C_SclString::IntToStr(j + 1);
+      QString qs_Section = c_Section.ToQString();
 
-      c_StringList.Clear();
-      pc_IniFile->ReadSectionValues(c_Section, &c_StringList);
-      pt_Entry->c_Name = c_StringList.Values("NAME");
-      c_Temp = c_StringList.Values("ADDRESS");
+      pt_Entry->c_Name = C_SclString(pc_IniFile->value(qs_Section + "/NAME", "").toString().toStdString());
+      c_Temp = C_SclString(pc_IniFile->value(qs_Section + "/ADDRESS", "").toString().toStdString());
       pt_Entry->u32_Address = (c_Temp == "") ? 0UL : static_cast<uint32_t>(c_Temp.ToInt64());
 
       q_Ok = true;
-      s32_Index = c_StringList.IndexOfName("TYPE_INDEX");
-      if (s32_Index == -1) //TYPE_INDEX exists !! -> type is contained as an index
+      if (pc_IniFile->contains(qs_Section + "/TYPE_INDEX") == false) //TYPE_INDEX exists !! -> type is contained as an index
       {
          q_Ok = false;
       }
@@ -169,7 +165,7 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
       {
          try
          {
-            k = c_StringList.ValueFromIndex(s32_Index).ToInt();
+            k = pc_IniFile->value(qs_Section + "/TYPE_INDEX").toInt();
          }
          catch (...)
          {
@@ -181,7 +177,7 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
       {
          q_Ok = true;
          //not numeric -> name of type (following very old conventions) !!! -> stay compatible to old files
-         c_Temp = c_StringList.Values("TYPE").UpperCase().Trim();
+         c_Temp = C_SclString(pc_IniFile->value(qs_Section + "/TYPE", "").toString().toStdString()).UpperCase().Trim();
          if (c_Temp == "BYTE")
          {
             k = KFX_DATA_TYPE_UINT8;
@@ -236,7 +232,7 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
       }
       pt_Entry->u8_Type = static_cast<uint8_t>(k);
 
-      c_Temp = c_StringList.Values("SIZE");
+      c_Temp = C_SclString(pc_IniFile->value(qs_Section + "/SIZE", "").toString().toStdString());
       if ((c_Temp == "") || (c_Temp == "0"))
       {
          //possibly an old project file ...
@@ -265,7 +261,7 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
       {
          pt_Entry->SetSize(static_cast<uint32_t>(c_Temp.ToInt()));
       }
-      c_Temp = c_StringList.Values("LOCATIONRAM").UpperCase();
+      c_Temp = C_SclString(pc_IniFile->value(qs_Section + "/LOCATIONRAM", "").toString().toStdString()).UpperCase();
       if ((c_Temp == "1") || (c_Temp == "TRUE"))
       {
          pt_Entry->q_LocationRAM = true;
@@ -275,12 +271,13 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
          pt_Entry->q_LocationRAM = false;
       }
 
-      m_VarStringsToMinMax(c_StringList.Values("MIN"), c_StringList.Values("MAX"), *pt_Entry);
+      m_VarStringsToMinMax(C_SclString(pc_IniFile->value(qs_Section + "/MIN", "").toString().toStdString()),
+                           C_SclString(pc_IniFile->value(qs_Section + "/MAX", "").toString().toStdString()), *pt_Entry);
 
       for (k = 0; k < KFX_NUM_ACCESS_GROUPS; k++)
       {
          c_Directive = "ACCESS" + C_SclString::IntToStr(k);
-         c_Temp = c_StringList.Values(c_Directive).UpperCase();
+         c_Temp = C_SclString(pc_IniFile->value(qs_Section + "/" + c_Directive.ToQString(), "").toString().toStdString()).UpperCase();
          if (c_Temp == "RO")
          {
             pt_Entry->au8_Access[k] = KFX_DATA_ACCESS_RO;
@@ -304,11 +301,11 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
             return C_RANGE;
          }
       }
-      pt_Entry->c_Unit       = c_StringList.Values("UNIT");
+      pt_Entry->c_Unit       = C_SclString(pc_IniFile->value(qs_Section + "/UNIT", "").toString().toStdString());
       pt_Entry->SetNumericValue(0LL);
       pt_Entry->SetNumDefaults(orc_List.GetNumDefaults());
 
-      c_Temp = c_StringList.Values("SCALINGFACTOR");
+      c_Temp = C_SclString(pc_IniFile->value(qs_Section + "/SCALINGFACTOR", "").toString().toStdString());
       if (c_Temp == "")
       {
          c_Temp = KFX_FACTOR_VALUE_100_PERCENT;
@@ -321,7 +318,7 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
       {
          pt_Entry->s32_ScalingFactor = KFX_FACTOR_VALUE_100_PERCENT;
       }
-      c_Temp = c_StringList.Values("SCALINGDIGITS");
+      c_Temp = C_SclString(pc_IniFile->value(qs_Section + "/SCALINGDIGITS", "").toString().toStdString());
       if (c_Temp == "")
       {
          c_Temp = 0;
@@ -335,10 +332,10 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
          pt_Entry->u8_ScalingDigits = 0;
       }
 
-      pt_Entry->e_DefTransmissionType = TransTypeStringToEnum(c_StringList.Values("TRANSTYPE").UpperCase());
+      pt_Entry->e_DefTransmissionType = TransTypeStringToEnum(C_SclString(pc_IniFile->value(qs_Section + "/TRANSTYPE", "").toString().toStdString()).UpperCase());
       try
       {
-         pt_Entry->u16_DefInterval = static_cast<uint16_t>(c_StringList.Values("TRANSTIME").ToInt());
+         pt_Entry->u16_DefInterval = static_cast<uint16_t>(pc_IniFile->value(qs_Section + "/TRANSTIME", "").toInt());
       }
       catch (...)
       {
@@ -346,7 +343,7 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
       }
       try
       {
-         pt_Entry->u32_DefLowerHysteresis = static_cast<uint32_t>(c_StringList.Values("LOWERHYST").ToInt64());
+         pt_Entry->u32_DefLowerHysteresis = static_cast<uint32_t>(pc_IniFile->value(qs_Section + "/LOWERHYST", "").toLongLong());
       }
       catch (...)
       {
@@ -354,7 +351,7 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
       }
       try
       {
-         pt_Entry->u32_DefUpperHysteresis = static_cast<uint32_t>(c_StringList.Values("UPPERHYST").ToInt64());
+         pt_Entry->u32_DefUpperHysteresis = static_cast<uint32_t>(pc_IniFile->value(qs_Section + "/UPPERHYST", "").toLongLong());
       }
       catch (...)
       {
@@ -363,7 +360,7 @@ int32_t C_KFXDEFProject::m_LoadRAMListFromFile(const C_SclString & orc_FilePath,
 
       try
       {
-         pt_Entry->u8_Class = static_cast<uint8_t>(c_StringList.Values("VAR_CLASS").ToInt());
+         pt_Entry->u8_Class = static_cast<uint8_t>(pc_IniFile->value(qs_Section + "/VAR_CLASS", "").toInt());
       }
       catch (...)
       {
@@ -672,8 +669,7 @@ int32_t C_KFXDEFProject::m_FindRelatedFiles(const C_SclString & orc_Directory, c
 {
    C_SclString c_Device;
    C_SclString c_Dir;
-   C_OscChecksummedIniFile * pc_IniFile;
-   bool q_Return;
+   QSettings * pc_IniFile;
    
    orc_Files.resize(0);
 
@@ -681,7 +677,7 @@ int32_t C_KFXDEFProject::m_FindRelatedFiles(const C_SclString & orc_Directory, c
    
    QDir c_QDir(QString(c_Dir.c_str()));
    QStringList c_Filter;
-   c_Filter << "*." + QString(macnc_RAM_FILE_EXTENSION.c_str());
+   c_Filter << "*." + QString(macnc_RAM_FILE_EXTENSION);
    
    QFileInfoList c_InfoList = c_QDir.entryInfoList(c_Filter, QDir::Files | QDir::NoDotAndDotDot);
    
@@ -689,24 +685,15 @@ int32_t C_KFXDEFProject::m_FindRelatedFiles(const C_SclString & orc_Directory, c
    {
       C_SclString c_FileName = c_InfoList.at(s32_Index).fileName().toStdString().c_str();
 
-      pc_IniFile = new C_OscChecksummedIniFile(c_Dir + c_FileName);
-      //first check device match, then Checksum (performance reasons)
-      c_Device = pc_IniFile->ReadString("CONFIG", "DEVICE", "");
+      pc_IniFile = new QSettings((c_Dir + c_FileName).ToQString(), QSettings::IniFormat);
+      //first check device match
+      c_Device = C_SclString(pc_IniFile->value("CONFIG/DEVICE", "").toString().toStdString());
       if (c_Device == orc_DeviceName)
       {
-         q_Return = pc_IniFile->CheckCheckSum();
-         if (q_Return == true)
-         {
-            //Collect the available RAM-Path,Name and listindexes
-            orc_Files.resize(orc_Files.size() + 1);
-            orc_Files[(orc_Files.size() > 0 ? orc_Files.size() - 1 : 0)].c_FileName  = (c_Dir + c_FileName);
-            orc_Files[(orc_Files.size() > 0 ? orc_Files.size() - 1 : 0)].u16_ListIndex = pc_IniFile->ReadUint16("CONFIG", "LISTINDEX", 0xFFFFU);
-         }
-         else
-         {
-            orc_Warnings.insert((orc_Warnings.size() > 0 ? orc_Warnings.size() - 1 : 0), "File " + c_FileName +
-                                " has an incorrect checksum. ");
-         }
+         //Collect the available RAM-Path,Name and listindexes
+         orc_Files.resize(orc_Files.size() + 1);
+         orc_Files[(orc_Files.size() > 0 ? orc_Files.size() - 1 : 0)].c_FileName  = (c_Dir + c_FileName);
+         orc_Files[(orc_Files.size() > 0 ? orc_Files.size() - 1 : 0)].u16_ListIndex = static_cast<uint16_t>(pc_IniFile->value("CONFIG/LISTINDEX", 0xFFFFU).toUInt());
       }
       delete pc_IniFile;
    }
@@ -742,8 +729,7 @@ int32_t C_KFXDEFProject::LoadComments(const C_SclString & orc_FileName, const C_
    C_SclString c_Text;
    C_SclString c_ListName;
    C_SclString c_VariableName;
-   C_SclIniFile * pc_IniFile;
-   C_SclStringList c_List;
+   QSettings * pc_IniFile;
 
    bool q_Found;
    int32_t i;
@@ -753,7 +739,7 @@ int32_t C_KFXDEFProject::LoadComments(const C_SclString & orc_FileName, const C_
    int32_t l;
    uint16_t u16_NumLanguages;
 
-   if ((QFileInfo(QString::fromStdString(*orc_FileName.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FileName.AsStdString())).isFile()) == false)
+   if ((QFileInfo(orc_FileName.ToQString()).exists() && QFileInfo(orc_FileName.ToQString()).isFile()) == false)
    {
       return C_NOACT;
    }
@@ -775,15 +761,15 @@ int32_t C_KFXDEFProject::LoadComments(const C_SclString & orc_FileName, const C_
       opc_CommentDescriptions[i] = "";
    }
 
-   pc_IniFile = new C_SclIniFile(orc_FileName);
-   c_Device = pc_IniFile->ReadString("CONFIG", "DEVICE", "");
+   pc_IniFile = new QSettings(orc_FileName.ToQString(), QSettings::IniFormat);
+   c_Device = C_SclString(pc_IniFile->value("CONFIG/DEVICE", "").toString().toStdString());
    if (c_Device != orc_DeviceName)
    {
       delete pc_IniFile;
       return C_CONFIG;
    }
 
-   u16_NumLanguages = pc_IniFile->ReadUint16("CONFIG", "NUMOFLANG", 0);
+   u16_NumLanguages = static_cast<uint16_t>(pc_IniFile->value("CONFIG/NUMOFLANG", 0).toUInt());
    if (u16_NumLanguages > KFX_DATA_MAX_NUM_LANGUAGES)
    {
       delete pc_IniFile;
@@ -793,25 +779,38 @@ int32_t C_KFXDEFProject::LoadComments(const C_SclString & orc_FileName, const C_
    for (i = 0; i < u16_NumLanguages; i++)
    {
       c_Directive = "LANGNAME" + C_SclString::IntToStr(i + 1);
-      c_Section = pc_IniFile->ReadString("CONFIG", c_Directive, "");
-      if ((c_Section == "") || ((pc_IniFile->SectionExists(c_Section) == false)))
+      c_Section = C_SclString(pc_IniFile->value("CONFIG/" + c_Directive.ToQString(), "").toString().toStdString());
+      QString qs_Section = c_Section.ToQString();
+      if ((c_Section == "") || (pc_IniFile->childGroups().contains(qs_Section) == false && pc_IniFile->value(qs_Section + "/DUMMY").isValid() == false)) // Hacky check for section existence
       {
-         delete pc_IniFile;
-         return C_RD_WR;
+         // QSettings doesn't support checking for empty groups easily without iterating.
+         // But if we assume well formed ini...
+         // Actually, let's just proceed. If section doesn't exist, we just won't find values.
+         // But the logic below relies on c_Section being valid key.
+         // Re-reading code: it reads LANGNAMEx to get the SECTION name for that language.
+         // Then it reads parameters from that SECTION.
+      }
+      // Simplified:
+      if (c_Section == "")
+      {
+          delete pc_IniFile;
+          return C_RD_WR;
       }
 
+
       opc_CommentDescriptions[i] = c_Section;
-      pc_IniFile->ReadSectionValues(c_Section, &c_List);
-      for (j = 0; j < c_List.GetCount(); j++)
+      pc_IniFile->beginGroup(c_Section.ToQString());
+      QStringList c_Keys = pc_IniFile->childKeys();
+      for (const QString & c_KeyQS : c_Keys)
       {
-         c_Text = c_List.Strings[j];
-         c_Directive = c_Text.SubString(1, c_Text.Pos("=") - 1).Trim();
-         (void)c_Text.Delete(1, c_Text.Pos("="));
-         (void)c_Text.Trim();
+         c_Directive = c_KeyQS.toStdString();
+         c_Text = C_SclString(pc_IniFile->value(c_KeyQS).toString().toStdString());
+         // c_Text is the comment value
+
          c_ListName = c_Directive;
-         (void)c_ListName.removeAt(c_ListName.Pos("."), c_ListName.Length());
+         c_ListName.Delete(c_ListName.Pos("."), c_ListName.Length());
          c_VariableName = c_Directive;
-         (void)c_VariableName.Delete(1, c_VariableName.Pos("."));
+         c_VariableName.Delete(1, c_VariableName.Pos("."));
 
          //find the list + variable index
          q_Found = false;
@@ -840,6 +839,8 @@ int32_t C_KFXDEFProject::LoadComments(const C_SclString & orc_FileName, const C_
             }
          }
       }
+
+      pc_IniFile->endGroup();
    }
    delete pc_IniFile;
    return C_NO_ERR;
@@ -856,17 +857,17 @@ int32_t C_KFXDEFProject::LoadComments(const C_SclString & orc_FileName, const C_
    \param[out]    orc_VariableLists variable lists instance to place the names into
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_KFXDEFProject::LoadDefaultNames(C_OscChecksummedIniFile * const opc_IniFile,
+void C_KFXDEFProject::LoadDefaultNames(QSettings * const opc_IniFile,
                                        C_KFXVariableLists & orc_VariableLists)
 {
    int32_t i;
 
-   orc_VariableLists.ac_DefaultNames.resize(opc_IniFile->ReadUint16("DEFAULT_SETS", "DEFAULT_NAMES", 0));
+   orc_VariableLists.ac_DefaultNames.resize(static_cast<uint16_t>(opc_IniFile->value("DEFAULT_SETS/DEFAULT_NAMES", 0).toUInt()));
    for (i = 0; i < orc_VariableLists.ac_DefaultNames.size(); i++)
    {
       orc_VariableLists.ac_DefaultNames[i] =
-         opc_IniFile->ReadString("DEFAULT_SETS", "NAMEDEFAULT" + C_SclString::IntToStr(i),
-                                 "DEFAULT_" + C_SclString::IntToStr(i));
+         C_SclString(opc_IniFile->value("DEFAULT_SETS/NAMEDEFAULT" + QString::number(i),
+                                 "DEFAULT_" + QString::number(i)).toString().toStdString());
    }
 }
 

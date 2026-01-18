@@ -58,7 +58,7 @@ int32_t C_OscDataLoggerJobFiler::h_LoadFile(std::vector<C_OscDataLoggerJob> & or
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading data loggers data");

@@ -25,7 +25,7 @@ void C_KFXVariableLists::ClearDefaults(void)
    uint16_t u16_List;
    uint16_t u16_Variable;
 
-   for (u16_List = 0U; u16_List < this->GetLength(); u16_List++)
+   for (u16_List = 0U; u16_List < this->size(); u16_List++)
    {
       for (u16_Variable = 0U; u16_Variable < (*this)[u16_List].VariableList.size(); u16_Variable++)
       {
@@ -42,7 +42,7 @@ void C_KFXVariableLists::ClearValues(void)
    uint16_t u16_List;
    uint16_t u16_Variable;
 
-   for (u16_List = 0U; u16_List < this->GetLength(); u16_List++)
+   for (u16_List = 0U; u16_List < this->size(); u16_List++)
    {
       for (u16_Variable = 0U; u16_Variable < (*this)[u16_List].VariableList.size(); u16_Variable++)
       {
@@ -58,7 +58,7 @@ void C_KFXVariableLists::CalcCRCOverAllLists(uint16_t & oru16_CRC, const bool oq
 {
    uint16_t u16_Index;
 
-   for (u16_Index = 0; u16_Index < this->GetLength(); u16_Index++)
+   for (u16_Index = 0; u16_Index < this->size(); u16_Index++)
    {
       (*this)[u16_Index].CalcCRCOverList(oru16_CRC, oq_SkipValues);
    }
@@ -85,7 +85,7 @@ bool C_KFXVariableLists::VariableExists(const uint16_t ou16_Index) const
 
 bool C_KFXVariableLists::ListExists(const uint16_t ou16_List) const
 {
-   if (this->GetLength() <= ou16_List)
+   if (this->size() <= ou16_List)
    {
       return false;
    }
@@ -96,7 +96,7 @@ bool C_KFXVariableLists::ListExists(const uint16_t ou16_List) const
 
 bool C_KFXVariableLists::VariableExists(const uint16_t ou16_List, const uint16_t ou16_Variable) const
 {
-   if (this->GetLength() <= ou16_List)
+   if (this->size() <= ou16_List)
    {
       return false;
    }
@@ -182,7 +182,7 @@ const C_KFXVariableListBase * C_KFXVariableLists::GetListByName(const C_SclStrin
 {
    int32_t s32_ListIndex;
 
-   for (s32_ListIndex = 0; s32_ListIndex < this->GetLength(); s32_ListIndex++)
+   for (s32_ListIndex = 0; s32_ListIndex < this->size(); s32_ListIndex++)
    {
       if ((*this)[s32_ListIndex].c_ListName == orc_ListName)
       {
@@ -198,7 +198,7 @@ C_KFXVariableListBase * C_KFXVariableLists::GetListByName(const C_SclString & or
 {
    int32_t s32_ListIndex;
 
-   for (s32_ListIndex = 0; s32_ListIndex < this->GetLength(); s32_ListIndex++)
+   for (s32_ListIndex = 0; s32_ListIndex < this->size(); s32_ListIndex++)
    {
       if ((*this)[s32_ListIndex].c_ListName == orc_ListName)
       {

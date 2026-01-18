@@ -306,7 +306,7 @@ QString C_PuiProject::GetPath(void) const
 //----------------------------------------------------------------------------------------------------------------------
 QString C_PuiProject::GetFolderPath(void) const
 {
-   const QString c_Path = (QFileInfo(QString::fromStdString(*this->mc_Path.toStdString(.AsStdString())).absolutePath() + "/").toStdString().c_str()).c_str();
+   const QString c_Path = QFileInfo(this->mc_Path).absolutePath() + "/";
 
    return c_Path;
 }
@@ -723,7 +723,7 @@ int32_t C_PuiProject::m_SaveServiceModeProject(const QString & orc_FilePath, con
    }
 
    //erase temporary folder:
-   if ((QDir(QString::fromStdString(*c_TemporaryPath.toStdString().c_str().AsStdString())).removeRecursively() ? 0 : -1) != 0)
+   if (QDir(c_TemporaryPath).removeRecursively() == false)
    {
       // Do not overwrite any other error
       if (s32_Retval == C_NO_ERR)
@@ -862,7 +862,7 @@ int32_t C_PuiProject::m_LoadServiceModeProject(const QString & orc_Password, uin
    }
 
    //erase temporary folder in any case:
-   if ((QDir(QString::fromStdString(*c_TemporaryPath.toStdString().c_str().AsStdString())).removeRecursively() ? 0 : -1) != 0)
+   if (QDir(c_TemporaryPath).removeRecursively() == false)
    {
       // Do not overwrite any other error
       if (s32_Retval == C_NO_ERR)

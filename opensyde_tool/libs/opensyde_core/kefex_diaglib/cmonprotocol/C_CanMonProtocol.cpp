@@ -17,7 +17,7 @@
 #include "C_CanMonProtocolOpenSyde.hpp"
 
 #include "C_SclString.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 
 
 //---------------------------------------------------------------------------
@@ -258,7 +258,7 @@ const
 
    try
    {
-      C_SclIniFile c_IniFile(orc_FileName);
+      QSettings c_IniFile(orc_FileName.ToQString(), QSettings::IniFormat);
       s32_Return = 0;
       for (s32_Loop = 0; s32_Loop < gs32_KFX_CMON_NUM_PROTOCOLS; s32_Loop++)
       {
@@ -299,13 +299,13 @@ const
    int32_t s32_Return;
    int32_t s32_Loop;
 
-   if ((QFileInfo(QString::fromStdString(*orc_FileName.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FileName.AsStdString())).isFile()) == false)
+   if ((QFileInfo(orc_FileName.ToQString()).exists() && QFileInfo(orc_FileName.ToQString()).isFile()) == false)
    {
       s32_Return = C_RD_WR;
    }
    else
    {
-      C_SclIniFile c_IniFile(orc_FileName);
+      QSettings c_IniFile(orc_FileName.ToQString(), QSettings::IniFormat);
 
       s32_Return  = 0;
       for (s32_Loop = 0; s32_Loop < gs32_KFX_CMON_NUM_PROTOCOLS; s32_Loop++)

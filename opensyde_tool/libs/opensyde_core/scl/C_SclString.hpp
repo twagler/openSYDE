@@ -37,6 +37,7 @@
 #include <sstream>
 #include "stwtypes.hpp"
 #include <QList>
+#include <QString>
 
 /* -- Namespace ----------------------------------------------------------------------------------------------------- */
 namespace stw
@@ -182,6 +183,9 @@ public:
    static C_SclString FloatToStr(const float64_t of64_Value, const int32_t os32_Digits);
 
    void Tokenize(const C_SclString & orc_Delimiters, QList<C_SclString> & orc_TokenizedData) const;
+
+   QString ToQString(void) const;
+   static C_SclString FromQString(const QString & orc_String);
 };
 
 //----------------------------------------------------------------------------------------------------------------------

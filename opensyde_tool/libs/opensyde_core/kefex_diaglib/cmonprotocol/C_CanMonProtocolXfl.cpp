@@ -18,6 +18,7 @@
 #include "C_CanMonProtocolXfl.hpp"
 #include "C_SclString.hpp"
 #include "stwcompid.h"
+#include <QSettings>
 
 //---------------------------------------------------------------------------
 
@@ -184,13 +185,14 @@ void C_CanMonProtocolXfl::SetSendId(const uint32_t ou32_SendId)
    C_RD_WR   -> error writing data
 */
 //-----------------------------------------------------------------------------
-int32_t C_CanMonProtocolXfl::SaveParamsToIni(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section)
+int32_t C_CanMonProtocolXfl::SaveParamsToIni(QSettings & orc_IniFile, const C_SclString & orc_Section)
 {
    int32_t s32_Error = C_NO_ERR;
+   QString c_Section = orc_Section.ToQString();
 
    try
    {
-      orc_IniFile.WriteInteger(orc_Section, "PP_XFL_SEND_ID", static_cast<int32_t>(this->mu32_XFLSendId));
+      orc_IniFile.setValue(c_Section + "/PP_XFL_SEND_ID", static_cast<int32_t>(this->mu32_XFLSendId));
    }
    catch (...)
    {
@@ -213,10 +215,11 @@ int32_t C_CanMonProtocolXfl::SaveParamsToIni(C_SclIniFile & orc_IniFile, const C
    C_RD_WR   -> error reading data
 */
 //-----------------------------------------------------------------------------
-int32_t C_CanMonProtocolXfl::LoadParamsFromIni(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section)
+int32_t C_CanMonProtocolXfl::LoadParamsFromIni(QSettings & orc_IniFile, const C_SclString & orc_Section)
 {
-   this->mu32_XFLSendId = static_cast<uint32_t>(orc_IniFile.ReadInteger(orc_Section, "PP_XFL_SEND_ID",
-                                                                        static_cast<int32_t>(this->mu32_XFLSendId)));
+   QString c_Section = orc_Section.ToQString();
+   this->mu32_XFLSendId = static_cast<uint32_t>(orc_IniFile.value(c_Section + "/PP_XFL_SEND_ID",
+                                                                        static_cast<int32_t>(this->mu32_XFLSendId)).toUInt());
    return C_NO_ERR;
 }
 

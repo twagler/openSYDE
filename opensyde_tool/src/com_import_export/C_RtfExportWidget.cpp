@@ -173,16 +173,16 @@ int32_t C_RtfExportWidget::GetRtfPath(C_SclString & orc_RtfPath) const
    if (C_OscUtils::h_CheckValidFilePath(orc_RtfPath) == true)
    {
       // check if directory exists
-      if (QFileInfo(QString::fromStdString(*(QFileInfo(QString::fromStdString(*orc_RtfPath.AsStdString(.AsStdString())).absolutePath() + "/").toStdString())).isDir()) == true)
+      if (QFileInfo(QFileInfo(orc_RtfPath.ToQString()).absolutePath()).isDir() == true)
       {
          // check if file name is valid
-         const C_SclString c_FileExtAct = ("." + QFileInfo(QString::fromStdString(*orc_RtfPath.AsStdString())).suffix()).toStdString();
+         const C_SclString c_FileExtAct = ("." + QFileInfo(orc_RtfPath.ToQString()).suffix()).toStdString().c_str();
          if (c_FileExtAct.LowerCase() == ".rtf")
          {
             const QFileInfo c_Info(orc_RtfPath.c_str());
             if (C_OscUtils::h_CheckValidFileName(c_Info.completeBaseName().toStdString().c_str()))
             {
-               if ((QFileInfo(QString::fromStdString(*orc_RtfPath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_RtfPath.AsStdString())).isFile()) == true)
+               if (QFileInfo(orc_RtfPath.ToQString()).exists() && QFileInfo(orc_RtfPath.ToQString()).isFile())
                {
                   s32_Return = C_WARN;
                }
@@ -259,10 +259,10 @@ int32_t C_RtfExportWidget::GetCompanyLogoPath(C_SclString & orc_CompanyLogoPath)
             C_PuiUtil::h_GetAbsolutePathFromProject(orc_CompanyLogoPath.c_str()).toStdString().c_str();
 
          // check if file exists
-         if ((QFileInfo(QString::fromStdString(*orc_CompanyLogoPath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_CompanyLogoPath.AsStdString())).isFile()) == true)
+         if (QFileInfo(orc_CompanyLogoPath.ToQString()).exists() && QFileInfo(orc_CompanyLogoPath.ToQString()).isFile())
          {
             // check if file name is valid
-            const C_SclString c_FileExtAct = ("." + QFileInfo(QString::fromStdString(*orc_CompanyLogoPath.AsStdString())).suffix()).toStdString();
+            const C_SclString c_FileExtAct = ("." + QFileInfo(orc_CompanyLogoPath.ToQString()).suffix()).toStdString().c_str();
             if ((c_FileExtAct.LowerCase() == ".jpg") || (c_FileExtAct.LowerCase() == ".png"))
             {
                s32_Return = C_NO_ERR;
@@ -364,7 +364,7 @@ int32_t C_RtfExportWidget::ExportToRtf(const C_SclString & orc_RtfPath, const C_
    osc_write_log_info("RTF File Export", "Look for DocuCreator at path \"" + c_SclStringDocuCreatorPath + "\".");
 
    // check for path of external 'DocuCreator' tool
-   if ((QFileInfo(QString::fromStdString(*c_SclStringDocuCreatorPath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_SclStringDocuCreatorPath.AsStdString())).isFile()) == false)
+   if (QFileInfo(c_SclStringDocuCreatorPath.ToQString()).exists() == false || QFileInfo(c_SclStringDocuCreatorPath.ToQString()).isFile() == false)
    {
       this->mc_Error = "Can't find external tool 'DocuCreator' for RTF File Export at path \"" +
                        c_SclStringDocuCreatorPath + "\".";
@@ -679,9 +679,9 @@ void C_RtfExportWidget::m_RtfPathClicked(void)
    const C_SclString c_Tmp =
       C_PuiUtil::h_GetAbsolutePathFromProject(this->mpc_Ui->pc_EditRtfPath->GetPath()).toStdString().c_str();
 
-   if (QFileInfo(QString::fromStdString(*(QFileInfo(QString::fromStdString(*c_Tmp.AsStdString(.AsStdString())).absolutePath() + "/").toStdString())).isDir()) == true)
+   if (QFileInfo(QFileInfo(c_Tmp.ToQString()).absolutePath()).isDir() == true)
    {
-      c_Folder = (QFileInfo(QString::fromStdString(*c_Tmp.AsStdString())).absolutePath() + "/").toStdString().c_str();
+      c_Folder = QFileInfo(c_Tmp.ToQString()).absolutePath() + "/";
    }
    else
    {
@@ -714,9 +714,9 @@ void C_RtfExportWidget::m_LogoPathClicked(void) const
    const C_SclString c_Tmp =
       C_PuiUtil::h_GetAbsolutePathFromProject(this->mpc_Ui->pc_EditLogoPath->GetPath()).toStdString().c_str();
 
-   if (QFileInfo(QString::fromStdString(*(QFileInfo(QString::fromStdString(*c_Tmp.AsStdString(.AsStdString())).absolutePath() + "/").toStdString())).isDir()) == true)
+   if (QFileInfo(QFileInfo(c_Tmp.ToQString()).absolutePath()).isDir() == true)
    {
-      c_Folder = (QFileInfo(QString::fromStdString(*c_Tmp.AsStdString())).absolutePath() + "/").toStdString().c_str();
+      c_Folder = QFileInfo(c_Tmp.ToQString()).absolutePath() + "/";
    }
    else
    {

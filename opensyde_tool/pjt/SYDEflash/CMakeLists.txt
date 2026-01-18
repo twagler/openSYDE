@@ -130,7 +130,7 @@ set(OPENSYDE_SOURCES
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget/C_CamOgeWiSettingSubSection.cpp
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget/C_CamOgeWiSettingsBase.cpp
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget/C_CamOgeWiSpinBoxGroupTable.cpp
-   ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings/C_CamMosDllWidget.cpp
+
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings/C_CamMosSectionPopup.cpp
    ${PROJECT_ROOT}/src/can_monitor/util/C_CamUtiGeneric.cpp
    ${PROJECT_ROOT}/src/help_engine/C_HeHandler.cpp
@@ -298,7 +298,7 @@ set(OPENSYDE_HEADERS
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget/C_CamOgeWiSettingSubSection.hpp
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget/C_CamOgeWiSettingsBase.hpp
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget/C_CamOgeWiSpinBoxGroupTable.hpp
-   ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings/C_CamMosDllWidget.hpp
+
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings/C_CamMosSectionPopup.hpp
    ${PROJECT_ROOT}/src/can_monitor/util/C_CamUtiGeneric.hpp
    ${PROJECT_ROOT}/src/constants.hpp
@@ -445,7 +445,7 @@ set(OPENSYDE_HEADERS
 set(OPENSYDE_FORMS
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget/C_CamOgeWiSectionHeader.ui
    ${PROJECT_ROOT}/src/can_monitor/can_monitor_gui_elements/widget/C_CamOgeWiSettingSubSection.ui
-   ${PROJECT_ROOT}/src/can_monitor/can_monitor_settings/C_CamMosDllWidget.ui
+
    ${PROJECT_ROOT}/src/navigable_gui/C_NagAboutDialog.ui
    ${PROJECT_ROOT}/src/navigable_gui/C_NagToolTip.ui
    ${PROJECT_ROOT}/src/opensyde_gui_elements/C_OgePopUpDialog.ui

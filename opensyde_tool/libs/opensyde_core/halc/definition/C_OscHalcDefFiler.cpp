@@ -60,7 +60,7 @@ int32_t C_OscHalcDefFiler::h_LoadFile(C_OscHalcDefBase & orc_IoData, const C_Scl
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       C_OscXmlParserLog c_XmlParser;
       s32_Retval = c_XmlParser.LoadFromFile(orc_Path);
@@ -77,7 +77,7 @@ int32_t C_OscHalcDefFiler::h_LoadFile(C_OscHalcDefBase & orc_IoData, const C_Scl
             //Save file to string
             C_OscUtils::h_FileToString(orc_Path, orc_IoData.c_FileString);
             //Remember name
-            orc_IoData.c_OriginalFileName = QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).fileName().toStdString();
+            orc_IoData.c_OriginalFileName = C_SclString::FromQString(QFileInfo(orc_Path.ToQString()).fileName());
             //Trigger postprocessing before finish
             orc_IoData.HandleFileLoadPostProcessing();
          }

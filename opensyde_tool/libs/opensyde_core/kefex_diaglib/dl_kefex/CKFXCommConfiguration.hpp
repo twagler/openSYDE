@@ -4,7 +4,7 @@
 
 #include "stwtypes.hpp"
 #include <QList>
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 #include "C_SclString.hpp"
 #include "DiagLib_config.hpp"
 
@@ -53,8 +53,8 @@ public:
    int32_t SetParameterValue(const stw::scl::C_SclString & orc_ParameterName, const int64_t os64_Value);
    void SetAllDefaults(void);
 
-   int32_t LoadConfigFromINI(stw::scl::C_SclIniFile & orc_File, const stw::scl::C_SclString & orc_Section);
-   int32_t SaveConfigToINI(stw::scl::C_SclIniFile & orc_File, const stw::scl::C_SclString & orc_Section) const;
+   int32_t LoadConfigFromINI(QSettings & orc_File, const stw::scl::C_SclString & orc_Section);
+   int32_t SaveConfigToINI(QSettings & orc_File, const stw::scl::C_SclString & orc_Section) const;
 };
 
 //---------------------------------------------------------------------------

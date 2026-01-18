@@ -73,7 +73,7 @@ int32_t C_OscSystemDefinitionFilerV2::h_LoadSystemDefinitionFile(C_OscSystemDefi
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_PathSystemDefinition.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PathSystemDefinition.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_PathSystemDefinition.ToQString()).exists() && QFileInfo(orc_PathSystemDefinition.ToQString()).isFile())
    {
       C_OscXmlParser c_XmlParser;
       s32_Retval = c_XmlParser.LoadFromFile(orc_PathSystemDefinition);
@@ -118,7 +118,7 @@ int32_t C_OscSystemDefinitionFilerV2::h_SaveSystemDefinitionFile(const C_OscSyst
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       //erase it:
       int x_Return; //lint !e970 !e8080  //using type to match library interface

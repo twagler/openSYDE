@@ -224,8 +224,8 @@ int32_t C_OscDeviceDefinitionFilerV1::h_Load(C_OscDeviceDefinition & orc_DeviceD
       }
       //expand the potentially relative image path to an absolute path
       // we will need it later to open the image in the UI
-      const QString c_BasePath = QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).absolutePath() + "/";
-      orc_DeviceDefinition.c_ImagePath = QDir(c_BasePath).absoluteFilePath(QString::fromStdString(*orc_DeviceDefinition.c_ImagePath.AsStdString())).toStdString();
+      const QString c_BasePath = QFileInfo(orc_Path.ToQString()).absolutePath() + "/";
+      orc_DeviceDefinition.c_ImagePath = C_SclString::FromQString(QDir(c_BasePath).absoluteFilePath(orc_DeviceDefinition.c_ImagePath.ToQString()));
       // also store file path
       // it is needed for creating service update package (see #24474)
       orc_DeviceDefinition.c_FilePath = orc_Path;

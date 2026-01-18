@@ -27,7 +27,6 @@
 #include "C_OscDeviceDefinition.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
 #include "C_OscSuSequences.hpp"
-#include "C_SclIniFile.hpp"
 #include "C_OscSuSequences.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OscZipFile.hpp"
@@ -315,7 +314,7 @@ int32_t C_OscSupServiceUpdatePackageBase::mh_AddFileToDigest(const C_SclString &
    const uint32_t u32_SECTION_SIZE = 256;
 
    std::ifstream c_InputFileStream;
-   const uint32_t u32_InputFileSize = static_cast<uint32_t>(static_cast<int32_t>(QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).size()));
+   const uint32_t u32_InputFileSize = static_cast<uint32_t>(QFileInfo(orc_FilePath.ToQString()).size());
 
    c_InputFileStream.open(orc_FilePath.c_str(), std::ifstream::binary);
 

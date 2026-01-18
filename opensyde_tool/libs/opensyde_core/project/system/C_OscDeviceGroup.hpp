@@ -13,8 +13,8 @@
 
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 
-#include "C_OscDeviceDefinition.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
+   #include "C_OscDeviceDefinition.hpp"
 
 /* -- Namespace ----------------------------------------------------------------------------------------------------- */
 namespace stw
@@ -35,7 +35,7 @@ public:
                                                uint32_t & oru32_SubDeviceIndex) const;
    bool PreCheckDevice(const stw::scl::C_SclString & orc_DeviceName, const stw::scl::C_SclString & orc_DeviceNameAlias,
                        const stw::scl::C_SclString & orc_DevicePath) const;
-   int32_t LoadGroup(stw::scl::C_SclIniFile & orc_Ini, const stw::scl::C_SclString & orc_BasePath);
+   int32_t LoadGroup(QSettings & orc_Ini, const stw::scl::C_SclString & orc_BasePath);
 
    void SetGroupName(const stw::scl::C_SclString & orc_GroupName);
    stw::scl::C_SclString GetGroupName(void) const;

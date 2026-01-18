@@ -119,7 +119,7 @@ int32_t C_OscSecurityPemBase::LoadFromFile(const std::string & orc_FileName, std
 
    this->Clear();
 
-   if ((QFileInfo(QString::fromStdString(*orc_FileName.c_str(.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FileName.c_str(.AsStdString())).isFile())))
+   if (QFileInfo(QString::fromStdString(orc_FileName)).exists() && QFileInfo(QString::fromStdString(orc_FileName)).isFile())
    {
       stw::scl::C_SclString c_FileContent;
       C_OscUtils::h_FileToString(orc_FileName.c_str(), c_FileContent);

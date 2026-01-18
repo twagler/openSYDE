@@ -16,7 +16,8 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "C_OscDeviceManager.hpp"
-#include "C_SclIniFile.hpp"
+#include "C_OscDeviceManager.hpp"
+#include <QSettings>
 
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
@@ -100,14 +101,15 @@ int32_t C_OscDeviceManager::AddDevice(const stw::scl::C_SclString & orc_DeviceDe
    C_OscDeviceDefinition c_DeviceDefinition;
 
    // Ini with toolbox structure definition
-   C_SclIniFile c_Ini(orc_IniFile);
+   QString c_IniPath = orc_IniFile.ToQString();
+   QSettings c_Ini(c_IniPath, QSettings::IniFormat);
 
-   if ((QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).isFile()) == false)
+   if ((QFileInfo(c_IniPath).exists() && QFileInfo(c_IniPath).isFile()) == false)
    {
-      c_Ini.WriteInteger("DeviceTypes", "NumTypes", 1);
-      c_Ini.WriteString("DeviceTypes", "TypeName1", orc_DeviceGroup);
-      c_Ini.WriteInteger(orc_DeviceGroup, "DeviceCount", 0);
-      c_Ini.UpdateFile();
+      c_Ini.setValue("DeviceTypes/NumTypes", 1);
+      c_Ini.setValue("DeviceTypes/TypeName1", orc_DeviceGroup.ToQString());
+      c_Ini.setValue(orc_DeviceGroup.ToQString() + "/DeviceCount", 0);
+      c_Ini.sync();
    }
 
    // Load device definition for name checking
@@ -137,14 +139,15 @@ int32_t C_OscDeviceManager::AddDevice(const stw::scl::C_SclString & orc_DeviceDe
       bool q_NewGroupNecessary = true;
 
       // Check number of devices in group
-      const int32_t s32_NumDevices = c_Ini.ReadInteger(orc_DeviceGroup, "DeviceCount", 0);
+      QString c_GroupSection = orc_DeviceGroup.ToQString();
+      const int32_t s32_NumDevices = c_Ini.value(c_GroupSection + "/DeviceCount", 0).toInt();
 
       // Write device count in the list in order
-      c_Ini.WriteInteger(orc_DeviceGroup, "DeviceCount", s32_NumDevices + 1);
+      c_Ini.setValue(c_GroupSection + "/DeviceCount", s32_NumDevices + 1);
 
       // Write device in the list in order
-      c_Ini.WriteString(orc_DeviceGroup, "Device" + C_SclString::IntToStr(s32_NumDevices + 1),
-                        orc_DeviceDefinitionFile);
+      c_Ini.setValue(c_GroupSection + "/Device" + QString::number(s32_NumDevices + 1),
+                        orc_DeviceDefinitionFile.ToQString());
 
       for (uint32_t u32_DeviceGroupCounter = 0U; u32_DeviceGroupCounter < this->mc_DeviceGroups.size();
            ++u32_DeviceGroupCounter)
@@ -152,7 +155,7 @@ int32_t C_OscDeviceManager::AddDevice(const stw::scl::C_SclString & orc_DeviceDe
          if (this->mc_DeviceGroups[u32_DeviceGroupCounter].GetGroupName() == orc_DeviceGroup)
          {
             s32_Return =
-               this->mc_DeviceGroups[u32_DeviceGroupCounter].LoadGroup(c_Ini, (QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).absolutePath() + "/").toStdString());
+               this->mc_DeviceGroups[u32_DeviceGroupCounter].LoadGroup(c_Ini, C_SclString::FromQString(QFileInfo(orc_IniFile.ToQString()).absolutePath() + "/"));
             q_NewGroupNecessary = false;
             break;
          }
@@ -162,8 +165,8 @@ int32_t C_OscDeviceManager::AddDevice(const stw::scl::C_SclString & orc_DeviceDe
       {
          // Set group name
          C_OscDeviceGroup c_Group;
-         c_Group.SetGroupName(c_Ini.ReadString("DeviceTypes", "TypeName1", "").c_str());
-         s32_Return = c_Group.LoadGroup(c_Ini, (QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).absolutePath() + "/").toStdString());
+         c_Group.SetGroupName(c_Ini.value("DeviceTypes/TypeName1", "").toString().toStdString());
+         s32_Return = c_Group.LoadGroup(c_Ini, C_SclString::FromQString(QFileInfo(orc_IniFile.ToQString()).absolutePath() + "/"));
          this->mc_DeviceGroups.push_back(c_Group);
       }
    }
@@ -209,9 +212,10 @@ int32_t C_OscDeviceManager::ChangeDevices(std::vector<C_OscDeviceDefinition> & o
    }
 
    // Ini with toolbox structure definition
-   C_SclIniFile c_Ini(orc_IniFile);
+   QString c_IniPath = orc_IniFile.ToQString();
+   QSettings c_Ini(c_IniPath, QSettings::IniFormat);
 
-   if ((QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).isFile()) == false)
+   if ((QFileInfo(c_IniPath).exists() && QFileInfo(c_IniPath).isFile()) == false)
    {
       osc_write_log_error("Delete device definitions", "File \"" + orc_IniFile + "\" does not exist.");
       s32_Return = C_RD_WR;
@@ -220,27 +224,28 @@ int32_t C_OscDeviceManager::ChangeDevices(std::vector<C_OscDeviceDefinition> & o
    if (s32_Return == C_NO_ERR)
    {
       // Check number of devices in group bevor deleting a device
-      const int32_t s32_NumDevicesBeforeChanges = c_Ini.ReadInteger(orc_DeviceGroup, "DeviceCount", 0);
+      QString c_GroupSection = orc_DeviceGroup.ToQString();
+      const int32_t s32_NumDevicesBeforeChanges = c_Ini.value(c_GroupSection + "/DeviceCount", 0).toInt();
 
       if (s32_NumDevicesBeforeChanges > 0)
       {
-         c_Ini.EraseSection(orc_DeviceGroup);
+         c_Ini.remove(c_GroupSection);
 
          // Write device count in the list in order
-         c_Ini.WriteInteger(orc_DeviceGroup, "DeviceCount", static_cast<int32_t>(orc_Devices.size()));
+         c_Ini.setValue(c_GroupSection + "/DeviceCount", static_cast<int32_t>(orc_Devices.size()));
 
          for (uint32_t u32_ItDevice = 0; u32_ItDevice < orc_Devices.size(); ++u32_ItDevice)
          {
             // Write device in the list in order
-            c_Ini.WriteString(orc_DeviceGroup, "Device" + C_SclString::IntToStr(u32_ItDevice + 1),
-                              orc_Devices[u32_ItDevice].c_FilePath.c_str());
+            c_Ini.setValue(c_GroupSection + "/Device" + QString::number(u32_ItDevice + 1),
+                              orc_Devices[u32_ItDevice].c_FilePath.ToQString());
          }
 
          s32_Return =
-            this->mc_DeviceGroups[u32_DeviceGroupCounter].LoadGroup(c_Ini, (QFileInfo(QString::fromStdString(*orc_IniFile.AsStdString())).absolutePath() + "/").toStdString());
+            this->mc_DeviceGroups[u32_DeviceGroupCounter].LoadGroup(c_Ini, (QFileInfo(c_IniPath).absolutePath() + "/").toStdString());
 
          // Check number of devices in group after deleting a device
-         if (c_Ini.ReadInteger(orc_DeviceGroup, "DeviceCount", 0) == 0)
+         if (C_SclString::FromQString(c_Ini.value(c_GroupSection + "/DeviceCount").toString()) != "")
          {
             s32_Return = C_WARN;
          }
@@ -301,7 +306,7 @@ int32_t C_OscDeviceManager::LoadFromFile(const C_SclString & orc_File, const boo
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_File.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_File.AsStdString())).isFile()) == false)
+   if (!(QFileInfo(orc_File.ToQString()).exists() && QFileInfo(orc_File.ToQString()).isFile()))
    {
       if (oq_Optional == true)
       {
@@ -316,16 +321,16 @@ int32_t C_OscDeviceManager::LoadFromFile(const C_SclString & orc_File, const boo
    }
 
    //Ini with toolbox structure definition
-   C_SclIniFile c_Ini(orc_File);
-   const int32_t s32_NumTypes = c_Ini.ReadInteger("DeviceTypes", "NumTypes", 0);
+   QString c_IniPath = orc_File.ToQString();
+   QSettings c_Ini(c_IniPath, QSettings::IniFormat);
+   const int32_t s32_NumTypes = c_Ini.value("DeviceTypes/NumTypes", 0).toInt();
 
    //Parse groups
    for (int32_t s32_ItType = 0; s32_ItType < s32_NumTypes; ++s32_ItType)
    {
       //Get group name
       C_OscDeviceGroup c_Group;
-      const C_SclString c_GroupName = c_Ini.ReadString("DeviceTypes", "TypeName" + C_SclString::IntToStr(
-                                                          s32_ItType + 1), "");
+      const C_SclString c_GroupName = c_Ini.value("DeviceTypes/TypeName" + QString::number(s32_ItType + 1), "").toString().toStdString();
 
       // special case user_devices.ini. We accept only one format. If an ini-file contains [User Nodes], the
       // number of types [NumTypes] has to be 1
@@ -339,12 +344,12 @@ int32_t C_OscDeviceManager::LoadFromFile(const C_SclString & orc_File, const boo
          // optional parameter (see above): sends number of files listed in ini to GUI layer for user feedback.
          if (ops32_DeviceCount != NULL)
          {
-            *ops32_DeviceCount += c_Ini.ReadInteger("User Nodes", "DeviceCount", 0);
+            *ops32_DeviceCount += c_Ini.value("User Nodes/DeviceCount", 0).toInt();
          }
       }
 
       c_Group.SetGroupName(c_GroupName.c_str());
-      s32_Return = c_Group.LoadGroup(c_Ini, (QFileInfo(QString::fromStdString(*orc_File.AsStdString())).absolutePath() + "/").toStdString());
+      s32_Return = c_Group.LoadGroup(c_Ini, (QFileInfo(c_IniPath).absolutePath() + "/").toStdString());
       this->mc_DeviceGroups.push_back(c_Group);
 
       if (s32_Return != C_NO_ERR)

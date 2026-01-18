@@ -62,18 +62,18 @@ C_SclString C_OscExportParamSet::h_GetFileName(const C_OscNodeApplication & orc_
    if (oq_IsSafe == true)
    {
       // first result path is always safe file
-      c_Retval = QFileInfo(QString::fromStdString(*orc_DataBlock.c_ResultPaths[0].AsStdString())).fileName().toStdString();
+      c_Retval = C_SclString::FromQString(QFileInfo(orc_DataBlock.c_ResultPaths[0].ToQString()).fileName());
    }
    else
    {
       // if there are two Data Blocks, the first result path is the safe file and the second is the non-safe file
       if (orc_DataBlock.c_ResultPaths.size() > 1)
       {
-         c_Retval = QFileInfo(QString::fromStdString(*orc_DataBlock.c_ResultPaths[1].AsStdString())).fileName().toStdString();
+         c_Retval = C_SclString::FromQString(QFileInfo(orc_DataBlock.c_ResultPaths[1].ToQString()).fileName());
       }
       else
       {
-         c_Retval = QFileInfo(QString::fromStdString(*orc_DataBlock.c_ResultPaths[0].AsStdString())).fileName().toStdString();
+         c_Retval = C_SclString::FromQString(QFileInfo(orc_DataBlock.c_ResultPaths[0].ToQString()).fileName());
       }
    }
 
@@ -439,7 +439,7 @@ int32_t C_OscExportParamSet::mh_WriteParameterSetImage(const C_OscParamSetRawNod
    else
    {
       // Remove pre-existing files because PSI writing will else result in an error
-      if ((QFileInfo(QString::fromStdString(*c_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_Path.AsStdString())).isFile()) == true)
+      if (QFileInfo(c_Path.ToQString()).exists() && QFileInfo(c_Path.ToQString()).isFile())
       {
          int x_Return; //lint !e970 !e8080  //using type to match library interface
          x_Return = std::remove(c_Path.c_str());

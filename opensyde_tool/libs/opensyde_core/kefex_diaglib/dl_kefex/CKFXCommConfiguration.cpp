@@ -17,6 +17,7 @@
 #include "stwtypes.hpp"
 #include "stwerrors.hpp"
 #include "CKFXCommConfiguration.hpp"
+#include <QSettings>
 
 //---------------------------------------------------------------------------
 
@@ -381,9 +382,10 @@ void C_KFXCommConfigurationBase::SetAllDefaults(void)
 
 //---------------------------------------------------------------------------
 
-int32_t C_KFXCommConfigurationBase::LoadConfigFromINI(C_SclIniFile & orc_File, const C_SclString & orc_Section)
+int32_t C_KFXCommConfigurationBase::LoadConfigFromINI(QSettings & orc_File, const C_SclString & orc_Section)
 {
    int32_t s32_Index;
+   QString c_Section = orc_Section.ToQString();
 
    //Protocol Name will be set from the outside
    //Procedure:
@@ -393,25 +395,26 @@ int32_t C_KFXCommConfigurationBase::LoadConfigFromINI(C_SclIniFile & orc_File, c
    for (s32_Index = 0; s32_Index < mc_Parameters.size(); s32_Index++)
    {
       mc_Values[s32_Index] =
-         static_cast<int64_t>(orc_File.ReadInteger(orc_Section, mc_Parameters[s32_Index].c_INIDirective,
+         static_cast<int64_t>(orc_File.value(c_Section + "/" + mc_Parameters[s32_Index].c_INIDirective.ToQString(),
                                                    static_cast<int32_t>(mc_Parameters[s32_Index].
-                                                                        s64_DefaultValue)));
+                                                                        s64_DefaultValue)).toInt());
    }
    return C_NO_ERR;
 }
 
 //---------------------------------------------------------------------------
 
-int32_t C_KFXCommConfigurationBase::SaveConfigToINI(C_SclIniFile & orc_File, const C_SclString & orc_Section) const
+int32_t C_KFXCommConfigurationBase::SaveConfigToINI(QSettings & orc_File, const C_SclString & orc_Section) const
 {
    int32_t s32_Index;
+   QString c_Section = orc_Section.ToQString();
 
    try
    {
-      orc_File.WriteString(orc_Section, "COMM_PROTOCOL_TYPE", mc_ProtocolName);
+      orc_File.setValue(c_Section + "/COMM_PROTOCOL_TYPE", mc_ProtocolName.ToQString());
       for (s32_Index = 0; s32_Index < mc_Parameters.size(); s32_Index++)
       {
-         orc_File.WriteInteger(orc_Section, mc_Parameters[s32_Index].c_INIDirective,
+         orc_File.setValue(c_Section + "/" + mc_Parameters[s32_Index].c_INIDirective.ToQString(),
                                static_cast<int32_t>(mc_Values[s32_Index]));
       }
    }

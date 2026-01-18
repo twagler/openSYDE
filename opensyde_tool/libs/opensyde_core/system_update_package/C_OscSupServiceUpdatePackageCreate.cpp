@@ -27,7 +27,6 @@
 #include "C_OscDeviceDefinition.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
 #include "C_OscSuSequences.hpp"
-#include "C_SclIniFile.hpp"
 #include "C_OscSuSequences.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OscZipFile.hpp"
@@ -660,7 +659,7 @@ int32_t C_OscSupServiceUpdatePackageCreate::mh_SupDefParamAdapter(const uint32_t
            ++c_IterAppl)
       {
          // store application file names with relative path
-         const C_SclString c_Tmp = QFileInfo(QString::fromStdString(**c_IterAppl.AsStdString())).fileName().toStdString();
+         const C_SclString c_Tmp = C_SclString::FromQString(QFileInfo(c_IterAppl->ToQString()).fileName());
          c_SupDefNodeContent.c_ApplicationFileNames.push_back(c_Tmp);
       }
       // get parameter sets of node
@@ -670,14 +669,14 @@ int32_t C_OscSupServiceUpdatePackageCreate::mh_SupDefParamAdapter(const uint32_t
            ++c_IterParam)
       {
          // store application file names with relative path
-         const C_SclString c_Tmp = QFileInfo(QString::fromStdString(**c_IterParam.AsStdString())).fileName().toStdString();
+         const C_SclString c_Tmp = C_SclString::FromQString(QFileInfo(c_IterParam->ToQString()).fileName());
          c_SupDefNodeContent.c_NvmFileNames.push_back(c_Tmp);
       }
 
       // get PEM file and its settings of node
       if (orc_ApplicationsToWrite[u32_Pos].c_PemFile != "")
       {
-         const C_SclString c_Tmp = QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u32_Pos].c_PemFile.AsStdString())).fileName().toStdString();
+         const C_SclString c_Tmp = C_SclString::FromQString(QFileInfo(orc_ApplicationsToWrite[u32_Pos].c_PemFile.ToQString()).fileName());
          c_SupDefNodeContent.c_PemFile = c_Tmp;
 
          c_SupDefNodeContent.q_SendSecurityEnabledState = orc_ApplicationsToWrite[u32_Pos].q_SendSecurityEnabledState;

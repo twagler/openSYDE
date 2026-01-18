@@ -4,7 +4,7 @@
 #include "stwtypes.hpp"
 #include "CKFXComm.hpp"
 #include "CKFXProtocol.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 #include "DiagLib_config.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ public:
 
    virtual void Cycle(void);
 
-   virtual int32_t LoadConfigFromINI(stw::scl::C_SclIniFile * const opc_File,
+   virtual int32_t LoadConfigFromINI(QSettings * const opc_File,
                                      const stw::scl::C_SclString & orc_Section);
    virtual int32_t SetConfig(const C_KFXCommConfiguration * const opt_Config);
 

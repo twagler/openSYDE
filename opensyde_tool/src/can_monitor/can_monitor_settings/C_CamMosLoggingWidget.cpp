@@ -438,17 +438,19 @@ void C_CamMosLoggingWidget::m_CheckAndStartLogging()
 {
    const C_CamProLoggingData & rc_LoggingData = C_CamProHandler::h_GetInstance()->GetLoggingData();
    const QString c_ResolvedPath =
-      C_CamUti::h_ResolvePlaceholderVariables(rc_LoggingData.c_Directory.toStdString().c_str());
+      C_CamUti::h_ResolvePlaceholderVariables(rc_LoggingData.c_Directory);
    QFileInfo c_FileInfo;
    bool q_ValidDir;
    bool q_ValidName;
    bool q_Continue = true;
 
    // check directory
-   q_ValidDir = stw::opensyde_core::C_OscUtils::h_CheckValidFilePath(c_ResolvedPath.toStdString().c_str());
+   q_ValidDir = stw::opensyde_core::C_OscUtils::h_CheckValidFilePath(
+      stw::scl::C_SclString::FromQString(c_ResolvedPath));
 
    // check file name
-   q_ValidName = stw::opensyde_core::C_OscUtils::h_CheckValidFileName(rc_LoggingData.c_FileName.toStdString().c_str());
+   q_ValidName = stw::opensyde_core::C_OscUtils::h_CheckValidFileName(
+      stw::scl::C_SclString::FromQString(rc_LoggingData.c_FileName));
 
    if ((q_ValidDir == false) || (q_ValidName == false))
    {

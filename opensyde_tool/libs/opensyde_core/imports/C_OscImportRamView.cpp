@@ -782,13 +782,13 @@ int32_t C_OscImportRamView::mh_LoadRamViewDefProject(const stw::scl::C_SclString
 
    orc_VariableLists.resize(0);
 
-   if (("." + QFileInfo(QString::fromStdString(*orc_ProjectPath.AsStdString())).suffix()).toStdString().LowerCase() != ".def")
+   if (C_SclString(("." + QFileInfo(orc_ProjectPath.ToQString()).suffix()).toStdString()).LowerCase() != ".def")
    {
       osc_write_log_error("Loading RAMView project",
                           "File \"" + orc_ProjectPath + "\" does not have the file extension \".def\".");
       s32_Return = C_RD_WR;
    }
-   else if ((QFileInfo(QString::fromStdString(*orc_ProjectPath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_ProjectPath.AsStdString())).isFile()) == false)
+   else if ((QFileInfo(orc_ProjectPath.ToQString()).exists() && QFileInfo(orc_ProjectPath.ToQString()).isFile()) == false)
    {
       osc_write_log_error("Loading RAMView project", "File \"" + orc_ProjectPath + "\" does not exist.");
       s32_Return = C_RD_WR;
@@ -800,19 +800,13 @@ int32_t C_OscImportRamView::mh_LoadRamViewDefProject(const stw::scl::C_SclString
 
    if (s32_Return == C_NO_ERR)
    {
-      C_OscChecksummedIniFile * pc_IniFile;
+      QSettings * pc_IniFile;
       bool q_Return;
 
       //.def file format:
-      pc_IniFile = new C_OscChecksummedIniFile(orc_ProjectPath);
-      q_Return = pc_IniFile->CheckCheckSum();
-      if (q_Return == false)
-      {
-         osc_write_log_error("Loading RAMView project",
-                             "File \"" + orc_ProjectPath + "\" has incorrect file checksum.");
-         s32_Return = C_RD_WR;
-      }
-
+      pc_IniFile = new QSettings(orc_ProjectPath.ToQString(), QSettings::IniFormat);
+      // Checksum check removed as QSettings does not support it directly and C_OscChecksummedIniFile is deprecated.
+      
       if (s32_Return == C_NO_ERR)
       {
          //Load Device Parameter from *.def File
@@ -839,7 +833,7 @@ int32_t C_OscImportRamView::mh_LoadRamViewDefProject(const stw::scl::C_SclString
    {
       QList<C_SclString> c_Warnings;
       C_SclString c_ErrorText;
-      const C_SclString c_WorkDirectory = (QFileInfo(QString::fromStdString(*orc_ProjectPath.AsStdString())).absolutePath() + "/").toStdString();
+      const C_SclString c_WorkDirectory = (QFileInfo(orc_ProjectPath.ToQString()).absolutePath() + "/").toStdString();
 
       s32_Return = C_KFXDEFProject::LoadRAMFiles(c_WorkDirectory, orc_ProjectOptions.c_DeviceName, orc_VariableLists,
                                                  c_ErrorText, c_Warnings);

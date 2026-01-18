@@ -15,7 +15,7 @@
 #include "stwerrors.hpp"
 #include "C_OscUtils.hpp"
 #include "C_SclChecksums.hpp"
-#include "C_SclIniFile.hpp"
+
 #include "C_SclStringList.hpp"
 #include "C_OscCanOpenEdsInfoBlock.hpp"
 
@@ -71,7 +71,7 @@ void C_OscCanOpenEdsInfoBlock::CalcHash(uint32_t & oru32_HashValue) const
    \retval   C_CONFIG   At least one value not found, for details see error message
 */
 //----------------------------------------------------------------------------------------------------------------------
-int32_t C_OscCanOpenEdsInfoBlock::LoadFromFile(C_SclIniFile & orc_File, C_SclString & orc_LastError)
+int32_t C_OscCanOpenEdsInfoBlock::LoadFromFile(QSettings & orc_File, C_SclString & orc_LastError)
 {
    int32_t s32_Retval = this->c_FileInfo.LoadFromIni(orc_File, orc_LastError);
 

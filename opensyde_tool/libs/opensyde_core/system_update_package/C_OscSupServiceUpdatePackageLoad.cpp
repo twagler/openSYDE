@@ -28,7 +28,6 @@
 #include "C_OscDeviceDefinition.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
 #include "C_OscSuSequences.hpp"
-#include "C_SclIniFile.hpp"
 #include "C_OscSuSequences.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OscZipFile.hpp"
@@ -390,7 +389,7 @@ int32_t C_OscSupServiceUpdatePackageLoad::mh_CheckParamsToProcessPackage(const C
    else
    {
       //no zip -> we have a plain directory. Does it even exist?
-      if (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isDir() == true)
+      if (QFileInfo(orc_PackagePath.ToQString()).isDir())
       {
          //We need the base path for handling relative paths of files to transfer:
          orc_TargetUnzipPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_PackagePath);
@@ -569,7 +568,7 @@ int32_t C_OscSupServiceUpdatePackageLoad::mh_UnpackNodes(const std::vector<uint8
       {
          const C_SclString c_FinalZipPath = orc_TargetUnzipPath + orc_PackageFiles[u32_ItPackage];
          const C_SclString c_TargetFolder = orc_NodeFoldersAbs[u32_ItPackage];
-         s32_Return = (QDir().mkpath(QString::fromStdString(*c_TargetFolder.AsStdString())) ? 0 : -1);
+         s32_Return = (QDir().mkpath(c_TargetFolder.ToQString()) ? 0 : -1);
          if (s32_Return == C_NO_ERR)
          {
             if (c_DecryptNodes[u32_ItPackage] == C_OscSupNodeDefinitionFiler::hu8_ACTIVE_NODE)

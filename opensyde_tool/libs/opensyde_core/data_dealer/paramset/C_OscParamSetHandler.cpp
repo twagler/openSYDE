@@ -65,7 +65,7 @@ int32_t C_OscParamSetHandler::CreateCleanFileWithoutCrc(const C_SclString & orc_
 {
    int32_t s32_Return = C_NO_ERR;
 
-   const QFileInfo c_FileInfo(QString::fromStdString(*orc_FilePath.AsStdString()));
+   const QFileInfo c_FileInfo(orc_FilePath.ToQString());
    if ((c_FileInfo.exists() && c_FileInfo.isFile()) == false)
    {
       if ((oq_InterpretedDataOnly == true) ||
@@ -133,7 +133,7 @@ int32_t C_OscParamSetHandler::ReadFile(const C_SclString & orc_FilePath, const b
    int32_t s32_Retval = C_NO_ERR;
 
    this->ClearContent();
-   if ((QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_FilePath.ToQString()).exists() && QFileInfo(orc_FilePath.ToQString()).isFile())
    {
       C_OscXmlParser * pc_Parser;
       if (oq_IgnoreCrc == true)

@@ -127,7 +127,7 @@ C_SyvDaChaPlotHandlerWidget::C_SyvDaChaPlotHandlerWidget(QWidget * const opc_Par
    mu32_MaximumDataElements(1U),
    mf64_MaxValue(5.0),
    mf64_MinValue(0.0),
-   mu32_TimeStampOfStart(0U),
+   ms64_TimeStampOfStart(0U),
    mq_IsConnected(false),
    mq_ManualOperationPossible(false),
    mq_PauseState(false),
@@ -1616,11 +1616,11 @@ void C_SyvDaChaPlotHandlerWidget::m_OnSplitterMoved(void)
 //----------------------------------------------------------------------------------------------------------------------
 void C_SyvDaChaPlotHandlerWidget::m_CyclicUpdateHorizontalAxis(void)
 {
-   const uint32_t u32_CurTime = QDateTime::currentMSecsSinceEpoch() - this->mu32_TimeStampOfStart;
+   const int64_t s64_CurTime = QDateTime::currentMSecsSinceEpoch() - this->ms64_TimeStampOfStart;
 
-   if (static_cast<float64_t>(u32_CurTime) > this->mpc_Ui->pc_Plot->xAxis->range().upper)
+   if (static_cast<float64_t>(s64_CurTime) > this->mpc_Ui->pc_Plot->xAxis->range().upper)
    {
-      this->mpc_Ui->pc_Plot->xAxis->setRange(static_cast<float64_t>(u32_CurTime),
+      this->mpc_Ui->pc_Plot->xAxis->setRange(static_cast<float64_t>(s64_CurTime),
                                              this->mpc_Ui->pc_Plot->xAxis->range().size(), Qt::AlignRight);
 
       m_RedrawGraph();

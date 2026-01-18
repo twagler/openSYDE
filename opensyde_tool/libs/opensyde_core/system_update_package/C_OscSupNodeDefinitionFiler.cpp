@@ -22,6 +22,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
 using namespace stw::errors;
+using namespace stw::scl;
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -411,7 +412,7 @@ int32_t C_OscSupNodeDefinitionFiler::mh_LoadSignatureFile(const stw::scl::C_SclS
    {
       const stw::scl::C_SclString c_XmlAttr = orc_XmlParser.GetAttributeString(mc_SIG_FILE_ATTR);
       const stw::scl::C_SclString c_PackagePathTmp = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_NodeFolderAbs) +
-                                                     QFileInfo(QString::fromStdString(*c_XmlAttr.AsStdString())).fileName().toStdString();
+                                                     C_SclString::FromQString(QFileInfo(c_XmlAttr.ToQString()).fileName());
       s32_Retval = C_OscSupSignatureFiler::h_LoadSignatureFile(c_PackagePathTmp, orc_Signature);
 
       Q_ASSERT(orc_XmlParser.SelectNodeParent() == mc_ROOT_NAME);

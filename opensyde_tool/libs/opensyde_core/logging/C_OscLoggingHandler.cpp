@@ -420,7 +420,7 @@ void C_OscLoggingHandler::mh_OpenFile(void)
    if (((C_OscLoggingHandler::mhc_FileName != "") && (C_OscLoggingHandler::mhq_WriteToFile == true)) &&
        (C_OscLoggingHandler::mhc_File.is_open() == false))
    {
-      const QString c_QFileName = QString::fromStdString(*C_OscLoggingHandler::mhc_FileName.AsStdString());
+      const QString c_QFileName = C_OscLoggingHandler::mhc_FileName.ToQString();
       const QFileInfo c_FileInfo(c_QFileName);
       const QString c_QFilePath = c_FileInfo.absolutePath() + "/";
       const C_SclString c_FilePath = c_QFilePath.toStdString();

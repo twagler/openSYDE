@@ -117,7 +117,7 @@ int32_t C_OscSystemFilerUtil::h_GetParserForExistingFile(C_OscXmlParser & orc_Fi
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()))
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       s32_Retval = orc_FileXmlParser.LoadFromFile(orc_Path);
       if (s32_Retval == C_NO_ERR)
@@ -160,7 +160,7 @@ int32_t C_OscSystemFilerUtil::h_GetParserForNewFile(C_OscXmlParser & orc_FileXml
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()))
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       if (std::remove(orc_Path.c_str()) == 0)
       {
@@ -192,13 +192,13 @@ int32_t C_OscSystemFilerUtil::h_CreateFolder(const C_SclString & orc_Path)
 {
    int32_t s32_Retval;
 
-   if (QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isDir())
+   if (QFileInfo(orc_Path.ToQString()).isDir())
    {
       s32_Retval = C_NO_ERR;
    }
    else
    {
-      if ((QDir().mkpath(QString::fromStdString(*orc_Path.AsStdString())) ? 0 : -1) == 0)
+      if (QDir().mkpath(orc_Path.ToQString()))
       {
          s32_Retval = C_NO_ERR;
       }
@@ -239,7 +239,7 @@ C_SclString C_OscSystemFilerUtil::h_PrepareItemNameForFileName(const C_SclString
 C_SclString C_OscSystemFilerUtil::h_CombinePaths(const C_SclString & orc_BasePathName,
                                                  const C_SclString & orc_SubFolderFileName)
 {
-   const C_SclString c_BasePath = (QFileInfo(QString::fromStdString(*orc_BasePathName.AsStdString())).absolutePath() + "/").toStdString();
+   const C_SclString c_BasePath = C_SclString::FromQString(QFileInfo(orc_BasePathName.ToQString()).absolutePath() + "/");
 
    return c_BasePath + orc_SubFolderFileName;
 }
@@ -267,11 +267,11 @@ int32_t C_OscSystemFilerUtil::h_SaveStringToFile(const C_SclString & orc_Complet
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   const C_SclString c_Folder = (QFileInfo(QString::fromStdString(*orc_CompleteFilePath.AsStdString())).absolutePath() + "/").toStdString();
+   const C_SclString c_Folder = C_SclString::FromQString(QFileInfo(orc_CompleteFilePath.ToQString()).absolutePath() + "/");
 
-   if (QFileInfo(QString::fromStdString(*c_Folder.AsStdString())).isDir() == false)
+   if (!QFileInfo(c_Folder.ToQString()).isDir())
    {
-      if ((QDir().mkpath(QString::fromStdString(*c_Folder.AsStdString())) ? 0 : -1) != 0)
+      if (!QDir().mkpath(c_Folder.ToQString()))
       {
          osc_write_log_error(orc_LogHeading, "Could not create folder \"" + c_Folder + "\".");
          s32_Retval = C_RD_WR;
@@ -317,7 +317,7 @@ int32_t C_OscSystemFilerUtil::h_SaveStringToFile(const C_SclString & orc_Complet
 void C_OscSystemFilerUtil::h_AdaptProjectPathToSystemDefinition(const C_SclString & orc_ProjectPath,
                                                                 C_SclString & orc_SystemDefintionPath)
 {
-   const QString c_QFilePath = QString::fromStdString(*orc_ProjectPath.AsStdString());
+   const QString c_QFilePath = orc_ProjectPath.ToQString();
    const QFileInfo c_FileInfo(c_QFilePath);
    const QString c_BaseName = c_FileInfo.completeBaseName();
    orc_SystemDefintionPath = (c_FileInfo.absolutePath() + "/").toStdString() + "system_definition/" +
@@ -334,7 +334,7 @@ void C_OscSystemFilerUtil::h_AdaptProjectPathToSystemDefinition(const C_SclStrin
 void C_OscSystemFilerUtil::h_AdaptProjectPathToSystemViews(const C_SclString & orc_ProjectPath,
                                                            C_SclString & orc_SystemViewsPath)
 {
-   const QString c_QFilePath = QString::fromStdString(*orc_ProjectPath.AsStdString());
+   const QString c_QFilePath = orc_ProjectPath.ToQString();
    const QFileInfo c_FileInfo(c_QFilePath);
    const QString c_BaseName = c_FileInfo.completeBaseName();
    orc_SystemViewsPath = (c_FileInfo.absolutePath() + "/").toStdString() + "system_views/" +

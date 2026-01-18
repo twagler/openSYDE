@@ -119,7 +119,7 @@ int32_t C_OscComMessageLoggerFileAsc::OpenFile(void)
       this->m_WriteHeader();
 
       // Check if the file was really created
-      if ((QFileInfo(QString::fromStdString(*this->mc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*this->mc_FilePath.AsStdString())).isFile()) == false)
+      if (!QFileInfo(this->mc_FilePath.ToQString()).exists() || !QFileInfo(this->mc_FilePath.ToQString()).isFile())
       {
          // File was not created
          s32_Return = C_RD_WR;

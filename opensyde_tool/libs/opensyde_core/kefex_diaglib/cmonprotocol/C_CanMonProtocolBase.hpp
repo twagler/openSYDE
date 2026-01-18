@@ -12,7 +12,7 @@
 #include "stwtypes.hpp"
 #include "C_CanMonProtocolTarget.hpp"
 #include "C_SclString.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -73,8 +73,8 @@ public:
    virtual void SetDecimal(const bool oq_Decimal);
 
    //overload if we have something to save (use protocol abbreviation as prefix for directives !)
-   virtual int32_t SaveParamsToIni(stw::scl::C_SclIniFile & orc_IniFile, const stw::scl::C_SclString & orc_Section);
-   virtual int32_t LoadParamsFromIni(stw::scl::C_SclIniFile & orc_IniFile, const stw::scl::C_SclString & orc_Section);
+   virtual int32_t SaveParamsToIni(QSettings & orc_IniFile, const stw::scl::C_SclString & orc_Section);
+   virtual int32_t LoadParamsFromIni(QSettings & orc_IniFile, const stw::scl::C_SclString & orc_Section);
 };
 
 //----------------------------------------------------------------------------------------------------------------------

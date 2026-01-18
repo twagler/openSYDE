@@ -23,6 +23,7 @@
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 
 using namespace stw::errors;
+using namespace stw::scl;
 using namespace stw::opensyde_core;
 
 /* -- Module Global Constants --------------------------------------------------------------------------------------- */
@@ -226,7 +227,7 @@ int32_t C_OscXceCreate::mh_CheckFileExists(const stw::scl::C_SclString & orc_Pat
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == false)
+   if (!(QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile()))
    {
       mhc_ErrorMessage = "File \"" + orc_Path + "\" not found.";
       osc_write_log_error(mhc_USE_CASE, mhc_ErrorMessage);
@@ -323,7 +324,7 @@ int32_t C_OscXceCreate::mh_PrepareCertFiles(const stw::scl::C_SclString & orc_Tm
 stw::scl::C_SclString C_OscXceCreate::mh_GenOutFilePathPart(const stw::scl::C_SclString & orc_InPath,
                                                             const stw::scl::C_SclString & orc_TargetFolder)
 {
-   const stw::scl::C_SclString c_FileName = QFileInfo(QString::fromStdString(*orc_InPath.AsStdString())).fileName().toStdString();
+   const stw::scl::C_SclString c_FileName = C_SclString::FromQString(QFileInfo(orc_InPath.ToQString()).fileName());
    const stw::scl::C_SclString c_Retval = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_TargetFolder) + c_FileName;
 
    return c_Retval;
@@ -389,7 +390,7 @@ stw::scl::C_SclString C_OscXceCreate::mh_GetUniqueFileName(const stw::scl::C_Scl
                                                            const stw::scl::C_SclString & orc_OutFolder,
                                                            std::map<stw::scl::C_SclString, bool> & orc_ExistingFiles)
 {
-   const stw::scl::C_SclString c_Extension = ("." + QFileInfo(QString::fromStdString(*orc_InPath.AsStdString())).suffix()).toStdString();
+   const stw::scl::C_SclString c_Extension = C_SclString::FromQString("." + QFileInfo(orc_InPath.ToQString()).suffix());
    const stw::scl::C_SclString c_OutPart = C_OscXceCreate::mh_GenOutFilePathPart(orc_InPath,
                                                                                  orc_OutFolder);
    const stw::scl::C_SclString c_OutPartWithoutExt =

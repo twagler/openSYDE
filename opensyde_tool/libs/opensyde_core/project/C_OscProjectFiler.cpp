@@ -77,7 +77,7 @@ int32_t C_OscProjectFiler::h_Save(C_OscProject & orc_Project, const C_SclString 
    {
       bool q_NewFile = true;
       //erase file if it already exists:
-      const QFileInfo c_FileInfo(QString::fromStdString(*orc_Path.AsStdString()));
+      const QFileInfo c_FileInfo(orc_Path.ToQString());
       if (c_FileInfo.exists() && c_FileInfo.isFile())
       {
          //erase it:
@@ -124,7 +124,7 @@ int32_t C_OscProjectFiler::h_Load(C_OscProject & orc_Project, const C_SclString 
 {
    int32_t s32_Retval;
 
-   const QFileInfo c_FileInfo(QString::fromStdString(*orc_Path.AsStdString()));
+   const QFileInfo c_FileInfo(orc_Path.ToQString());
    if (c_FileInfo.exists() && c_FileInfo.isFile())
    {
       C_SclString c_Tmp;

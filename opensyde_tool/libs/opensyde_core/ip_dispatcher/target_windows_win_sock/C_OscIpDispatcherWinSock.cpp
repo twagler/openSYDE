@@ -12,6 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 #include <QFileInfo>
+#include <QSettings>
 
 #include <winsock2.h>
 #include <winsock.h> //Windows WinSock
@@ -23,7 +24,7 @@
 #include "C_OscLoggingHandler.hpp"
 #include "C_OscIpDispatcherWinSock.hpp"
 #include "C_SclString.hpp"
-#include "C_SclIniFile.hpp"
+
 
 /* -- Used Namespaces ----------------------------------------------------------------------------------------------- */
 using namespace stw::errors;
@@ -1283,10 +1284,10 @@ int32_t C_OscIpDispatcherWinSock::ReadUdp(std::vector<uint8_t> & orc_Data, uint8
 //----------------------------------------------------------------------------------------------------------------------
 void C_OscIpDispatcherWinSock::LoadConfigFile(const C_SclString & orc_FileLocation)
 {
-   if ((QFileInfo(QString::fromStdString(*orc_FileLocation.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FileLocation.AsStdString())).isFile()) == true)
+   if ((QFileInfo(orc_FileLocation.ToQString()).exists() && QFileInfo(orc_FileLocation.ToQString()).isFile()) == true)
    {
-      C_SclIniFile c_Ini(orc_FileLocation);
-      const C_SclString c_Help = c_Ini.ReadString("ETH_CONFIG", "ETH_INTERFACE_NAME", "");
+      QSettings c_Ini(orc_FileLocation.ToQString(), QSettings::IniFormat);
+      const C_SclString c_Help = C_SclString(c_Ini.value("ETH_CONFIG/ETH_INTERFACE_NAME", "").toString().toStdString());
 
       c_Help.Tokenize(",", this->mc_PreferredInterfaceNames.Strings);
    }

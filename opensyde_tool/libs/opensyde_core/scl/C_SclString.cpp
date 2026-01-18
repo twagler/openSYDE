@@ -1687,3 +1687,34 @@ void C_SclString::Tokenize(const C_SclString & orc_Delimiters, QList<C_SclString
       }
    }
 }
+
+//----------------------------------------------------------------------------------------------------------------------
+/*! \brief    Convert C_SclString to QString.
+
+   Converts the internal std::string to a QString.
+
+   \return
+   QString containing the string data
+*/
+//----------------------------------------------------------------------------------------------------------------------
+QString C_SclString::ToQString(void) const
+{
+   return QString::fromStdString(this->c_String);
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+/*! \brief    Convert QString to C_SclString.
+
+   Converts a QString to C_SclString via std::string.
+
+   \param[in]    orc_String   QString to convert
+
+   \return
+   C_SclString containing the string data
+*/
+//----------------------------------------------------------------------------------------------------------------------
+C_SclString C_SclString::FromQString(const QString & orc_String)
+{
+   return C_SclString(orc_String.toStdString());
+}

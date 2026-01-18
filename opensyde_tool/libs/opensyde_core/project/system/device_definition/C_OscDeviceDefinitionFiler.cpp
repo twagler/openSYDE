@@ -195,8 +195,8 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
       }
       //expand the potentially relative image path to an absolute path
       // we will need it later to open the image in the UI
-      const QString c_BasePath = QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).absolutePath() + "/";
-      orc_DeviceDefinition.c_ImagePath = QDir(c_BasePath).absoluteFilePath(QString::fromStdString(*orc_DeviceDefinition.c_ImagePath.AsStdString())).toStdString();
+      const QString c_BasePath = QFileInfo(orc_Path.ToQString()).absolutePath() + "/";
+      orc_DeviceDefinition.c_ImagePath = C_SclString::FromQString(QDir(c_BasePath).absoluteFilePath(orc_DeviceDefinition.c_ImagePath.ToQString()));
       // also store file path
       // it is needed for creating service update package (see #24474)
       orc_DeviceDefinition.c_FilePath = orc_Path;
@@ -309,8 +309,8 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
                   orc_DeviceDefinition.c_ToolboxIcon = orc_Parser.GetNodeContent();
                   //expand the potentially relative image path to an absolute path
                   // we will need it later to open the image in the UI
-                  const QString c_BasePath = QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).absolutePath() + "/";
-                  orc_DeviceDefinition.c_ToolboxIcon = QDir(c_BasePath).absoluteFilePath(QString::fromStdString(*orc_DeviceDefinition.c_ToolboxIcon.AsStdString())).toStdString();
+                  const QString c_BasePath = QFileInfo(orc_Path.ToQString()).absolutePath() + "/";
+                  orc_DeviceDefinition.c_ToolboxIcon = C_SclString::FromQString(QDir(c_BasePath).absoluteFilePath(orc_DeviceDefinition.c_ToolboxIcon.ToQString()));
                   c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
                   Q_ASSERT(c_Text == "manufacturer-string");
                }
@@ -323,8 +323,8 @@ int32_t C_OscDeviceDefinitionFiler::mh_Load(C_OscDeviceDefinition & orc_DeviceDe
                   orc_DeviceDefinition.c_CompanyLogoLink = orc_Parser.GetNodeContent();
                   //expand the potentially relative image path to an absolute path
                   // we will need it later to open the image in the UI
-                  const QString c_BasePath = QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).absolutePath() + "/";
-                  orc_DeviceDefinition.c_CompanyLogoLink = QDir(c_BasePath).absoluteFilePath(QString::fromStdString(*orc_DeviceDefinition.c_CompanyLogoLink.AsStdString())).toStdString();
+                  const QString c_BasePath = QFileInfo(orc_Path.ToQString()).absolutePath() + "/";
+                  orc_DeviceDefinition.c_CompanyLogoLink = C_SclString::FromQString(QDir(c_BasePath).absoluteFilePath(orc_DeviceDefinition.c_CompanyLogoLink.ToQString()));
                   c_Text = orc_Parser.SelectNodeParent(); //back to parent of parent ...
                   Q_ASSERT(c_Text == "manufacturer-string");
                }
@@ -1280,7 +1280,7 @@ int32_t C_OscDeviceDefinitionFiler::h_Load(C_OscDeviceDefinition & orc_DeviceDef
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == false)
+   if (!QFileInfo(orc_Path.ToQString()).exists() || !QFileInfo(orc_Path.ToQString()).isFile())
    {
       osc_write_log_error("Loading device definition", "File not found: \"" + orc_Path + "\".");
       s32_Return = C_RANGE;
@@ -1387,7 +1387,7 @@ int32_t C_OscDeviceDefinitionFiler::h_Save(const C_OscDeviceDefinition & orc_Dev
 {
    int32_t s32_Return = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile())
    {
       //erase it:
       int x_Return; //lint !e970 !e8080  //using type to match library interface

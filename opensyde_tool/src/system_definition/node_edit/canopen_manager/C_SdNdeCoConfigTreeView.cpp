@@ -583,7 +583,7 @@ C_OscCanOpenManagerDeviceInfo C_SdNdeCoConfigTreeView::h_CreateNewDevice(const Q
    C_OscCanOpenManagerDeviceInfo c_Config;
    const QFileInfo c_FileInfo(orc_EdsPath);
 
-   c_Config.c_OriginalEdsFileName = QFileInfo(QString::fromStdString(*orc_EdsPath.toStdString(.AsStdString())).fileName().toStdString());
+   c_Config.c_OriginalEdsFileName = QFileInfo(orc_EdsPath).fileName().toStdString();
    c_Config.c_ProjectEdsFilePath = orc_EdsPath.toStdString();
    Q_ASSERT(c_FileInfo.exists());
    C_SdNdeCoConfigTreeView::mh_InitMappableSignals(c_Config.c_EdsFileMappableSignals, c_Config.GetEdsFileContent(),
@@ -807,7 +807,7 @@ void C_SdNdeCoConfigTreeView::m_OnAddDevice(void)
             c_Message.SetCustomMinHeight(180, 250);
             c_Message.Execute();
          }
-         else if (!(QFileInfo(QString::fromStdString(*pc_AddDialog->GetEdsFile(.AsStdString())).exists() && QFileInfo(QString::fromStdString(*pc_AddDialog->GetEdsFile(.AsStdString())).isFile())))
+         else if (!(QFileInfo(pc_AddDialog->GetEdsFile().ToQString()).exists() && QFileInfo(pc_AddDialog->GetEdsFile().ToQString()).isFile()))
          {
             C_OgeWiCustomMessage c_Message(this, C_OgeWiCustomMessage::eERROR);
             c_Message.SetHeading("EDS File");

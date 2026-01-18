@@ -17,7 +17,8 @@
 
 #include "stwtypes.hpp"
 #include "C_SclString.hpp"
-#include "C_SclIniFile.hpp"
+#include "C_SclStringList.hpp"
+#include <QSettings>
 #include "C_OscCanOpenEdsInfoBlock.hpp"
 
 /* -- Namespace ----------------------------------------------------------------------------------------------------- */
@@ -121,9 +122,9 @@ public:
 class C_OscCanOpenObjectDictionary
 {
 private:
-   int32_t m_CheckForExistingObjects(const stw::scl::C_SclString & orc_Blockname, stw::scl::C_SclIniFile & orc_IniFile);
+   int32_t m_CheckForExistingObjects(const stw::scl::C_SclString & orc_Blockname, QSettings & orc_IniFile);
    int32_t m_GetObjectDescription(const uint16_t ou16_Index, const uint8_t ou8_SubIndex, const bool oq_IsSubIndex,
-                                  stw::scl::C_SclIniSection & orc_Section, C_OscCanOpenObjectData & orc_Object);
+                                  const stw::scl::C_SclString & orc_SectionName, QSettings & orc_IniFile, C_OscCanOpenObjectData & orc_Object);
    void m_RememberFileHash();
 
    stw::scl::C_SclString mc_LastError;

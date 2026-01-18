@@ -27,7 +27,7 @@
 #include "C_OscDeviceDefinition.hpp"
 #include "C_OscDeviceDefinitionFiler.hpp"
 #include "C_OscSuSequences.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 #include "C_OscSuSequences.hpp"
 #include "C_OscUtils.hpp"
 #include "C_OscZipFile.hpp"
@@ -197,7 +197,7 @@ int32_t C_OscSupServiceUpdatePackageV1::h_CreatePackage(const C_SclString & orc_
          {
             // use sub folder named like package
             c_PackagePathTmp = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_TemporaryDirectory) +
-                               QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).fileName().toStdString();
+                               QFileInfo(orc_PackagePath.ToQString()).fileName().toStdString();
          }
          c_PackagePathTmp = c_PackagePathTmp.SubString(1, c_PackagePathTmp.Pos(mc_PACKAGE_EXT) - 1) +
                             mc_PACKAGE_EXT_TMP;
@@ -319,14 +319,14 @@ int32_t C_OscSupServiceUpdatePackageV1::h_CreatePackage(const C_SclString & orc_
            (c_Iter != c_DeviceDefinitionFiles.end()) && (s32_Return == C_NO_ERR);
            ++c_Iter)
       {
-         const C_SclString c_TargetFileName = QFileInfo(QString::fromStdString(**c_Iter.AsStdString())).fileName().toStdString();
+         const C_SclString c_TargetFileName = QFileInfo(c_Iter->ToQString()).fileName().toStdString();
          c_SupFiles.insert(c_TargetFileName);
          const C_SclString c_TargetFilePath = c_PackagePathTmp + c_TargetFileName;
          s32_Return = C_OscUtils::h_CopyFile(*c_Iter, c_TargetFilePath, NULL, &mhc_ErrorMessage);
          if (s32_Return != C_NO_ERR)
          {
             mhc_ErrorMessage = "Could not save device definition file \"" +
-                               QFileInfo(QString::fromStdString(*c_TargetFilePath.AsStdString())).fileName().toStdString() + "\" to path \"" + orc_PackagePath + "\".";
+                               QFileInfo(c_TargetFilePath.ToQString()).fileName().toStdString() + "\" to path \"" + orc_PackagePath + "\".";
             osc_write_log_error("Creating Update Package", mhc_ErrorMessage);
             s32_Return = C_RD_WR;
          }
@@ -365,7 +365,7 @@ int32_t C_OscSupServiceUpdatePackageV1::h_CreatePackage(const C_SclString & orc_
       // cleanup: delete temporary result folder
       if (q_TemporaryFolderCreated == true)
       {
-         const int32_t s32_Tmp = (QDir(QString::fromStdString(*c_PackagePathTmp.AsStdString())).removeRecursively() ? 0 : -1);
+         const int32_t s32_Tmp = (QDir(c_PackagePathTmp.ToQString()).removeRecursively() ? 0 : -1);
          if (s32_Tmp != 0)
          {
             const C_SclString c_Message = "Could not delete temporary result folder \"" + c_PackagePathTmp + "\".";
@@ -467,7 +467,7 @@ int32_t C_OscSupServiceUpdatePackageV1::h_ProcessPackage(const C_SclString & orc
    if (oq_IsZip)
    {
       // check if zip archive exists
-      if ((QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isFile()) == false)
+      if ((QFileInfo(orc_PackagePath.ToQString()).exists() && QFileInfo(orc_PackagePath.ToQString()).isFile()) == false)
       {
          mhc_ErrorMessage = "Zip archive \"" + orc_PackagePath + "\" does not exist.";
          osc_write_log_error("Unpacking Update Package", mhc_ErrorMessage);
@@ -477,9 +477,9 @@ int32_t C_OscSupServiceUpdatePackageV1::h_ProcessPackage(const C_SclString & orc
       //erase target path if it exists
       if (s32_Return == C_NO_ERR)
       {
-         if (QFileInfo(QString::fromStdString(*c_TargetUnzipPath.AsStdString())).isDir() == true)
+         if (QFileInfo(c_TargetUnzipPath.ToQString()).isDir() == true)
          {
-            s32_Return = (QDir(QString::fromStdString(*c_TargetUnzipPath.AsStdString())).removeRecursively() ? 0 : -1);
+            s32_Return = (QDir(c_TargetUnzipPath.ToQString()).removeRecursively() ? 0 : -1);
             if (s32_Return != 0)
             {
                mhc_ErrorMessage = "Could not remove folder \"" + c_TargetUnzipPath +
@@ -528,7 +528,7 @@ int32_t C_OscSupServiceUpdatePackageV1::h_ProcessPackage(const C_SclString & orc
    else
    {
       //no zip -> we have a plain directory. Does it even exist?
-      if (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isDir() == true)
+      if (QFileInfo(orc_PackagePath.ToQString()).isDir() == true)
       {
          //We need the base path for handling relative paths of files to transfer:
          c_TargetUnzipPath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(orc_PackagePath);
@@ -716,7 +716,7 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CheckSupFiles(const C_SclString & orc
          break;
       }
       
-      const C_SclString c_FileExt = ("." + QFileInfo(QString::fromStdString(*c_NecessaryFiles[u32_It].AsStdString())).suffix()).toStdString();
+      const C_SclString c_FileExt = ("." + QFileInfo(c_NecessaryFiles[u32_It].ToQString()).suffix()).toStdString();
       QStringList c_Filter;
       c_Filter << "*" + QString(c_FileExt.c_str());
       
@@ -771,8 +771,8 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CheckParamsToCreatePackage(const C_Sc
    int32_t s32_Return = C_NO_ERR;
 
    // does package already exist ?
-   const bool q_FileExists = (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isFile());
-   const bool q_DirectoryExists = QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).isDir();
+   const bool q_FileExists = (QFileInfo(orc_PackagePath.ToQString()).exists() && QFileInfo(orc_PackagePath.ToQString()).isFile());
+   const bool q_DirectoryExists = QFileInfo(orc_PackagePath.ToQString()).isDir();
 
    if ((q_FileExists == true) || (q_DirectoryExists == true))
    {
@@ -784,11 +784,11 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CheckParamsToCreatePackage(const C_Sc
    // does target directory for package exist ?
    if (s32_Return == C_NO_ERR)
    {
-      const C_SclString c_TargetDir = (QFileInfo(QString::fromStdString(*orc_PackagePath.AsStdString())).absolutePath() + "/").toStdString();
+      const C_SclString c_TargetDir = (QFileInfo(orc_PackagePath.ToQString()).absolutePath() + "/").toStdString();
 
       // package name without path or './' leads to target directory "",
       // which should not lead to error as it will result in creating package next to executable
-      if ((c_TargetDir.IsEmpty() == false) && (QFileInfo(QString::fromStdString(*c_TargetDir.AsStdString())).isDir() == false))
+      if ((c_TargetDir.IsEmpty() == false) && (QFileInfo(c_TargetDir.ToQString()).isDir() == false))
       {
          mhc_ErrorMessage = "Target directory \"" + c_TargetDir + "\" does not exist.";
          osc_write_log_error("Creating Update Package", mhc_ErrorMessage);
@@ -816,7 +816,7 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CheckParamsToCreatePackage(const C_Sc
                                      mc_PACKAGE_EXT_TMP;
       // add trailing path delimiter to temporary folder if not present
       c_TmpPackagePath = stw::opensyde_core::C_OscUtils::h_IncludeTrailingDelimiter(c_TmpPackagePath);
-      if (((QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).isFile()) == true) || (QFileInfo(QString::fromStdString(*c_TmpPackagePath.AsStdString())).isDir() == true))
+      if (QFileInfo(c_TmpPackagePath.ToQString()).exists() || QFileInfo(c_TmpPackagePath.ToQString()).isDir())
       {
          mhc_ErrorMessage = "Temporary result folder \"" + c_TmpPackagePath +
                             "\" to create zip archive already exists.";
@@ -1020,24 +1020,33 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_CreateDeviceIniFile(const C_SclString
    // build up devices.ini --> device definitions are in the same folder
    try
    {
-      C_SclIniFile c_IniFile(c_IniDevPath); // devices.ini
+      QSettings c_IniFile(c_IniDevPath.ToQString(), QSettings::IniFormat);
+      // Ensure file is fresh by clearing it? QSettings doesn't wipe on open.
+      // But we are creating a new package presumably.
+      // Let's assume we overwrite keys. But to be safe and match "Create" semantics:
+      c_IniFile.clear();
+
       uint32_t u32_DeviceCounter = 1;
+
+      const QString c_GroupHead = QString(c_HEAD_SECTION.c_str()) + "/";
+      const QString c_GroupDevice = QString(c_DEVICE_SECTION.c_str()) + "/";
+
       // write header section
-      c_IniFile.WriteInteger(c_HEAD_SECTION, c_FIRST_KEY, s32_FIRST_VALUE);
-      c_IniFile.WriteString(c_HEAD_SECTION, c_SECOND_KEY, c_DEVICE_SECTION);
+      c_IniFile.setValue(c_GroupHead + QString(c_FIRST_KEY.c_str()), s32_FIRST_VALUE);
+      c_IniFile.setValue(c_GroupHead + QString(c_SECOND_KEY.c_str()), QString(c_DEVICE_SECTION.c_str()));
 
       // write content section
-      c_IniFile.WriteInteger(c_DEVICE_SECTION, c_DEVICE_COUNT, static_cast<int32_t>(orc_DeviceDefinitionPaths.size()));
+      c_IniFile.setValue(c_GroupDevice + QString(c_DEVICE_COUNT.c_str()), static_cast<int32_t>(orc_DeviceDefinitionPaths.size()));
       // fill up with device definitions
       set<C_SclString>::const_iterator c_Iter;
       for (c_Iter = orc_DeviceDefinitionPaths.begin(); c_Iter != orc_DeviceDefinitionPaths.end(); ++c_Iter)
       {
          const C_SclString c_Key = c_DEVICE_KEY + C_SclString::IntToStr(u32_DeviceCounter);
-         const C_SclString c_Value = QFileInfo(QString::fromStdString(**c_Iter.AsStdString())).fileName().toStdString();
-         c_IniFile.WriteString(c_DEVICE_SECTION, c_Key, c_Value);
+         const C_SclString c_Value = QFileInfo(c_Iter->ToQString()).fileName().toStdString();
+         c_IniFile.setValue(c_GroupDevice + QString(c_Key.c_str()), QString(c_Value.c_str()));
          u32_DeviceCounter++;
       }
-      c_IniFile.UpdateFile(); // make data persistent
+      c_IniFile.sync(); // make data persistent
    }
    catch (...)
    {
@@ -1114,7 +1123,7 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_SupDefParamAdapter(const C_OscSystemD
            ++c_IterAppl)
       {
          // store application file names with relative path
-         const C_SclString c_Tmp = c_Folder + "/" + QFileInfo(QString::fromStdString(**c_IterAppl.AsStdString())).fileName().toStdString();
+         const C_SclString c_Tmp = c_Folder + "/" + QFileInfo(c_IterAppl->ToQString()).fileName().toStdString();
          c_SupDefNodeContent.c_ApplicationFileNames.push_back(c_Tmp);
       }
       // get parameter sets of node
@@ -1124,14 +1133,14 @@ int32_t C_OscSupServiceUpdatePackageV1::mh_SupDefParamAdapter(const C_OscSystemD
            ++c_IterParam)
       {
          // store application file names with relative path
-         const C_SclString c_Tmp = c_Folder + "/" + QFileInfo(QString::fromStdString(**c_IterParam.AsStdString())).fileName().toStdString();
+         const C_SclString c_Tmp = c_Folder + "/" + QFileInfo(c_IterParam->ToQString()).fileName().toStdString();
          c_SupDefNodeContent.c_NvmFileNames.push_back(c_Tmp);
       }
 
       // get PEM file and its settings of node
       if (orc_ApplicationsToWrite[u32_Pos].c_PemFile != "")
       {
-         const C_SclString c_Tmp = c_Folder + "/" + QFileInfo(QString::fromStdString(*orc_ApplicationsToWrite[u32_Pos].c_PemFile.AsStdString())).fileName().toStdString();
+         const C_SclString c_Tmp = c_Folder + "/" + QFileInfo(orc_ApplicationsToWrite[u32_Pos].c_PemFile.ToQString()).fileName().toStdString();
          c_SupDefNodeContent.c_PemFile = c_Tmp;
 
          c_SupDefNodeContent.q_SendSecurityEnabledState = orc_ApplicationsToWrite[u32_Pos].q_SendSecurityEnabledState;
@@ -1246,7 +1255,7 @@ void C_OscSupServiceUpdatePackageV1::mh_LoadFilesSection(std::vector<C_SclString
       {
          // we have to take care of OS dependent path delimiters for windows '\\'
          const C_SclString c_XmlAttr = orc_XmlParser.GetAttributeString(mc_FILE_NAME_ATTR);
-         const C_SclString c_FileName = QFileInfo(QString::fromStdString(*c_XmlAttr.AsStdString())).fileName().toStdString();
+         const C_SclString c_FileName = QFileInfo(c_XmlAttr.ToQString()).fileName().toStdString();
          // subfolder without '/'
          const C_SclString c_SubFolder =
             c_XmlAttr.SubString(1, (c_XmlAttr.Length() - c_FileName.Length()) - 1);
@@ -1287,7 +1296,7 @@ void C_OscSupServiceUpdatePackageV1::mh_LoadPemConfigSection(C_OscSuSequences::C
       const C_SclString c_XmlAttr = orc_XmlParser.GetAttributeString(mc_FILE_NAME_ATTR);
       if (c_XmlAttr != "")
       {
-         const C_SclString c_FileName = QFileInfo(QString::fromStdString(*c_XmlAttr.AsStdString())).fileName().toStdString();
+         const C_SclString c_FileName = QFileInfo(c_XmlAttr.ToQString()).fileName().toStdString();
          // subfolder without '/'
          const C_SclString c_SubFolder =
             c_XmlAttr.SubString(1, (c_XmlAttr.Length() - c_FileName.Length()) - 1);

@@ -14,7 +14,7 @@
 #include "stwtypes.hpp"
 #include "CXFLProtocol.hpp"
 #include "C_SclString.hpp"
-#include "C_SclIniFile.hpp"
+#include <QSettings>
 #include <QList>
 #include "DiagLib_config.hpp"
 
@@ -45,8 +45,8 @@ public:
    QList<C_XFLDivertParameter> c_Parameters;     ///list of parameters for target device
    uint8_t u8_SelectedPosition;                                        ///target position (e.g. "0" for CAN_1)
 
-   void LoadFromINI(stw::scl::C_SclIniFile & orc_IniFile, const stw::scl::C_SclString & orc_Section);
-   int32_t SaveToINI(stw::scl::C_SclIniFile & orc_IniFile, const stw::scl::C_SclString & orc_Section);
+   void LoadFromINI(QSettings & orc_IniFile, const stw::scl::C_SclString & orc_Section);
+   int32_t SaveToINI(QSettings & orc_IniFile, const stw::scl::C_SclString & orc_Section);
 };
 
 //----------------------------------------------------------------------------------------------------------------------

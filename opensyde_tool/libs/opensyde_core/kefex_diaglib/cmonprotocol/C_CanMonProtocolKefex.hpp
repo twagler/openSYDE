@@ -41,8 +41,8 @@ public:
    virtual stw::scl::C_SclString MessageToString(const stw::can::T_STWCAN_Msg_RX & orc_Msg) const;
    virtual stw::scl::C_SclString GetProtocolName(void) const;
 
-   virtual int32_t SaveParamsToIni(stw::scl::C_SclIniFile & orc_IniFile, const stw::scl::C_SclString & orc_Section);
-   virtual int32_t LoadParamsFromIni(stw::scl::C_SclIniFile & orc_IniFile, const stw::scl::C_SclString & orc_Section);
+   virtual int32_t SaveParamsToIni(QSettings & orc_IniFile, const stw::scl::C_SclString & orc_Section);
+   virtual int32_t LoadParamsFromIni(QSettings & orc_IniFile, const stw::scl::C_SclString & orc_Section);
 
    uint16_t GetBaseId(void) const;
    void SetBaseId(const uint16_t ou16_BaseId);

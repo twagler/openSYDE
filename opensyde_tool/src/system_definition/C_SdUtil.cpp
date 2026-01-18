@@ -2339,7 +2339,7 @@ QString C_SdUtil::h_GetEdsFileDetails(const C_OscCanOpenObjectDictionary oc_CanO
 
    c_String += "[FileInfo]";
    c_String += "\nFileName=";
-   c_String += c_FileInfoBlock.c_FileName.AsStdString()->c_str();
+   c_String += c_FileInfoBlock.c_FileName.ToQString();
    c_String += "\nFileVersion=";
    c_String += QString::number(c_FileInfoBlock.u8_FileVersion);
    c_String += "\nFileRevision=";
@@ -2347,37 +2347,37 @@ QString C_SdUtil::h_GetEdsFileDetails(const C_OscCanOpenObjectDictionary oc_CanO
    if (c_FileInfoBlock.c_EdsVersion != "")
    {
       c_String += "\nEDSVersion=";
-      c_String += c_FileInfoBlock.c_EdsVersion.AsStdString()->c_str();
+      c_String += c_FileInfoBlock.c_EdsVersion.ToQString();
    }
    c_String += "\nDescription=";
-   c_String += c_FileInfoBlock.c_Description.AsStdString()->c_str();
+   c_String += c_FileInfoBlock.c_Description.ToQString();
    c_String += "\nCreationTime=";
-   c_String += c_FileInfoBlock.c_CreationTime.AsStdString()->c_str();
+   c_String += c_FileInfoBlock.c_CreationTime.ToQString();
    c_String += "\nCreationDate=";
-   c_String += c_FileInfoBlock.c_CreationDate.AsStdString()->c_str();
+   c_String += c_FileInfoBlock.c_CreationDate.ToQString();
    c_String += "\nCreatedBy=";
-   c_String += c_FileInfoBlock.c_CreatedBy.AsStdString()->c_str();
+   c_String += c_FileInfoBlock.c_CreatedBy.ToQString();
    c_String += "\nModificationDate=";
-   c_String += c_FileInfoBlock.c_ModificationDate.AsStdString()->c_str();
+   c_String += c_FileInfoBlock.c_ModificationDate.ToQString();
    c_String += "\nModifiedBy=";
-   c_String += c_FileInfoBlock.c_ModifiedBy.AsStdString()->c_str();
+   c_String += c_FileInfoBlock.c_ModifiedBy.ToQString();
 
    c_String += "\n\n[DeviceInfo]";
    c_String += "\nVendorName=";
-   c_String += c_DeviceInfoBlock.c_VendorName.AsStdString()->c_str();
+   c_String += c_DeviceInfoBlock.c_VendorName.ToQString();
    c_String += "\nVendorNumber=";
-   c_String += c_DeviceInfoBlock.c_VendorNumber.AsStdString()->c_str();
+   c_String += c_DeviceInfoBlock.c_VendorNumber.ToQString();
    c_String += "\nProductName=";
-   c_String += c_DeviceInfoBlock.c_ProductName.AsStdString()->c_str();
+   c_String += c_DeviceInfoBlock.c_ProductName.ToQString();
    c_String += "\nProductNumber=";
-   c_String += c_DeviceInfoBlock.c_ProductNumber.AsStdString()->c_str();
+   c_String += c_DeviceInfoBlock.c_ProductNumber.ToQString();
    if (c_DeviceInfoBlock.c_RevisionNumber != "")
    {
       c_String += "\nRevisionNumber=";
-      c_String += c_DeviceInfoBlock.c_RevisionNumber.AsStdString()->c_str();
+      c_String += c_DeviceInfoBlock.c_RevisionNumber.ToQString();
    }
    c_String += "\nOrderCode=";
-   c_String += c_DeviceInfoBlock.c_OrderCode.AsStdString()->c_str();
+   c_String += c_DeviceInfoBlock.c_OrderCode.ToQString();
    c_String += "\nBaudRate_10=";
    c_TrueOrFalse = c_DeviceInfoBlock.q_BaudRate10 ? "1" : "0";
    c_String += c_TrueOrFalse;
@@ -2411,7 +2411,7 @@ QString C_SdUtil::h_GetEdsFileDetails(const C_OscCanOpenObjectDictionary oc_CanO
    c_String += "\nGranularity=";
    c_String += QString::number(c_DeviceInfoBlock.u8_Granularity);
    c_String += "\nDynamicChannelsSupported=";
-   c_String += c_DeviceInfoBlock.c_DynamicChannelsSupported.AsStdString()->c_str();
+   c_String += c_DeviceInfoBlock.c_DynamicChannelsSupported.ToQString();
    c_String += "\nGroupMessaging=";
    c_TrueOrFalse = c_DeviceInfoBlock.q_GroupMessaging ? "1" : "0";
    c_String += c_TrueOrFalse;

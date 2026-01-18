@@ -142,29 +142,31 @@ C_XFLDivertParameters & C_XFLDivertParameters::operator =(const C_XFLDivertParam
    \param[in]   orc_Section        section in INI file
 */
 //----------------------------------------------------------------------------------------------------------------------
-void C_XFLDivertParameters::LoadFromINI(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section)
+void C_XFLDivertParameters::LoadFromINI(QSettings & orc_IniFile, const C_SclString & orc_Section)
 {
-   u8_DeviceIndex      = orc_IniFile.ReadUint8(orc_Section, "DIVERT_DEVICE_INDEX", 0U);
-   u8_SelectedPosition = orc_IniFile.ReadUint8(orc_Section, "DIVERT_SELECTED_POSITION", 0U);
+   QString c_Section = orc_Section.ToQString();
 
-   c_PositionNames.resize(orc_IniFile.ReadInteger(orc_Section, "DIVERT_NUM_POSITIONS", 0));
+   u8_DeviceIndex      = orc_IniFile.value(c_Section + "/DIVERT_DEVICE_INDEX", 0U).toUInt();
+   u8_SelectedPosition = orc_IniFile.value(c_Section + "/DIVERT_SELECTED_POSITION", 0U).toUInt();
+
+   c_PositionNames.resize(orc_IniFile.value(c_Section + "/DIVERT_NUM_POSITIONS", 0).toInt());
    for (int32_t s32_NameIndex = 0; s32_NameIndex < c_PositionNames.size(); s32_NameIndex++)
    {
       c_PositionNames[s32_NameIndex] =
-         orc_IniFile.ReadString(orc_Section, "DIVERT_POSITION_" + C_SclString::IntToStr(s32_NameIndex), "");
+         C_SclString(orc_IniFile.value(c_Section + "/DIVERT_POSITION_" + C_SclString::IntToStr(s32_NameIndex).ToQString(), "").toString().toStdString());
    }
-   c_Parameters.resize(orc_IniFile.ReadInteger(orc_Section, "DIVERT_NUM_PARAMETERS", 0));
+   c_Parameters.resize(orc_IniFile.value(c_Section + "/DIVERT_NUM_PARAMETERS", 0).toInt());
    for (int32_t s32_ParameterIndex = 0; s32_ParameterIndex < c_Parameters.size(); s32_ParameterIndex++)
    {
       c_Parameters[s32_ParameterIndex].u8_ParameterIndex  =
-         orc_IniFile.ReadUint8(orc_Section, "DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex) + "_INDEX",
-                               0U);
+         orc_IniFile.value(c_Section + "/DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex).ToQString() + "_INDEX",
+                               0U).toUInt();
       c_Parameters[s32_ParameterIndex].c_ParameterName    =
-         orc_IniFile.ReadString(orc_Section, "DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex) + "_NAME",
-                                "");
+         C_SclString(orc_IniFile.value(c_Section + "/DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex).ToQString() + "_NAME",
+                                "").toString().toStdString());
       c_Parameters[s32_ParameterIndex].u16_ParameterValue =
-         orc_IniFile.ReadUint16(orc_Section, "DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex) + "_VALUE",
-                                0U);
+         orc_IniFile.value(c_Section + "/DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex).ToQString() + "_VALUE",
+                                0U).toUInt();
    }
 }
 
@@ -194,28 +196,30 @@ void C_XFLDivertParameters::LoadFromINI(C_SclIniFile & orc_IniFile, const C_SclS
    else       error
 */
 //----------------------------------------------------------------------------------------------------------------------
-int32_t C_XFLDivertParameters::SaveToINI(C_SclIniFile & orc_IniFile, const C_SclString & orc_Section)
+int32_t C_XFLDivertParameters::SaveToINI(QSettings & orc_IniFile, const C_SclString & orc_Section)
 {
    try
    {
-      orc_IniFile.WriteInteger(orc_Section, "DIVERT_DEVICE_INDEX", u8_DeviceIndex);
-      orc_IniFile.WriteInteger(orc_Section, "DIVERT_SELECTED_POSITION", u8_SelectedPosition);
+      QString c_Section = orc_Section.ToQString();
 
-      orc_IniFile.WriteInteger(orc_Section, "DIVERT_NUM_POSITIONS", c_PositionNames.size());
+      orc_IniFile.setValue(c_Section + "/DIVERT_DEVICE_INDEX", u8_DeviceIndex);
+      orc_IniFile.setValue(c_Section + "/DIVERT_SELECTED_POSITION", u8_SelectedPosition);
+
+      orc_IniFile.setValue(c_Section + "/DIVERT_NUM_POSITIONS", c_PositionNames.size());
       for (int32_t s32_NameIndex = 0; s32_NameIndex < c_PositionNames.size(); s32_NameIndex++)
       {
-         orc_IniFile.WriteString(orc_Section, "DIVERT_POSITION_" + C_SclString::IntToStr(
-                                    s32_NameIndex), c_PositionNames[s32_NameIndex]);
+         orc_IniFile.setValue(c_Section + "/DIVERT_POSITION_" + C_SclString::IntToStr(
+                                    s32_NameIndex).ToQString(), c_PositionNames[s32_NameIndex].ToQString());
       }
 
-      orc_IniFile.WriteInteger(orc_Section, "DIVERT_NUM_PARAMETERS", c_Parameters.size());
+      orc_IniFile.setValue(c_Section + "/DIVERT_NUM_PARAMETERS", c_Parameters.size());
       for (int32_t s32_ParameterIndex = 0; s32_ParameterIndex < c_Parameters.size(); s32_ParameterIndex++)
       {
-         orc_IniFile.WriteInteger(orc_Section, "DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex) +
+         orc_IniFile.setValue(c_Section + "/DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex).ToQString() +
                                   "_INDEX", c_Parameters[s32_ParameterIndex].u8_ParameterIndex);
-         orc_IniFile.WriteString(orc_Section, "DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex) +
-                                 "_NAME", c_Parameters[s32_ParameterIndex].c_ParameterName);
-         orc_IniFile.WriteInteger(orc_Section, "DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex) +
+         orc_IniFile.setValue(c_Section + "/DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex).ToQString() +
+                                 "_NAME", c_Parameters[s32_ParameterIndex].c_ParameterName.ToQString());
+         orc_IniFile.setValue(c_Section + "/DIVERT_PARAMETER_" + C_SclString::IntToStr(s32_ParameterIndex).ToQString() +
                                   "_VALUE", c_Parameters[s32_ParameterIndex].u16_ParameterValue);
       }
    }

@@ -965,7 +965,7 @@ int32_t C_OscDataDealerNvmSafe::NvmSafeCreateCleanFileWithoutCrc(const C_SclStri
 {
    int32_t s32_Retval;
 
-   if ((QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_Path.AsStdString())).isFile()) == false)
+   if (!(QFileInfo(orc_Path.ToQString()).exists() && QFileInfo(orc_Path.ToQString()).isFile()))
    {
       if (this->me_ParameterSetFileState == C_OscDataDealerNvmSafe::ePSFS_DATA_RESET)
       {

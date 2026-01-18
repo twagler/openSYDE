@@ -63,7 +63,7 @@ int32_t C_OscViewFiler::h_LoadSystemViewsFile(std::vector<C_OscViewData> & orc_V
 {
    int32_t s32_Retval = C_NO_ERR;
 
-   if ((QFileInfo(QString::fromStdString(*orc_PathSystemViews.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_PathSystemViews.AsStdString())).isFile()) == true)
+   if (QFileInfo(orc_PathSystemViews.ToQString()).exists() && QFileInfo(orc_PathSystemViews.ToQString()).isFile())
    {
       C_OscXmlParserLog c_XmlParser;
       c_XmlParser.SetLogHeading("Loading System Views");

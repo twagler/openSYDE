@@ -3201,7 +3201,7 @@ bool C_CamMetTreeModel::m_IsStatusValid(const C_CamMetTreeLoggerData & orc_Curre
    bool q_StatusValid = true;
 
    // If status is "invalid" (Invalid counter or CRC for ECeS message)
-   const QString c_Status(orc_CurrentMessage.c_Status.AsStdString()->c_str());
+   const QString c_Status(orc_CurrentMessage.c_Status.ToQString());
 
    if ((c_Status.contains("invalid", Qt::CaseInsensitive)) || (c_Status.contains("incorrect", Qt::CaseInsensitive)))
    {

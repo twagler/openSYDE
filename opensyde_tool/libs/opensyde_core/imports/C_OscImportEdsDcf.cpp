@@ -12,6 +12,7 @@
 /* -- Includes ------------------------------------------------------------------------------------------------------ */
 #include "precomp_headers.hpp"
 #include <QFileInfo>
+#include <QSettings>
 
 #include <cmath>
 #include <limits>
@@ -19,7 +20,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include "stwerrors.hpp"
-#include "C_SclIniFile.hpp"
+
 #include "C_OscImportEdsDcf.hpp"
 #include "C_OscLoggingHandler.hpp"
 
@@ -86,10 +87,10 @@ int32_t C_OscImportEdsDcf::h_Import(const C_SclString & orc_FilePath, const uint
    orc_ImportMessagesPerMessage.clear();
    orc_ParsingError = "";
 
-   if ((QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).exists() && QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).isFile()) == true)
+   if ((QFileInfo(orc_FilePath.ToQString()).exists() && QFileInfo(orc_FilePath.ToQString()).isFile()) == true)
    {
       bool q_Eds = true;
-      const C_SclString c_Extension = ("." + QFileInfo(QString::fromStdString(*orc_FilePath.AsStdString())).suffix()).toStdString().LowerCase();
+      const C_SclString c_Extension = C_SclString(("." + QFileInfo(orc_FilePath.ToQString()).suffix()).toStdString()).LowerCase();
       if (c_Extension == ".eds")
       {
          q_Eds = true;
@@ -2126,10 +2127,10 @@ void C_OscImportEdsDcf::mh_LoadDummies(const C_SclString & orc_FilePath, std::ve
 {
    try
    {
-      C_SclStringList c_StringList;
-      C_SclIniFile c_Ini(orc_FilePath);
-      c_Ini.ReadSection("DummyUsage", &c_StringList);
-      if (c_StringList.GetCount() > 0UL)
+      QSettings c_Ini(orc_FilePath.ToQString(), QSettings::IniFormat);
+      c_Ini.beginGroup("DummyUsage");
+      QStringList c_Keys = c_Ini.childKeys();
+      if (c_Keys.size() > 0)
       {
          //1B is last supported data type
          for (uint32_t u32_ItPossibleDummy = 1U; u32_ItPossibleDummy <= 0x1B; ++u32_ItPossibleDummy)
@@ -2138,17 +2139,19 @@ void C_OscImportEdsDcf::mh_LoadDummies(const C_SclString & orc_FilePath, std::ve
             C_SclString c_CurString;
             c_Stream << std::setw(4) << std::setfill('0') << &std::hex << u32_ItPossibleDummy;
             c_CurString = static_cast<C_SclString>("Dummy") + c_Stream.str().c_str();
+            QString qs_Key = c_CurString.ToQString();
             //Check if entry exists
-            if (c_StringList.IndexOf(c_CurString) >= 0L)
+            if (c_Keys.contains(qs_Key, Qt::CaseInsensitive))
             {
                //Check if entry specifies dummy can be used
-               if (c_Ini.ReadBool("DummyUsage", c_CurString, false) == true)
+               if (c_Ini.value(qs_Key, false).toBool() == true)
                {
                   orc_Dummies.push_back(u32_ItPossibleDummy);
                }
             }
          }
       }
+      c_Ini.endGroup();
    }
    catch (...)
    {

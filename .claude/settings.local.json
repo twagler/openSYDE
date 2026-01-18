@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(python replace_tglfile.py:*)",
+      "Bash(ninja:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}
